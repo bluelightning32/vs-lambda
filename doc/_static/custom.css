@@ -1,0 +1,70 @@
+.hidden {
+    display: none;
+}
+
+.inference-title {
+  color: DarkBlue;
+}
+
+/* Works around a Firefox bug where the overline doesn't show up at some zoom
+ * levels. Supposedly it was fixed with
+ * https://github.com/mathjax/MathJax/issues/2701, but the fix doesn't work.
+ *
+ * The supports block ensures the rules only apply to on Firefox, because
+ * Chrome doesn't need them.
+ */
+@supports (-moz-appearance:none) {
+  mjx-stretchy-h.mjx-c2013 mjx-ext mjx-c::before {
+    /* replace the en dash with a hyphen, which seems to be a little bolder. */
+    content: "-" ! important;
+    /* Make it still a little more bold. */
+    font-size: 115%;
+  }
+}
+
+/* Similar fix for overline, but for MathJax 4.0.0. */
+@supports (-moz-appearance:none) {
+  mjx-stretchy-h.mjx-c2015 mjx-ext mjx-c {
+    /* Show the line through the border. */
+    border-top: solid black 1px;
+    /* Hide the dash in the contents to avoid having a line that is too thick.
+     * */
+    color: transparent;
+  }
+}
+
+/* Remove the padding at the top of the main column so that the title aligns
+ * with the logo on the left side bar. */
+#right-column {
+  padding-top: 0px;
+}
+
+/* Remove the top margin of the title bar. The title bar is the first h1
+ * element in the first section of the first div of the right-column. */
+.body > section:first-child > h1:first-child {
+  margin-top: 0px;
+}
+
+/* Change the position of the mobile toggle from fixed to unset. It was likely
+ * set to fixed as a hack to reduce the padding before the title in mobile
+ * mode. However, the above rules completely disabled the padding above the
+ * title bar. */
+#mobile-toggle {
+  position: unset;
+}
+
+/* Instead of the white background from the theme, use a light gray background
+ * for code snippets. */
+div.highlight > pre {
+  background-color: ghostwhite;
+  border-left-width: 4px;
+  border-color: #dde;
+}
+
+div.justify-space-between {
+  justify-content: space-between;
+}
+
+img.image-grid {
+  image-rendering: pixelated;
+}
