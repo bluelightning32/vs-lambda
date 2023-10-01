@@ -11,6 +11,7 @@ Welcome to Lambda Factory's documentation!
    :caption: Contents:
 
    building
+   puzzles
    test3
 
 
