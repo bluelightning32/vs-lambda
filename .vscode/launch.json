@@ -1,0 +1,15 @@
+{
+	"version": "0.2.0",
+	"configurations": [{
+		"name": "Run VintageStory",
+		"type": "coreclr",
+		"request": "launch",
+		"preLaunchTask": "Build (Debug)",
+		"program": "${env:VINTAGE_STORY}/Vintagestory",
+		"args": [
+			"--addModPath", "${workspaceFolder}/bin/Debug"
+		],
+		"console": "internalConsole",
+		"internalConsoleOptions": "openOnSessionStart",
+	}]
+}
