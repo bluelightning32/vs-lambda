@@ -1,3 +1,4 @@
 doc/_ext/__pycache__/
+doc/_build
 bin
 obj
