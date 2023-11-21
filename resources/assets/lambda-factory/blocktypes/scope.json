@@ -1,0 +1,62 @@
+{
+  code: "scope",
+  variantGroups: [
+    { code: "face", states: ["none"], combine: "Add"},
+    { code: "face",
+      states: ["up", "down"],
+      loadFromProperties: "abstract/horizontalorientation"
+    },
+    { code: "scope",
+      states: ["function", "case", "forall", "matchin"]
+    }
+  ],
+  creativeinventory: { general: ["*"] },
+  blockmaterial: "Stone",
+  drawtype: "json",
+  shape: {
+    base: "block/scope"
+  },
+  texturesByType: {
+    "*-north-*": {
+      "north": {
+        base: "scope/northsouth",
+        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+      }
+    },
+    "*-east-*": {
+      "east": {
+        base: "scope/eastwest",
+        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+      }
+    },
+    "*-south-*": {
+      "south": {
+        base: "scope/northsouth",
+        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+      }
+    },
+    "*-west-*": {
+      "west": {
+        base: "scope/eastwest",
+        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+      }
+    },
+    "*-up-*": {
+      "up": {
+        base: "scope/updown",
+        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+      }
+    },
+    "*-down-*": {
+      "down": {
+        base: "scope/updown",
+        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+      }
+    },
+  },
+  resistance: 3.5,
+  sounds: {
+    place: "game:block/ceramicplace",
+    walk: "game:walk/stone"
+  }
+}
