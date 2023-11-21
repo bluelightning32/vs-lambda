@@ -4,15 +4,9 @@
   blockmaterial: "Stone",
   drawtype: "json",
   shape: {
-    base: "game:block/basic/cube"
+    base: "block/scope"
   },
   textures: {
-    north: {base: "wall/northsouth"},
-    east: {base: "wall/eastwest"},
-    south: {base: "wall/northsouth", rotation: 180},
-    west: {base: "wall/eastwest", rotation: 180},
-    up: {base: "wall/updown"},
-    down: {base: "wall/updown"},
   },
   resistance: 3.5,
   sounds: {
