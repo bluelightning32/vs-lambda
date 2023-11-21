@@ -1,11 +1,11 @@
 {
     textures: {
-        north: "wall/northsouth",
-        east: "wall/eastwest",
-        south: "wall/northsouth",
-        west: "wall/eastwest",
-        up: "wall/updown",
-        down: "wall/updown",
+        north: "scope/northsouth",
+        east: "scope/eastwest",
+        south: "scope/northsouth",
+        west: "scope/eastwest",
+        up: "scope/updown",
+        down: "scope/updown",
     },
     elements: [
         {
