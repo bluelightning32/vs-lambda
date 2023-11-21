@@ -1,0 +1,22 @@
+{
+  code: "scope-blank",
+  creativeinventory: { general: ["*"] },
+  blockmaterial: "Stone",
+  drawtype: "json",
+  shape: {
+    base: "game:block/basic/cube"
+  },
+  textures: {
+    north: {base: "wall/northsouth"},
+    east: {base: "wall/eastwest"},
+    south: {base: "wall/northsouth", rotation: 180},
+    west: {base: "wall/eastwest", rotation: 180},
+    up: {base: "wall/updown"},
+    down: {base: "wall/updown"},
+  },
+  resistance: 3.5,
+  sounds: {
+    place: "game:block/anvil",
+    walk: "game:walk/stone"
+  }
+}

@@ -1,0 +1,1333 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   sodipodi:docname="eastwest.svg"
+   inkscape:export-filename="eastwest.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     showgrid="true"
+     inkscape:zoom="18.484375"
+     inkscape:cx="12.145393"
+     inkscape:cy="14.038884"
+     inkscape:window-width="2560"
+     inkscape:window-height="1371"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       id="grid1"
+       units="px"
+       originx="0"
+       originy="0"
+       spacingx="1"
+       spacingy="1"
+       empcolor="#0099e5"
+       empopacity="0.30196078"
+       color="#0099e5"
+       opacity="0.14901961"
+       empspacing="5"
+       dotted="false"
+       gridanglex="30"
+       gridanglez="30"
+       visible="true" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1">
+    <filter
+       inkscape:label="Film Grain"
+       inkscape:menu="Image Effects"
+       inkscape:menu-tooltip="Adds a small scale graininess"
+       style="color-interpolation-filters:sRGB;"
+       id="filter21"
+       x="0"
+       y="0"
+       width="1"
+       height="1">
+      <feTurbulence
+         type="fractalNoise"
+         numOctaves="3"
+         baseFrequency="0.39430043436293438"
+         seed="0"
+         result="result0"
+         id="feTurbulence20" />
+      <feColorMatrix
+         result="result4"
+         values="0"
+         type="saturate"
+         id="feColorMatrix20" />
+      <feComposite
+         in="SourceGraphic"
+         in2="result4"
+         operator="arithmetic"
+         k1="0"
+         k2="0.5"
+         k3="2.7755575615628914e-17"
+         result="result2"
+         id="feComposite20" />
+      <feBlend
+         result="result5"
+         mode="normal"
+         in="result2"
+         in2="SourceGraphic"
+         id="feBlend20" />
+      <feComposite
+         in="result5"
+         in2="SourceGraphic"
+         operator="in"
+         result="result3"
+         id="feComposite21" />
+    </filter>
+    <filter
+       inkscape:label="Film Grain"
+       inkscape:menu="Image Effects"
+       inkscape:menu-tooltip="Adds a small scale graininess"
+       style="color-interpolation-filters:sRGB;"
+       id="filter23"
+       x="0"
+       y="0"
+       width="1"
+       height="1">
+      <feTurbulence
+         type="fractalNoise"
+         numOctaves="3"
+         baseFrequency="0.099999999999999922"
+         seed="0"
+         result="result0"
+         id="feTurbulence21" />
+      <feColorMatrix
+         result="result4"
+         values="0"
+         type="saturate"
+         id="feColorMatrix21" />
+      <feComposite
+         in="SourceGraphic"
+         in2="result4"
+         operator="arithmetic"
+         k1="1.25"
+         k2="0.5"
+         k3="0.5"
+         result="result2"
+         id="feComposite22" />
+      <feBlend
+         result="result5"
+         mode="normal"
+         in="result2"
+         in2="SourceGraphic"
+         id="feBlend22" />
+      <feComposite
+         in="result5"
+         in2="SourceGraphic"
+         operator="in"
+         result="result3"
+         id="feComposite23" />
+    </filter>
+    <filter
+       inkscape:label="Film Grain"
+       inkscape:menu="Image Effects"
+       inkscape:menu-tooltip="Adds a small scale graininess"
+       style="color-interpolation-filters:sRGB;"
+       id="filter27"
+       x="0"
+       y="0"
+       width="1"
+       height="1">
+      <feTurbulence
+         type="fractalNoise"
+         numOctaves="3"
+         baseFrequency="1"
+         seed="0"
+         result="result0"
+         id="feTurbulence26" />
+      <feColorMatrix
+         result="result4"
+         values="0"
+         type="saturate"
+         id="feColorMatrix26" />
+      <feComposite
+         in="SourceGraphic"
+         in2="result4"
+         operator="arithmetic"
+         k1="1.25"
+         k2="0.5"
+         k3="0.5"
+         result="result2"
+         id="feComposite26" />
+      <feBlend
+         result="result5"
+         mode="normal"
+         in="result2"
+         in2="SourceGraphic"
+         id="feBlend26" />
+      <feComposite
+         in="result5"
+         in2="SourceGraphic"
+         operator="in"
+         result="result3"
+         id="feComposite27" />
+    </filter>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath97">
+      <rect
+         style="fill:#808080;fill-opacity:0.994918;stroke:#53676c;stroke-width:0.865191"
+         id="rect98"
+         width="24.03109"
+         height="28"
+         x="51"
+         y="-1" />
+    </clipPath>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#b7c8be;fill-opacity:0.994918;stroke:none;stroke-width:1.06732"
+       id="rect74"
+       width="32"
+       height="31.999998"
+       x="0"
+       y="1.573087e-09" />
+    <path
+       style="fill-opacity:1;stroke:#93ac9d;stroke-width:2;stroke-dasharray:none;font-variation-settings:normal;opacity:1;fill:#000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1"
+       d="M 0,16 H 32"
+       id="path9" />
+    <path
+       style="font-variation-settings:normal;opacity:1;fill:#000000;fill-opacity:1;stroke:#93ac9d;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 8.4692293,0.06209795 8.5307707,15.937902"
+       id="path17" />
+    <path
+       style="font-variation-settings:normal;opacity:1;fill:#000000;fill-opacity:1;stroke:#93ac9d;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 23.5,0 V 16"
+       id="path18" />
+    <path
+       style="font-variation-settings:normal;opacity:1;fill:#000000;fill-opacity:1;stroke:#93ac9d;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 23.969229,16.062098 0.06154,15.875804"
+       id="path20" />
+    <path
+       style="font-variation-settings:normal;opacity:1;fill:#000000;fill-opacity:1;stroke:#9eb4a8;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 24.469229,0.062098 v 16"
+       id="path383" />
+    <path
+       style="font-variation-settings:normal;opacity:1;fill:#000000;fill-opacity:1;stroke:#9eb4a8;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 7.5,0 V 16"
+       id="path384" />
+    <g
+       id="g384">
+      <path
+         style="font-variation-settings:normal;opacity:1;fill:#000000;fill-opacity:1;stroke:#93ac9d;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         d="m 7.9692293,16.062098 0.061541,15.875804"
+         id="path19" />
+      <rect
+         style="font-variation-settings:normal;fill:#84a190;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         id="use74"
+         width="1"
+         height="1"
+         x="8"
+         y="17" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use74"
+         id="use75"
+         transform="translate(0,1)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use75"
+         id="use76"
+         transform="translate(-1,2)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use76"
+         id="use77"
+         transform="translate(0,2)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use77"
+         id="use78"
+         transform="translate(1,1)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use78"
+         id="use79"
+         transform="translate(-1,2)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use79"
+         id="use80"
+         transform="translate(1,1)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use80"
+         id="use81"
+         transform="translate(-1,2)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use81"
+         id="use82"
+         transform="translate(1)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use82"
+         id="use83"
+         transform="translate(-1,1)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use98"
+         id="use99"
+         transform="translate(1,-1)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use99"
+         id="use100"
+         transform="translate(1,1)" />
+    </g>
+    <g
+       id="g72">
+      <rect
+         style="font-variation-settings:normal;opacity:1;fill:#93ac9d;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         id="rect34"
+         width="32"
+         height="1"
+         x="0"
+         y="0" />
+      <rect
+         style="font-variation-settings:normal;fill:#a1b6aa;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         id="use54"
+         width="1"
+         height="1"
+         x="1"
+         y="0" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use54"
+         id="use55"
+         transform="translate(3)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use55"
+         id="use56"
+         transform="translate(2)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use56"
+         id="use57"
+         transform="translate(4)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use57"
+         id="use58"
+         transform="translate(-1)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use58"
+         id="use59"
+         transform="translate(6)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use57"
+         id="use60"
+         transform="translate(2)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use59"
+         id="use61"
+         transform="translate(3)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use61"
+         id="use62"
+         transform="translate(3)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use62"
+         id="use63"
+         transform="translate(-1)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use63"
+         id="use64"
+         transform="translate(3)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use64"
+         id="use65"
+         transform="translate(3)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use65"
+         id="use66"
+         transform="translate(3)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use66"
+         id="use67"
+         transform="translate(2)" />
+      <rect
+         style="font-variation-settings:normal;fill:#84a190;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         id="use68"
+         width="1"
+         height="1"
+         x="13"
+         y="0" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use68"
+         id="use69"
+         transform="translate(-4)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use69"
+         id="use70"
+         transform="translate(12)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use70"
+         id="use71"
+         transform="translate(7)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use71"
+         id="use72"
+         transform="translate(-26)" />
+    </g>
+    <use
+       x="0"
+       y="0"
+       xlink:href="#g72"
+       id="use73"
+       transform="matrix(-1,0,0,1,32,31)" />
+    <g
+       id="use84"
+       transform="rotate(180,16,23.5)">
+      <rect
+         style="font-variation-settings:normal;fill:#84a190;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         id="use85"
+         width="1"
+         height="1"
+         x="8"
+         y="17" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use74"
+         id="use86"
+         transform="translate(0,1)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use75"
+         id="use87"
+         transform="translate(-1,2)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use76"
+         id="use88"
+         transform="translate(0,2)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use77"
+         id="use89"
+         transform="translate(1,1)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use78"
+         id="use90"
+         transform="translate(-1,2)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use79"
+         id="use91"
+         transform="translate(1,1)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use80"
+         id="use92"
+         transform="translate(-1,2)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use81"
+         id="use93"
+         transform="translate(1)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#use82"
+         id="use94"
+         transform="translate(-1,1)" />
+    </g>
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use77"
+       id="use95"
+       transform="translate(-6,-6)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use95"
+       id="use96"
+       transform="translate(2,-1)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use96"
+       id="use97"
+       transform="translate(1)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use97"
+       id="use98"
+       transform="translate(2,1)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use100"
+       id="use101"
+       transform="translate(2,-1)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use101"
+       id="use102"
+       transform="translate(1,1)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use102"
+       id="use103"
+       transform="translate(1)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use103"
+       id="use104"
+       transform="translate(1,-1)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use104"
+       id="use105"
+       transform="translate(2)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use105"
+       id="use106"
+       transform="translate(1)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use106"
+       id="use107"
+       transform="translate(1,1)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use107"
+       id="use108"
+       transform="translate(1,-1)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use108"
+       id="use109"
+       transform="translate(1)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use109"
+       id="use110"
+       transform="translate(1,1)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use110"
+       id="use111"
+       transform="translate(1.9692365,-0.94177831)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use111"
+       id="use112"
+       transform="translate(1.9999925,0.00387631)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use112"
+       id="use113"
+       transform="translate(-0.969229,0.937902)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use113"
+       id="use114"
+       transform="translate(2)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use114"
+       id="use115"
+       transform="translate(1,-1)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use115"
+       id="use116"
+       transform="translate(1,1)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use116"
+       id="use117"
+       transform="translate(2)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use117"
+       id="use118"
+       transform="translate(1,-1)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use118"
+       id="use119"
+       transform="translate(1,1)" />
+    <rect
+       style="fill:#dee3db;fill-opacity:0.994918;stroke:none"
+       id="use522"
+       width="1"
+       height="1"
+       x="13"
+       y="26" />
+    <use
+       id="use141"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(-10.298718,-5.4195588)" />
+    <use
+       id="use142"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(-10.157159,-2.3771537)" />
+    <use
+       id="use143"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(-11.968059,-1.6447707)" />
+    <use
+       id="use144"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(-11.247931,1.0006622)" />
+    <use
+       id="use145"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(0.54859349,-5.4199157)" />
+    <use
+       id="use146"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(4.2853954,-5.103973)" />
+    <use
+       id="use147"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(5.5314712,-5.9434831)" />
+    <use
+       id="use148"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(5.6877024,0.98988223)" />
+    <use
+       id="use149"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(4.3869321,-1.3994847)" />
+    <use
+       id="use150"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(3.0437985,1.9184675)" />
+    <use
+       id="use151"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(-1.6595273,-2.8459014)" />
+    <use
+       id="use152"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(-3.1771996,-7.6030502)" />
+    <use
+       id="use153"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(-2.3901785,-6.9064079)" />
+    <use
+       id="use159"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(-0.7347439,2.0946734)" />
+    <use
+       id="use160"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(8.1886753,-4.7427679)" />
+    <use
+       id="use161"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(1.9282664,-3.2798682)" />
+    <use
+       id="use169"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(16.019779,-3.7644362)" />
+    <use
+       id="use170"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(15.182964,-0.68924073)" />
+    <use
+       id="use171"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(13.681349,0.66788036)" />
+    <use
+       id="use172"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(16.439741,2.2500182)" />
+    <use
+       id="use173"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(15.947813,-6.8920882)" />
+    <use
+       id="use178"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(14.524587,-13.493886)" />
+    <use
+       id="use179"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(17.622777,-21.81642)" />
+    <use
+       id="use180"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(13.896147,-21.7802)" />
+    <use
+       id="use181"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(17.847168,-15.652108)" />
+    <use
+       id="use182"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(15.889558,-18.683134)" />
+    <use
+       id="use183"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(4.3063858,-14.294186)" />
+    <use
+       id="use184"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(6.1766894,-13.264592)" />
+    <use
+       id="use186"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(-0.63419051,-13.95324)" />
+    <use
+       id="use187"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(0.84446769,-14.676296)" />
+    <use
+       id="use188"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(-0.09938455,-18.688094)" />
+    <use
+       id="use189"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(0.79203584,-19.827018)" />
+    <use
+       id="use190"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(-1.1016556,-22.464852)" />
+    <use
+       id="use191"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(4.9930102,-23.718255)" />
+    <use
+       id="use192"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(4.3199304,-20.053034)" />
+    <use
+       id="use193"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(1.3545303,-17.01969)" />
+    <use
+       id="use197"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(6.7900445,-19.022202)" />
+    <use
+       id="use198"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(-10.470284,-15.318907)" />
+    <use
+       id="use199"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(-10.54112,-15.267292)" />
+    <use
+       id="use200"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(-12.042855,-19.928409)" />
+    <use
+       id="use201"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(-10.629781,-23.286188)" />
+    <use
+       id="use202"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(-8.7953097,-16.755553)" />
+    <use
+       id="use203"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(-11.539289,-14.584374)" />
+    <use
+       id="use205"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(-9.911821,-21.190881)" />
+    <use
+       id="use206"
+       inkscape:spray-origin="#use522"
+       xlink:href="#use522"
+       transform="translate(-8.4744559,-12.912326)" />
+    <rect
+       style="fill:#9dac93;fill-opacity:0.994918;stroke:none"
+       id="use207"
+       width="1"
+       height="1"
+       x="10.689537"
+       y="18.421976" />
+    <use
+       id="use231"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(1.9693944,1.1178405)" />
+    <use
+       id="use232"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(3.519079,-0.20628309)" />
+    <use
+       id="use233"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(3.0601412,-0.66852612)" />
+    <use
+       id="use234"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(6.310463,-0.92197609)" />
+    <use
+       id="use235"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(10.310463,-0.92197609)" />
+    <use
+       id="use236"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(9.6670779,4.3980271)" />
+    <use
+       id="use237"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(10.927297,5.3205684)" />
+    <use
+       id="use238"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(10.374337,9.0367633)" />
+    <use
+       id="use239"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(11.199927,8.6583972)" />
+    <use
+       id="use240"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(8.310463,7.0780239)" />
+    <use
+       id="use241"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(10.327053,6.5805782)" />
+    <use
+       id="use242"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(11.114903,5.2091843)" />
+    <use
+       id="use243"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(10.310463,1.5780239)" />
+    <use
+       id="use244"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(10.100396,10.205728)" />
+    <use
+       id="use245"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(9.600396,11.205728)" />
+    <use
+       id="use246"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(7.9428334,10.325969)" />
+    <use
+       id="use247"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(0.56437233,9.7227304)" />
+    <use
+       id="use248"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-0.80491039,9.792017)" />
+    <use
+       id="use249"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(5.310463,11.578024)" />
+    <use
+       id="use250"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(3.3715074,10.842817)" />
+    <use
+       id="use251"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-1.689537,7.0780239)" />
+    <use
+       id="use252"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-0.19508748,5.5619308)" />
+    <use
+       id="use259"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-0.68953705,3.5780239)" />
+    <use
+       id="use267"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(16.201818,2.7288796)" />
+    <use
+       id="use268"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(15.310463,2.0780239)" />
+    <use
+       id="use269"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(16.392593,3.1300009)" />
+    <use
+       id="use270"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(14.810463,5.5780239)" />
+    <use
+       id="use271"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(16.810463,11.578024)" />
+    <use
+       id="use272"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(15.310463,10.578024)" />
+    <use
+       id="use273"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(19.810463,11.578024)" />
+    <use
+       id="use274"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(16.810463,-1.4219761)" />
+    <use
+       id="use275"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(16.892394,-5.1852633)" />
+    <use
+       id="use276"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(16.275891,-4.974809)" />
+    <use
+       id="use277"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(15.376919,-9.0695482)" />
+    <use
+       id="use278"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(14.310463,-6.9219761)" />
+    <use
+       id="use279"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(14.348181,-17.674971)" />
+    <use
+       id="use280"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(15.496456,-16.042427)" />
+    <use
+       id="use281"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(14.436557,-13.772347)" />
+    <use
+       id="use282"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(18.209284,-16.955069)" />
+    <use
+       id="use283"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(20.349381,-6.1524301)" />
+    <use
+       id="use284"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(11.167789,-5.0433332)" />
+    <use
+       id="use289"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(6.1417884,-4.8405117)" />
+    <use
+       id="use290"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(3.0112843,-6.1556405)" />
+    <use
+       id="use291"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-1.5282447,-5.7031595)" />
+    <use
+       id="use292"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-0.66017566,-6.1978323)" />
+    <use
+       id="use293"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(0.12160456,-8.1892433)" />
+    <use
+       id="use294"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(1.4322835,-11.246564)" />
+    <use
+       id="use295"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-0.56117749,-13.165753)" />
+    <use
+       id="use296"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-0.1944053,-13.2388)" />
+    <use
+       id="use297"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-1.3032723,-12.960433)" />
+    <use
+       id="use298"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-1.1451046,-17.195471)" />
+    <use
+       id="use299"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(0.9789292,-16.614264)" />
+    <use
+       id="use302"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(9.3049039,-8.251469)" />
+    <use
+       id="use303"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(9.3546619,-12.327807)" />
+    <use
+       id="use304"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(9.7481281,-13.601914)" />
+    <use
+       id="use305"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(4.3944024,-16.469165)" />
+    <use
+       id="use306"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(3.8479984,-17.4024)" />
+    <use
+       id="use307"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(4.4864992,-16.87278)" />
+    <use
+       id="use308"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(5.3361698,-17.804228)" />
+    <use
+       id="use309"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(11.033311,-16.997876)" />
+    <use
+       id="use316"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-7.8177597,-16.298984)" />
+    <use
+       id="use317"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-6.689537,-17.421976)" />
+    <use
+       id="use318"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-9.1124922,-16.509883)" />
+    <use
+       id="use319"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-5.189537,-12.421976)" />
+    <use
+       id="use320"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-7.189537,-6.4219761)" />
+    <use
+       id="use321"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-5.8448644,-5.5092265)" />
+    <use
+       id="use322"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-10.614721,-5.4398093)" />
+    <use
+       id="use323"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-8.9240814,0.48740145)" />
+    <use
+       id="use324"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-8.4997471,-0.10195415)" />
+    <use
+       id="use325"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-10.189537,-1.4219761)" />
+    <use
+       id="use326"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-5.689537,-0.92197609)" />
+    <use
+       id="use327"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-5.189537,8.5780239)" />
+    <use
+       id="use328"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-6.689537,11.078024)" />
+    <use
+       id="use329"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-9.689537,11.078024)" />
+    <use
+       id="use330"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-6.2977857,4.8264795)" />
+    <use
+       id="use331"
+       inkscape:spray-origin="#use207"
+       xlink:href="#use207"
+       transform="translate(-5.9506271,0.59014498)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use76"
+       id="use374"
+       transform="translate(1,-8)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use374"
+       id="use375"
+       transform="translate(0,-2)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use375"
+       id="use376"
+       transform="translate(0,-3)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use376"
+       id="use377"
+       transform="translate(0,-3.5)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use377"
+       id="use378"
+       transform="translate(0,-2.5)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use378"
+       id="use379"
+       transform="translate(15,1)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use379"
+       id="use380"
+       transform="translate(0,3)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use380"
+       id="use381"
+       transform="translate(0,1)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use381"
+       id="use382"
+       transform="translate(0,3)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#use382"
+       id="use383"
+       transform="translate(0,4)" />
+  </g>
+</svg>
