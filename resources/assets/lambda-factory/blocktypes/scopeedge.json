@@ -1,0 +1,92 @@
+{
+  code: "scopeedge",
+  behaviors: [ {name: "Decor", properties: {sides: ["north", "east", "south", "west", "up", "down"], thickness: 0.0 }} ],
+
+  variantGroups: [
+    { code: "scope",
+      states: ["function", "case", "forall", "matchin"]
+    },
+    { code: "rot",
+      states: ["up", "down"],
+      loadFromProperties: "abstract/horizontalorientation"
+    },
+    { code: "edge",
+      states: ["up", "down", "left", "right"]
+    }
+  ],
+  creativeinventory: { general: ["*"] },
+  blockmaterial: "Stone",
+  drawtype: "json",
+  sidesolid: {
+    all: false
+  },
+  sideopaque: {
+    all: false
+  },
+  shapeByType: {
+    "*-north-*": {
+      base: "block/edge/{edge}",
+      rotateX: 90,
+      rotateZ: 180
+    },
+    "*-east-*": {
+      base: "block/edge/{edge}",
+      rotateX: 90,
+      rotateZ: -90
+    },
+    "*-south-*": {
+      base: "block/edgeflipped/{edge}",
+      rotateX: 90
+    },
+    "*-west-*": {
+      base: "block/edgeflipped/{edge}",
+      rotateX: 90,
+      rotateZ: 90
+    },
+    "*-up-*": {
+      base: "block/edge/{edge}"
+    },
+    "*-down-*": {
+      base: "block/edge/{edge}",
+      rotateZ: 180
+    }
+  },
+  texturesByType: {
+    "*-north-*": {
+      "texture": {
+        base: "scope/northsouth",
+        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+      }
+    },
+    "*-east-*": {
+      "texture": {
+        base: "scope/eastwest",
+        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+      }
+    },
+    "*-south-*": {
+      "texture": {
+        base: "scope/northsouth",
+        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+      }
+    },
+    "*-west-*": {
+      "texture": {
+        base: "scope/eastwest",
+        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+      }
+    },
+    "*-up-*": {
+      "texture": {
+        base: "scope/updown",
+        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+      }
+    },
+    "*-down-*": {
+      "texture": {
+        base: "scope/updown",
+        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+    "textures": {
+    },
+    "elements": [
+        {
+            "name": "Cube",
+            "RotationOrigin": [16, 0, 16],
+            "RotationX": 1,
+            "from": [ 0.0, 0.01, 15.0 ],
+            "to": [ 16.0, 0.01, 16.07 ],
+            "faces": {
+                "up": { "texture": "#texture", "uv": [ 0.0, 15.0, 16.0, 16.0 ] },
+                "north": { "texture": "#none", enabled: false },
+                "east": { "texture": "#none", enabled: false },
+                "south": { "texture": "#none", enabled: false },
+                "west": { "texture": "#none", enabled: false },
+                "down": { "texture": "#none", enabled: false }
+            }
+        }
+    ]
+}

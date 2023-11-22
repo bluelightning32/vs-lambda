@@ -36,7 +36,7 @@
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1">
+     inkscape:current-layer="layer4">
     <inkscape:grid
        id="grid1"
        units="px"
@@ -1329,5 +1329,28 @@
        xlink:href="#use382"
        id="use383"
        transform="translate(0,4)" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="orientation"
+     style="display:none">
+    <g
+       id="g2">
+      <rect
+         style="fill:#000000;fill-opacity:1;-inkscape-stroke:none"
+         id="rect1"
+         width="1"
+         height="1"
+         x="0"
+         y="0" />
+      <rect
+         style="fill:#ffffff;fill-opacity:1;-inkscape-stroke:none"
+         id="rect2"
+         width="1"
+         height="1"
+         x="31"
+         y="31" />
+    </g>
   </g>
 </svg>
