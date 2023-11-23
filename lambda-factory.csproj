@@ -172,7 +172,6 @@
             DependsOnTargets="Build"
             Inputs="@(Package);@(StaleFiles)"
             Outputs="$(OutputPath)$(TargetName).zip">
-      <Message Text="--kyle-- package"/>
         <!--
             Copy the files to zip into a temporary directory. Use the
             %(Dest) metadata property on each file as the path inside of the
