@@ -1,16 +1,16 @@
 {
-	"version": "0.2.0",
-	"configurations": [{
-		"name": "Run VintageStory",
-		"type": "coreclr",
-		"request": "launch",
-		"preLaunchTask": "DllOnly (Debug)",
-		"program": "${env:VINTAGE_STORY}/Vintagestory",
-		"args": [
-			"--addModPath", "${workspaceFolder}/bin/Debug",
-			"--addOrigin", "${workspaceFolder}/resources/assets"
-		],
-		"console": "internalConsole",
-		"internalConsoleOptions": "openOnSessionStart",
-	}]
+  "version": "0.2.0",
+  "configurations": [{
+    "name": "Run VintageStory",
+    "type": "coreclr",
+    "request": "launch",
+    "preLaunchTask": "DllOnly (Debug)",
+    "program": "${env:VINTAGE_STORY}/Vintagestory",
+    "args": [
+      "--addModPath", "${workspaceFolder}/bin/Debug",
+      "--addOrigin", "${workspaceFolder}/resources/assets"
+    ],
+    "console": "internalConsole",
+    "internalConsoleOptions": "openOnSessionStart"
+  }]
 }
