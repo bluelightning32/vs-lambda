@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
       {
-        "label": "Build (Debug)",
+        "label": "Package (Debug)",
         "group": {
           "kind": "build",
           "isDefault": true
@@ -20,7 +20,26 @@
         ]
       },
       {
-        "label": "Build (Release)",
+        "label": "DllOnly (Debug)",
+        "group": {
+          "kind": "build",
+          "isDefault": false
+        },
+        "presentation": {
+          "reveal": "silent"
+        },
+        "problemMatcher": "$msCompile",
+        "type": "process",
+        "command": "dotnet",
+        "args": [
+          "build",
+          "-c",
+          "Debug",
+          "-target:dllonly"
+        ]
+      },
+      {
+        "label": "Package (Release)",
         "group": "build",
         "presentation": {
           "reveal": "silent"

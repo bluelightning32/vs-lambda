@@ -4,10 +4,11 @@
 		"name": "Run VintageStory",
 		"type": "coreclr",
 		"request": "launch",
-		"preLaunchTask": "Build (Debug)",
+		"preLaunchTask": "DllOnly (Debug)",
 		"program": "${env:VINTAGE_STORY}/Vintagestory",
 		"args": [
-			"--addModPath", "${workspaceFolder}/bin/Debug"
+			"--addModPath", "${workspaceFolder}/bin/Debug",
+			"--addOrigin", "${workspaceFolder}/resources/assets"
 		],
 		"console": "internalConsole",
 		"internalConsoleOptions": "openOnSessionStart",
