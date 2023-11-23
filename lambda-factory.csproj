@@ -31,6 +31,7 @@
             https://learn.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props#targetframework
         -->
         <TargetFramework>net7.0</TargetFramework>
+        <DefaultItemExcludes>$(DefaultItemExcludes);test/**</DefaultItemExcludes>
     </PropertyGroup>
     
     <!-- The ItemGroup element is required to set any item (a kind of
@@ -185,4 +186,5 @@
             SourceDirectory="$(IntermediateOutputPath)zip"
             Overwrite="true" />
     </Target>
+
 </Project>
