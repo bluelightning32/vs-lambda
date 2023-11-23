@@ -168,7 +168,7 @@
         delete (and thus the zip file needs to be regenerated without the stale
         files).
     -->
-    <Target Name="Package" Condition="'$(Configuration)' == 'Release'"
+    <Target Name="Package"
             DependsOnTargets="Build"
             Inputs="@(Package);@(StaleFiles)"
             Outputs="$(OutputPath)$(TargetName).zip">
