@@ -1,3 +1,6 @@
+# Command to format all cs files better:
+# clang-format -i src/*.cs test/*.cs
+
 root = true
 
 # All files
