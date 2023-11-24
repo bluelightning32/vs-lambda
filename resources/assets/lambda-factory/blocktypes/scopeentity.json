@@ -1,0 +1,16 @@
+{
+  code: "scopeentity",
+  class: "Scope",
+  entityclass: "Scope",
+  creativeinventory: { general: ["*"] },
+  blockmaterial: "Stone",
+  drawtype: "json",
+  shape: {
+    base: "block/scope"
+  },
+  resistance: 3.5,
+  sounds: {
+    place: "game:block/ceramicplace",
+    walk: "game:walk/stone"
+  }
+}
