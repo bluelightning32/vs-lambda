@@ -1,6 +1,8 @@
 {
   code: "scopeentity",
-  class: "Scope",
+  behaviors: [
+    { name: "BlockEntityForward" }
+  ],
   entityclass: "Scope",
   creativeinventory: { general: ["*"] },
   blockmaterial: "Stone",

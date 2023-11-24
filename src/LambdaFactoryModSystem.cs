@@ -6,7 +6,7 @@ namespace LambdaFactory;
 
 public class LambdaFactoryModSystem : ModSystem {
   public override void Start(ICoreAPI api) {
-    api.RegisterBlockClass("Scope", typeof(BlockScope));
+    api.RegisterBlockBehaviorClass("BlockEntityForward", typeof(BlockBehaviorBlockEntityForward));
     api.RegisterBlockEntityClass("Scope", typeof(BlockEntityScope));
   }
 
