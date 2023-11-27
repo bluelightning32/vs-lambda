@@ -9,8 +9,6 @@
     "args": [
       "--addModPath", "${workspaceFolder}/bin/Debug",
       "--addOrigin", "${workspaceFolder}/resources/assets"
-    ],
-    "console": "internalConsole",
-    "internalConsoleOptions": "openOnSessionStart"
+    ]
   }]
 }

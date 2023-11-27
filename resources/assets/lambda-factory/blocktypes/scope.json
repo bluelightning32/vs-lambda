@@ -57,6 +57,6 @@
   resistance: 3.5,
   sounds: {
     place: "game:block/ceramicplace",
-    walk: "game:walk/stone"
+    walk: "game:walk/stone1"
   }
 }

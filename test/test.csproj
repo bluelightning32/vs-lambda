@@ -5,7 +5,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
 
     <IsPackable>false</IsPackable>
-    <RunSettingsFilePath>test.runsettings2</RunSettingsFilePath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,10 +15,6 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <Reference Include="VintagestoryAPI">
       <HintPath>$(VINTAGE_STORY)/VintagestoryAPI.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="VintagestoryLib">
-      <HintPath>$(VINTAGE_STORY)/VintagestoryLib.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>
