@@ -13,7 +13,7 @@
     }
   ],
   variantgroups: [
-    { code: "type", states: ["in"]},
+    { code: "type", states: ["in", "out"]},
     { code: "rot", states: ["north", "east", "south", "west", "up", "down"]}
   ],
   creativeinventory: { general: ["*-south"] },
