@@ -24,8 +24,8 @@
     "*-west": { base: "block/port/{type}", rotateY: 270 },
     "*-north": { base: "block/port/{type}", rotateY: 180 },
     "*-east": { base: "block/port/{type}", rotateY: 90 },
-    "*-down": { base: "block/port/{type}", rotateX: 90 },
-    "*-up": { base: "block/port/{type}", rotateX: 270 },
+    "*-down": { base: "block/port/{type}", rotateX: 270, rotateY: 180 },
+    "*-up": { base: "block/port/{type}", rotateX: 90, rotateY: 180 },
   },
   resistance: 3.5,
   sounds: {
