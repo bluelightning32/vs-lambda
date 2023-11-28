@@ -2,64 +2,30 @@
   code: "port",
   behaviors: [
     {
-      name: "OmniRotatable",
+      name: "Decor",
       properties: {
-        rotateSides: true,
-        facing: "block",
+        sides: ["north", "east", "south", "west", "up", "down"],
+        sidedVariants: true,
+        notFullFace: true,
+        removable: true,
+        thickness: 0.125,
       }
-    },
-    { name: "WrenchOrientable", properties: { baseCode: "plankslab-{type}-*" } }
+    }
   ],
   variantgroups: [
-    { code: "type", states: ["in", "out"]},
+    { code: "type", states: ["in"]},
     { code: "rot", states: ["north", "east", "south", "west", "up", "down"]}
   ],
-  creativeinventory: { general: ["*-up"] },
+  creativeinventory: { general: ["*-south"] },
   blockmaterial: "Stone",
-  drawtype: "Cube",
-  texturesByType: {
-    "*-north": {
-      west: {base: "port-{type}-side", rotation: 270 },
-      east: {base: "port-{type}-side", rotation: 90 },
-      up: {base: "port-{type}-side", rotation: 0 },
-      down: {base: "port-{type}-side", rotation: 180 },
-      north: {base: "port-{type}-front"},
-      south: {base: "wall"},
-    },
-    "*-east": {
-      north: {base: "port-{type}-side", rotation: 270 },
-      south: {base: "port-{type}-side", rotation: 90 },
-      up: {base: "port-{type}-side", rotation: 270 },
-      down: {base: "port-{type}-side", rotation: 270 },
-      east: {base: "port-{type}-front"},
-      west: {base: "wall"},
-    },
-    "*-south": {
-      east: {base: "port-{type}-side", rotation: 270 },
-      west: {base: "port-{type}-side", rotation: 90 },
-      up: {base: "port-{type}-side", rotation: 180 },
-      down: {base: "port-{type}-side", rotation: 0 },
-      south: {base: "port-{type}-front"},
-      north: {base: "wall"},
-    },
-    "*-west": {
-      south: {base: "port-{type}-side", rotation: 270 },
-      north: {base: "port-{type}-side", rotation: 90 },
-      up: {base: "port-{type}-side", rotation: 90 },
-      down: {base: "port-{type}-side", rotation: 270 },
-      west: {base: "port-{type}-front"},
-      east: {base: "wall"},
-    },
-    "*-up": {
-      all: {base: "port-{type}-side", rotation: 180 },
-      up: {base: "port-{type}-front"},
-      down: {base: "wall"},
-    },
-    "*-down": {
-      all: {base: "port-{type}-side" },
-      down: {base: "port-{type}-front"},
-      up: {base: "wall"},
-    },
+  drawtype: "json",
+  shapeByType: {
+    "*-south": { base: "block/port/{type}" },
+    "*-west": { base: "block/port/{type}", rotateY: 270 },
+    "*-north": { base: "block/port/{type}", rotateY: 180 },
+    "*-east": { base: "block/port/{type}", rotateY: 90 },
+    "*-down": { base: "block/port/{type}", rotateX: 90 },
+    "*-up": { base: "block/port/{type}", rotateX: 270 },
   },
   resistance: 3.5,
   sounds: {
