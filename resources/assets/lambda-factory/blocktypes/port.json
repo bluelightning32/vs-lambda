@@ -13,19 +13,31 @@
     }
   ],
   variantgroups: [
-    { code: "type", states: ["in", "out"]},
+    { code: "type", states: ["direct", "passthrough"]},
+    { code: "dir", states: ["in", "out"]},
     { code: "rot", states: ["north", "east", "south", "west", "up", "down"]}
   ],
   creativeinventory: { general: ["*-south"] },
   blockmaterial: "Stone",
   drawtype: "json",
   shapeByType: {
-    "*-south": { base: "block/port/{type}" },
-    "*-west": { base: "block/port/{type}", rotateY: 270 },
-    "*-north": { base: "block/port/{type}", rotateY: 180 },
-    "*-east": { base: "block/port/{type}", rotateY: 90 },
-    "*-down": { base: "block/port/{type}", rotateX: 270, rotateY: 180 },
-    "*-up": { base: "block/port/{type}", rotateX: 90, rotateY: 180 },
+    "*-south": { base: "block/port/{dir}" },
+    "*-west": { base: "block/port/{dir}", rotateY: 270 },
+    "*-north": { base: "block/port/{dir}", rotateY: 180 },
+    "*-east": { base: "block/port/{dir}", rotateY: 90 },
+    "*-down": { base: "block/port/{dir}", rotateX: 270, rotateY: 180 },
+    "*-up": { base: "block/port/{dir}", rotateX: 90, rotateY: 180 },
+  },
+  texturesByType: {
+    "*-passthrough-*": {
+      "port": { base: "port/passthrough" }
+    },
+    "*-direct-in-*": {
+      "port": { base: "port/in" }
+    },
+    "*-direct-out-*": {
+      "port": { base: "port/out" }
+    },
   },
   resistance: 3.5,
   sounds: {
