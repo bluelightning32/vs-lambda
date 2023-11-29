@@ -19,37 +19,53 @@
     "*-north-*": {
       "north": {
         base: "scope/northsouth",
-        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+        blendedOverlays: [{ base: "scope/{scope}/full", blendMode: "ColorBurn" }]
+      },
+      "up": {
+        base: "scope/updown",
+        blendedOverlays: [{ base: "scope/{scope}/{scopeface}", blendMode: "ColorBurn" }]
       }
     },
     "*-east-*": {
       "east": {
         base: "scope/eastwest",
-        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+        blendedOverlays: [{ base: "scope/{scope}/full", blendMode: "ColorBurn" }]
+      },
+      "up": {
+        base: "scope/updown",
+        blendedOverlays: [{ base: "scope/{scope}/{scopeface}", blendMode: "ColorBurn" }]
       }
     },
     "*-south-*": {
       "south": {
         base: "scope/northsouth",
-        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+        blendedOverlays: [{ base: "scope/{scope}/full", blendMode: "ColorBurn" }]
+      },
+      "up": {
+        base: "scope/updown",
+        blendedOverlays: [{ base: "scope/{scope}/{scopeface}", blendMode: "ColorBurn" }]
       }
     },
     "*-west-*": {
       "west": {
         base: "scope/eastwest",
-        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+        blendedOverlays: [{ base: "scope/{scope}/full", blendMode: "ColorBurn" }]
+      },
+      "up": {
+        base: "scope/updown",
+        blendedOverlays: [{ base: "scope/{scope}/{scopeface}", blendMode: "ColorBurn" }]
       }
     },
     "*-up-*": {
       "up": {
         base: "scope/updown",
-        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+        blendedOverlays: [{ base: "scope/{scope}/full", blendMode: "ColorBurn" }]
       }
     },
     "*-down-*": {
       "down": {
         base: "scope/updown",
-        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+        blendedOverlays: [{ base: "scope/{scope}/full", blendMode: "ColorBurn" }]
       }
     },
   },

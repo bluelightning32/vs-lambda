@@ -54,37 +54,37 @@
     "*-north-*": {
       "texture": {
         base: "scope/northsouth",
-        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+        blendedOverlays: [{ base: "scope/{scope}/full", blendMode: "ColorBurn" }]
       }
     },
     "*-east-*": {
       "texture": {
         base: "scope/eastwest",
-        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+        blendedOverlays: [{ base: "scope/{scope}/full", blendMode: "ColorBurn" }]
       }
     },
     "*-south-*": {
       "texture": {
         base: "scope/northsouth",
-        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+        blendedOverlays: [{ base: "scope/{scope}/full", blendMode: "ColorBurn" }]
       }
     },
     "*-west-*": {
       "texture": {
         base: "scope/eastwest",
-        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+        blendedOverlays: [{ base: "scope/{scope}/full", blendMode: "ColorBurn" }]
       }
     },
     "*-up-*": {
       "texture": {
         base: "scope/updown",
-        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+        blendedOverlays: [{ base: "scope/{scope}/full", blendMode: "ColorBurn" }]
       }
     },
     "*-down-*": {
       "texture": {
         base: "scope/updown",
-        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
+        blendedOverlays: [{ base: "scope/{scope}/full", blendMode: "ColorBurn" }]
       }
     }
   }
