@@ -15,7 +15,7 @@
   variantgroups: [
     { code: "type", states: ["direct", "passthrough"]},
     { code: "dir", states: ["in", "out"]},
-    { code: "rot", states: ["north", "east", "south", "west", "up", "down"]}
+    { code: "rot", loadFromPropertiesCombine: ["abstract/horizontalorientation", "abstract/verticalorientation"]}
   ],
   creativeinventory: { general: ["*-south"] },
   blockmaterial: "Stone",

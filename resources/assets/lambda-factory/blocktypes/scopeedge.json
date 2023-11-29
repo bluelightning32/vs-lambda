@@ -7,8 +7,7 @@
       states: ["function", "case", "forall", "matchin"]
     },
     { code: "rot",
-      states: ["up", "down"],
-      loadFromProperties: "abstract/horizontalorientation"
+      loadFromPropertiesCombine: ["abstract/horizontalorientation", "abstract/verticalorientation"]
     },
     { code: "edge",
       states: ["up", "down", "left", "right"]

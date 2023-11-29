@@ -1,10 +1,9 @@
 {
   code: "scope",
   variantGroups: [
-    { code: "face", states: ["none"], combine: "Add"},
-    { code: "face",
-      states: ["up", "down"],
-      loadFromProperties: "abstract/horizontalorientation"
+    { code: "scopeface", states: ["none"], combine: "Add"},
+    { code: "scopeface",
+      loadFromPropertiesCombine: ["abstract/horizontalorientation", "abstract/verticalorientation"]
     },
     { code: "scope",
       states: ["function", "case", "forall", "matchin"]
