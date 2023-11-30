@@ -3,6 +3,9 @@
   behaviors: [
     { name: "BlockEntityForward" }
   ],
+  attributes: {
+    scope: "any"
+  },
   entityclass: "Scope",
   creativeinventory: { general: ["*"] },
   blockmaterial: "Stone",

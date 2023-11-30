@@ -13,22 +13,26 @@ public enum Scope { Function = 0, Case = 1, Forall = 2, Matchin = 3 }
 
 public static class ScopeHelper {
   public static string GetCode(Scope scope) {
-    switch (scope) {
-    case Scope.Function:
-      return "function";
-    case Scope.Case:
-      return "case";
-    case Scope.Forall:
-      return "forall";
-    case Scope.Matchin:
-      return "matchin";
-    default:
-      return "unknown";
-    }
+    return scope switch {
+      Scope.Function => "function",
+      Scope.Case => "case",
+      Scope.Forall => "forall",
+      Scope.Matchin => "matchin",
+      _ => "unknown",
+    };
+  }
+  public static Scope FromCode(string code, Scope def = Scope.Function) {
+    return code switch {
+      "function" => Scope.Function,
+      "case" => Scope.Case,
+      "forall" => Scope.Forall,
+      "matchin" => Scope.Matchin,
+      _ => def,
+    };
   }
 }
 
-public class ScopeCacheKey : IEquatable<ScopeCacheKey> {
+public class ScopeCacheKey : IEquatable<ScopeCacheKey>, ICloneable {
   public int PortedSides = 0;
   public int ScopeFace = -1;
   public Scope Scope = Scope.Function;
@@ -60,15 +64,28 @@ public class ScopeCacheKey : IEquatable<ScopeCacheKey> {
   public override string ToString() {
     return $"{PortedSides} {ScopeFace} {Scope}";
   }
+
+  public object Clone() {
+    return MemberwiseClone();
+  }
 }
 
 public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
-    where Key : ScopeCacheKey, new() {
+    where Key : ScopeCacheKey, IEquatable<Key>, new() {
   private MeshData _mesh;
   protected Key _key = new Key();
+  bool _fixedScope = false;
 
   public override void Initialize(ICoreAPI api) {
     base.Initialize(api);
+    string scope = Block.Attributes["scope"].AsString("any");
+    if (scope == "any") {
+      _fixedScope = false;
+    } else {
+      _fixedScope = true;
+      _key.Scope = ScopeHelper.FromCode(scope);
+    }
+
     UpdateMesh();
   }
 
@@ -76,25 +93,31 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
                                ref EnumHandling handling) {
     ItemStack stack = new ItemStack(Block, 1);
     stack.Attributes.SetInt("ScopeFace", _key.ScopeFace);
+    if (!_fixedScope) {
+      stack.Attributes.SetInt("Scope", (int)_key.Scope);
+    }
 
     handling = EnumHandling.PreventDefault;
     return stack;
   }
 
   public override void ToTreeAttributes(ITreeAttribute tree) {
-    Console.WriteLine("lambda: ToTreeAttributes {0}", tree.ToJsonToken());
     base.ToTreeAttributes(tree);
     tree.SetInt("ScopeFace", _key.ScopeFace);
+    if (!_fixedScope) {
+      tree.SetInt("Scope", (int)_key.Scope);
+    }
   }
 
   public override void OnBlockPlaced(ItemStack byItemStack) {
     base.OnBlockPlaced(byItemStack);
     _key.ScopeFace =
         byItemStack.Attributes.GetAsInt("ScopeFace", _key.ScopeFace);
+    if (!_fixedScope) {
+      _key.Scope = (Scope)byItemStack.Attributes.GetAsInt("Scope", (int)_key.Scope);
+    }
+
     UpdateMesh();
-    Api.Logger.Notification("lambda: OnBlockPlaced {0} - {1} - {2}",
-                            GetHashCode(), _key.ScopeFace,
-                            byItemStack.Attributes.ToJsonToken());
   }
 
   public override void
@@ -102,8 +125,9 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
                      IWorldAccessor worldAccessForResolve) {
     base.FromTreeAttributes(tree, worldAccessForResolve);
     _key.ScopeFace = tree.GetInt("ScopeFace", _key.ScopeFace);
-    worldAccessForResolve.Logger.Notification(
-        "lambda: FromTreeAttributes {0} - {1}", GetHashCode(), _key.ScopeFace);
+    if (!_fixedScope) {
+      _key.Scope = (Scope)tree.GetInt("Scope", (int)_key.Scope);
+    }
     // No need to update the mesh here. Initialize will be called before the
     // block is rendered.
   }
@@ -133,11 +157,12 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
     if (cache.TryGetValue(_key, out _mesh)) {
       return;
     }
-    _mesh = cache[_key] = GenerateMesh(_key);
+    Api.Logger.Notification("lambda: Cache miss for {0} {1}. Dict has {2} entries.", Block.Code, _key, cache.Count);
+
+    _mesh = cache[(Key)_key.Clone()] = GenerateMesh(_key);
   }
 
   protected virtual MeshData GenerateMesh(ScopeCacheKey key) {
-    Api.Logger.Notification("lambda: GenerateMesh {0} {1}", Block.Code, key);
     MeshData original =
         ((ICoreClientAPI)Api).TesselatorManager.GetDefaultBlockMesh(Block);
     if (original == null) {

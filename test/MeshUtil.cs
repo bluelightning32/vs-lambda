@@ -7,7 +7,7 @@ using Vintagestory.API.MathTools;
 namespace LambdaFactory.Tests;
 
 [TestClass]
-public class BlockEntityScope {
+public class MeshUtilTest {
   // This property is set by the test framework:
   // https://learn.microsoft.com/en-us/visualstudio/test/how-to-create-a-data-driven-unit-test?view=vs-2022#add-a-testcontext-to-the-test-class
   public TestContext TestContext { get; set; } = null!;
@@ -22,7 +22,7 @@ public class BlockEntityScope {
     xyz[4 * 3 + 0] = 5;
     xyz[4 * 3 + 1] = 6;
     xyz[4 * 3 + 2] = 7;
-    LambdaFactory.MeshUtil.GetFaceBounds(bounds, xyz, 4, 5);
+    MeshUtil.GetFaceBounds(bounds, xyz, 4, 5);
     Assert.AreEqual(bounds.X1, 5);
     Assert.AreEqual(bounds.Y1, 6);
     Assert.AreEqual(bounds.Z1, 7);
@@ -44,7 +44,7 @@ public class BlockEntityScope {
     xyz[6 * 3 + 0] = 8;
     xyz[6 * 3 + 1] = 9;
     xyz[6 * 3 + 2] = 10;
-    LambdaFactory.MeshUtil.GetFaceBounds(bounds, xyz, 4, 7);
+    MeshUtil.GetFaceBounds(bounds, xyz, 4, 7);
     Assert.AreEqual(bounds.X1, 2);
     Assert.AreEqual(bounds.Y1, 3);
     Assert.AreEqual(bounds.Z1, 4);
@@ -62,7 +62,7 @@ public class BlockEntityScope {
     FastVec3f corner = new FastVec3f(0 + offsetX, 0 + offsetY, 0 + offsetZ);
     FastVec3f neighbor1 = new FastVec3f(10 + offsetX, 0 + offsetY, 0 + offsetZ);
     FastVec3f neighbor2 = new FastVec3f(0 + offsetX, 10 + offsetY, 0 + offsetZ);
-    LambdaFactory.MeshUtil.GetTriangleProjection(EnumAxis.Z, input, corner,
+    MeshUtil.GetTriangleProjection(EnumAxis.Z, input, corner,
                                                  neighbor1, neighbor2,
                                                  out float t, out float u);
     Assert.AreEqual(0.5, t, 0.001);
@@ -79,7 +79,7 @@ public class BlockEntityScope {
     FastVec3f neighbor1 =
         new FastVec3f(10 + offsetX, 10 + offsetY, 0 + offsetZ);
     FastVec3f neighbor2 = new FastVec3f(0 + offsetX, 10 + offsetY, 0 + offsetZ);
-    LambdaFactory.MeshUtil.GetTriangleProjection(EnumAxis.Z, input, corner,
+    MeshUtil.GetTriangleProjection(EnumAxis.Z, input, corner,
                                                  neighbor1, neighbor2,
                                                  out float t, out float u);
     Assert.AreEqual(5 + offsetX,
@@ -102,7 +102,7 @@ public class BlockEntityScope {
     FastVec3f neighbor1 = new FastVec3f(0 + offsetX, 10 + offsetY, 0 + offsetZ);
     FastVec3f neighbor2 =
         new FastVec3f(10 + offsetX, 10 + offsetY, 0 + offsetZ);
-    LambdaFactory.MeshUtil.GetTriangleProjection(EnumAxis.Z, input, corner,
+    MeshUtil.GetTriangleProjection(EnumAxis.Z, input, corner,
                                                  neighbor1, neighbor2,
                                                  out float t, out float u);
     Assert.AreEqual(0, t, 0.001);
