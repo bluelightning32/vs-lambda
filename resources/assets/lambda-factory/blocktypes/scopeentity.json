@@ -10,6 +10,26 @@
   shape: {
     base: "block/scope"
   },
+  textures: {
+    "north": {
+      base: "scope/northsouth",
+    },
+    "east": {
+      base: "scope/eastwest",
+    },
+    "south": {
+      base: "scope/northsouth",
+    },
+    "west": {
+      base: "scope/eastwest",
+    },
+    "up": {
+      base: "scope/updown",
+    },
+    "down": {
+      base: "scope/updown",
+    },
+  },
   resistance: 3.5,
   sounds: {
     place: "game:block/ceramicplace",

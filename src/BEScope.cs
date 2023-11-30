@@ -10,6 +10,23 @@ namespace LambdaFactory;
 
 public enum Scope { Function = 0, Case = 1, Forall = 2, Matchin = 3 }
 
+public static class ScopeHelper {
+  public static string GetCode(Scope scope) {
+    switch (scope) {
+      case Scope.Function:
+        return "function";
+      case Scope.Case:
+        return "case";
+      case Scope.Forall:
+        return "forall";
+      case Scope.Matchin:
+        return "matchin";
+      default:
+        return "unknown";
+    }
+  }
+}
+
 public class ScopeCacheKey : IEquatable<ScopeCacheKey> {
   public int PortedSides = 0;
   public int ScopeFace = -1;
@@ -47,6 +64,8 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
 
   public override void Initialize(ICoreAPI api) {
     api.Logger.Notification($"lambda: Initialize {GetHashCode()}");
+    _key.ScopeFace = BlockFacing.NORTH.Index;
+    _key.Scope = Scope.Function;
     base.Initialize(api);
     UpdateMesh();
   }
@@ -80,12 +99,43 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
   }
 
   protected virtual MeshData GenerateMesh(ScopeCacheKey key) {
-    MeshData mesh =
+    MeshData original =
         ((ICoreClientAPI)Api).TesselatorManager.GetDefaultBlockMesh(Block);
-    return CutPortHoles(key.PortedSides, mesh);
+    MeshData mesh = original;
+
+    if (key.ScopeFace != -1) {
+      mesh = ColorScopeFace(key.ScopeFace, key.Scope, mesh, !Object.ReferenceEquals(mesh, original));
+    }
+    mesh = CutPortHoles(key.PortedSides, mesh, !Object.ReferenceEquals(mesh, original));
+    return mesh;
   }
 
-  public MeshData CutPortHoles(int sides, MeshData mesh) {
+  public MeshData ColorScopeFace(int scopeFace, Scope scope, MeshData mesh, bool copied) {
+    if (scopeFace == -1) {
+      return mesh;
+    }
+    MeshData copy = mesh;
+    if (!copied) {
+      copy = copy.Clone();
+    }
+    ICoreClientAPI capi = (ICoreClientAPI)Api;
+    BlockFacing facing = BlockFacing.ALLFACES[scopeFace];
+    ITextureAtlasAPI atlas = capi.BlockTextureAtlas;
+    TextureAtlasPosition original = atlas.Positions[Block.TexturesInventory[facing.Code].Baked.TextureSubId];
+    CompositeTexture compositeReplacement = Block.TexturesInventory[facing.Code].Clone();
+    Array.Resize(ref compositeReplacement.BlendedOverlays, (compositeReplacement.BlendedOverlays?.Length ?? 0) + 1);
+    BlendedOverlayTexture scopeBlend = new BlendedOverlayTexture();
+    scopeBlend.Base = new AssetLocation(LambdaFactoryModSystem.Domain, $"scope/{ScopeHelper.GetCode(scope)}/full");
+    scopeBlend.BlendMode = EnumColorBlendMode.ColorBurn;
+    compositeReplacement.BlendedOverlays[compositeReplacement.BlendedOverlays.Length - 1] = scopeBlend;
+    compositeReplacement.Bake(capi.Assets);
+    atlas.GetOrInsertTexture(compositeReplacement.Baked.BakedName, out int replacementId, out TextureAtlasPosition replacement, () => atlas.LoadCompositeBitmap(compositeReplacement.Baked.BakedName));
+
+    MeshUtil.ReplaceTexture(copy, facing, 2.1f/16, original, replacement);
+    return copy;
+  }
+
+  public MeshData CutPortHoles(int sides, MeshData mesh, bool copied) {
     if (mesh.VerticesPerFace != 4 || mesh.IndicesPerFace != 6) {
       throw new Exception("Unexpected VerticesPerFace or IndicesPerFace");
     }
@@ -94,7 +144,10 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
     }
     Cuboidf faceBounds = new Cuboidf();
     int origFaceCount = mesh.VerticesCount / mesh.VerticesPerFace;
-    MeshData copy = mesh.Clone();
+    MeshData copy = mesh;
+    if (!copied) {
+      copy = copy.Clone();
+    }
     for (int face = 0; face < origFaceCount; face++) {
       MeshUtil.GetFaceBounds(faceBounds, mesh.xyz, face * mesh.VerticesPerFace,
                              (face + 1) * mesh.VerticesPerFace);
