@@ -106,10 +106,10 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
     }
     MeshData mesh = original;
 
-    if (key.ScopeFace != -1) {
-      mesh = ColorScopeFace(key.ScopeFace, key.Scope, mesh,
-                            !Object.ReferenceEquals(mesh, original));
-    }
+    mesh = ColorScopeFace(key.ScopeFace, key.Scope, mesh,
+                          !Object.ReferenceEquals(mesh, original));
+    mesh = ColorScopeTopEdge(key.ScopeFace, key.Scope, mesh,
+                             !Object.ReferenceEquals(mesh, original));
     mesh = CutPortHoles(key.PortedSides, mesh,
                         !Object.ReferenceEquals(mesh, original));
     return mesh;
@@ -182,6 +182,54 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
         }
       }
     }
+    return copy;
+  }
+
+  public MeshData ColorScopeTopEdge(int scopeFace, Scope scope, MeshData mesh,
+                                    bool copied) {
+    if (scopeFace == -1) {
+      return mesh;
+    }
+    if (!BlockFacing.ALLFACES[scopeFace].IsHorizontal) {
+      return mesh;
+    }
+    MeshData copy = mesh;
+    if (!copied) {
+      copy = copy.Clone();
+    }
+
+    ICoreClientAPI capi = (ICoreClientAPI)Api;
+    ITextureAtlasAPI atlas = capi.BlockTextureAtlas;
+    TextureAtlasPosition original =
+        atlas.Positions[Block.TexturesInventory["up"].Baked.TextureSubId];
+    CompositeTexture compositeReplacement =
+        Block.TexturesInventory["up"].Clone();
+    Array.Resize(ref compositeReplacement.BlendedOverlays,
+                 (compositeReplacement.BlendedOverlays?.Length ?? 0) + 1);
+    BlendedOverlayTexture scopeBlend = new BlendedOverlayTexture();
+    scopeBlend.Base =
+        new AssetLocation(LambdaFactoryModSystem.Domain,
+                          $"scope/{ScopeHelper.GetCode(scope)}/full");
+    scopeBlend.BlendMode = EnumColorBlendMode.ColorBurn;
+    compositeReplacement
+        .BlendedOverlays[compositeReplacement.BlendedOverlays.Length - 1] =
+        scopeBlend;
+    compositeReplacement.Bake(capi.Assets);
+    atlas.GetOrInsertTexture(
+        compositeReplacement.Baked.BakedName, out int replacementId,
+        out TextureAtlasPosition replacement,
+        () => atlas.LoadCompositeBitmap(compositeReplacement.Baked.BakedName));
+
+    BlockFacing facing = BlockFacing.ALLFACES[scopeFace];
+    Cuboidf bounds =
+        new Cuboidf(-0.1f, 1.0f - 2.1f / 16, -0.1f, 1.1f, 1.1f, 1.1f);
+    bounds[(int)facing.Axis] = facing.PlaneCenter[(int)facing.Axis] - 2f / 16;
+    bounds[(int)facing.Axis + 3] =
+        facing.PlaneCenter[(int)facing.Axis] + 2f / 16;
+
+    MeshUtil.ReplaceTextureInBounds(copy, BlockFacing.UP, bounds, original,
+                                    replacement);
+
     return copy;
   }
 

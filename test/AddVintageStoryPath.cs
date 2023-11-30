@@ -1,31 +1,26 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Reflection;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace LambdaFactory.Tests;
 
 // This class allows the Vintagestory dlls to be loaded from $(VINTAGE_STORY).
-[TestClass]
-public class AssemblyInitializer {
-  static ResolveEventHandler _assemblyResolveDelegate = null;
+public class AddVintageStoryPath {
 
-  [AssemblyInitialize()]
-  public static void Setup(TestContext testContext) {
+  [ModuleInitializer]
+  internal static void ModuleInitialize() {
     _assemblyResolveDelegate = new ResolveEventHandler(
-        (sender, args) => LoadFromVintageStory(testContext, sender, args));
+        (sender, args) => LoadFromVintageStory(sender, args));
     AppDomain.CurrentDomain.AssemblyResolve += _assemblyResolveDelegate;
   }
 
-  [AssemblyCleanup]
-  public static void TearDown() {
-    AppDomain.CurrentDomain.AssemblyResolve -= _assemblyResolveDelegate;
-  }
+  static ResolveEventHandler _assemblyResolveDelegate = null;
 
-  static Assembly LoadFromVintageStory(TestContext testContext, object sender,
-                                       ResolveEventArgs args) {
+  static Assembly LoadFromVintageStory(object sender, ResolveEventArgs args) {
     string vsDir = Environment.GetEnvironmentVariable("VINTAGE_STORY");
     if (vsDir == null) {
-      testContext.WriteLine(
+      Console.Error.WriteLine(
           "Warning: the VINTAGE_STORY environmental variable is unset. The tests will likely be unable to load the Vintagestory dlls.");
       return null;
     }

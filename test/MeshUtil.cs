@@ -1,5 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using Vintagestory.API.Client;
+using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
 namespace LambdaFactory.Tests;
@@ -113,5 +115,49 @@ public class BlockEntityScope {
                     corner.Y + t * (neighbor1.Y - corner.Y) +
                         u * (neighbor2.Y - corner.Y),
                     0.001);
+  }
+
+  public MeshData MakeUpFaceMesh() {
+    MeshData mesh = new MeshData(4, 6, false, true, true, true);
+    mesh.VerticesPerFace = 4;
+    mesh.IndicesPerFace = 6;
+    int[] vertexFlags = { BlockFacing.UP.NormalPackedFlags,
+                          BlockFacing.UP.NormalPackedFlags,
+                          BlockFacing.UP.NormalPackedFlags,
+                          BlockFacing.UP.NormalPackedFlags };
+    ModelCubeUtilExt.AddFace(mesh, BlockFacing.UP, BlockFacing.UP.PlaneCenter,
+                             Vec3f.One, Vec2f.Zero, new Vec2f(1, 1), 0, 0,
+                             ModelCubeUtilExt.EnumShadeMode.On, vertexFlags);
+    return mesh;
+  }
+
+  [TestMethod]
+  public void CopyFaceWithHoleAllHole() {
+    MeshData mesh = MakeUpFaceMesh();
+    Cuboidf bounds = new Cuboidf(0, 0, 0, 1, 1, 1);
+    int hole = MeshUtil.CopyFaceWithHole(mesh, BlockFacing.UP.Axis, 0,
+                                         BlockFacing.UP, bounds);
+    Assert.AreEqual(4, mesh.VerticesCount);
+  }
+
+  [TestMethod]
+  public void CopyFaceWithHoleBottomHalf() {
+    MeshData mesh = MakeUpFaceMesh();
+    Cuboidf bounds = new Cuboidf(0, 0, 0, 1.1f, 1f, 0.5f);
+    int hole = MeshUtil.CopyFaceWithHole(mesh, BlockFacing.UP.Axis, 0,
+                                         BlockFacing.UP, bounds);
+    Assert.AreEqual(8, mesh.VerticesCount);
+    for (int i = 0; i < 4; ++i) {
+      bounds.ContainsOrTouches(mesh.xyz[i * 3 + 0], mesh.xyz[i * 3 + 1],
+                               mesh.xyz[i * 3 + 2]);
+    }
+    Assert.AreEqual(1, hole);
+  }
+
+  [TestMethod]
+  public void AddFaceHoleUp() {
+    MeshData mesh = MakeUpFaceMesh();
+    MeshUtil.AddFaceHole(mesh, BlockFacing.UP.Axis, 0, BlockFacing.UP);
+    Assert.AreEqual(4 * 4, mesh.VerticesCount);
   }
 }

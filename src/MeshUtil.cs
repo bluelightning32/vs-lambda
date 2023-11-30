@@ -59,6 +59,22 @@ public static class MeshUtil {
     }
   }
 
+  static public bool IsEmptyFace(float[] xyz, int beginVertex, int endVertex) {
+    Cuboidf bounds = new Cuboidf();
+    GetFaceBounds(bounds, xyz, beginVertex, endVertex);
+    int zerodims = 0;
+    for (int i = 0; i < 3; ++i) {
+      if (bounds[i] == bounds[i + 3])
+        ++zerodims;
+    }
+    return zerodims >= 2;
+  }
+
+  static public bool IsEmptyFace(MeshData mesh, int face) {
+    return IsEmptyFace(mesh.xyz, face * mesh.VerticesPerFace,
+                       (face + 1) * mesh.VerticesPerFace);
+  }
+
   static public bool Clamp(ref float val, float min, float max) {
     if (val < min) {
       val = min;
@@ -111,9 +127,9 @@ public static class MeshUtil {
                   u * ((int)udest - origin));
   }
 
-  static public void ClampVertex(MeshData mesh, EnumAxis project, Cuboidf clamp,
+  static public bool ClampVertex(MeshData mesh, EnumAxis project, Cuboidf clamp,
                                  int origVertex, int neighbor1, int neighbor2,
-                                 int modifyVertex) {
+                                 int modifyVertex, bool skipOutOfBounds) {
     bool clamped;
     FastVec3f oldVertex =
         new FastVec3f(mesh.xyz[origVertex * 3], mesh.xyz[origVertex * 3 + 1],
@@ -123,7 +139,7 @@ public static class MeshUtil {
     clamped |= Clamp(ref newVertex.Y, clamp.Y1, clamp.Y2);
     clamped |= Clamp(ref newVertex.Z, clamp.Z1, clamp.Z2);
     if (!clamped)
-      return;
+      return true;
     FastVec3f n1V =
         new FastVec3f(mesh.xyz[neighbor1 * 3], mesh.xyz[neighbor1 * 3 + 1],
                       mesh.xyz[neighbor1 * 3 + 2]);
@@ -132,10 +148,11 @@ public static class MeshUtil {
                       mesh.xyz[neighbor2 * 3 + 2]);
     GetTriangleProjection(project, newVertex, oldVertex, n1V, n2V, out float t,
                           out float u);
-    if (t < -0.001 || t > 1.001 || u < -0.001 || u > 1.001) {
+    if (skipOutOfBounds &&
+        (t < -0.001 || t > 1.001 || u < -0.001 || u > 1.001)) {
       // The vertex is outside of the range of this triangle. Skip it and hope
       // that one of the other triangles for the face can take care of it.
-      return;
+      return false;
     }
 
     mesh.xyz[modifyVertex * 3] = newVertex.X;
@@ -151,16 +168,27 @@ public static class MeshUtil {
           Lerp2(t, u, mesh.Rgba[origVertex * 4 + i], mesh.Rgba[neighbor1 * 4],
                 mesh.Rgba[neighbor2 * 4 + i]);
     }
+    return true;
   }
 
   static public void ClampTriangle(MeshData mesh, EnumAxis project,
                                    Cuboidf clamp, int originalBeginIndex,
                                    int modifyBeginIndex) {
+    bool allInBounds = true;
     for (int i = 0; i < 3; ++i) {
-      ClampVertex(mesh, project, clamp, mesh.Indices[originalBeginIndex + i],
-                  mesh.Indices[originalBeginIndex + (i + 1) % 3],
-                  mesh.Indices[originalBeginIndex + (i + 2) % 3],
-                  mesh.Indices[modifyBeginIndex + i]);
+      allInBounds &= ClampVertex(mesh, project, clamp,
+                                 mesh.Indices[originalBeginIndex + i],
+                                 mesh.Indices[originalBeginIndex + (i + 1) % 3],
+                                 mesh.Indices[originalBeginIndex + (i + 2) % 3],
+                                 mesh.Indices[modifyBeginIndex + i], true);
+    }
+    if (!allInBounds) {
+      for (int i = 0; i < 3; ++i) {
+        ClampVertex(mesh, project, clamp, mesh.Indices[originalBeginIndex + i],
+                    mesh.Indices[originalBeginIndex + (i + 1) % 3],
+                    mesh.Indices[originalBeginIndex + (i + 2) % 3],
+                    mesh.Indices[modifyBeginIndex + i], false);
+      }
     }
   }
 
@@ -198,6 +226,46 @@ public static class MeshUtil {
     return mesh.VerticesCount / mesh.VerticesPerFace - 1;
   }
 
+  static public void CopyFaceTo(MeshData mesh, int sourceFace, int targetFace) {
+    int firstSourceVertex = sourceFace * mesh.VerticesPerFace;
+    int firstTargetVertex = targetFace * mesh.VerticesPerFace;
+    for (int i = 0; i < mesh.VerticesPerFace * 3; ++i) {
+      mesh.xyz[firstTargetVertex * 3 + i] = mesh.xyz[firstSourceVertex * 3 + i];
+    }
+    for (int i = 0; i < mesh.VerticesPerFace * 2; ++i) {
+      mesh.Uv[firstTargetVertex * 2 + i] = mesh.Uv[firstSourceVertex * 2 + i];
+    }
+    for (int i = 0; i < mesh.VerticesPerFace; ++i) {
+      mesh.Flags[firstTargetVertex + i] = mesh.Flags[firstSourceVertex + i];
+    }
+    for (int i = 0; i < mesh.VerticesPerFace * 4; ++i) {
+      mesh.Rgba[firstTargetVertex * 4 + i] =
+          mesh.Rgba[firstSourceVertex * 4 + i];
+    }
+
+    int firstSourceIndex = sourceFace * mesh.IndicesPerFace;
+    int firstTargetIndex = targetFace * mesh.IndicesPerFace;
+    for (int i = 0; i < mesh.IndicesPerFace; ++i) {
+      mesh.Indices[firstTargetIndex + i] = mesh.Indices[firstSourceIndex + i] -
+                                           firstSourceVertex +
+                                           firstTargetVertex;
+    }
+    if (mesh.TextureIndicesCount > 0) {
+      mesh.TextureIndices[targetFace] = mesh.TextureIndices[sourceFace];
+    }
+    if (mesh.XyzFacesCount > 0) {
+      mesh.XyzFaces[targetFace] = mesh.XyzFaces[sourceFace];
+    }
+    if (mesh.RenderPassCount > 0) {
+      mesh.RenderPassesAndExtraBits[targetFace] =
+          mesh.RenderPassesAndExtraBits[sourceFace];
+    }
+    if (mesh.ColorMapIdsCount > 0) {
+      mesh.ClimateColorMapIds[targetFace] = mesh.ClimateColorMapIds[sourceFace];
+      mesh.SeasonColorMapIds[targetFace] = mesh.SeasonColorMapIds[sourceFace];
+    }
+  }
+
   static public void RemoveLastFace(MeshData mesh) {
     mesh.VerticesCount -= mesh.VerticesPerFace;
     mesh.IndicesCount -= mesh.IndicesPerFace;
@@ -217,41 +285,76 @@ public static class MeshUtil {
     }
   }
 
-  static public void AddFaceHole(MeshData mesh, EnumAxis project, int faceIndex,
-                                 BlockFacing face) {
+  static public int CopyFaceWithHole(MeshData mesh, EnumAxis project,
+                                     int faceIndex, BlockFacing face,
+                                     Cuboidf hole) {
     int beginVertex = faceIndex * mesh.VerticesPerFace;
 
-    int copy1 = AddFaceCopy(mesh, faceIndex);
-    int copy2 = AddFaceCopy(mesh, faceIndex);
-    int copy3 = AddFaceCopy(mesh, faceIndex);
-    // This last copy tracks the original face data. It is removed at the end of
-    // the method.
     int extraCopy = AddFaceCopy(mesh, faceIndex);
 
     // bottom rectangle
     Cuboidf clamp = face.Plane.Clone();
-    clamp[3 + ((int)face.Axis + 2) % 3] = (8 - 3) / 16f;
+    clamp[3 + ((int)face.Axis + 2) % 3] = hole[((int)face.Axis + 2) % 3];
     ClampFace(mesh, project, clamp, extraCopy, faceIndex);
+
+    if (IsEmptyFace(mesh, faceIndex)) {
+      CopyFaceTo(mesh, extraCopy, faceIndex);
+    } else {
+      faceIndex = extraCopy;
+      extraCopy = AddFaceCopy(mesh, extraCopy);
+    }
 
     // top rectangle
     clamp.Set(face.Plane);
-    clamp[0 + ((int)face.Axis + 2) % 3] = (8 + 3) / 16f;
-    ClampFace(mesh, project, clamp, extraCopy, copy1);
+    clamp[0 + ((int)face.Axis + 2) % 3] = hole[3 + ((int)face.Axis + 2) % 3];
+    ClampFace(mesh, project, clamp, extraCopy, faceIndex);
+
+    if (IsEmptyFace(mesh, faceIndex)) {
+      CopyFaceTo(mesh, extraCopy, faceIndex);
+    } else {
+      faceIndex = extraCopy;
+      extraCopy = AddFaceCopy(mesh, extraCopy);
+    }
 
     // left rectangle
     clamp.Set(face.Plane);
-    clamp[0 + ((int)face.Axis + 2) % 3] = (8 - 3) / 16f;
-    clamp[3 + ((int)face.Axis + 1) % 3] = (8 - 3) / 16f;
-    clamp[3 + ((int)face.Axis + 2) % 3] = (8 + 3) / 16f;
-    ClampFace(mesh, project, clamp, extraCopy, copy2);
+    clamp[0 + ((int)face.Axis + 2) % 3] = hole[((int)face.Axis + 2) % 3];
+    clamp[3 + ((int)face.Axis + 1) % 3] = hole[((int)face.Axis + 1) % 3];
+    clamp[3 + ((int)face.Axis + 2) % 3] = hole[3 + ((int)face.Axis + 2) % 3];
+    ClampFace(mesh, project, clamp, extraCopy, faceIndex);
+
+    if (IsEmptyFace(mesh, faceIndex)) {
+      CopyFaceTo(mesh, extraCopy, faceIndex);
+    } else {
+      faceIndex = extraCopy;
+      extraCopy = AddFaceCopy(mesh, extraCopy);
+    }
 
     // right rectangle
     clamp.Set(face.Plane);
-    clamp[0 + ((int)face.Axis + 1) % 3] = (8 + 3) / 16f;
-    clamp[0 + ((int)face.Axis + 2) % 3] = (8 - 3) / 16f;
-    clamp[3 + ((int)face.Axis + 2) % 3] = (8 + 3) / 16f;
-    ClampFace(mesh, project, clamp, extraCopy, copy3);
+    clamp[0 + ((int)face.Axis + 2) % 3] = hole[((int)face.Axis + 2) % 3];
+    clamp[0 + ((int)face.Axis + 1) % 3] = hole[3 + ((int)face.Axis + 1) % 3];
+    clamp[3 + ((int)face.Axis + 2) % 3] = hole[3 + ((int)face.Axis + 2) % 3];
+    ClampFace(mesh, project, clamp, extraCopy, faceIndex);
 
+    if (IsEmptyFace(mesh, faceIndex)) {
+      CopyFaceTo(mesh, extraCopy, faceIndex);
+      RemoveLastFace(mesh);
+      return faceIndex;
+    } else {
+      return extraCopy;
+    }
+  }
+
+  static public void AddFaceHole(MeshData mesh, EnumAxis project, int faceIndex,
+                                 BlockFacing face) {
+    Cuboidf hole = face.Plane.Clone();
+
+    hole[0 + ((int)face.Axis + 1) % 3] = (8 - 3) / 16f;
+    hole[0 + ((int)face.Axis + 2) % 3] = (8 - 3) / 16f;
+    hole[3 + ((int)face.Axis + 1) % 3] = (8 + 3) / 16f;
+    hole[3 + ((int)face.Axis + 2) % 3] = (8 + 3) / 16f;
+    CopyFaceWithHole(mesh, project, faceIndex, face, hole);
     RemoveLastFace(mesh);
   }
 
@@ -325,12 +428,76 @@ public static class MeshUtil {
       if (!allMatched) {
         continue;
       }
+      mesh.TextureIndices[f] = mesh.getTextureIndex(replacement.atlasTextureId);
       for (int i = 0; i < mesh.VerticesPerFace; ++i) {
         int uvoffset = (f * mesh.VerticesPerFace + i) * 2;
         float u = mesh.Uv[uvoffset];
         float v = mesh.Uv[uvoffset + 1];
-        mesh.TextureIndices[f] =
-            mesh.getTextureIndex(replacement.atlasTextureId);
+        // The original and replacment meshes are the same size. So reoffsetting
+        // the uv coordinates is enough. Rescaling them is not necessary.
+        mesh.Uv[uvoffset] = replacement.x1 + (u - original.x1);
+        mesh.Uv[uvoffset + 1] = replacement.y1 + (v - original.y1);
+      }
+    }
+  }
+
+  static public void ReplaceTextureInBounds(MeshData mesh, BlockFacing face,
+                                            Cuboidf bounds,
+                                            TextureAtlasPosition original,
+                                            TextureAtlasPosition replacement) {
+    if (mesh.TextureIndices == null) {
+      return;
+    }
+    int faceCount = mesh.VerticesCount / mesh.VerticesPerFace;
+    const float errorX = 0.1f / 4096;
+    const float errorY = 0.1f / 4096;
+    for (int f = 0; f < faceCount; f++) {
+      if (mesh.XyzFaces[f] != 0 && mesh.XyzFaces[f] != face.MeshDataIndex) {
+        continue;
+      }
+      // Verify the mesh face is close to the block face on the block face's
+      // normal axis. The face normal was effectively checked already through
+      // XyzFaces. So checking only the first vertex is sufficient.
+      float axisLocation =
+          mesh.xyz[f * mesh.VerticesPerFace * 3 + (int)face.Axis];
+      if (axisLocation < bounds[(int)face.Axis] ||
+          axisLocation > bounds[(int)face.Axis + 3]) {
+        continue;
+      }
+
+      // Verify the face has the original texture.
+      bool allMatched = true;
+      for (int i = 0; i < mesh.VerticesPerFace; ++i) {
+        int uvoffset = (f * mesh.VerticesPerFace + i) * 2;
+        float u = mesh.Uv[uvoffset];
+        float v = mesh.Uv[uvoffset + 1];
+        int textureId = mesh.TextureIds[mesh.TextureIndices[f]];
+        if (textureId != original.atlasTextureId || u < original.x1 - errorX ||
+            u > original.x2 + errorX || v < original.y1 - errorY ||
+            v > original.y2 + errorY) {
+          allMatched = false;
+          break;
+        }
+      }
+      if (!allMatched) {
+        continue;
+      }
+
+      int hole = CopyFaceWithHole(mesh, face.Axis, f, face, bounds);
+      int extraCopy = AddFaceCopy(mesh, hole);
+      ClampFace(mesh, face.Axis, bounds, extraCopy, hole);
+      RemoveLastFace(mesh);
+      if (IsEmptyFace(mesh, hole)) {
+        RemoveLastFace(mesh);
+        continue;
+      }
+
+      mesh.TextureIndices[hole] =
+          mesh.getTextureIndex(replacement.atlasTextureId);
+      for (int i = 0; i < mesh.VerticesPerFace; ++i) {
+        int uvoffset = (hole * mesh.VerticesPerFace + i) * 2;
+        float u = mesh.Uv[uvoffset];
+        float v = mesh.Uv[uvoffset + 1];
         // The original and replacment meshes are the same size. So reoffsetting
         // the uv coordinates is enough. Rescaling them is not necessary.
         mesh.Uv[uvoffset] = replacement.x1 + (u - original.x1);
