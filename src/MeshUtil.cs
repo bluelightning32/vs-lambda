@@ -164,7 +164,6 @@ public static class MeshUtil {
   }
 
   static public int AddFaceCopy(MeshData mesh, int sourceIndex) {
-    int addFace = mesh.XyzFacesCount;
     int firstAddVertex = mesh.VerticesCount;
     for (int i = sourceIndex * mesh.VerticesPerFace;
          i < (sourceIndex + 1) * mesh.VerticesPerFace; ++i) {
@@ -182,12 +181,20 @@ public static class MeshUtil {
       mesh.AddIndex(mesh.Indices[i] - sourceIndex * mesh.VerticesPerFace +
                     firstAddVertex);
     }
-    mesh.AddTextureId(mesh.TextureIds[mesh.TextureIndices[sourceIndex]]);
-    mesh.AddXyzFace(mesh.XyzFaces[sourceIndex]);
-    mesh.AddRenderPass(mesh.RenderPassesAndExtraBits[sourceIndex]);
-    mesh.AddColorMapIndex(mesh.ClimateColorMapIds[sourceIndex],
-                          mesh.SeasonColorMapIds[sourceIndex]);
-    return addFace;
+    if (mesh.TextureIndicesCount > 0) {
+      mesh.AddTextureId(mesh.TextureIds[mesh.TextureIndices[sourceIndex]]);
+    }
+    if (mesh.XyzFacesCount > 0) {
+      mesh.AddXyzFace(mesh.XyzFaces[sourceIndex]);
+    }
+    if (mesh.RenderPassCount > 0) {
+      mesh.AddRenderPass(mesh.RenderPassesAndExtraBits[sourceIndex]);
+    }
+    if (mesh.ColorMapIdsCount > 0) {
+      mesh.AddColorMapIndex(mesh.ClimateColorMapIds[sourceIndex],
+                            mesh.SeasonColorMapIds[sourceIndex]);
+    }
+    return mesh.VerticesCount / mesh.VerticesPerFace - 1;
   }
 
   static public void RemoveLastFace(MeshData mesh) {
@@ -278,6 +285,9 @@ public static class MeshUtil {
   }
 
   static public void ReplaceTexture(MeshData mesh, BlockFacing face, float faceAxisRange, TextureAtlasPosition original, TextureAtlasPosition replacement) {
+    if (mesh.TextureIndices == null) {
+      return;
+    }
     int faceCount = mesh.VerticesCount / mesh.VerticesPerFace;
     const float errorX = 0.1f / 4096;
     const float errorY = 0.1f / 4096;

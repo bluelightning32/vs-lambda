@@ -1,7 +1,7 @@
 {
 	"type": "code",
-	"name": "LambdaFactory",
-	"modid": "lambda-factory",
+	"name": "Lambda Factory",
+	"modid": "lambdafactory",
 	"version": "0.1.0",
 	
 	"description" : "Solve puzzles in Coq.",

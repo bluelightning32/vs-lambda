@@ -101,6 +101,9 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
   protected virtual MeshData GenerateMesh(ScopeCacheKey key) {
     MeshData original =
         ((ICoreClientAPI)Api).TesselatorManager.GetDefaultBlockMesh(Block);
+    if (original == null) {
+      return original;
+    }
     MeshData mesh = original;
 
     if (key.ScopeFace != -1) {
@@ -171,6 +174,9 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
   public override bool OnTesselation(ITerrainMeshPool mesher,
                                      ITesselatorAPI tessThreadTesselator) {
     Api.Logger.Notification($"lambda: OnTesselation {GetHashCode()}");
+    if (_mesh == null) {
+      return false;
+    }
     mesher.AddMeshData(_mesh);
     return true;
   }

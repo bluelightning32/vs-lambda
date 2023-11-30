@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../lambda-factory.csproj">
+    <ProjectReference Include="../lambdafactory.csproj">
       <Targets>Build</Targets>
     </ProjectReference>
   </ItemGroup>
