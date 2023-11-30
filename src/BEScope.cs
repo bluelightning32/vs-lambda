@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
@@ -30,7 +31,7 @@ public static class ScopeHelper {
 public class ScopeCacheKey : IEquatable<ScopeCacheKey> {
   public int PortedSides = 0;
   public int ScopeFace = -1;
-  public Scope Scope;
+  public Scope Scope = Scope.Function;
 
   public bool Equals(ScopeCacheKey other) {
     if (other == null) {
@@ -55,6 +56,10 @@ public class ScopeCacheKey : IEquatable<ScopeCacheKey> {
   public override bool Equals(object obj) {
     return Equals(obj as ScopeCacheKey);
   }
+
+  public override string ToString() {
+    return $"{PortedSides} {ScopeFace} {Scope}";
+  }
 }
 
 public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
@@ -63,11 +68,44 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
   protected Key _key = new Key();
 
   public override void Initialize(ICoreAPI api) {
-    api.Logger.Notification($"lambda: Initialize {GetHashCode()}");
-    _key.ScopeFace = BlockFacing.NORTH.Index;
-    _key.Scope = Scope.Function;
     base.Initialize(api);
     UpdateMesh();
+  }
+
+  public ItemStack OnPickBlock(IWorldAccessor world, BlockPos pos,
+                               ref EnumHandling handling) {
+    ItemStack stack = new ItemStack(Block, 1);
+    stack.Attributes.SetInt("ScopeFace", _key.ScopeFace);
+
+    handling = EnumHandling.PreventDefault;
+    return stack;
+  }
+
+  public override void ToTreeAttributes(ITreeAttribute tree) {
+    Console.WriteLine("lambda: ToTreeAttributes {0}", tree.ToJsonToken());
+    base.ToTreeAttributes(tree);
+    tree.SetInt("ScopeFace", _key.ScopeFace);
+  }
+
+  public override void OnBlockPlaced(ItemStack byItemStack) {
+    base.OnBlockPlaced(byItemStack);
+    _key.ScopeFace =
+        byItemStack.Attributes.GetAsInt("ScopeFace", _key.ScopeFace);
+    UpdateMesh();
+    Api.Logger.Notification("lambda: OnBlockPlaced {0} - {1} - {2}",
+                            GetHashCode(), _key.ScopeFace,
+                            byItemStack.Attributes.ToJsonToken());
+  }
+
+  public override void
+  FromTreeAttributes(ITreeAttribute tree,
+                     IWorldAccessor worldAccessForResolve) {
+    base.FromTreeAttributes(tree, worldAccessForResolve);
+    _key.ScopeFace = tree.GetInt("ScopeFace", _key.ScopeFace);
+    worldAccessForResolve.Logger.Notification(
+        "lambda: FromTreeAttributes {0} - {1}", GetHashCode(), _key.ScopeFace);
+    // No need to update the mesh here. Initialize will be called before the
+    // block is rendered.
   }
 
   static private Dictionary<Key, MeshData> GetMeshCache(ICoreAPI api,
@@ -99,6 +137,7 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
   }
 
   protected virtual MeshData GenerateMesh(ScopeCacheKey key) {
+    Api.Logger.Notification("lambda: GenerateMesh {0} {1}", Block.Code, key);
     MeshData original =
         ((ICoreClientAPI)Api).TesselatorManager.GetDefaultBlockMesh(Block);
     if (original == null) {
@@ -223,9 +262,9 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
     BlockFacing facing = BlockFacing.ALLFACES[scopeFace];
     Cuboidf bounds =
         new Cuboidf(-0.1f, 1.0f - 2.1f / 16, -0.1f, 1.1f, 1.1f, 1.1f);
-    bounds[(int)facing.Axis] = facing.PlaneCenter[(int)facing.Axis] - 2f / 16;
+    bounds[(int)facing.Axis] = facing.PlaneCenter[(int)facing.Axis] - 1f / 16;
     bounds[(int)facing.Axis + 3] =
-        facing.PlaneCenter[(int)facing.Axis] + 2f / 16;
+        facing.PlaneCenter[(int)facing.Axis] + 1f / 16;
 
     MeshUtil.ReplaceTextureInBounds(copy, BlockFacing.UP, bounds, original,
                                     replacement);
@@ -235,17 +274,11 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
 
   public override bool OnTesselation(ITerrainMeshPool mesher,
                                      ITesselatorAPI tessThreadTesselator) {
-    Api.Logger.Notification($"lambda: OnTesselation {GetHashCode()}");
     if (_mesh == null) {
       return false;
     }
     mesher.AddMeshData(_mesh);
     return true;
-  }
-
-  public override void OnBlockPlaced(ItemStack byItemStack = null) {
-    Api.Logger.Notification($"lambda: OnBlockPlaced {GetHashCode()}");
-    base.OnBlockPlaced(byItemStack);
   }
 
   public override void OnExchanged(Block block) {
