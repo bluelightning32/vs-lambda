@@ -6,8 +6,9 @@ using Vintagestory.API.MathTools;
 namespace LambdaFactory;
 
 public static class MeshUtil {
-  static public void GetFaceAxisBounds(EnumAxis axis, float[] xyz, int beginVertex,
-                                   int endVertex, out float min, out float max) {
+  static public void GetFaceAxisBounds(EnumAxis axis, float[] xyz,
+                                       int beginVertex, int endVertex,
+                                       out float min, out float max) {
     if (beginVertex >= endVertex) {
       min = 0;
       max = 0;
@@ -284,7 +285,10 @@ public static class MeshUtil {
     return copy;
   }
 
-  static public void ReplaceTexture(MeshData mesh, BlockFacing face, float faceAxisRange, TextureAtlasPosition original, TextureAtlasPosition replacement) {
+  static public void ReplaceTexture(MeshData mesh, BlockFacing face,
+                                    float faceAxisRange,
+                                    TextureAtlasPosition original,
+                                    TextureAtlasPosition replacement) {
     if (mesh.TextureIndices == null) {
       return;
     }
@@ -292,22 +296,28 @@ public static class MeshUtil {
     const float errorX = 0.1f / 4096;
     const float errorY = 0.1f / 4096;
     for (int f = 0; f < faceCount; f++) {
-      MeshUtil.GetFaceAxisBounds(face.Axis, mesh.xyz, f * mesh.VerticesPerFace,
-               (f + 1) * mesh.VerticesPerFace, out float min, out float max);
-      if (min - faceAxisRange > face.PlaneCenter[(int)face.Axis] ||
-          max + faceAxisRange < face.PlaneCenter[(int)face.Axis] ||
-          max - min > faceAxisRange) {
+      if (mesh.XyzFaces[f] != 0 && mesh.XyzFaces[f] != face.MeshDataIndex) {
         continue;
       }
+      // Verify the mesh face is close to the block face on the block face's
+      // normal axis. The face normal was effectively checked already through
+      // XyzFaces. So checking only the first vertex is sufficient.
+      float axisLocation =
+          mesh.xyz[f * mesh.VerticesPerFace * 3 + (int)face.Axis];
+      if (axisLocation + faceAxisRange < face.PlaneCenter[(int)face.Axis] ||
+          axisLocation - faceAxisRange > face.PlaneCenter[(int)face.Axis]) {
+        continue;
+      }
+
       bool allMatched = true;
       for (int i = 0; i < mesh.VerticesPerFace; ++i) {
         int uvoffset = (f * mesh.VerticesPerFace + i) * 2;
         float u = mesh.Uv[uvoffset];
         float v = mesh.Uv[uvoffset + 1];
         int textureId = mesh.TextureIds[mesh.TextureIndices[f]];
-        if (textureId != original.atlasTextureId ||
-            u < original.x1 - errorX || u > original.x2 + errorX ||
-            v < original.y1 - errorY || v > original.y2 + errorY) {
+        if (textureId != original.atlasTextureId || u < original.x1 - errorX ||
+            u > original.x2 + errorX || v < original.y1 - errorY ||
+            v > original.y2 + errorY) {
           allMatched = false;
           break;
         }
@@ -319,12 +329,12 @@ public static class MeshUtil {
         int uvoffset = (f * mesh.VerticesPerFace + i) * 2;
         float u = mesh.Uv[uvoffset];
         float v = mesh.Uv[uvoffset + 1];
-        mesh.TextureIndices[f] = mesh.getTextureIndex(replacement.atlasTextureId);
-        // The original and replacment meshes are the same size. So reoffsetting the uv coordinates is enough. Rescaling them is not necessary.
-        mesh.Uv[uvoffset] =
-          replacement.x1 + (u - original.x1);
-        mesh.Uv[uvoffset + 1] =
-          replacement.y1 + (v - original.y1);
+        mesh.TextureIndices[f] =
+            mesh.getTextureIndex(replacement.atlasTextureId);
+        // The original and replacment meshes are the same size. So reoffsetting
+        // the uv coordinates is enough. Rescaling them is not necessary.
+        mesh.Uv[uvoffset] = replacement.x1 + (u - original.x1);
+        mesh.Uv[uvoffset + 1] = replacement.y1 + (v - original.y1);
       }
     }
   }

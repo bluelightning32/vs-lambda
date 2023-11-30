@@ -13,16 +13,16 @@ public enum Scope { Function = 0, Case = 1, Forall = 2, Matchin = 3 }
 public static class ScopeHelper {
   public static string GetCode(Scope scope) {
     switch (scope) {
-      case Scope.Function:
-        return "function";
-      case Scope.Case:
-        return "case";
-      case Scope.Forall:
-        return "forall";
-      case Scope.Matchin:
-        return "matchin";
-      default:
-        return "unknown";
+    case Scope.Function:
+      return "function";
+    case Scope.Case:
+      return "case";
+    case Scope.Forall:
+      return "forall";
+    case Scope.Matchin:
+      return "matchin";
+    default:
+      return "unknown";
     }
   }
 }
@@ -107,13 +107,16 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
     MeshData mesh = original;
 
     if (key.ScopeFace != -1) {
-      mesh = ColorScopeFace(key.ScopeFace, key.Scope, mesh, !Object.ReferenceEquals(mesh, original));
+      mesh = ColorScopeFace(key.ScopeFace, key.Scope, mesh,
+                            !Object.ReferenceEquals(mesh, original));
     }
-    mesh = CutPortHoles(key.PortedSides, mesh, !Object.ReferenceEquals(mesh, original));
+    mesh = CutPortHoles(key.PortedSides, mesh,
+                        !Object.ReferenceEquals(mesh, original));
     return mesh;
   }
 
-  public MeshData ColorScopeFace(int scopeFace, Scope scope, MeshData mesh, bool copied) {
+  public MeshData ColorScopeFace(int scopeFace, Scope scope, MeshData mesh,
+                                 bool copied) {
     if (scopeFace == -1) {
       return mesh;
     }
@@ -124,17 +127,28 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
     ICoreClientAPI capi = (ICoreClientAPI)Api;
     BlockFacing facing = BlockFacing.ALLFACES[scopeFace];
     ITextureAtlasAPI atlas = capi.BlockTextureAtlas;
-    TextureAtlasPosition original = atlas.Positions[Block.TexturesInventory[facing.Code].Baked.TextureSubId];
-    CompositeTexture compositeReplacement = Block.TexturesInventory[facing.Code].Clone();
-    Array.Resize(ref compositeReplacement.BlendedOverlays, (compositeReplacement.BlendedOverlays?.Length ?? 0) + 1);
+    TextureAtlasPosition original =
+        atlas
+            .Positions[Block.TexturesInventory[facing.Code].Baked.TextureSubId];
+    CompositeTexture compositeReplacement =
+        Block.TexturesInventory[facing.Code].Clone();
+    Array.Resize(ref compositeReplacement.BlendedOverlays,
+                 (compositeReplacement.BlendedOverlays?.Length ?? 0) + 1);
     BlendedOverlayTexture scopeBlend = new BlendedOverlayTexture();
-    scopeBlend.Base = new AssetLocation(LambdaFactoryModSystem.Domain, $"scope/{ScopeHelper.GetCode(scope)}/full");
+    scopeBlend.Base =
+        new AssetLocation(LambdaFactoryModSystem.Domain,
+                          $"scope/{ScopeHelper.GetCode(scope)}/full");
     scopeBlend.BlendMode = EnumColorBlendMode.ColorBurn;
-    compositeReplacement.BlendedOverlays[compositeReplacement.BlendedOverlays.Length - 1] = scopeBlend;
+    compositeReplacement
+        .BlendedOverlays[compositeReplacement.BlendedOverlays.Length - 1] =
+        scopeBlend;
     compositeReplacement.Bake(capi.Assets);
-    atlas.GetOrInsertTexture(compositeReplacement.Baked.BakedName, out int replacementId, out TextureAtlasPosition replacement, () => atlas.LoadCompositeBitmap(compositeReplacement.Baked.BakedName));
+    atlas.GetOrInsertTexture(
+        compositeReplacement.Baked.BakedName, out int replacementId,
+        out TextureAtlasPosition replacement,
+        () => atlas.LoadCompositeBitmap(compositeReplacement.Baked.BakedName));
 
-    MeshUtil.ReplaceTexture(copy, facing, 2.1f/16, original, replacement);
+    MeshUtil.ReplaceTexture(copy, facing, 2.1f / 16, original, replacement);
     return copy;
   }
 
