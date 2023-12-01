@@ -59,7 +59,6 @@
     "*-entity": {
       base: "block/wire/center",
       // TODO: switch the entity shape back to just the center.
-      selectiveElements: ["north", "east", "west", "down", "extension"],
       overlays: [
         {
           base: "block/wire/up"
