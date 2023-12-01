@@ -34,5 +34,5 @@ public class BlockEntityScopeTest {
 
     Assert.IsTrue(cache.ContainsKey(key2));
     Assert.AreEqual(1, cache[key2]);
- }
+  }
 }

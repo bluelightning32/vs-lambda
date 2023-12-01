@@ -62,9 +62,8 @@ public class MeshUtilTest {
     FastVec3f corner = new FastVec3f(0 + offsetX, 0 + offsetY, 0 + offsetZ);
     FastVec3f neighbor1 = new FastVec3f(10 + offsetX, 0 + offsetY, 0 + offsetZ);
     FastVec3f neighbor2 = new FastVec3f(0 + offsetX, 10 + offsetY, 0 + offsetZ);
-    MeshUtil.GetTriangleProjection(EnumAxis.Z, input, corner,
-                                                 neighbor1, neighbor2,
-                                                 out float t, out float u);
+    MeshUtil.GetTriangleProjection(EnumAxis.Z, input, corner, neighbor1,
+                                   neighbor2, out float t, out float u);
     Assert.AreEqual(0.5, t, 0.001);
     Assert.AreEqual(0, u, 0.001);
   }
@@ -79,9 +78,8 @@ public class MeshUtilTest {
     FastVec3f neighbor1 =
         new FastVec3f(10 + offsetX, 10 + offsetY, 0 + offsetZ);
     FastVec3f neighbor2 = new FastVec3f(0 + offsetX, 10 + offsetY, 0 + offsetZ);
-    MeshUtil.GetTriangleProjection(EnumAxis.Z, input, corner,
-                                                 neighbor1, neighbor2,
-                                                 out float t, out float u);
+    MeshUtil.GetTriangleProjection(EnumAxis.Z, input, corner, neighbor1,
+                                   neighbor2, out float t, out float u);
     Assert.AreEqual(5 + offsetX,
                     corner.X + t * (neighbor1.X - corner.X) +
                         u * (neighbor2.X - corner.X),
@@ -102,9 +100,8 @@ public class MeshUtilTest {
     FastVec3f neighbor1 = new FastVec3f(0 + offsetX, 10 + offsetY, 0 + offsetZ);
     FastVec3f neighbor2 =
         new FastVec3f(10 + offsetX, 10 + offsetY, 0 + offsetZ);
-    MeshUtil.GetTriangleProjection(EnumAxis.Z, input, corner,
-                                                 neighbor1, neighbor2,
-                                                 out float t, out float u);
+    MeshUtil.GetTriangleProjection(EnumAxis.Z, input, corner, neighbor1,
+                                   neighbor2, out float t, out float u);
     Assert.AreEqual(0, t, 0.001);
     Assert.AreEqual(0.5, u, 0.001);
     Assert.AreEqual(5 + offsetX,

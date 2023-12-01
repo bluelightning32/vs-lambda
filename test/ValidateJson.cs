@@ -35,9 +35,7 @@ public class ValidateJson {
           JToken.ReadFrom(reader);
         }
       } catch (JsonException ex) {
-        Assert.Fail(
-            $"Validation failed for JSON file: {file}{Environment.NewLine}{ex.Message}",
-            ex);
+        Assert.Fail("Validation failed for JSON file: {0}\n{1}", file, ex);
       }
 
       ++validated;

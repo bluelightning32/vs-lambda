@@ -65,9 +65,7 @@ public class ScopeCacheKey : IEquatable<ScopeCacheKey>, ICloneable {
     return $"{PortedSides} {ScopeFace} {Scope}";
   }
 
-  public object Clone() {
-    return MemberwiseClone();
-  }
+  public object Clone() { return MemberwiseClone(); }
 }
 
 public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
@@ -114,7 +112,8 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
     _key.ScopeFace =
         byItemStack.Attributes.GetAsInt("ScopeFace", _key.ScopeFace);
     if (!_fixedScope) {
-      _key.Scope = (Scope)byItemStack.Attributes.GetAsInt("Scope", (int)_key.Scope);
+      _key.Scope =
+          (Scope)byItemStack.Attributes.GetAsInt("Scope", (int)_key.Scope);
     }
 
     UpdateMesh();
@@ -157,7 +156,9 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
     if (cache.TryGetValue(_key, out _mesh)) {
       return;
     }
-    Api.Logger.Notification("lambda: Cache miss for {0} {1}. Dict has {2} entries.", Block.Code, _key, cache.Count);
+    Api.Logger.Notification(
+        "lambda: Cache miss for {0} {1}. Dict has {2} entries.", Block.Code,
+        _key, cache.Count);
 
     _mesh = cache[(Key)_key.Clone()] = GenerateMesh(_key);
   }
