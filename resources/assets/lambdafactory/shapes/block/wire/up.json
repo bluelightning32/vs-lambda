@@ -1,0 +1,22 @@
+{
+    textureWidth: 32,
+    textureHeight: 32,
+    textures: {
+        wire: "scope/updown",
+    },
+    elements: [
+        {
+            "name": "extension",
+            "from": [ 6.5, 8, 6.5 ],
+            "to": [ 9.5, 16, 9.5 ],
+            "faces": {
+                "north": { "texture": "#wire", "uv": [ 0, 0, 32, 32 ] },
+                "east": { "texture": "#wire", "uv": [ 0, 0, 32, 32 ] },
+                "south": { "texture": "#wire", "uv": [ 0, 0, 32, 32 ] },
+                "west": { "texture": "#wire", "uv": [ 0, 0, 32, 32 ] },
+                "up": { "texture": "#wire", "uv": [ 0, 0, 32, 32 ] },
+                "down": { "texture": "#wire", "uv": [ 0, 0, 32, 32 ] },
+            },
+        }
+    ]
+}
