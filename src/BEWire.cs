@@ -20,6 +20,12 @@ public class BlockEntityWire : BlockEntity, IBlockEntityForward {
     UpdateSelectionBoxes();
   }
 
+  public static void OnModLoaded() {
+    // Reset _up_mesh, because if the mod is restarted, the old mesh points to
+    // the wrong textures.
+    _up_mesh = null;
+  }
+
   public ItemStack OnPickBlock(ref EnumHandling handling) {
     ItemStack stack = new ItemStack(Block, 1);
     stack.Attributes.SetInt("directions", _directions);

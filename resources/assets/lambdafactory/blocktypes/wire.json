@@ -9,6 +9,14 @@
   variantGroups: [
     { code: "connection", states: ["ns", "ew", "ud", "entity"], }
   ],
+  textures: {
+    "center": {
+      base: "wire/center",
+    },
+    "straight": {
+      base: "wire/straight",
+    },
+  },
   entityClassByType: {
     "*-entity": "Wire"
   },

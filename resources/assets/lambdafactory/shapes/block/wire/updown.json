@@ -2,7 +2,7 @@
     textureWidth: 32,
     textureHeight: 32,
     textures: {
-        wire: "scope/updown",
+        straight: "wire/straight",
     },
     elements: [
         {
@@ -10,12 +10,12 @@
             "from": [ 6.5, 0, 6.5 ],
             "to": [ 9.5, 16, 9.5 ],
             "faces": {
-                "north": { "texture": "#wire", "uv": [ 0, 0, 32, 32 ] },
-                "east": { "texture": "#wire", "uv": [ 0, 0, 32, 32 ] },
-                "south": { "texture": "#wire", "uv": [ 0, 0, 32, 32 ] },
-                "west": { "texture": "#wire", "uv": [ 0, 0, 32, 32 ] },
-                "up": { "texture": "#wire", "uv": [ 0, 0, 32, 32 ] },
-                "down": { "texture": "#wire", "uv": [ 0, 0, 32, 32 ] },
+                "north": { "texture": "#straight", "uv": [ 0, 0, 6, 32 ] },
+                "east": { "texture": "#straight", "uv": [ 6, 0, 12, 32 ] },
+                "south": { "texture": "#straight", "uv": [ 12, 0, 18, 32 ] },
+                "west": { "texture": "#straight", "uv": [ 18, 0, 24, 32 ] },
+                "up": { "texture": "#straight", "uv": [ 24, 0, 30, 6 ] },
+                "down": { "texture": "#straight", "uv": [ 30, 26, 24, 32 ] },
             },
         }
     ]
