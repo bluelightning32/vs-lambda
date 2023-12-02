@@ -20,6 +20,35 @@ public class BlockEntityWire : BlockEntity, IBlockEntityForward {
     UpdateSelectionBoxes();
   }
 
+  public ItemStack OnPickBlock(ref EnumHandling handling) {
+    ItemStack stack = new ItemStack(Block, 1);
+    stack.Attributes.SetInt("directions", _directions);
+
+    handling = EnumHandling.PreventDefault;
+    return stack;
+  }
+
+  public override void ToTreeAttributes(ITreeAttribute tree) {
+    base.ToTreeAttributes(tree);
+    tree.SetInt("directions", _directions);
+  }
+
+  public override void OnBlockPlaced(ItemStack byItemStack) {
+    base.OnBlockPlaced(byItemStack);
+    _directions = byItemStack.Attributes.GetAsInt("directions", _directions);
+
+    UpdateSelectionBoxes();
+  }
+
+  public override void
+  FromTreeAttributes(ITreeAttribute tree,
+                     IWorldAccessor worldAccessForResolve) {
+    base.FromTreeAttributes(tree, worldAccessForResolve);
+    _directions = tree.GetInt("directions", _directions);
+    // No need to update the selection boxes here. Initialize will be called
+    // before the block is rendered.
+  }
+
   private void LoadUpMesh() {
     if (Api.Side == EnumAppSide.Server)
       return;
