@@ -87,8 +87,7 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
     UpdateMesh();
   }
 
-  public ItemStack OnPickBlock(IWorldAccessor world, BlockPos pos,
-                               ref EnumHandling handling) {
+  public ItemStack OnPickBlock(ref EnumHandling handling) {
     ItemStack stack = new ItemStack(Block, 1);
     stack.Attributes.SetInt("ScopeFace", _key.ScopeFace);
     if (!_fixedScope) {

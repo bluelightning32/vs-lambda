@@ -1,13 +1,17 @@
 {
   code: "wire",
+  // The block class must inherit from BlockGeneric so that it forwards
+  // GetSelectionBoxes to the behaviors.
+  class: "BlockGeneric",
+  behaviors: [
+    { name: "BlockEntityForward" }
+  ],
   variantGroups: [
     { code: "connection", states: ["ns", "ew", "ud", "entity"], }
   ],
-  /*behaviors: [
-    { name: "BlockEntityForward" }
-  ],
-  entityclass: "Wire",
-  */
+  entityClassByType: {
+    "*-entity": "Wire"
+  },
   sideSolid: {
     all: false
   },
@@ -24,22 +28,9 @@
     "*-ud": {
       x1: 0.40625, y1: 0, z1: 0.40625, x2: 0.59375, y2: 1, z2: 0.59375
     },
-    /*"*": {
+    "*": {
       x1: 0.40625, y1: 0.40625, z1: 0.40625, x2: 0.59375, y2: 0.59375, z2: 0.59375
-    },*/
-  },
-  // TODO: switch the entity collision box back to just the center.
-  collisionSelectionBoxesByType: {
-    "*-entity": [
-      // center + south
-      {
-        x1: 0.40625, y1: 0.40625, z1: 0.40625, x2: 0.59375, y2: 0.59375, z2: 1
-      },
-      // up
-      {
-        x1: 0.40625, y1: 0.59375, z1: 0.40625, x2: 0.59375, y2: 1, z2: 0.59375
-      },
-    ]
+    },
   },
   creativeinventory: { general: ["*"] },
   blockmaterial: "Metal",
@@ -57,17 +48,7 @@
       base: "block/wire/updown"
     },
     "*-entity": {
-      base: "block/wire/center",
-      // TODO: switch the entity shape back to just the center.
-      overlays: [
-        {
-          base: "block/wire/up"
-        },
-        {
-          base: "block/wire/up",
-          rotateX: 90
-        },
-      ]
+      base: "block/wire/center"
     },
   },
   resistance: 3.5,

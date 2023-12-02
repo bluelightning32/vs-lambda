@@ -12,6 +12,7 @@ public class LambdaFactoryModSystem : ModSystem {
                                    typeof(BlockBehaviorBlockEntityForward));
     api.RegisterBlockEntityClass("Scope",
                                  typeof(BlockEntityScope<ScopeCacheKey>));
+    api.RegisterBlockEntityClass("Wire", typeof(BlockEntityWire));
   }
 
   public override void StartClientSide(ICoreClientAPI api) {}
