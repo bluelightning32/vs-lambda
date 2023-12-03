@@ -76,8 +76,8 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
 
   public override void Initialize(ICoreAPI api) {
     base.Initialize(api);
-    string scope = Block.Attributes["scope"].AsString("any");
-    if (scope == "any") {
+    string scope = Block.Attributes?["scope"].AsString("any");
+    if (scope == null || scope == "any") {
       _fixedScope = false;
     } else {
       _fixedScope = true;

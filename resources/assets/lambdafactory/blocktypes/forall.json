@@ -1,0 +1,48 @@
+{
+  code: "forall",
+  variantGroups: [
+    { code: "orientation", states: ["ns", "we"] },
+  ],
+  behaviors: [
+    { name: "NWOrientable" },
+    { name: "BlockEntityForward" }
+  ],
+  attributes: {
+    scope: "forall"
+  },
+  entityclass: "Scope",
+  creativeinventory: { general: ["*"] },
+  blockmaterial: "Stone",
+  drawtype: "json",
+  shape: {
+    base: "block/forall-{orientation}"
+  },
+  sideopaque: {
+    all: false
+  },
+  textures: {
+    "north": {
+      base: "scope/northsouth",
+    },
+    "east": {
+      base: "scope/eastwest",
+    },
+    "south": {
+      base: "scope/northsouth",
+    },
+    "west": {
+      base: "scope/eastwest",
+    },
+    "up": {
+      base: "scope/updown",
+    },
+    "down": {
+      base: "scope/updown",
+    },
+  },
+  resistance: 3.5,
+  sounds: {
+    place: "game:block/ceramicplace",
+    walk: "game:walk/stone1"
+  }
+}
