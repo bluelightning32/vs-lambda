@@ -11,7 +11,7 @@
 		"east": "scope/eastwest",
 		"eastwest": "scope/eastwest",
 		"west": "scope/eastwest",
-		"full": "scope/forall/full",
+		"full": "scope/forall",
 		"south": "scope/northsouth",
 		"north": "scope/northsouth",
 		"northsouth": "scope/northsouth",

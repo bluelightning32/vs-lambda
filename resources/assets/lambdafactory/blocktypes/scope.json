@@ -1,77 +1,115 @@
 {
   code: "scope",
   variantGroups: [
-    { code: "scopeface", states: ["none"], combine: "Add"},
-    { code: "scopeface",
-      loadFromPropertiesCombine: ["abstract/horizontalorientation", "abstract/verticalorientation"]
+    { code: "porthole",
+      states: ["solid", "hole"]
     },
     { code: "scope",
-      states: ["function", "case", "forall", "matchin"]
+      states: ["none", "function", "case", "forall", "matchin"]
+    },
+    { code: "rot",
+      loadFromPropertiesCombine: ["abstract/horizontalorientation", "abstract/verticalorientation"]
     }
   ],
-  creativeinventory: { general: ["*"] },
-  blockmaterial: "Stone",
+  behaviors: [
+    { name: "OmniRotatable", properties: {rotateSides: true, facing: "block"} },
+  ],
+  creativeinventory: { general: ["*-up"] },
+  blockmaterial: "Ceramic",
   drawtype: "json",
-  shape: {
-    base: "block/scope"
+  shapeByType: {
+    "*-north": {
+      base: "block/slab-{porthole}",
+      rotateX: 270
+    },
+    "*-east": {
+      base: "block/slab-{porthole}",
+      rotateX: 270,
+      rotateZ: 270
+    },
+    "*-south": {
+      base: "block/slab-{porthole}",
+      rotateX: 270,
+      rotateZ: 180
+    },
+    "*-west": {
+      base: "block/slab-{porthole}",
+      rotateX: 270,
+      rotateZ: 90
+    },
+    "*-up": {
+      base: "block/slab-{porthole}"
+    },
+    "*-down": {
+      base: "block/slab-{porthole}",
+      rotateX: 180
+    },
   },
   texturesByType: {
-    "*-north-*": {
-      "north": {
+    "*-none-*": {
+      "northsouth": {
+        base: "scope/northsouth"
+      },
+      "eastwest": {
+        base: "scope/eastwest"
+      },
+      "up": {
+        base: "scope/up"
+      },
+    },
+    "*": {
+      "northsouth": {
         base: "scope/northsouth",
-        blendedOverlays: [{ base: "scope/{scope}/full", blendMode: "ColorBurn" }]
+        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
       },
-      "up": {
-        base: "scope/updown",
-        blendedOverlays: [{ base: "scope/{scope}/{scopeface}", blendMode: "ColorBurn" }]
-      }
-    },
-    "*-east-*": {
-      "east": {
+      "eastwest": {
         base: "scope/eastwest",
-        blendedOverlays: [{ base: "scope/{scope}/full", blendMode: "ColorBurn" }]
+        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
       },
       "up": {
-        base: "scope/updown",
-        blendedOverlays: [{ base: "scope/{scope}/{scopeface}", blendMode: "ColorBurn" }]
-      }
-    },
-    "*-south-*": {
-      "south": {
-        base: "scope/northsouth",
-        blendedOverlays: [{ base: "scope/{scope}/full", blendMode: "ColorBurn" }]
+        base: "scope/up",
+        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
       },
-      "up": {
-        base: "scope/updown",
-        blendedOverlays: [{ base: "scope/{scope}/{scopeface}", blendMode: "ColorBurn" }]
-      }
     },
-    "*-west-*": {
-      "west": {
-        base: "scope/eastwest",
-        blendedOverlays: [{ base: "scope/{scope}/full", blendMode: "ColorBurn" }]
-      },
-      "up": {
-        base: "scope/updown",
-        blendedOverlays: [{ base: "scope/{scope}/{scopeface}", blendMode: "ColorBurn" }]
-      }
+  },
+  sideSolidOpaqueAo: {
+    all: false
+  },
+  sideSolidOpaqueAoByType: {
+    "*-north": {
+      north: true
     },
-    "*-up-*": {
-      "up": {
-        base: "scope/updown",
-        blendedOverlays: [{ base: "scope/{scope}/full", blendMode: "ColorBurn" }]
-      }
+    "*-east": {
+      east: true
     },
-    "*-down-*": {
-      "down": {
-        base: "scope/updown",
-        blendedOverlays: [{ base: "scope/{scope}/full", blendMode: "ColorBurn" }]
-      }
+    "*-south": {
+      south: true
+    },
+    "*-west": {
+      west: true
+    },
+    "*-up": {
+      up: true
+    },
+    "*-down": {
+      down: true
+    },
+  },
+  selectionBox: {
+    x1: 0, y1: 0.5, z1: 0, x2: 1, y2: 1, z2: 1,
+    rotateXByType: {
+      "*-north": 270,
+      "*-south": 90,
+      "*-down": 180
+    },
+    rotateZByType: {
+      "*-east": 270,
+      "*-west": 90
     },
   },
   resistance: 3.5,
   sounds: {
     place: "game:block/ceramicplace",
     walk: "game:walk/stone1"
-  }
+  },
 }

@@ -8,7 +8,7 @@
 	"textureSizes": {
 	},
 	"textures": {
-		"full": "scope/case/full",
+		"full": "scope/case",
 		"east": "scope/eastwest",
 		"west": "scope/eastwest",
 		"south": "scope/northsouth",
