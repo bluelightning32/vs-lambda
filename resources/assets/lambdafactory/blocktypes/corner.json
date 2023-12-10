@@ -1,0 +1,32 @@
+{
+  code: "corner",
+  behaviors: [
+  ],
+  creativeinventory: { general: ["*"] },
+  blockmaterial: "Ceramic",
+  drawtype: "json",
+  shape: { base: "block/corner" },
+  textures: {
+		"down": { base: "scope/down"},
+		"northeast": { base: "scope/cornercrystal"},
+		"northwest": { base: "scope/cornercrystal"},
+		"southeast": { base: "scope/cornercrystal"},
+		"southwest": { base: "scope/cornercrystal"},
+		"upnorth": { base: "scope/cornercrystal"},
+		"upeast": { base: "scope/cornercrystal"},
+		"upsouth": { base: "scope/cornercrystal"},
+		"upwest": { base: "scope/cornercrystal"},
+		"downnorth": { base: "scope/cornercrystal"},
+		"downeast": { base: "scope/cornercrystal"},
+		"downsouth": { base: "scope/cornercrystal"},
+		"downwest": { base: "scope/cornercrystal"}
+  },
+  sideSolidOpaqueAo: {
+    all: false
+  },
+  resistance: 3.5,
+  sounds: {
+    place: "game:block/ceramicplace",
+    walk: "game:walk/stone1"
+  },
+}
