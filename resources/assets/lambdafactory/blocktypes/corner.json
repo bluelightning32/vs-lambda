@@ -22,7 +22,7 @@
 		"downwest": { base: "scope/cornercrystal"}
   },
   sideSolidOpaqueAo: {
-    all: false
+    all: true
   },
   resistance: 3.5,
   sounds: {
