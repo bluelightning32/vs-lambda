@@ -2,8 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Permissions;
-using System.Xml.Schema;
 
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
