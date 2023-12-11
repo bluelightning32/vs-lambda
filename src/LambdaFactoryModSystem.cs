@@ -10,6 +10,8 @@ public class LambdaFactoryModSystem : ModSystem {
     Domain = Mod.Info.ModID;
     api.RegisterBlockBehaviorClass("BlockEntityForward",
                                    typeof(BlockBehaviorBlockEntityForward));
+    api.RegisterBlockEntityClass("Corner",
+                                 typeof(BlockEntityCorner));
     api.RegisterBlockEntityClass("Scope",
                                  typeof(BlockEntityScope<ScopeCacheKey>));
     api.RegisterBlockEntityClass("Wire", typeof(BlockEntityWire));

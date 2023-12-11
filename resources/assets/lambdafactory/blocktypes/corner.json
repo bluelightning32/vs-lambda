@@ -1,6 +1,8 @@
 {
   code: "corner",
+  entityclass: "Corner",
   behaviors: [
+    { name: "BlockEntityForward" }
   ],
   creativeinventory: { general: ["*"] },
   blockmaterial: "Ceramic",
