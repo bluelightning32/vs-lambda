@@ -1,44 +1,70 @@
 {
   code: "function",
   variantGroups: [
-    { code: "orientation", states: ["ns", "we"] },
+    { code: "side", loadFromProperties: "abstract/horizontalorientation" }
   ],
   behaviors: [
-    { name: "NWOrientable" },
+    { name: "HorizontalOrientable" },
     { name: "BlockEntityForward" }
   ],
   attributes: {
     scope: "function"
   },
   entityclass: "Scope",
-  creativeinventory: { general: ["*"] },
+  creativeinventory: { general: ["*-north"] },
   blockmaterial: "Stone",
   drawtype: "json",
-  shape: {
-    base: "block/function-{orientation}"
-  },
-  sideopaque: {
-    all: false
+  shapeByType: {
+    "*-north": {
+      base: "block/function"
+    },
+    "*-east": {
+      base: "block/function",
+      rotateY: 270
+    },
+    "*-south": {
+      base: "block/function",
+      rotateY: 180
+    },
+    "*-west": {
+      base: "block/function",
+      rotateY: 90
+    }
   },
   textures: {
-    "north": {
-      base: "scope/northsouth",
-    },
-    "east": {
+    "eastwest": {
       base: "scope/eastwest",
+      blendedOverlays: [{ base: "scope/function", blendMode: "ColorBurn" }]
     },
-    "south": {
+    "northsouth": {
       base: "scope/northsouth",
-    },
-    "west": {
-      base: "scope/eastwest",
+      blendedOverlays: [{ base: "scope/function", blendMode: "ColorBurn" }]
     },
     "up": {
-      base: "scope/updown",
+      base: "scope/up",
+      blendedOverlays: [{ base: "scope/function", blendMode: "ColorBurn" }]
     },
-    "down": {
-      base: "scope/updown",
+  },
+  sideopaque: {
+    all: true,
+    up: false
+  },
+  sideOpaqueByType: {
+    "*-north": {
+      north: false,
     },
+    "*-east": {
+      east: false,
+    },
+    "*-south": {
+      south: false,
+    },
+    "*-west": {
+      west: false,
+    }
+  },
+  sidesolid: {
+    all: true
   },
   resistance: 3.5,
   sounds: {
