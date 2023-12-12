@@ -1,0 +1,38 @@
+{
+  code: "doublescope",
+  variantGroups: [
+    { code: "orientation",
+      states: ["ud", "ns", "we"]
+    }
+  ],
+  behaviors: [
+    { name: "Pillar", properties: {invertedPlacement: true}},
+  ],
+  creativeinventory: { general: ["*-ud"] },
+  blockmaterial: "Ceramic",
+  drawtype: "json",
+  shapeByType: {
+    "*-ns": {
+      base: "block/doubleslab",
+      rotateX: 270
+    },
+    "*-we": {
+      base: "block/doubleslab",
+      rotateX: 270,
+      rotateZ: 90
+    },
+    "*-ud": {
+      base: "block/doubleslab"
+    },
+  },
+  textures: {
+  },
+  sideSolidOpaqueAo: {
+    all: true
+  },
+  resistance: 3.5,
+  sounds: {
+    place: "game:block/ceramicplace",
+    walk: "game:walk/stone1"
+  },
+}

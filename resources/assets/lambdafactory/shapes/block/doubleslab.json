@@ -1,0 +1,54 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+		"down": "scope/down",
+		"eastwest": "scope/eastwest",
+		"northsouth": "scope/northsouth",
+		"split": "scope/split",
+		"up": "scope/up"
+	},
+	"elements": [
+		{
+			"name": "base",
+			"from": [ 0.0, 2.0, 0.0 ],
+			"to": [ 16.0, 14.0, 16.0 ],
+			"rotationOrigin": [ 0.0, -6.0, 0.0 ],
+			"faces": {
+				"north": { "texture": "#split", "uv": [ 0.0, 2.0, 16.0, 14.0 ] },
+				"east": { "texture": "#split", "uv": [ 0.0, 2.0, 16.0, 14.0 ] },
+				"south": { "texture": "#split", "uv": [ 0.0, 2.0, 16.0, 14.0 ] },
+				"west": { "texture": "#split", "uv": [ 0.0, 2.0, 16.0, 14.0 ] }
+			}
+		},
+		{
+			"name": "upactive",
+			"from": [ 0.0, 14.0, 0.0 ],
+			"to": [ 16.0, 16.0, 16.0 ],
+			"faces": {
+				"north": { "texture": "#northsouth", "uv": [ 0.0, 0.0, 16.0, 2.0 ], "autoUv": false },
+				"east": { "texture": "#eastwest", "uv": [ 0.0, 0.0, 16.0, 2.0 ] },
+				"south": { "texture": "#northsouth", "uv": [ 0.0, 14.0, 16.0, 16.0 ] },
+				"west": { "texture": "#eastwest", "uv": [ 16.0, 14.0, 0.0, 16.0 ], "autoUv": false },
+				"up": { "texture": "#up", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
+			}
+		},
+		{
+			"name": "downactive",
+			"from": [ 0.0, 0.0, 0.0 ],
+			"to": [ 16.0, 2.0, 16.0 ],
+			"faces": {
+				"north": { "texture": "#northsouth", "uv": [ 0.0, 0.0, 16.0, 2.0 ], "autoUv": false },
+				"east": { "texture": "#eastwest", "uv": [ 0.0, 0.0, 16.0, 2.0 ] },
+				"south": { "texture": "#northsouth", "uv": [ 0.0, 14.0, 16.0, 16.0 ] },
+				"west": { "texture": "#eastwest", "uv": [ 16.0, 14.0, 0.0, 16.0 ], "autoUv": false },
+				"down": { "texture": "#up", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "windMode": [-1,-1,-1,-1] }
+			}
+		}
+	]}

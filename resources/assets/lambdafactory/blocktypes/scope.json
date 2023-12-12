@@ -42,7 +42,8 @@
     },
     "*-down": {
       base: "block/slab-{porthole}",
-      rotateX: 180
+      rotateX: 180,
+      rotateY: 180
     },
   },
   texturesByType: {
