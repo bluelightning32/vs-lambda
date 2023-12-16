@@ -7,10 +7,8 @@
     { name: "HorizontalOrientable" },
     { name: "BlockEntityForward" }
   ],
-  attributes: {
-    scope: "function"
-  },
-  entityclass: "Scope",
+  entityclass: "CacheMesh",
+  entityBehaviors: [{name: "PortHole"}],
   creativeinventory: { general: ["*-north"] },
   blockmaterial: "Stone",
   drawtype: "json",

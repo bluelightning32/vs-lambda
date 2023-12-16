@@ -15,7 +15,7 @@ interface IMeshGenerator {
   public object GetClonedKey() { return ((ICloneable)GetKey()).Clone(); }
   public void GenerateMesh(ref MeshData mesh);
 
-  public bool UpdatedPickedStack(ItemStack stack);
+  public bool UpdatedPickedStack(ItemStack stack) { return false; }
 }
 
 public class BlockEntityCacheMesh : BlockEntity, IBlockEntityForward {

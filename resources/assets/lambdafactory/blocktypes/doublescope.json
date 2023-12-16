@@ -10,7 +10,7 @@
     { name: "Pillar", properties: {invertedPlacement: true}},
   ],
   entityclass: "CacheMesh",
-  entityBehaviors: [{name: "DoubleScope"}],
+  entityBehaviors: [{name: "DoubleScope"}, {name: "PortHole"}],
   creativeinventory: { general: ["*-ud"] },
   blockmaterial: "Ceramic",
   drawtype: "json",
