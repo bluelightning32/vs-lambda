@@ -11,52 +11,52 @@ using Vintagestory.API.Util;
 
 namespace LambdaFactory;
 
-public class BEBehaviorDoubleScope : BlockEntityBehavior,
+public class BEBehaviorScope : BlockEntityBehavior,
                                      IMeshGenerator,
                                      ITexPositionSource {
-  protected (Scope, Scope) _faces = (Scope.None, Scope.None);
+  protected Scope _face = Scope.None;
 
-  public BEBehaviorDoubleScope(BlockEntity blockentity) : base(blockentity) {}
+  public BEBehaviorScope(BlockEntity blockentity) : base(blockentity) { }
 
   public bool UpdatedPickedStack(ItemStack stack) {
-    stack.Attributes.SetInt("face1", (int)_faces.Item1);
-    stack.Attributes.SetInt("face2", (int)_faces.Item2);
+    stack.Attributes.SetInt("face", (int)_face);
     return true;
   }
 
   public override void ToTreeAttributes(ITreeAttribute tree) {
     base.ToTreeAttributes(tree);
-    tree.SetInt("face1", (int)_faces.Item1);
-    tree.SetInt("face2", (int)_faces.Item2);
+    tree.SetInt("face", (int)_face);
   }
 
   public override void OnBlockPlaced(ItemStack byItemStack) {
     base.OnBlockPlaced(byItemStack);
-    _faces.Item1 =
-        (Scope)byItemStack.Attributes.GetAsInt("face1", (int)Scope.None);
-    _faces.Item2 =
-        (Scope)byItemStack.Attributes.GetAsInt("face2", (int)Scope.None);
+    if (byItemStack == null) {
+      // The OmniRotatable behavior does not pass the item stack through when it places the oriented block.
+      _face = Scope.None;
+    } else {
+      _face =
+          (Scope)byItemStack.Attributes.GetAsInt("face", (int)Scope.None);
+    }
   }
 
   public override void
   FromTreeAttributes(ITreeAttribute tree,
                      IWorldAccessor worldAccessForResolve) {
     base.FromTreeAttributes(tree, worldAccessForResolve);
-    _faces.Item1 = (Scope)tree.GetAsInt("face1", (int)Scope.None);
-    _faces.Item2 = (Scope)tree.GetAsInt("face2", (int)Scope.None);
+    _face = (Scope)tree.GetAsInt("face", (int)Scope.None);
     // No need to update the mesh here. Initialize will be called before the
     // block is rendered.
   }
 
   public void GenerateMesh(ref MeshData mesh) {
     ((ICoreClientAPI)Api)
-        .Tesselator.TesselateShape("corner", Block.Code, Block.Shape, out mesh,
+        .Tesselator.TesselateShape("scope", Block.Code, Block.Shape, out mesh,
                                    this);
   }
 
-  public object GetKey() { return _faces; }
+  public object GetKey() { return _face; }
 
-  public object GetClonedKey() { return _faces; }
+  public object GetClonedKey() { return _face; }
 
   public Size2i AtlasSize {
     get {
@@ -88,12 +88,9 @@ public class BEBehaviorDoubleScope : BlockEntityBehavior,
   public TextureAtlasPosition this[string textureCode] {
     get {
       return textureCode switch {
-        "active1up" => GetBlendedTexture("scope/up", _faces.Item1),
-        "active1ew" => GetBlendedTexture("scope/eastwest", _faces.Item1),
-        "active1ns" => GetBlendedTexture("scope/northsouth", _faces.Item1),
-        "active2up" => GetBlendedTexture("scope/up", _faces.Item2),
-        "active2ew" => GetBlendedTexture("scope/eastwest", _faces.Item2),
-        "active2ns" => GetBlendedTexture("scope/northsouth", _faces.Item2),
+        "up" => GetBlendedTexture("scope/up", _face),
+        "eastwest" => GetBlendedTexture("scope/eastwest", _face),
+        "northsouth" => GetBlendedTexture("scope/northsouth", _face),
         _ => ((ICoreClientAPI)Api)
                  .Tesselator.GetTextureSource(Block)[textureCode],
       };

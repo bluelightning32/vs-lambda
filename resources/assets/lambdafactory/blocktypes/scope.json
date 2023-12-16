@@ -1,77 +1,63 @@
 {
   code: "scope",
   variantGroups: [
-    { code: "porthole",
-      states: ["solid", "hole"]
-    },
-    { code: "scope",
-      states: ["none", "function", "case", "forall", "matchin"]
-    },
     { code: "rot",
-      loadFromPropertiesCombine: ["abstract/horizontalorientation", "abstract/verticalorientation"]
+      loadFromPropertiesCombine: [
+        "abstract/horizontalorientation",
+        "abstract/verticalorientation"
+      ]
     }
   ],
   behaviors: [
-    { name: "OmniRotatable", properties: {rotateSides: true, facing: "block"} },
+    { name: "BlockEntityForward"
+    },
+    { name: "OmniRotatable", properties: {rotateSides: true, facing: "block"
+      }
+    },
   ],
-  creativeinventory: { general: ["*-up"] },
+  entityclass: "CacheMesh",
+  entityBehaviors: [
+    {name: "Scope"
+    },
+    {name: "PortHole"
+    }
+  ],
+  creativeinventory: { general: [
+      "*-up"
+    ]
+  },
   blockmaterial: "Ceramic",
   drawtype: "json",
   shapeByType: {
     "*-north": {
-      base: "block/slab-{porthole}",
+      base: "block/slab-solid",
       rotateX: 270
     },
     "*-east": {
-      base: "block/slab-{porthole}",
+      base: "block/slab-solid",
       rotateX: 270,
       rotateZ: 270
     },
     "*-south": {
-      base: "block/slab-{porthole}",
+      base: "block/slab-solid",
       rotateX: 270,
       rotateZ: 180
     },
     "*-west": {
-      base: "block/slab-{porthole}",
+      base: "block/slab-solid",
       rotateX: 270,
       rotateZ: 90
     },
     "*-up": {
-      base: "block/slab-{porthole}"
+      base: "block/slab-solid"
     },
     "*-down": {
-      base: "block/slab-{porthole}",
+      base: "block/slab-solid",
       rotateX: 180,
       rotateY: 180
     },
   },
-  texturesByType: {
-    "*-none-*": {
-      "northsouth": {
-        base: "scope/northsouth"
-      },
-      "eastwest": {
-        base: "scope/eastwest"
-      },
-      "up": {
-        base: "scope/up"
-      },
-    },
-    "*": {
-      "northsouth": {
-        base: "scope/northsouth",
-        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
-      },
-      "eastwest": {
-        base: "scope/eastwest",
-        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
-      },
-      "up": {
-        base: "scope/up",
-        blendedOverlays: [{ base: "scope/{scope}", blendMode: "ColorBurn" }]
-      },
-    },
+  textures: {
   },
   sideSolidOpaqueAo: {
     all: false
