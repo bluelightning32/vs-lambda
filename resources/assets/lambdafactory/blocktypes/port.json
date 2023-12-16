@@ -5,7 +5,6 @@
       name: "Decor",
       properties: {
         sides: ["north", "east", "south", "west", "up", "down"],
-        sidedVariants: true,
         notFullFace: true,
         removable: true,
         thickness: 0.125,
@@ -14,20 +13,12 @@
   ],
   variantgroups: [
     { code: "type", states: ["direct", "passthrough"]},
-    { code: "dir", states: ["in", "out"]},
-    { code: "rot", loadFromPropertiesCombine: ["abstract/horizontalorientation", "abstract/verticalorientation"]}
+    { code: "dir", states: ["in", "out"]}
   ],
-  creativeinventory: { general: ["*-south"] },
+  creativeinventory: { general: ["*"] },
   blockmaterial: "Stone",
   drawtype: "json",
-  shapeByType: {
-    "*-south": { base: "block/port/{dir}" },
-    "*-west": { base: "block/port/{dir}", rotateY: 270 },
-    "*-north": { base: "block/port/{dir}", rotateY: 180 },
-    "*-east": { base: "block/port/{dir}", rotateY: 90 },
-    "*-down": { base: "block/port/{dir}", rotateX: 270, rotateY: 180 },
-    "*-up": { base: "block/port/{dir}", rotateX: 90, rotateY: 180 },
-  },
+  shape: { base: "block/port/{dir}" },
   texturesByType: {
     "*-passthrough-*": {
       "port": { base: "port/passthrough" }
