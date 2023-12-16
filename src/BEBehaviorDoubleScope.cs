@@ -50,8 +50,8 @@ public class BEBehaviorDoubleScope : BlockEntityBehavior,
 
   public void GenerateMesh(ref MeshData mesh) {
     ((ICoreClientAPI)Api)
-        .Tesselator.TesselateShape("doublescope", Block.Code, Block.Shape, out mesh,
-                                   this);
+        .Tesselator.TesselateShape("doublescope", Block.Code, Block.Shape,
+                                   out mesh, this);
   }
 
   public object GetKey() { return _faces; }
@@ -71,8 +71,8 @@ public class BEBehaviorDoubleScope : BlockEntityBehavior,
         new AssetLocation(LambdaFactoryModSystem.Domain, baseTex));
     if (scope != Scope.None) {
       BlendedOverlayTexture scopeBlend = new BlendedOverlayTexture();
-      scopeBlend.Base = new AssetLocation(
-          LambdaFactoryModSystem.Domain, $"scope/{ScopeHelper.GetCode(scope)}");
+      scopeBlend.Base = new AssetLocation(LambdaFactoryModSystem.Domain,
+                                          $"scope/{scope.GetCode()}");
       scopeBlend.BlendMode = EnumColorBlendMode.ColorBurn;
       composite.BlendedOverlays = new BlendedOverlayTexture[] { scopeBlend };
     }

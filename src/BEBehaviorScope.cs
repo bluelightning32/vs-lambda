@@ -12,11 +12,11 @@ using Vintagestory.API.Util;
 namespace LambdaFactory;
 
 public class BEBehaviorScope : BlockEntityBehavior,
-                                     IMeshGenerator,
-                                     ITexPositionSource {
+                               IMeshGenerator,
+                               ITexPositionSource {
   protected Scope _face = Scope.None;
 
-  public BEBehaviorScope(BlockEntity blockentity) : base(blockentity) { }
+  public BEBehaviorScope(BlockEntity blockentity) : base(blockentity) {}
 
   public bool UpdatedPickedStack(ItemStack stack) {
     stack.Attributes.SetInt("face", (int)_face);
@@ -31,11 +31,11 @@ public class BEBehaviorScope : BlockEntityBehavior,
   public override void OnBlockPlaced(ItemStack byItemStack) {
     base.OnBlockPlaced(byItemStack);
     if (byItemStack == null) {
-      // The OmniRotatable behavior does not pass the item stack through when it places the oriented block.
+      // The OmniRotatable behavior does not pass the item stack through when it
+      // places the oriented block.
       _face = Scope.None;
     } else {
-      _face =
-          (Scope)byItemStack.Attributes.GetAsInt("face", (int)Scope.None);
+      _face = (Scope)byItemStack.Attributes.GetAsInt("face", (int)Scope.None);
     }
   }
 
@@ -71,8 +71,8 @@ public class BEBehaviorScope : BlockEntityBehavior,
         new AssetLocation(LambdaFactoryModSystem.Domain, baseTex));
     if (scope != Scope.None) {
       BlendedOverlayTexture scopeBlend = new BlendedOverlayTexture();
-      scopeBlend.Base = new AssetLocation(
-          LambdaFactoryModSystem.Domain, $"scope/{ScopeHelper.GetCode(scope)}");
+      scopeBlend.Base = new AssetLocation(LambdaFactoryModSystem.Domain,
+                                          $"scope/{scope.GetCode()}");
       scopeBlend.BlendMode = EnumColorBlendMode.ColorBurn;
       composite.BlendedOverlays = new BlendedOverlayTexture[] { scopeBlend };
     }

@@ -10,8 +10,8 @@ public enum Scope {
   Max = Matchin
 }
 
-public static class ScopeHelper {
-  public static string GetCode(Scope scope) {
+public static class ScopeExtension {
+  public static string GetCode(this Scope scope) {
     return scope switch {
       Scope.None => "none",
       Scope.Function => "function",

@@ -196,8 +196,8 @@ public class CornerScopes : IEquatable<CornerScopes>,
         LambdaFactoryModSystem.Domain, "scope/cornercrystal"));
     if (scope != Scope.None) {
       BlendedOverlayTexture scopeBlend = new BlendedOverlayTexture();
-      scopeBlend.Base = new AssetLocation(
-          LambdaFactoryModSystem.Domain, $"scope/{ScopeHelper.GetCode(scope)}");
+      scopeBlend.Base = new AssetLocation(LambdaFactoryModSystem.Domain,
+                                          $"scope/{scope.GetCode()}");
       scopeBlend.BlendMode = EnumColorBlendMode.ColorBurn;
       composite.BlendedOverlays = new BlendedOverlayTexture[] { scopeBlend };
     }

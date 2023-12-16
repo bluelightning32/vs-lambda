@@ -58,7 +58,7 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
       _fixedScope = false;
     } else {
       _fixedScope = true;
-      _key.Scope = ScopeHelper.FromCode(scope);
+      _key.Scope = ScopeExtension.FromCode(scope);
     }
 
     UpdateMesh();
@@ -176,9 +176,8 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
     Array.Resize(ref compositeReplacement.BlendedOverlays,
                  (compositeReplacement.BlendedOverlays?.Length ?? 0) + 1);
     BlendedOverlayTexture scopeBlend = new BlendedOverlayTexture();
-    scopeBlend.Base =
-        new AssetLocation(LambdaFactoryModSystem.Domain,
-                          $"scope/{ScopeHelper.GetCode(scope)}/full");
+    scopeBlend.Base = new AssetLocation(LambdaFactoryModSystem.Domain,
+                                        $"scope/{scope.GetCode()}/full");
     scopeBlend.BlendMode = EnumColorBlendMode.ColorBurn;
     compositeReplacement
         .BlendedOverlays[compositeReplacement.BlendedOverlays.Length - 1] =
@@ -248,9 +247,8 @@ public class BlockEntityScope<Key> : BlockEntity, IBlockEntityForward
     Array.Resize(ref compositeReplacement.BlendedOverlays,
                  (compositeReplacement.BlendedOverlays?.Length ?? 0) + 1);
     BlendedOverlayTexture scopeBlend = new BlendedOverlayTexture();
-    scopeBlend.Base =
-        new AssetLocation(LambdaFactoryModSystem.Domain,
-                          $"scope/{ScopeHelper.GetCode(scope)}/full");
+    scopeBlend.Base = new AssetLocation(LambdaFactoryModSystem.Domain,
+                                        $"scope/{scope.GetCode()}/full");
     scopeBlend.BlendMode = EnumColorBlendMode.ColorBurn;
     compositeReplacement
         .BlendedOverlays[compositeReplacement.BlendedOverlays.Length - 1] =
