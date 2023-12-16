@@ -1,0 +1,23 @@
+{
+  code: "edgereference",
+  creativeinventory: { general: ["*"] },
+  blockmaterial: "Ceramic",
+  drawtype: "json",
+  shape: { base: "block/basic/cube" },
+  textures: {
+		"north": { base: "edgereference-north"},
+		"east": { base: "edgereference-east"},
+		"south": { base: "edgereference-south"},
+		"west": { base: "edgereference-west"},
+		"up": { base: "edgereference-up"},
+		"down": { base: "edgereference-down"},
+  },
+  sideSolidOpaqueAo: {
+    all: true
+  },
+  resistance: 3.5,
+  sounds: {
+    place: "game:block/ceramicplace",
+    walk: "game:walk/stone1"
+  },
+}
