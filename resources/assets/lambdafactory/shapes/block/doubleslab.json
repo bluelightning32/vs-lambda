@@ -9,10 +9,13 @@
 	},
 	"textures": {
 		"down": "scope/down",
-		"eastwest": "scope/eastwest",
-		"northsouth": "scope/northsouth",
 		"split": "scope/split",
-		"up": "scope/up"
+		"active1up": "scope/up",
+		"active1ew": "scope/eastwest",
+		"active1ns": "scope/northsouth",
+		"active2up": "scope/up",
+		"active2ew": "scope/eastwest",
+		"active2ns": "scope/northsouth"
 	},
 	"elements": [
 		{
@@ -32,11 +35,11 @@
 			"from": [ 0.0, 14.0, 0.0 ],
 			"to": [ 16.0, 16.0, 16.0 ],
 			"faces": {
-				"north": { "texture": "#northsouth", "uv": [ 0.0, 0.0, 16.0, 2.0 ], "autoUv": false },
-				"east": { "texture": "#eastwest", "uv": [ 0.0, 0.0, 16.0, 2.0 ] },
-				"south": { "texture": "#northsouth", "uv": [ 0.0, 14.0, 16.0, 16.0 ] },
-				"west": { "texture": "#eastwest", "uv": [ 16.0, 14.0, 0.0, 16.0 ], "autoUv": false },
-				"up": { "texture": "#up", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
+				"north": { "texture": "#active1ns", "uv": [ 0.0, 0.0, 16.0, 2.0 ], "autoUv": false },
+				"east": { "texture": "#active1ew", "uv": [ 0.0, 0.0, 16.0, 2.0 ] },
+				"south": { "texture": "#active1ns", "uv": [ 0.0, 14.0, 16.0, 16.0 ] },
+				"west": { "texture": "#active1ew", "uv": [ 16.0, 14.0, 0.0, 16.0 ], "autoUv": false },
+				"up": { "texture": "#active1up", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
 			}
 		},
 		{
@@ -44,11 +47,11 @@
 			"from": [ 0.0, 0.0, 0.0 ],
 			"to": [ 16.0, 2.0, 16.0 ],
 			"faces": {
-				"north": { "texture": "#northsouth", "uv": [ 0.0, 0.0, 16.0, 2.0 ], "autoUv": false },
-				"east": { "texture": "#eastwest", "uv": [ 0.0, 0.0, 16.0, 2.0 ] },
-				"south": { "texture": "#northsouth", "uv": [ 0.0, 14.0, 16.0, 16.0 ] },
-				"west": { "texture": "#eastwest", "uv": [ 16.0, 14.0, 0.0, 16.0 ], "autoUv": false },
-				"down": { "texture": "#up", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "windMode": [-1,-1,-1,-1] }
+				"north": { "texture": "#active2ns", "uv": [ 0.0, 0.0, 16.0, 2.0 ], "autoUv": false },
+				"east": { "texture": "#active2ew", "uv": [ 0.0, 0.0, 16.0, 2.0 ] },
+				"south": { "texture": "#active2ns", "uv": [ 0.0, 14.0, 16.0, 16.0 ] },
+				"west": { "texture": "#active2ew", "uv": [ 16.0, 14.0, 0.0, 16.0 ], "autoUv": false },
+				"down": { "texture": "#active2up", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "windMode": [-1,-1,-1,-1] }
 			}
 		}
 	]}

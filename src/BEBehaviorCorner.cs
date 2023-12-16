@@ -253,7 +253,7 @@ public class BEBehaviorCorner : BlockEntityBehavior,
                                    this);
   }
 
-  public ICloneable GetKey() { return _corners; }
+  public object GetKey() { return _corners; }
 
   public Size2i AtlasSize {
     get {

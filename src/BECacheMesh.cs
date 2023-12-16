@@ -11,7 +11,8 @@ using Vintagestory.API.Util;
 namespace LambdaFactory;
 
 interface IMeshGenerator {
-  public ICloneable GetKey();
+  public object GetKey();
+  public object GetClonedKey() { return ((ICloneable)GetKey()).Clone(); }
   public void GenerateMesh(ref MeshData mesh);
 
   public bool UpdatedPickedStack(ItemStack stack);
@@ -30,16 +31,16 @@ public class BlockEntityCacheMesh : BlockEntity, IBlockEntityForward {
     UpdateMesh();
   }
 
-  static private Dictionary<List<ICloneable>, MeshData>
-  GetMeshCache(ICoreAPI api, Block block) {
+  static private Dictionary<List<object>, MeshData> GetMeshCache(ICoreAPI api,
+                                                                 Block block) {
     return ObjectCacheUtil.GetOrCreate(
         api, $"lambdafactory-mesh-{block.Code}",
-        () => new Dictionary<List<ICloneable>, MeshData>(
-            new ListEqualityComparer<ICloneable>()));
+        () => new Dictionary<List<object>, MeshData>(
+            new ListEqualityComparer<object>()));
   }
 
-  private List<ICloneable> GetKey() {
-    List<ICloneable> result = new List<ICloneable>();
+  private List<object> GetKey() {
+    List<object> result = new List<object>();
     foreach (var behavior in Behaviors) {
       IMeshGenerator generator = behavior as IMeshGenerator;
       if (generator == null) {
@@ -50,22 +51,33 @@ public class BlockEntityCacheMesh : BlockEntity, IBlockEntityForward {
     return result;
   }
 
+  private List<object> GetClonedKey() {
+    List<object> result = new List<object>();
+    foreach (var behavior in Behaviors) {
+      IMeshGenerator generator = behavior as IMeshGenerator;
+      if (generator == null) {
+        continue;
+      }
+      result.Add(generator.GetClonedKey());
+    }
+    return result;
+  }
+
   public void UpdateMesh() {
     if (Api.Side == EnumAppSide.Server)
       return;
-    List<ICloneable> key = GetKey();
-    Dictionary<List<ICloneable>, MeshData> cache = GetMeshCache(Api, Block);
+    List<object> key = GetKey();
+    Dictionary<List<object>, MeshData> cache = GetMeshCache(Api, Block);
     if (cache.TryGetValue(key, out _mesh)) {
       return;
     }
     Api.Logger.Notification(
         "lambda: Cache miss for {0} {1}. Dict has {2} entries.", Block.Code,
-        ListEqualityComparer<ICloneable>.GetString(key), cache.Count);
+        ListEqualityComparer<object>.GetString(key), cache.Count);
 
     _mesh = null;
     GenerateMesh(ref _mesh);
-    List<ICloneable> cloned =
-        key.Select(item => (ICloneable)item.Clone()).ToList();
+    List<object> cloned = GetClonedKey();
     cache[cloned] = _mesh;
   }
 

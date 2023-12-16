@@ -6,8 +6,11 @@
     }
   ],
   behaviors: [
+    { name: "BlockEntityForward" },
     { name: "Pillar", properties: {invertedPlacement: true}},
   ],
+  entityclass: "CacheMesh",
+  entityBehaviors: [{name: "DoubleScope"}],
   creativeinventory: { general: ["*-ud"] },
   blockmaterial: "Ceramic",
   drawtype: "json",
