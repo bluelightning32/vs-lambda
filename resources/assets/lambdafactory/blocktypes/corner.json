@@ -1,9 +1,10 @@
 {
   code: "corner",
-  entityclass: "Corner",
   behaviors: [
     { name: "BlockEntityForward" }
   ],
+  entityclass: "CacheMesh",
+  entityBehaviors: [{name: "Corner"}],
   creativeinventory: { general: ["*"] },
   blockmaterial: "Ceramic",
   drawtype: "json",

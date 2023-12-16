@@ -1,6 +1,14 @@
 namespace LambdaFactory;
 
-public enum Scope { None = -1, Function = 0, Case = 1, Forall = 2, Matchin = 3, Min = None, Max = Matchin }
+public enum Scope {
+  None = -1,
+  Function = 0,
+  Case = 1,
+  Forall = 2,
+  Matchin = 3,
+  Min = None,
+  Max = Matchin
+}
 
 public static class ScopeHelper {
   public static string GetCode(Scope scope) {
