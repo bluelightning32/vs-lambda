@@ -1,3 +1,5 @@
+using System;
+
 namespace LambdaFactory;
 
 public enum Scope {
@@ -12,23 +14,13 @@ public enum Scope {
 
 public static class ScopeExtension {
   public static string GetCode(this Scope scope) {
-    return scope switch {
-      Scope.None => "none",
-      Scope.Function => "function",
-      Scope.Case => "case",
-      Scope.Forall => "forall",
-      Scope.Matchin => "matchin",
-      _ => "unknown",
-    };
+    return scope.ToString().ToLower();
   }
   public static Scope FromCode(string code, Scope def = Scope.Function) {
-    return code switch {
-      "none" => Scope.None,
-      "function" => Scope.Function,
-      "case" => Scope.Case,
-      "forall" => Scope.Forall,
-      "matchin" => Scope.Matchin,
-      _ => def,
-    };
+    Scope result;
+    if (!Enum.TryParse<Scope>(code, true, out result)) {
+      result = def;
+    }
+    return result;
   }
 }
