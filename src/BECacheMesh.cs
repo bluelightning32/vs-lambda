@@ -12,7 +12,7 @@ namespace LambdaFactory;
 
 interface IMeshGenerator {
   public object GetKey();
-  public object GetClonedKey() { return ((ICloneable)GetKey()).Clone(); }
+  public object GetImmutableKey() { return ((ICloneable)GetKey()).Clone(); }
   public void GenerateMesh(ref MeshData mesh);
 
   public bool UpdatedPickedStack(ItemStack stack) { return false; }
@@ -58,7 +58,7 @@ public class BlockEntityCacheMesh : BlockEntity, IBlockEntityForward {
       if (generator == null) {
         continue;
       }
-      result.Add(generator.GetClonedKey());
+      result.Add(generator.GetImmutableKey());
     }
     return result;
   }

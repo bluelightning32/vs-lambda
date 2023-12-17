@@ -3,11 +3,11 @@ using System;
 namespace LambdaFactory;
 
 public enum Scope {
-  None = -1,
-  Function = 0,
-  Case = 1,
-  Forall = 2,
-  Matchin = 3,
+  None = 0,
+  Function = 1,
+  Case = 2,
+  Forall = 3,
+  Matchin = 4,
   Min = None,
   Max = Matchin
 }

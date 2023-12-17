@@ -56,7 +56,7 @@ public class BEBehaviorDoubleScope : BlockEntityBehavior,
 
   public object GetKey() { return _faces; }
 
-  public object GetClonedKey() { return _faces; }
+  public object GetImmutableKey() { return _faces; }
 
   public Size2i AtlasSize {
     get {

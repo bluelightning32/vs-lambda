@@ -2,16 +2,52 @@
   code: "doublescope",
   variantGroups: [
     { code: "orientation",
-      states: ["ud", "ns", "we"]
+      states: [
+        "ud",
+        "ns",
+        "we"
+      ]
     }
   ],
   behaviors: [
-    { name: "BlockEntityForward" },
-    { name: "Pillar", properties: {invertedPlacement: true}},
+    { name: "BlockEntityForward"
+    },
+    { name: "Pillar", properties: {invertedPlacement: true
+      }
+    },
   ],
   entityclass: "CacheMesh",
-  entityBehaviors: [{name: "DoubleScope"}, {name: "PortHole"}],
-  creativeinventory: { general: ["*-ud"] },
+  entityBehaviors: [
+    {
+      name: "Network",
+      properties: {
+        scope: [
+          {
+            nodesByType: {
+              "*-ns": ["east-right", "up-up", "west-left", "down-up"],
+              "*-we": ["north-right", "up-left", "south-left", "down-right"],
+              "*-up": ["north-up", "east-up", "south-up", "west-up"]
+            },
+            textures: ["active1up", "active1ew", "active1ns"]
+          },
+          {
+            nodesByType: {
+              "*-ns": ["east-left", "up-down", "west-right", "down-down"],
+              "*-we": ["north-left", "up-right", "south-right", "down-left"],
+              "*-up": ["north-down", "east-down", "south-down", "west-down"]
+            },
+            textures: ["active2up", "active2ew", "active2ns"]
+          }
+        ]
+      }
+    },
+    {name: "PortHole"
+    }
+  ],
+  creativeinventory: { general: [
+      "*-ud"
+    ]
+  },
   blockmaterial: "Ceramic",
   drawtype: "json",
   shapeByType: {
@@ -29,6 +65,24 @@
     },
   },
   textures: {
+    "active1up": {
+      base: "scope/up"
+    },
+    "active1ew": {
+      base: "scope/eastwest"
+    },
+    "active1ns": {
+      base: "scope/northsouth"
+    },
+    "active2up": {
+      base: "scope/up"
+    },
+    "active2ew": {
+      base: "scope/eastwest"
+    },
+    "active2ns": {
+      base: "scope/northsouth"
+    }
   },
   sideSolidOpaqueAo: {
     all: true

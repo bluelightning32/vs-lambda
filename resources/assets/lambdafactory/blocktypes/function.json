@@ -8,7 +8,27 @@
     { name: "BlockEntityForward" }
   ],
   entityclass: "CacheMesh",
-  entityBehaviors: [{name: "PortHole"}],
+  entityBehaviors: [
+    {
+      name: "Network",
+      properties: {
+        scope: [
+          {
+            nodesByType: {
+              "*-north": ["east-right", "west-left", "down-up", "source"],
+              "*-south": ["east-left", "west-right", "down-down", "source"],
+              "*-west": ["north-right", "south-left", "down-right", "source"],
+              "*-east": ["north-left", "south-right", "down-left", "source"]
+            },
+            textures: ["eastwest", "northsouth", "up"],
+            sourceScope: "function"
+          }
+        ]
+      }
+    },
+    {name: "PortHole"
+    }
+  ],
   creativeinventory: { general: ["*-north"] },
   blockmaterial: "Stone",
   drawtype: "json",
@@ -31,17 +51,14 @@
   },
   textures: {
     "eastwest": {
-      base: "scope/eastwest",
-      blendedOverlays: [{ base: "scope/function", blendMode: "ColorBurn" }]
+      base: "scope/eastwest"
     },
     "northsouth": {
-      base: "scope/northsouth",
-      blendedOverlays: [{ base: "scope/function", blendMode: "ColorBurn" }]
+      base: "scope/northsouth"
     },
     "up": {
-      base: "scope/up",
-      blendedOverlays: [{ base: "scope/function", blendMode: "ColorBurn" }]
-    },
+      base: "scope/up"
+    }
   },
   sideopaque: {
     all: true,

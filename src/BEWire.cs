@@ -117,7 +117,6 @@ public class BlockEntityWire : BlockEntity, IBlockEntityForward {
 
   public override bool OnTesselation(ITerrainMeshPool mesher,
                                      ITesselatorAPI tessThreadTesselator) {
-    Api.Logger.Notification($"lambda: OnTesselation {GetHashCode()}");
     if (_up_mesh == null) {
       return false;
     }

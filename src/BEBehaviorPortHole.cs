@@ -94,5 +94,5 @@ public class BEBehaviorPortHole : BlockEntityBehavior,
 
   public object GetKey() { return _portedSides; }
 
-  public object GetClonedKey() { return _portedSides; }
+  public object GetImmutableKey() { return _portedSides; }
 }
