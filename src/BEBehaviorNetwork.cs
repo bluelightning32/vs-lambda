@@ -128,18 +128,6 @@ public class Network {
 
   public Network() {}
 
-  public TreeAttribute ToTreeAttributes(NetworkMembership membership) {
-    TreeAttribute tree = new TreeAttribute();
-    tree.SetInt("scope", (int)membership.Scope);
-    return tree;
-  }
-
-  public NetworkMembership FromTreeAttributes(TreeAttribute tree) {
-    NetworkMembership membership = new NetworkMembership();
-    membership.Scope = (Scope)tree.GetAsInt("scope");
-    return membership;
-  }
-
   public Scope GetScope(NetworkMembership[] membership) {
     if (Source) {
       return SourceScope;
@@ -232,16 +220,10 @@ public class Networks {
   public TreeArrayAttribute ToTreeAttributes(NetworkMembership[] membership) {
     List<TreeAttribute> info = new List<TreeAttribute>(Count);
     foreach (var network in _scope.Networks) {
-      if (network.Source) {
-        continue;
-      }
-      info.Add(network.ToTreeAttributes(membership[network.Id]));
+      info.Add(membership[network.Id].ToTreeAttributes());
     }
     foreach (var network in _match.Networks) {
-      if (network.Source) {
-        continue;
-      }
-      info.Add(network.ToTreeAttributes(membership[network.Id]));
+      info.Add(membership[network.Id].ToTreeAttributes());
     }
     if (info.Count == 0) {
       return null;
@@ -262,20 +244,12 @@ public class Networks {
     }
     int index = 0;
     foreach (var network in _scope.Networks) {
-      if (network.Source) {
-        membership[network.Id].Scope = network.SourceScope;
-      } else {
-        membership[network.Id] =
-            network.FromTreeAttributes(info.value[index++]);
-      }
+      membership[network.Id] =
+            NetworkMembership.FromTreeAttributes(info.value[index++]);
     }
     foreach (var network in _match.Networks) {
-      if (network.Source) {
-        membership[network.Id].Scope = network.SourceScope;
-      } else {
-        membership[network.Id] =
-            network.FromTreeAttributes(info.value[index++]);
-      }
+      membership[network.Id] =
+            NetworkMembership.FromTreeAttributes(info.value[index++]);
     }
     return membership;
   }
@@ -349,6 +323,18 @@ public struct NetworkMembership {
   public Scope Scope = Scope.None;
 
   public NetworkMembership() {}
+
+  public TreeAttribute ToTreeAttributes() {
+    TreeAttribute tree = new TreeAttribute();
+    tree.SetInt("scope", (int)Scope);
+    return tree;
+  }
+
+  public static NetworkMembership FromTreeAttributes(TreeAttribute tree) {
+    NetworkMembership membership = new NetworkMembership();
+    membership.Scope = (Scope)tree.GetAsInt("scope");
+    return membership;
+  }
 }
 
 public class BEBehaviorNetwork : BlockEntityBehavior,
