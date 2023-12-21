@@ -19,7 +19,7 @@ using Vintagestory.API.Util;
 
 namespace LambdaFactory;
 
-public enum Node {
+public enum Edge {
   [EnumMember(Value = "north-right")] NorthRight = 0,
   [EnumMember(Value = "north-up")] NorthUp = 1,
   [EnumMember(Value = "north-left")] NorthLeft = 2,
@@ -54,64 +54,64 @@ public enum Node {
   [EnumMember(Value = "unknown")] Unknown = 100,
 }
 
-static class NodeExtension {
-  public static BlockFacing GetFace(this Node node) {
+static class EdgeExtension {
+  public static BlockFacing GetFace(this Edge node) {
     return node switch {
-      Node.NorthRight or Node.NorthUp or Node.NorthLeft or
-          Node.NorthDown or Node.NorthCenter => BlockFacing.NORTH,
-      Node.EastRight or Node.EastUp or Node.EastLeft or Node.EastDown or
-          Node.EastCenter => BlockFacing.EAST,
-      Node.SouthRight or Node.SouthUp or Node.SouthLeft or
-          Node.SouthDown or Node.SouthCenter => BlockFacing.SOUTH,
-      Node.WestRight or Node.WestUp or Node.WestLeft or Node.WestDown or
-          Node.WestCenter => BlockFacing.WEST,
-      Node.UpRight or Node.UpUp or Node.UpLeft or Node.UpDown or
-          Node.UpCenter => BlockFacing.UP,
-      Node.DownRight or Node.DownUp or Node.DownLeft or Node.DownDown or
-          Node.DownCenter => BlockFacing.DOWN,
+      Edge.NorthRight or Edge.NorthUp or Edge.NorthLeft or
+          Edge.NorthDown or Edge.NorthCenter => BlockFacing.NORTH,
+      Edge.EastRight or Edge.EastUp or Edge.EastLeft or Edge.EastDown or
+          Edge.EastCenter => BlockFacing.EAST,
+      Edge.SouthRight or Edge.SouthUp or Edge.SouthLeft or
+          Edge.SouthDown or Edge.SouthCenter => BlockFacing.SOUTH,
+      Edge.WestRight or Edge.WestUp or Edge.WestLeft or Edge.WestDown or
+          Edge.WestCenter => BlockFacing.WEST,
+      Edge.UpRight or Edge.UpUp or Edge.UpLeft or Edge.UpDown or
+          Edge.UpCenter => BlockFacing.UP,
+      Edge.DownRight or Edge.DownUp or Edge.DownLeft or Edge.DownDown or
+          Edge.DownCenter => BlockFacing.DOWN,
       _ => null
     };
   }
 
-  public static Node GetOpposite(this Node node) {
-    return node switch { Node.NorthRight => Node.SouthLeft,
-                         Node.EastRight => Node.WestLeft,
-                         Node.SouthRight => Node.NorthLeft,
-                         Node.WestRight => Node.EastLeft,
+  public static Edge GetOpposite(this Edge node) {
+    return node switch { Edge.NorthRight => Edge.SouthLeft,
+                         Edge.EastRight => Edge.WestLeft,
+                         Edge.SouthRight => Edge.NorthLeft,
+                         Edge.WestRight => Edge.EastLeft,
 
-                         Node.NorthLeft => Node.SouthRight,
-                         Node.EastLeft => Node.WestRight,
-                         Node.SouthLeft => Node.NorthRight,
-                         Node.WestLeft => Node.EastRight,
+                         Edge.NorthLeft => Edge.SouthRight,
+                         Edge.EastLeft => Edge.WestRight,
+                         Edge.SouthLeft => Edge.NorthRight,
+                         Edge.WestLeft => Edge.EastRight,
 
-                         Node.NorthUp => Node.SouthUp,
-                         Node.EastUp => Node.WestUp,
-                         Node.SouthUp => Node.NorthUp,
-                         Node.WestUp => Node.EastUp,
+                         Edge.NorthUp => Edge.SouthUp,
+                         Edge.EastUp => Edge.WestUp,
+                         Edge.SouthUp => Edge.NorthUp,
+                         Edge.WestUp => Edge.EastUp,
 
-                         Node.NorthDown => Node.SouthDown,
-                         Node.EastDown => Node.WestDown,
-                         Node.SouthDown => Node.NorthDown,
-                         Node.WestDown => Node.EastDown,
+                         Edge.NorthDown => Edge.SouthDown,
+                         Edge.EastDown => Edge.WestDown,
+                         Edge.SouthDown => Edge.NorthDown,
+                         Edge.WestDown => Edge.EastDown,
 
-                         Node.UpUp => Node.DownUp,
-                         Node.UpDown => Node.DownDown,
-                         Node.UpLeft => Node.DownRight,
-                         Node.UpRight => Node.DownLeft,
+                         Edge.UpUp => Edge.DownUp,
+                         Edge.UpDown => Edge.DownDown,
+                         Edge.UpLeft => Edge.DownRight,
+                         Edge.UpRight => Edge.DownLeft,
 
-                         Node.DownUp => Node.UpUp,
-                         Node.DownDown => Node.UpDown,
-                         Node.DownLeft => Node.UpRight,
-                         Node.DownRight => Node.UpLeft,
+                         Edge.DownUp => Edge.UpUp,
+                         Edge.DownDown => Edge.UpDown,
+                         Edge.DownLeft => Edge.UpRight,
+                         Edge.DownRight => Edge.UpLeft,
 
-                         Node.NorthCenter => Node.SouthCenter,
-                         Node.EastCenter => Node.WestCenter,
-                         Node.SouthCenter => Node.NorthCenter,
-                         Node.WestCenter => Node.EastCenter,
-                         Node.UpCenter => Node.DownCenter,
-                         Node.DownCenter => Node.UpCenter,
+                         Edge.NorthCenter => Edge.SouthCenter,
+                         Edge.EastCenter => Edge.WestCenter,
+                         Edge.SouthCenter => Edge.NorthCenter,
+                         Edge.WestCenter => Edge.EastCenter,
+                         Edge.UpCenter => Edge.DownCenter,
+                         Edge.DownCenter => Edge.UpCenter,
 
-                         _ => Node.Unknown };
+                         _ => Edge.Unknown };
   }
 }
 
@@ -122,7 +122,7 @@ public class Network {
   [JsonProperty]
   public Scope SourceScope = Scope.Function;
   [JsonProperty]
-  public Node[] Nodes = Array.Empty<Node>();
+  public Edge[] Nodes = Array.Empty<Edge>();
   [JsonProperty]
   public string[] Textures = Array.Empty<string>();
 
@@ -150,7 +150,7 @@ public class Network {
 
   public void Propagate(ICoreAPI api, BlockPos pos, bool scopeNetwork,
                         ref NetworkMembership networkMembership) {
-    foreach (Node node in Nodes) {
+    foreach (Edge node in Nodes) {
       BlockFacing face = node.GetFace();
       if (face == null) {
         continue;
@@ -176,18 +176,18 @@ public class Network {
 [JsonArray]
 public class IndexedNetwork {
   public readonly Network[] Networks;
-  public readonly Dictionary<Node, Network> Index =
-      new Dictionary<Node, Network>();
+  public readonly Dictionary<Edge, Network> Index =
+      new Dictionary<Edge, Network>();
 
   public IndexedNetwork(int firstId, Network[] networks) {
     Networks = networks;
     foreach (var network in networks) {
       network.Id = firstId++;
       foreach (var node in network.Nodes) {
-        if (node == Node.Source) {
+        if (node == Edge.Source) {
           network.Source = true;
         }
-        if (node != Node.Unknown) {
+        if (node != Edge.Unknown) {
           Index.Add(node, network);
         }
       }
@@ -329,7 +329,7 @@ public class Networks {
     return membership;
   }
 
-  public NetworkMembership GetMembership(bool scopeNetwork, Node node,
+  public NetworkMembership GetMembership(bool scopeNetwork, Edge node,
                                          NetworkMembership[] membership) {
     IndexedNetwork network = scopeNetwork ? _scope : _match;
     if (!network.Index.TryGetValue(node, out Network n)) {
@@ -367,7 +367,7 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
     }
   }
 
-  public NetworkMembership GetMembership(bool scopeNetwork, Node node) {
+  public NetworkMembership GetMembership(bool scopeNetwork, Edge node) {
     return _networks.GetMembership(scopeNetwork, node, _membership);
   }
 
