@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -20,7 +21,7 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
   }
 
   class NetworkNodeAccessor : NodeAccessor {
-    private IWorldAccessor _world;
+    private readonly IWorldAccessor _world;
     public NetworkNodeAccessor(IWorldAccessor world) { _world = world; }
 
     public override BlockNodeTemplate GetBlock(BlockPos pos, out Node[] nodes) {
@@ -45,6 +46,8 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
   public class Manager {
     private readonly NetworkManager _networkManager;
 
+    public bool SingleStep = false;
+
     public Manager(IWorldAccessor world) {
       _networkManager = new NetworkManager(new NetworkNodeAccessor(world));
     }
@@ -53,6 +56,10 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
                          ref string failureCode) {
       return networks.CanPlace(_networkManager, pos, ref failureCode);
     }
+
+    public void ToggleSingleStep() { SingleStep = !SingleStep; }
+
+    public void Step() {}
   }
 
   public BEBehaviorNetwork(BlockEntity blockentity) : base(blockentity) {}
@@ -154,6 +161,15 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
       ICoreClientAPI capi = (ICoreClientAPI)Api;
       return _networks.GetTexture(textureCode, capi, Block, _nodes) ??
              capi.Tesselator.GetTextureSource(Block)[textureCode];
+    }
+  }
+
+  public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc) {
+    base.GetBlockInfo(forPlayer, dsc);
+    if ((Api as ICoreClientAPI)?.Settings.Bool["extendedDebugInfo"] ?? false) {
+      for (int i = 0; i < _nodes.Length; ++i) {
+        dsc.AppendLine($"node[{i}] = {{ {_nodes[i].ToString()} }}");
+      }
     }
   }
 }

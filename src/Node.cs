@@ -14,7 +14,7 @@ public struct Node {
   // The index of the edge in this node that points to the parent node. If the
   // network is fully up to date, then the parent edges point to the source
   // block.
-  public int ParentEdge;
+  public Edge Parent;
   public int PropagationDistance = Int32.MaxValue;
 
   public Node() {}
@@ -36,10 +36,10 @@ public struct Node {
     if (Source.IsSet()) {
       tree.SetBlockPos("SourceBlock", Source.Block);
       tree.SetInt("SourceNodeId", Source.NodeId);
+      tree.SetInt("Scope", (int)Scope);
+      tree.SetInt("Parent", (int)Parent);
+      tree.SetInt("PropagationDistance", PropagationDistance);
     }
-    tree.SetInt("Scope", (int)Scope);
-    tree.SetInt("SourceEdge", ParentEdge);
-    tree.SetInt("PropagationDistance", PropagationDistance);
     return tree;
   }
 
@@ -47,11 +47,15 @@ public struct Node {
     Node node = new Node();
     node.Source.Block = tree.GetBlockPos("SourceBlock", null);
     node.Source.NodeId = tree.GetAsInt("SourceNodeId", 0);
-    node.Scope = (Scope)tree.GetAsInt("Scope");
-    node.ParentEdge = tree.GetAsInt("SourceEdge", 0);
+    node.Scope = (Scope)tree.GetAsInt("Scope", (int)Scope.None);
+    node.Parent = (Edge)tree.GetAsInt("Parent", (int)Edge.Unknown);
     node.PropagationDistance =
         tree.GetAsInt("PropagationDistance", Int32.MaxValue);
     return node;
+  }
+
+  public override readonly string ToString() {
+    return $"source=&lt;{Source.Block?.ToString() ?? "null"}&gt;:{Source.NodeId}, parent={Parent}, dist={PropagationDistance}";
   }
 }
 
