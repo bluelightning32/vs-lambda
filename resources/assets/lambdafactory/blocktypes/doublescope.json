@@ -15,6 +15,7 @@
     { name: "Pillar", properties: {invertedPlacement: true
       }
     },
+    { name: "Network" },
   ],
   entityclass: "CacheMesh",
   entityBehaviors: [

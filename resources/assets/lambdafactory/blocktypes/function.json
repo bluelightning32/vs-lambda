@@ -5,7 +5,8 @@
   ],
   behaviors: [
     { name: "HorizontalOrientable" },
-    { name: "BlockEntityForward" }
+    { name: "BlockEntityForward" },
+    { name: "Network" },
   ],
   entityclass: "CacheMesh",
   entityBehaviors: [
