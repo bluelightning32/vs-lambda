@@ -63,20 +63,28 @@
   },
   sideopaque: {
     all: true,
-    up: false
+    up: false,
   },
   sideOpaqueByType: {
     "*-north": {
       north: false,
+      east: false,
+      west: false,
     },
     "*-east": {
       east: false,
+      north: false,
+      south: false,
     },
     "*-south": {
       south: false,
+      east: false,
+      west: false,
     },
     "*-west": {
       west: false,
+      north: false,
+      south: false,
     }
   },
   sidesolid: {
