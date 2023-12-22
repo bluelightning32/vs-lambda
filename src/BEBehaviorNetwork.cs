@@ -55,8 +55,8 @@ public enum Edge {
 }
 
 static class EdgeExtension {
-  public static BlockFacing GetFace(this Edge node) {
-    return node switch {
+  public static BlockFacing GetFace(this Edge edge) {
+    return edge switch {
       Edge.NorthRight or Edge.NorthUp or Edge.NorthLeft or
           Edge.NorthDown or Edge.NorthCenter => BlockFacing.NORTH,
       Edge.EastRight or Edge.EastUp or Edge.EastLeft or Edge.EastDown or
@@ -73,8 +73,8 @@ static class EdgeExtension {
     };
   }
 
-  public static Edge GetOpposite(this Edge node) {
-    return node switch { Edge.NorthRight => Edge.SouthLeft,
+  public static Edge GetOpposite(this Edge edge) {
+    return edge switch { Edge.NorthRight => Edge.SouthLeft,
                          Edge.EastRight => Edge.WestLeft,
                          Edge.SouthRight => Edge.NorthLeft,
                          Edge.WestRight => Edge.EastLeft,
@@ -116,30 +116,30 @@ static class EdgeExtension {
 }
 
 [JsonObject(MemberSerialization.OptIn)]
-public class Network {
+public class NodeTemplate {
   public int Id = 0;
   public bool Source = false;
   [JsonProperty]
   public Scope SourceScope = Scope.Function;
   [JsonProperty]
-  public Edge[] Nodes = Array.Empty<Edge>();
+  public Edge[] Edges = Array.Empty<Edge>();
   [JsonProperty]
   public string[] Textures = Array.Empty<string>();
 
-  public Network() {}
+  public NodeTemplate() {}
 
-  public Scope GetScope(NetworkMembership[] membership) {
+  public Scope GetScope(Node[] nodes) {
     if (Source) {
       return SourceScope;
     } else {
-      return membership[Id].Scope;
+      return nodes[Id].Scope;
     }
   }
 
   public void Propagate(ICoreAPI api, BlockPos pos, bool scopeNetwork,
-                        ref NetworkMembership networkMembership) {
-    foreach (Edge node in Nodes) {
-      BlockFacing face = node.GetFace();
+                        ref Node node) {
+    foreach (Edge edge in Edges) {
+      BlockFacing face = edge.GetFace();
       if (face == null) {
         continue;
       }
@@ -152,9 +152,9 @@ public class Network {
           neighborEntity.GetBehavior<BEBehaviorNetwork>();
       if (neighbor != null) {
         Scope neighborScope =
-            neighbor.GetMembership(scopeNetwork, node.GetOpposite()).Scope;
+            neighbor.GetNode(scopeNetwork, edge.GetOpposite()).Scope;
         if (neighborScope != Scope.None) {
-          networkMembership.Scope = neighborScope;
+          node.Scope = neighborScope;
         }
       }
     }
@@ -162,68 +162,68 @@ public class Network {
 }
 
 [JsonArray]
-public class IndexedNetwork {
-  public readonly Network[] Networks;
-  public readonly Dictionary<Edge, Network> Index =
-      new Dictionary<Edge, Network>();
+public class BlockNodeCategory {
+  public readonly NodeTemplate[] Networks;
+  public readonly Dictionary<Edge, NodeTemplate> Index =
+      new Dictionary<Edge, NodeTemplate>();
 
-  public IndexedNetwork(int firstId, Network[] networks) {
+  public BlockNodeCategory(int firstId, NodeTemplate[] networks) {
     Networks = networks;
     foreach (var network in networks) {
       network.Id = firstId++;
-      foreach (var node in network.Nodes) {
-        if (node == Edge.Source) {
+      foreach (var edge in network.Edges) {
+        if (edge == Edge.Source) {
           network.Source = true;
         }
-        if (node != Edge.Unknown) {
-          Index.Add(node, network);
+        if (edge != Edge.Unknown) {
+          Index.Add(edge, network);
         }
       }
     }
   }
 
   public void Propagate(ICoreAPI api, BlockPos pos, bool scopeNetwork,
-                        NetworkMembership[] membership) {
+                        Node[] nodes) {
     foreach (var network in Networks) {
-      network.Propagate(api, pos, scopeNetwork, ref membership[network.Id]);
+      network.Propagate(api, pos, scopeNetwork, ref nodes[network.Id]);
     }
   }
 }
 
 [JsonObject(MemberSerialization.OptIn)]
-public class Networks {
+public class BlockNodeTemplate {
   [JsonProperty]
-  private readonly IndexedNetwork _scope;
+  private readonly BlockNodeCategory _scope;
   [JsonProperty]
-  private readonly IndexedNetwork _match;
+  private readonly BlockNodeCategory _match;
 
-  private readonly Dictionary<string, Network> _textures =
-      new Dictionary<string, Network>();
+  private readonly Dictionary<string, NodeTemplate> _textures =
+      new Dictionary<string, NodeTemplate>();
 
   [JsonConstructor]
-  public Networks(Network[] scope, Network[] match) {
-    _scope = new IndexedNetwork(0, scope ?? Array.Empty<Network>());
-    _match = new IndexedNetwork(_scope.Networks.Length,
-                                match ?? Array.Empty<Network>());
-    foreach (Network network in _scope.Networks) {
+  public BlockNodeTemplate(NodeTemplate[] scope, NodeTemplate[] match) {
+    _scope = new BlockNodeCategory(0, scope ?? Array.Empty<NodeTemplate>());
+    _match = new BlockNodeCategory(_scope.Networks.Length,
+                                   match ?? Array.Empty<NodeTemplate>());
+    foreach (NodeTemplate network in _scope.Networks) {
       foreach (string texture in network.Textures) {
         _textures.Add(texture, network);
       }
     }
-    foreach (Network network in _match.Networks) {
+    foreach (NodeTemplate network in _match.Networks) {
       foreach (string texture in network.Textures) {
         _textures.Add(texture, network);
       }
     }
   }
 
-  public TreeArrayAttribute ToTreeAttributes(NetworkMembership[] membership) {
+  public TreeArrayAttribute ToTreeAttributes(Node[] nodes) {
     List<TreeAttribute> info = new List<TreeAttribute>(Count);
     foreach (var network in _scope.Networks) {
-      info.Add(membership[network.Id].ToTreeAttributes());
+      info.Add(nodes[network.Id].ToTreeAttributes());
     }
     foreach (var network in _match.Networks) {
-      info.Add(membership[network.Id].ToTreeAttributes());
+      info.Add(nodes[network.Id].ToTreeAttributes());
     }
     if (info.Count == 0) {
       return null;
@@ -236,35 +236,32 @@ public class Networks {
     get { return _scope.Networks.Length + _match.Networks.Length; }
   }
 
-  public NetworkMembership[] FromTreeAttributes(TreeArrayAttribute info) {
-    NetworkMembership[] membership = new NetworkMembership[Count];
+  public Node[] FromTreeAttributes(TreeArrayAttribute info) {
+    Node[] nodes = new Node[Count];
     if (info == null) {
-      SetSourceMembership(membership);
-      return membership;
+      SetSourceScope(nodes);
+      return nodes;
     }
     int index = 0;
     foreach (var network in _scope.Networks) {
-      membership[network.Id] =
-            NetworkMembership.FromTreeAttributes(info.value[index++]);
+      nodes[network.Id] = Node.FromTreeAttributes(info.value[index++]);
     }
     foreach (var network in _match.Networks) {
-      membership[network.Id] =
-            NetworkMembership.FromTreeAttributes(info.value[index++]);
+      nodes[network.Id] = Node.FromTreeAttributes(info.value[index++]);
     }
-    return membership;
+    return nodes;
   }
 
   public TextureAtlasPosition GetTexture(string name, ICoreClientAPI capi,
-                                         Block block,
-                                         NetworkMembership[] membership) {
-    if (!_textures.TryGetValue(name, out Network network)) {
+                                         Block block, Node[] nodes) {
+    if (!_textures.TryGetValue(name, out NodeTemplate network)) {
       return null;
     }
     CompositeTexture composite;
     if (!block.Textures.TryGetValue(name, out composite)) {
       return null;
     }
-    Scope scope = network.GetScope(membership);
+    Scope scope = network.GetScope(nodes);
     if (scope != Scope.None) {
       composite = composite.Clone();
       BlendedOverlayTexture scopeBlend = new BlendedOverlayTexture();
@@ -284,45 +281,43 @@ public class Networks {
     return tex;
   }
 
-  private void SetSourceMembership(NetworkMembership[] membership) {
+  private void SetSourceScope(Node[] nodes) {
     foreach (var network in _scope.Networks) {
       if (network.Source) {
-        membership[network.Id].Scope = network.SourceScope;
+        nodes[network.Id].Scope = network.SourceScope;
       }
     }
     foreach (var network in _match.Networks) {
       if (network.Source) {
-        membership[network.Id].Scope = network.SourceScope;
+        nodes[network.Id].Scope = network.SourceScope;
       }
     }
   }
 
-  public NetworkMembership[] CreateMembership() {
-    NetworkMembership[] membership = new NetworkMembership[Count];
-    SetSourceMembership(membership);
-    return membership;
+  public Node[] CreateNodes() {
+    Node[] nodes = new Node[Count];
+    SetSourceScope(nodes);
+    return nodes;
   }
 
-  public NetworkMembership GetMembership(bool scopeNetwork, Edge node,
-                                         NetworkMembership[] membership) {
-    IndexedNetwork network = scopeNetwork ? _scope : _match;
-    if (!network.Index.TryGetValue(node, out Network n)) {
-      return new NetworkMembership();
+  public Node GetNode(bool scopeNetwork, Edge edge, Node[] nodes) {
+    BlockNodeCategory network = scopeNetwork ? _scope : _match;
+    if (!network.Index.TryGetValue(edge, out NodeTemplate n)) {
+      return new Node();
     }
-    return membership[n.Id];
+    return nodes[n.Id];
   }
 
-  public void Propagate(ICoreAPI api, BlockPos pos,
-                        NetworkMembership[] membership) {
-    _scope.Propagate(api, pos, true, membership);
-    _match.Propagate(api, pos, false, membership);
+  public void Propagate(ICoreAPI api, BlockPos pos, Node[] nodes) {
+    _scope.Propagate(api, pos, true, nodes);
+    _match.Propagate(api, pos, false, nodes);
   }
 }
 
-public struct NetworkMembership {
+public struct Node {
   public Scope Scope = Scope.None;
 
-  public NetworkMembership() {}
+  public Node() {}
 
   public TreeAttribute ToTreeAttributes() {
     TreeAttribute tree = new TreeAttribute();
@@ -330,44 +325,45 @@ public struct NetworkMembership {
     return tree;
   }
 
-  public static NetworkMembership FromTreeAttributes(TreeAttribute tree) {
-    NetworkMembership membership = new NetworkMembership();
-    membership.Scope = (Scope)tree.GetAsInt("scope");
-    return membership;
+  public static Node FromTreeAttributes(TreeAttribute tree) {
+    Node node = new Node();
+    node.Scope = (Scope)tree.GetAsInt("scope");
+    return node;
   }
 }
 
 public class BEBehaviorNetwork : BlockEntityBehavior,
                                  IMeshGenerator,
                                  ITexPositionSource {
-  private Networks _networks;
-  private NetworkMembership[] _membership;
+  private BlockNodeTemplate _networks;
+  private Node[] _nodes;
 
   public BEBehaviorNetwork(BlockEntity blockentity) : base(blockentity) {}
 
   public override void ToTreeAttributes(ITreeAttribute tree) {
     base.ToTreeAttributes(tree);
-    TreeArrayAttribute networks = _networks.ToTreeAttributes(_membership);
+    TreeArrayAttribute networks = _networks.ToTreeAttributes(_nodes);
     if (networks != null) {
       tree["networks"] = networks;
     }
   }
 
-  public NetworkMembership GetMembership(bool scopeNetwork, Edge node) {
-    return _networks.GetMembership(scopeNetwork, node, _membership);
+  public Node GetNode(bool scopeNetwork, Edge edge) {
+    return _networks.GetNode(scopeNetwork, edge, _nodes);
   }
 
   private void ParseNetworks(JsonObject properties, ICoreAPI api) {
-    Dictionary<JsonObject, Networks> cache = ObjectCacheUtil.GetOrCreate(
-        api, $"lambdafactory-networks-{Block.Code}",
-        () => new Dictionary<JsonObject, Networks>());
+    Dictionary<JsonObject, BlockNodeTemplate> cache =
+        ObjectCacheUtil.GetOrCreate(
+            api, $"lambdafactory-networks-{Block.Code}",
+            () => new Dictionary<JsonObject, BlockNodeTemplate>());
     if (cache.TryGetValue(properties, out _networks)) {
       return;
     }
     api.Logger.Notification(
         "lambda: Properties cache miss for {0}. Dict has {1} entries.",
         Block.Code, cache.Count);
-    _networks = properties.AsObject<Networks>();
+    _networks = properties.AsObject<BlockNodeTemplate>();
     cache.Add(properties, _networks);
   }
 
@@ -378,7 +374,7 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
     // FromTreeAttributes is called before Initialize, so ParseNetworks needs to
     // be called before accessing _networks.
     ParseNetworks(properties, worldAccessForResolve.Api);
-    _membership =
+    _nodes =
         _networks.FromTreeAttributes(tree["networks"] as TreeArrayAttribute);
     // No need to update the mesh here. Initialize will be called before the
     // block is rendered.
@@ -386,18 +382,18 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
 
   public override void Initialize(ICoreAPI api, JsonObject properties) {
     base.Initialize(api, properties);
-    // _networks and _membership may have already been initialized in
-    // `FromTreeAttributes`. Reinitializing it would wipe out the membership
+    // _networks and _nodes may have already been initialized in
+    // `FromTreeAttributes`. Reinitializing it would wipe out the _nodes
     // information.
     if (_networks == null) {
       ParseNetworks(properties, api);
-      _membership = _networks.CreateMembership();
+      _nodes = _networks.CreateNodes();
     }
   }
 
   public override void OnBlockPlaced(ItemStack byItemStack = null) {
     base.OnBlockPlaced(byItemStack);
-    _networks.Propagate(Api, Pos, _membership);
+    _networks.Propagate(Api, Pos, _nodes);
   }
 
   public void GenerateMesh(ref MeshData mesh) {
@@ -410,15 +406,15 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
     if (Scope.Min < 0 || (int)Scope.Max > 7) {
       throw new Exception("Scope range is too large for 3 bits.");
     }
-    if (_membership.Length > 64 / 3) {
+    if (_nodes.Length > 64 / 3) {
       throw new Exception(
           $"Block {Block.Code} has more than the max supported networks.");
     }
 
     ulong key = 0;
-    foreach (NetworkMembership membership in _membership) {
+    foreach (Node node in _nodes) {
       key <<= 3;
-      key |= (ulong)membership.Scope;
+      key |= (ulong)node.Scope;
     }
 
     return key;
@@ -437,7 +433,7 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
   public TextureAtlasPosition this[string textureCode] {
     get {
       ICoreClientAPI capi = (ICoreClientAPI)Api;
-      return _networks.GetTexture(textureCode, capi, Block, _membership) ??
+      return _networks.GetTexture(textureCode, capi, Block, _nodes) ??
              capi.Tesselator.GetTextureSource(Block)[textureCode];
     }
   }

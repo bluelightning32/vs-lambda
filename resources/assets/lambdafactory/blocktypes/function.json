@@ -14,7 +14,7 @@
       properties: {
         scope: [
           {
-            nodesByType: {
+            edgesByType: {
               "*-north": ["east-right", "west-left", "down-up", "source"],
               "*-south": ["east-left", "west-right", "down-down", "source"],
               "*-west": ["north-right", "south-left", "down-right", "source"],

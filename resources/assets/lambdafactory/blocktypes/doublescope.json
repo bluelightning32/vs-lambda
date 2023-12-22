@@ -23,7 +23,7 @@
       properties: {
         scope: [
           {
-            nodesByType: {
+            edgesByType: {
               "*-ns": ["east-right", "up-up", "west-left", "down-up"],
               "*-we": ["north-right", "up-left", "south-left", "down-right"],
               "*-up": ["north-up", "east-up", "south-up", "west-up"]
@@ -31,7 +31,7 @@
             textures: ["active1up", "active1ew", "active1ns"]
           },
           {
-            nodesByType: {
+            edgesByType: {
               "*-ns": ["east-left", "up-down", "west-right", "down-down"],
               "*-we": ["north-left", "up-right", "south-right", "down-left"],
               "*-up": ["north-down", "east-down", "south-down", "west-down"]
