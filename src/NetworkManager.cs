@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using ProtoBuf;
 
+using Vintagestory.API.Common;
 using Vintagestory.API.Util;
 
 namespace LambdaFactory;
@@ -46,9 +47,24 @@ public class PendingUpdates {
 public class NetworkManager {
   PendingUpdates _pendingUpdates = new PendingUpdates();
 
+  private readonly int _distanceIncrementVariance = 18;
+
+  public int DefaultDistanceIncrement {
+    get { return 1 + (_distanceIncrementVariance >> 1); }
+  }
+
   public readonly NodeAccessor Accessor;
 
-  public NetworkManager(NodeAccessor accessor) { Accessor = accessor; }
+  public readonly EnumAppSide Side;
+
+  private readonly ILogger _logger;
+
+  public NetworkManager(EnumAppSide side, ILogger logger,
+                        NodeAccessor accessor) {
+    Side = side;
+    _logger = logger;
+    Accessor = accessor;
+  }
 
   public void Load(byte[] serialized) {
     if (serialized == null) {
@@ -59,4 +75,8 @@ public class NetworkManager {
   }
 
   public byte[] Save() { return SerializerUtil.Serialize(_pendingUpdates); }
+
+  public void Debug(string format, params object[] args) {
+    _logger?.Debug(format, args);
+  }
 }

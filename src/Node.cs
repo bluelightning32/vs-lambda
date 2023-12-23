@@ -43,15 +43,14 @@ public struct Node {
     return tree;
   }
 
-  public static Node FromTreeAttributes(TreeAttribute tree) {
-    Node node = new Node();
-    node.Source.Block = tree.GetBlockPos("SourceBlock", null);
-    node.Source.NodeId = tree.GetAsInt("SourceNodeId", 0);
-    node.Scope = (Scope)tree.GetAsInt("Scope", (int)Scope.None);
-    node.Parent = (Edge)tree.GetAsInt("Parent", (int)Edge.Unknown);
-    node.PropagationDistance =
-        tree.GetAsInt("PropagationDistance", Int32.MaxValue);
-    return node;
+  public bool FromTreeAttributes(TreeAttribute tree) {
+    Source.Block = tree.GetBlockPos("SourceBlock", null);
+    Source.NodeId = tree.GetAsInt("SourceNodeId", 0);
+    Scope oldScope = Scope;
+    Scope = (Scope)tree.GetAsInt("Scope", (int)Scope.None);
+    Parent = (Edge)tree.GetAsInt("Parent", (int)Edge.Unknown);
+    PropagationDistance = tree.GetAsInt("PropagationDistance", Int32.MaxValue);
+    return oldScope != Scope;
   }
 
   public override readonly string ToString() {
@@ -80,26 +79,33 @@ public class NodeTemplate {
     }
   }
 
-  public void Propagate(ICoreAPI api, BlockPos pos, bool scopeNetwork,
-                        ref Node node) {
+  public void OnPlaced(NetworkManager manager, BlockPos pos, bool scopeNetwork,
+                       BlockNodeTemplate[] neighborTemplates,
+                       Node[][] neighbors, ref Node node) {
+    manager.Debug("Block placed on {0} source set: {1}", manager.Side,
+                  node.Source.IsSet());
     foreach (Edge edge in Edges) {
       BlockFacing face = edge.GetFace();
       if (face == null) {
+        // The source edge does not have a face.
         continue;
       }
-      BlockEntity neighborEntity =
-          api.World.BlockAccessor.GetBlockEntity(pos.AddCopy(face));
-      if (neighborEntity == null) {
+      NodeTemplate neighborTemplate =
+          neighborTemplates[face.Index]?.GetNodeTemplate(scopeNetwork,
+                                                         edge.GetOpposite());
+      if (neighborTemplate == null) {
         continue;
       }
-      BEBehaviorNetwork neighbor =
-          neighborEntity.GetBehavior<BEBehaviorNetwork>();
-      if (neighbor != null) {
-        Scope neighborScope =
-            neighbor.GetNode(scopeNetwork, edge.GetOpposite()).Scope;
-        if (neighborScope != Scope.None) {
-          node.Scope = neighborScope;
-        }
+      var neighborNode = neighbors[face.Index][neighborTemplate.Id];
+      if (neighborNode.Source.IsSet()) {
+        node.Source = neighborNode.Source;
+        node.Scope = neighborNode.Scope;
+        node.Parent = edge;
+        node.PropagationDistance =
+            neighborNode.PropagationDistance + manager.DefaultDistanceIncrement;
+        NodePos nodePos = new NodePos(pos, Id);
+        // manager.Accessor.SetNode(nodePos, in node);
+        break;
       }
     }
   }

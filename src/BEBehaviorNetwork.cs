@@ -13,7 +13,7 @@ namespace LambdaFactory;
 public class BEBehaviorNetwork : BlockEntityBehavior,
                                  IMeshGenerator,
                                  ITexPositionSource {
-  private BlockNodeTemplate _networks;
+  private BlockNodeTemplate _template;
   private Node[] _nodes;
 
   public static string Name {
@@ -32,29 +32,25 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
         return null;
       }
       nodes = behavior._nodes;
-      return behavior._networks;
+      return behavior._template;
     }
 
     public override void SetNode(NodePos pos, in Node node) {
-      BEBehaviorNetwork behavior =
-          _world.BlockAccessor.GetBlockEntity(pos.Block)
-              ?.GetBehavior<BEBehaviorNetwork>();
+      BlockEntity block = _world.BlockAccessor.GetBlockEntity(pos.Block);
+      BEBehaviorNetwork behavior = block?.GetBehavior<BEBehaviorNetwork>();
       behavior._nodes[pos.NodeId] = node;
+      block.MarkDirty();
     }
   }
 
   public class Manager {
-    private readonly NetworkManager _networkManager;
+    internal readonly NetworkManager NetworkManager;
 
     public bool SingleStep = false;
 
     public Manager(IWorldAccessor world) {
-      _networkManager = new NetworkManager(new NetworkNodeAccessor(world));
-    }
-
-    public bool CanPlace(BlockNodeTemplate networks, BlockPos pos,
-                         ref string failureCode) {
-      return networks.CanPlace(_networkManager, pos, ref failureCode);
+      NetworkManager = new NetworkManager(world.Api.Side, world.Logger,
+                                          new NetworkNodeAccessor(world));
     }
 
     public void ToggleSingleStep() { SingleStep = !SingleStep; }
@@ -66,14 +62,14 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
 
   public override void ToTreeAttributes(ITreeAttribute tree) {
     base.ToTreeAttributes(tree);
-    TreeArrayAttribute networks = _networks.ToTreeAttributes(_nodes);
-    if (networks != null) {
-      tree["networks"] = networks;
+    TreeArrayAttribute nodes = _template.ToTreeAttributes(_nodes);
+    if (nodes != null) {
+      tree["nodes"] = nodes;
     }
   }
 
   public Node GetNode(bool scopeNetwork, Edge edge) {
-    return _networks.GetNode(scopeNetwork, edge, _nodes);
+    return _template.GetNode(scopeNetwork, edge, _nodes);
   }
 
   public static BlockNodeTemplate
@@ -82,15 +78,21 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
         ObjectCacheUtil.GetOrCreate(
             api, $"lambdafactory-network-properties",
             () => new Dictionary<JsonObject, BlockNodeTemplate>());
-    if (cache.TryGetValue(properties, out BlockNodeTemplate networks)) {
-      return networks;
+    if (cache.TryGetValue(properties, out BlockNodeTemplate block)) {
+      return block;
     }
     api.Logger.Notification(
         "lambda: Network properties cache miss. Dict has {0} entries.",
         cache.Count);
-    networks = properties.AsObject<BlockNodeTemplate>();
-    cache.Add(properties, networks);
-    return networks;
+    BlockNodeTemplateLoading loading =
+        properties.AsObject<BlockNodeTemplateLoading>();
+    NetworkManager manager =
+        api.ModLoader.GetModSystem<LambdaFactoryModSystem>()
+            .NetworkManager.NetworkManager;
+    block = new BlockNodeTemplate(loading, manager);
+
+    cache.Add(properties, block);
+    return block;
   }
 
   public override void
@@ -99,11 +101,29 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
     base.FromTreeAttributes(tree, worldAccessForResolve);
     // FromTreeAttributes is called before Initialize, so ParseNetworks needs to
     // be called before accessing _networks.
-    _networks = ParseBlockNodeTemplate(worldAccessForResolve.Api, properties);
-    _nodes = _networks.FromTreeAttributes(
-        Pos, tree["networks"] as TreeArrayAttribute);
-    // No need to update the mesh here. Initialize will be called before the
-    // block is rendered.
+    _template = ParseBlockNodeTemplate(worldAccessForResolve.Api, properties);
+
+    StringBuilder dsc = new StringBuilder();
+    for (int i = 0; i < (_nodes?.Length ?? 0); ++i) {
+      dsc.AppendLine($"oldnode[{i}] = {{ {_nodes[i].ToString()} }}");
+    }
+
+    if (_template.FromTreeAttributes(Pos, tree["nodes"] as TreeArrayAttribute,
+                                     ref _nodes) &&
+        Api != null) {
+      // Only update the mesh here if the behavior was already initialized
+      // (indicated by the non-null Api), and the template indicates that the
+      // nodes changed significantly enough to require a mesh update.
+      (Blockentity as BlockEntityCacheMesh)?.UpdateMesh();
+      Blockentity.MarkDirty(true);
+    }
+
+    for (int i = 0; i < _nodes.Length; ++i) {
+      dsc.AppendLine($"newnode[{i}] = {{ {_nodes[i].ToString()} }}");
+    }
+    worldAccessForResolve.Api.Logger.Debug(
+        "FromTreeAttributes on {0} api set {1}: {2}",
+        worldAccessForResolve.Api.Side, Api != null, dsc);
   }
 
   public override void Initialize(ICoreAPI api, JsonObject properties) {
@@ -111,15 +131,15 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
     // _networks and _nodes may have already been initialized in
     // `FromTreeAttributes`. Reinitializing it would wipe out the _nodes
     // information.
-    if (_networks == null) {
-      _networks = ParseBlockNodeTemplate(Api, properties);
-      _nodes = _networks.CreateNodes(Pos);
+    if (_template == null) {
+      _template = ParseBlockNodeTemplate(Api, properties);
+      _nodes = _template.CreateNodes(Pos);
     }
   }
 
   public override void OnBlockPlaced(ItemStack byItemStack = null) {
     base.OnBlockPlaced(byItemStack);
-    _networks.Propagate(Api, Pos, _nodes);
+    _template.OnPlaced(Pos, _nodes);
   }
 
   public void GenerateMesh(ref MeshData mesh) {
@@ -159,7 +179,7 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
   public TextureAtlasPosition this[string textureCode] {
     get {
       ICoreClientAPI capi = (ICoreClientAPI)Api;
-      return _networks.GetTexture(textureCode, capi, Block, _nodes) ??
+      return _template.GetTexture(textureCode, capi, Block, _nodes) ??
              capi.Tesselator.GetTextureSource(Block)[textureCode];
     }
   }

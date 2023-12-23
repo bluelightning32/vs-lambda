@@ -2,19 +2,25 @@ using Vintagestory.API.Common;
 
 namespace LambdaFactory.Tests;
 
-public static class TestBlockNodeTemplates {
-  public static BlockNodeTemplate ScopeCenterConnector =
-      JsonUtil.FromString<BlockNodeTemplate>(@"
+public class TestBlockNodeTemplates {
+  public BlockNodeTemplate ScopeCenterConnector;
+
+  public BlockNodeTemplate ScopeCenterSource;
+
+  public TestBlockNodeTemplates(NetworkManager manager) {
+    ScopeCenterConnector =
+        new BlockNodeTemplate(JsonUtil.FromString<BlockNodeTemplateLoading>(@"
       {
         scope: [
           {
             edges: ['north-center', 'east-center', 'south-center', 'west-center']
           }
         ]
-      }");
+      }"),
+                              manager);
 
-  public static BlockNodeTemplate ScopeCenterSource =
-      JsonUtil.FromString<BlockNodeTemplate>(@"
+    ScopeCenterSource =
+        new BlockNodeTemplate(JsonUtil.FromString<BlockNodeTemplateLoading>(@"
       {
         scope: [
           {
@@ -22,5 +28,7 @@ public static class TestBlockNodeTemplates {
             sourceScope: 'function'
           }
         ]
-      }");
+      }"),
+                              manager);
+  }
 }

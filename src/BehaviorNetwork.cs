@@ -10,16 +10,12 @@ namespace LambdaFactory;
 
 // Forwards more methods from the Block to the BlockEntity.
 public class BlockBehaviorNetwork : BlockBehavior {
-  private BEBehaviorNetwork.Manager _networkManager;
-
   private BlockNodeTemplate _blockTemplate;
 
   public BlockBehaviorNetwork(Block block) : base(block) {}
 
   public override void OnLoaded(ICoreAPI api) {
     base.OnLoaded(api);
-    _networkManager =
-        api.ModLoader.GetModSystem<LambdaFactoryModSystem>().NetworkManager;
     foreach (var beb in block.BlockEntityBehaviors) {
       if (beb.Name == BEBehaviorNetwork.Name) {
         _blockTemplate =
@@ -37,8 +33,7 @@ public class BlockBehaviorNetwork : BlockBehavior {
                                      BlockSelection blockSel,
                                      ref EnumHandling handling,
                                      ref string failureCode) {
-    if (!_networkManager.CanPlace(_blockTemplate, blockSel.Position,
-                                  ref failureCode)) {
+    if (!_blockTemplate.CanPlace(blockSel.Position, ref failureCode)) {
       handling = EnumHandling.PreventSubsequent;
       return false;
     }
