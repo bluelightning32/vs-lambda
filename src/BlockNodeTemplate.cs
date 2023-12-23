@@ -70,10 +70,12 @@ public class BlockNodeTemplate {
   private readonly Dictionary<string, NodeTemplate> _textures =
       new Dictionary<string, NodeTemplate>();
 
+  private NodeAccessor _accessor;
   private NetworkManager _manager;
 
   public BlockNodeTemplate(BlockNodeTemplateLoading loading,
-                           NetworkManager manager) {
+                           NodeAccessor accessor, NetworkManager manager) {
+    _accessor = accessor;
     _manager = manager;
     _scope =
         new BlockNodeCategory(0, loading.Scope ?? Array.Empty<NodeTemplate>());
@@ -208,8 +210,7 @@ public class BlockNodeTemplate {
     for (int i = 0; i < BlockFacing.NumberOfFaces; ++i) {
       neighborPos.Set(pos);
       neighborPos.Offset(BlockFacing.ALLFACES[i]);
-      neighborTemplates[i] =
-          _manager.Accessor.GetBlock(neighborPos, out neighbors[i]);
+      neighborTemplates[i] = _accessor.GetBlock(neighborPos, out neighbors[i]);
     }
     return neighborTemplates;
   }

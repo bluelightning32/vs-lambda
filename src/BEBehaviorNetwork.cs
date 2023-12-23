@@ -20,7 +20,7 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
     get { return "Network"; }
   }
 
-  class NetworkNodeAccessor : NodeAccessor {
+  private class NetworkNodeAccessor : NodeAccessor {
     private readonly IWorldAccessor _world;
     public NetworkNodeAccessor(IWorldAccessor world) { _world = world; }
 
@@ -38,20 +38,25 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
     public override void SetNode(NodePos pos, in Node node) {
       BlockEntity block = _world.BlockAccessor.GetBlockEntity(pos.Block);
       BEBehaviorNetwork behavior = block?.GetBehavior<BEBehaviorNetwork>();
+      bool redraw = behavior._nodes[pos.NodeId].Scope != node.Scope;
       behavior._nodes[pos.NodeId] = node;
-      block.MarkDirty();
+      block.MarkDirty(redraw);
     }
   }
 
-  public class Manager {
-    internal readonly NetworkManager NetworkManager;
+  private interface IGetNodeAccessor {
+    public NodeAccessor Accessor { get; }
+  }
 
+  public class Manager : NetworkManager, IGetNodeAccessor {
     public bool SingleStep = false;
 
-    public Manager(IWorldAccessor world) {
-      NetworkManager = new NetworkManager(world.Api.Side, world.Logger,
-                                          new NetworkNodeAccessor(world));
+    NodeAccessor IGetNodeAccessor.Accessor {
+      get { return _accessor; }
     }
+
+    public Manager(IWorldAccessor world)
+        : base(world.Api.Side, world.Logger, new NetworkNodeAccessor(world)) {}
 
     public void ToggleSingleStep() { SingleStep = !SingleStep; }
 
@@ -68,10 +73,6 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
     }
   }
 
-  public Node GetNode(bool scopeNetwork, Edge edge) {
-    return _template.GetNode(scopeNetwork, edge, _nodes);
-  }
-
   public static BlockNodeTemplate
   ParseBlockNodeTemplate(ICoreAPI api, JsonObject properties) {
     Dictionary<JsonObject, BlockNodeTemplate> cache =
@@ -86,10 +87,10 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
         cache.Count);
     BlockNodeTemplateLoading loading =
         properties.AsObject<BlockNodeTemplateLoading>();
-    NetworkManager manager =
-        api.ModLoader.GetModSystem<LambdaFactoryModSystem>()
-            .NetworkManager.NetworkManager;
-    block = new BlockNodeTemplate(loading, manager);
+    Manager manager =
+        api.ModLoader.GetModSystem<LambdaFactoryModSystem>().NetworkManager;
+    block = new BlockNodeTemplate(loading, ((IGetNodeAccessor)manager).Accessor,
+                                  manager);
 
     cache.Add(properties, block);
     return block;

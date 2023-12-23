@@ -53,7 +53,7 @@ public class NetworkManager {
     get { return 1 + (_distanceIncrementVariance >> 1); }
   }
 
-  public readonly NodeAccessor Accessor;
+  protected readonly NodeAccessor _accessor;
 
   public readonly EnumAppSide Side;
 
@@ -63,7 +63,7 @@ public class NetworkManager {
                         NodeAccessor accessor) {
     Side = side;
     _logger = logger;
-    Accessor = accessor;
+    _accessor = accessor;
   }
 
   public void Load(byte[] serialized) {

@@ -7,7 +7,7 @@ public class TestBlockNodeTemplates {
 
   public BlockNodeTemplate ScopeCenterSource;
 
-  public TestBlockNodeTemplates(NetworkManager manager) {
+  public TestBlockNodeTemplates(NodeAccessor accessor, NetworkManager manager) {
     ScopeCenterConnector =
         new BlockNodeTemplate(JsonUtil.FromString<BlockNodeTemplateLoading>(@"
       {
@@ -17,7 +17,7 @@ public class TestBlockNodeTemplates {
           }
         ]
       }"),
-                              manager);
+                              accessor, manager);
 
     ScopeCenterSource =
         new BlockNodeTemplate(JsonUtil.FromString<BlockNodeTemplateLoading>(@"
@@ -29,6 +29,6 @@ public class TestBlockNodeTemplates {
           }
         ]
       }"),
-                              manager);
+                              accessor, manager);
   }
 }

@@ -16,7 +16,7 @@ public class BlockNodeTemplateTest {
   public void Initialize() {
     _accessor = new MemoryNodeAccessor();
     _manager = new NetworkManager(EnumAppSide.Server, null, _accessor);
-    _templates = new TestBlockNodeTemplates(_manager);
+    _templates = new TestBlockNodeTemplates(_accessor, _manager);
   }
 
   [TestMethod]
