@@ -254,4 +254,57 @@ public class BlockNodeTemplateTest {
     template = _accessor.GetBlock(connector3Pos, out nodes);
     Assert.IsFalse(nodes[0].Source.IsSet());
   }
+
+  [TestMethod]
+  public void ThreePathsToSource() {
+    // First, the following pattern is made:
+    //
+    //  |  |
+    // -0--1-
+    //  |  |
+    //  |
+    // -S-
+    //  |
+    //  |  |
+    // -2--3-
+    //  |  |
+    //
+    // Then a connector is placed next to the source. There are 3 ways for the
+    // new connector to connect to the source, and any are acceptable.
+    //
+    //  |  |
+    // -0--1-
+    //  |  |
+    //  |  |
+    // -S--4-
+    //  |  |
+    //  |  |
+    // -2--3-
+    //  |  |
+    //
+
+    // Place a source block next to the connector.
+    BlockPos sourceBlock = new(0, 0, 1, 0);
+    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+    Assert.AreEqual(0 * _manager.DefaultDistanceIncrement,
+                    _accessor.GetDistance(sourceBlock, 0));
+
+    BlockPos[] connectors = {
+      new(0, 0, 2, 0), new(1, 0, 2, 0), new(0, 0, 0, 0),
+      new(1, 0, 0, 0), new(1, 0, 1, 0),
+    };
+    foreach (BlockPos pos in connectors) {
+      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _manager.FinishPendingWork();
+    }
+
+    // Verify that the connector blocks are now connected to the source.
+    foreach (BlockPos pos in connectors) {
+      BlockNodeTemplate template = _accessor.GetBlock(pos, out Node[] nodes);
+      Assert.AreEqual(_templates.ScopeCenterConnector, template);
+      Assert.AreEqual(new NodePos(sourceBlock, 0), nodes[0].Source,
+                      $"Block {pos} does not connect to the source.");
+      Assert.AreEqual(Scope.Function, nodes[0].Scope);
+    }
+  }
 }

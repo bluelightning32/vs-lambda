@@ -47,7 +47,7 @@ public class MemoryNodeAccessor : NodeAccessor {
   }
 
   public BlockNodeTemplate GetBlock(int x, int y, int z, int dimension,
-                       out Node[] nodes) {
+                                    out Node[] nodes) {
     BlockPos pos = new(x, y, z, dimension);
     return GetBlock(pos, out nodes);
   }

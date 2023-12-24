@@ -28,7 +28,8 @@ public class AddVintageStoryPath {
         vsDir, Path.ChangeExtension(new AssemblyName(args.Name).Name, ".dll"));
     if (!File.Exists(assemblyFile)) {
       assemblyFile = Path.Combine(
-          vsDir, "Lib", Path.ChangeExtension(new AssemblyName(args.Name).Name, ".dll"));
+          vsDir, "Lib",
+          Path.ChangeExtension(new AssemblyName(args.Name).Name, ".dll"));
       if (!File.Exists(assemblyFile)) {
         return null;
       }
