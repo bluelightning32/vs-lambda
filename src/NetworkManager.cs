@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 using ProtoBuf;
@@ -49,13 +50,13 @@ public struct NodeQueueItem : IComparable<NodeQueueItem> {
 }
 
 [ProtoContract]
-public class PendingUpdates {
+public class SourcePendingUpdates {
   [ProtoMember(1)]
   public SortedSet<NodeQueueItem> Queue = new SortedSet<NodeQueueItem>();
   [ProtoMember(2)]
   public List<NodePos> Ejections = new List<NodePos>();
 
-  public PendingUpdates() {}
+  public SourcePendingUpdates() {}
 
   public bool HasWork {
     get { return Queue.Count > 0 || Ejections.Count > 0; }
@@ -74,7 +75,8 @@ public class PendingUpdates {
 }
 
 public class NetworkManager {
-  PendingUpdates _pendingUpdates = new PendingUpdates();
+  Dictionary<NodePos, SourcePendingUpdates> _pendingUpdates =
+      new Dictionary<NodePos, SourcePendingUpdates>();
 
   private readonly int _distanceIncrementVariance = 18;
 
@@ -105,10 +107,12 @@ public class NetworkManager {
 
   public void Load(byte[] serialized) {
     if (serialized == null) {
-      _pendingUpdates = new PendingUpdates();
+      _pendingUpdates = new Dictionary<NodePos, SourcePendingUpdates>();
       return;
     }
-    _pendingUpdates = SerializerUtil.Deserialize<PendingUpdates>(serialized);
+    _pendingUpdates =
+        SerializerUtil.Deserialize<Dictionary<NodePos, SourcePendingUpdates>>(
+            serialized);
   }
 
   public byte[] Save() { return SerializerUtil.Serialize(_pendingUpdates); }
@@ -133,67 +137,103 @@ public class NetworkManager {
   // Puts the node in the pending updates queue. This should only be called by
   // NodeTemplate.
   // The caller treat `pos` as immutable after the function call.
-  public virtual void EnqueueNode(int distance, BlockPos pos, int nodeId) {
+  public virtual void EnqueueNode(Node node, BlockPos pos, int nodeId) {
     if (Side == EnumAppSide.Client) {
       return;
     }
+    System.Diagnostics.Debug.Assert(_accessor.GetSource(pos, nodeId) ==
+                                    node.Source);
     System.Diagnostics.Debug.Assert(_accessor.GetDistance(pos, nodeId) ==
-                                    distance);
-    System.Diagnostics.Debug.Assert(
-        !_pendingUpdates.QueueContains(pos, nodeId));
-    _pendingUpdates.Queue.Add(new NodeQueueItem(distance, pos, nodeId));
-    Debug("Added node to queue. pos=<{0}>:{1} dist={2}", pos, nodeId, distance);
-  }
-
-  public int QueueSize {
-    get { return _pendingUpdates.Queue.Count; }
+                                    node.PropagationDistance);
+    SourcePendingUpdates sourceUpdates;
+    if (!_pendingUpdates.TryGetValue(node.Source, out sourceUpdates)) {
+      sourceUpdates = new SourcePendingUpdates();
+      _pendingUpdates.Add(node.Source, sourceUpdates);
+    }
+    System.Diagnostics.Debug.Assert(!sourceUpdates.QueueContains(pos, nodeId));
+    sourceUpdates.Queue.Add(
+        new NodeQueueItem(node.PropagationDistance, pos, nodeId));
+    Debug("Added node to queue. source={0} pos=<{1}>:{2} dist={3}", node.Source,
+          pos, nodeId, node.PropagationDistance);
   }
 
   public bool HasPendingWork {
-    get { return _pendingUpdates.HasWork; }
+    get {
+      foreach (var sourceQueue in _pendingUpdates) {
+        if (sourceQueue.Value.HasWork) {
+          return true;
+        }
+      }
+      return false;
+    }
   }
+
   public string QueueDebugString() {
     StringBuilder builder = new StringBuilder();
     builder.AppendLine(
-        $"Queue.Count={_pendingUpdates.Queue.Count} Ejections.Count={_pendingUpdates.Ejections.Count}");
-    builder.AppendLine("First 5 queue updates:");
-    NodeQueueItem[] firstN =
-        new NodeQueueItem[Math.Min(_pendingUpdates.Queue.Count, 5)];
-    _pendingUpdates.Queue.CopyTo(firstN, 0, firstN.Length);
-    for (int i = 0; i < firstN.Length; ++i) {
-      builder.AppendLine(firstN[i].ToEscapedString());
-    }
-    builder.AppendLine("First 5 ejection updates:");
-    for (int i = 0; i < Math.Min(5, _pendingUpdates.Ejections.Count); ++i) {
-      builder.AppendLine(_pendingUpdates.Ejections[i].ToEscapedString());
+        $"SourceQueueCount={_pendingUpdates.Count} First 2 source queues:");
+    int printed = 0;
+    foreach (var sourceQueue in _pendingUpdates) {
+      builder.AppendLine(
+          $"Source={sourceQueue.Key.ToEscapedString()} Queue.Count={sourceQueue.Value.Queue.Count} Ejections.Count={sourceQueue.Value.Ejections.Count}");
+      builder.AppendLine("  First 5 queue updates:");
+      NodeQueueItem[] firstN =
+          new NodeQueueItem[Math.Min(sourceQueue.Value.Queue.Count, 5)];
+      sourceQueue.Value.Queue.CopyTo(firstN, 0, firstN.Length);
+      for (int i = 0; i < firstN.Length; ++i) {
+        builder.AppendLine($"  {firstN[i].ToEscapedString()}");
+      }
+      builder.AppendLine("  First 5 ejection updates:");
+      for (int i = 0; i < Math.Min(5, sourceQueue.Value.Ejections.Count); ++i) {
+        builder.AppendLine(
+            $"  sourceQueue.Value.Ejections[i].ToEscapedString()");
+      }
+      if (++printed >= 2) {
+        break;
+      }
     }
     return builder.ToString();
   }
 
   public bool AreQueueDistancesConsistent() {
-    foreach (NodeQueueItem item in _pendingUpdates.Queue) {
-      if (item.PropagationDistance == Node.InfDistance) {
-        Debug("Node <{0}>:{1} in the queue has infinite distance.", item.Pos,
-              item.NodeId);
-        return false;
-      }
-      if (item.PropagationDistance !=
-          _accessor.GetDistance(item.Pos, item.NodeId)) {
-        Debug(
-            "The queue claims node <{0}>:{1} has distance {2}, but it really has distance {3}.",
-            item.Pos, item.NodeId, item.PropagationDistance,
-            _accessor.GetDistance(item.Pos, item.NodeId));
-        return false;
+    foreach (var sourceQueue in _pendingUpdates) {
+      foreach (NodeQueueItem item in sourceQueue.Value.Queue) {
+        if (item.PropagationDistance == Node.InfDistance) {
+          Debug("Node <{0}>:{1} in the queue has infinite distance.", item.Pos,
+                item.NodeId);
+          return false;
+        }
+        if (sourceQueue.Key != _accessor.GetSource(item.Pos, item.NodeId)) {
+          Debug(
+              "The queue claims node <{0}>:{1} has source {2}, but it really has source {3}.",
+              item.Pos, item.NodeId, sourceQueue.Key,
+              _accessor.GetSource(item.Pos, item.NodeId));
+          return false;
+        }
+        if (item.PropagationDistance !=
+            _accessor.GetDistance(item.Pos, item.NodeId)) {
+          Debug(
+              "The queue claims node <{0}>:{1} has distance {2}, but it really has distance {3}.",
+              item.Pos, item.NodeId, item.PropagationDistance,
+              _accessor.GetDistance(item.Pos, item.NodeId));
+          return false;
+        }
       }
     }
     return true;
   }
 
   public void Step() {
-    if (_pendingUpdates.Queue.Count > 0) {
+    foreach (var sourceQueue in _pendingUpdates) {
+      StepSource(sourceQueue.Value);
+    }
+  }
+
+  private void StepSource(SourcePendingUpdates sourceQueue) {
+    if (sourceQueue.Queue.Count > 0) {
       System.Diagnostics.Debug.Assert(AreQueueDistancesConsistent());
-      NodeQueueItem min = _pendingUpdates.Queue.Min;
-      _pendingUpdates.Queue.Remove(min);
+      NodeQueueItem min = sourceQueue.Queue.Min;
+      sourceQueue.Queue.Remove(min);
       System.Diagnostics.Debug.Assert(
           _accessor.GetDistance(min.Pos, min.NodeId) ==
           min.PropagationDistance);

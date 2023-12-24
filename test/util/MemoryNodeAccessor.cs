@@ -34,6 +34,7 @@ public class MemoryNodeAccessor : NodeAccessor {
     _nodes.Get(pos).Nodes[nodeId] = node;
   }
 
+  // `pos` should be treated as immutable.
   public void SetBlock(BlockPos pos, BlockNodeTemplate block) {
     _nodes[pos] = new BlockNodeInfo(block, block.CreateNodes(pos));
     _nodes[pos].Template.OnPlaced(pos, _nodes[pos].Nodes);

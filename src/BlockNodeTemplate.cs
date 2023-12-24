@@ -70,8 +70,8 @@ public class BlockNodeTemplate {
   private readonly Dictionary<string, NodeTemplate> _textures =
       new Dictionary<string, NodeTemplate>();
 
-  private NodeAccessor _accessor;
-  private NetworkManager _manager;
+  private readonly NodeAccessor _accessor;
+  private readonly NetworkManager _manager;
 
   public BlockNodeTemplate(BlockNodeTemplateLoading loading,
                            NodeAccessor accessor, NetworkManager manager) {
@@ -182,6 +182,7 @@ public class BlockNodeTemplate {
     }
   }
 
+  // `pos` should be treated as immutable.
   public Node[] CreateNodes(BlockPos pos) {
     Node[] nodes = new Node[Count];
     Node.ArrayInitialize(nodes);

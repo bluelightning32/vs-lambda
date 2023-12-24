@@ -51,4 +51,10 @@ public abstract class NodeAccessor {
         GetNode(pos, nodeId, out Node node, out bool scopeNetwork);
     return node.PropagationDistance;
   }
+
+  public virtual NodePos GetSource(BlockPos pos, int nodeId) {
+    NodeTemplate template =
+        GetNode(pos, nodeId, out Node node, out bool scopeNetwork);
+    return node.Source;
+  }
 }

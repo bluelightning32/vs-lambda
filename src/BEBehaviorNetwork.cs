@@ -86,8 +86,8 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
       }
     }
 
-    public override void EnqueueNode(int distance, BlockPos pos, int nodeId) {
-      base.EnqueueNode(distance, pos, nodeId);
+    public override void EnqueueNode(Node node, BlockPos pos, int nodeId) {
+      base.EnqueueNode(node, pos, nodeId);
       MaybeEnqueueStep();
     }
   }

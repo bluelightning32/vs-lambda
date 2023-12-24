@@ -135,7 +135,7 @@ public class NodeTemplate {
       anyInfDistNeighbors |= neighborNode.HasInfDistance;
     }
     if (!node.HasInfDistance && anyInfDistNeighbors) {
-      manager.EnqueueNode(node.PropagationDistance, pos, Id);
+      manager.EnqueueNode(node, pos, Id);
     }
   }
 
@@ -255,8 +255,8 @@ public class NodeTemplate {
         // Copy `neighborPos` so that it is immutable.
         BlockPos neighborPosCopy = neighborPos.Copy();
         accessor.SetNode(neighborPosCopy, neighborTemplate.Id, in neighbor);
-        networkManager.EnqueueNode(neighbor.PropagationDistance,
-                                   neighborPosCopy, neighborTemplate.Id);
+        networkManager.EnqueueNode(neighbor, neighborPosCopy,
+                                   neighborTemplate.Id);
       }
     }
   }
