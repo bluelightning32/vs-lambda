@@ -43,4 +43,10 @@ public struct NodePos : IEquatable<NodePos> {
   public override readonly int GetHashCode() {
     return (Block?.GetHashCode() ?? 0) ^ (NodeId << 6);
   }
+
+  public override readonly string ToString() { return $"<{Block}>:{NodeId}"; }
+
+  public readonly string ToEscapedString() {
+    return $"&lt;{Block}&gt;:{NodeId}";
+  }
 }

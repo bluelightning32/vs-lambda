@@ -46,12 +46,20 @@ public class LambdaFactoryModSystem : ModSystem {
         })
         .EndSubCommand();
 
+    network.BeginSubCommand("pending")
+        .WithDescription("Prints out the next items in the queue.")
+        .HandleWith((args) => {
+          return TextCommandResult.Success(NetworkManager.QueueDebugString());
+        })
+        .EndSubCommand();
+
     network.BeginSubCommand("step")
         .WithDescription("Advances one step in single step mode.")
         .HandleWith((args) => {
           if (NetworkManager.SingleStep) {
             NetworkManager.Step();
-            return TextCommandResult.Success("Step complete.");
+            return TextCommandResult.Success(
+                $"Step complete. HasPendingWork={NetworkManager.HasPendingWork}.");
           } else {
             return TextCommandResult.Error(
                 "The step command is only valid in single step mode.");

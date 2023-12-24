@@ -5,6 +5,8 @@ namespace LambdaFactory.Tests;
 public class TestBlockNodeTemplates {
   public BlockNodeTemplate ScopeCenterConnector;
 
+  public BlockNodeTemplate ScopeNSCenterConnector;
+
   public BlockNodeTemplate ScopeCenterSource;
 
   public TestBlockNodeTemplates(NodeAccessor accessor, NetworkManager manager) {
@@ -14,6 +16,17 @@ public class TestBlockNodeTemplates {
         scope: [
           {
             edges: ['north-center', 'east-center', 'south-center', 'west-center']
+          }
+        ]
+      }"),
+                              accessor, manager);
+
+    ScopeNSCenterConnector =
+        new BlockNodeTemplate(JsonUtil.FromString<BlockNodeTemplateLoading>(@"
+      {
+        scope: [
+          {
+            edges: ['north-center', 'south-center']
           }
         ]
       }"),

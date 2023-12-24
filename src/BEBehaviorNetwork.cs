@@ -35,11 +35,11 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
       return behavior._template;
     }
 
-    public override void SetNode(NodePos pos, in Node node) {
-      BlockEntity block = _world.BlockAccessor.GetBlockEntity(pos.Block);
+    public override void SetNode(BlockPos pos, int nodeId, in Node node) {
+      BlockEntity block = _world.BlockAccessor.GetBlockEntity(pos);
       BEBehaviorNetwork behavior = block?.GetBehavior<BEBehaviorNetwork>();
-      bool redraw = behavior._nodes[pos.NodeId].Scope != node.Scope;
-      behavior._nodes[pos.NodeId] = node;
+      bool redraw = behavior._nodes[nodeId].Scope != node.Scope;
+      behavior._nodes[nodeId] = node;
       block.MarkDirty(redraw);
     }
   }
@@ -51,16 +51,45 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
   public class Manager : NetworkManager, IGetNodeAccessor {
     public bool SingleStep = false;
 
+    private readonly IEventAPI _eventAPI;
+    private bool _stepEnqueued = false;
+
     NodeAccessor IGetNodeAccessor.Accessor {
       get { return _accessor; }
     }
 
     public Manager(IWorldAccessor world)
-        : base(world.Api.Side, world.Logger, new NetworkNodeAccessor(world)) {}
+        : base(world.Api.Side, world.Logger, new NetworkNodeAccessor(world)) {
+      _eventAPI = world.Api.Event;
+    }
 
-    public void ToggleSingleStep() { SingleStep = !SingleStep; }
+    private void MaybeEnqueueStep() {
+      if (!_stepEnqueued && !SingleStep) {
+        _eventAPI.EnqueueMainThreadTask(() => {
+          _stepEnqueued = false;
+          if (!SingleStep) {
+            Step();
+            if (HasPendingWork) {
+              MaybeEnqueueStep();
+            }
+          }
+        }, "lambdanetwork");
+        _stepEnqueued = true;
+      }
+    }
 
-    public void Step() {}
+    public void ToggleSingleStep() {
+      SingleStep = !SingleStep;
+      // `MaybeEnqueueStep` checks that SingleStep is false.
+      if (HasPendingWork) {
+        MaybeEnqueueStep();
+      }
+    }
+
+    public override void EnqueueNode(int distance, BlockPos pos, int nodeId) {
+      base.EnqueueNode(distance, pos, nodeId);
+      MaybeEnqueueStep();
+    }
   }
 
   public BEBehaviorNetwork(BlockEntity blockentity) : base(blockentity) {}

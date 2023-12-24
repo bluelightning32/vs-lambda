@@ -184,16 +184,9 @@ public class BlockNodeTemplate {
 
   public Node[] CreateNodes(BlockPos pos) {
     Node[] nodes = new Node[Count];
+    Node.ArrayInitialize(nodes);
     SetSourceScope(pos, nodes);
     return nodes;
-  }
-
-  public Node GetNode(bool scopeNetwork, Edge edge, Node[] nodes) {
-    BlockNodeCategory network = scopeNetwork ? _scope : _match;
-    if (!network.Index.TryGetValue(edge, out NodeTemplate n)) {
-      return new Node();
-    }
-    return nodes[n.Id];
   }
 
   public NodeTemplate GetNodeTemplate(bool scopeNetwork, Edge edge) {
@@ -239,5 +232,9 @@ public class BlockNodeTemplate {
 
     _scope.OnPlaced(_manager, pos, true, neighborTemplates, neighbors, nodes);
     _match.OnPlaced(_manager, pos, false, neighborTemplates, neighbors, nodes);
+  }
+
+  public bool IsScopeNetwork(int nodeId) {
+    return nodeId < _scope.NodeTemplates.Length;
   }
 }

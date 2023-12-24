@@ -30,17 +30,24 @@ public class MemoryNodeAccessor : NodeAccessor {
     return value.Template;
   }
 
-  public override void SetNode(NodePos pos, in Node node) {
-    _nodes.Get(pos.Block).Nodes[pos.NodeId] = node;
+  public override void SetNode(BlockPos pos, int nodeId, in Node node) {
+    _nodes.Get(pos).Nodes[nodeId] = node;
   }
 
   public void SetBlock(BlockPos pos, BlockNodeTemplate block) {
     _nodes[pos] = new BlockNodeInfo(block, block.CreateNodes(pos));
+    _nodes[pos].Template.OnPlaced(pos, _nodes[pos].Nodes);
   }
 
   public void SetBlock(int x, int y, int z, int dimension,
                        BlockNodeTemplate block) {
     BlockPos pos = new(x, y, z, dimension);
     SetBlock(pos, block);
+  }
+
+  public BlockNodeTemplate GetBlock(int x, int y, int z, int dimension,
+                       out Node[] nodes) {
+    BlockPos pos = new(x, y, z, dimension);
+    return GetBlock(pos, out nodes);
   }
 }
