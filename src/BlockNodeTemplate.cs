@@ -136,10 +136,16 @@ public class BlockNodeTemplate {
     }
     int index = 0;
     foreach (var network in _scope.NodeTemplates) {
-      needRefresh |= nodes[network.Id].FromTreeAttributes(info.value[index++]);
+      if (index < info.value.Length) {
+        needRefresh |=
+            nodes[network.Id].FromTreeAttributes(info.value[index++]);
+      }
     }
     foreach (var network in _match.NodeTemplates) {
-      needRefresh |= nodes[network.Id].FromTreeAttributes(info.value[index++]);
+      if (index < info.value.Length) {
+        needRefresh |=
+            nodes[network.Id].FromTreeAttributes(info.value[index++]);
+      }
     }
     return needRefresh;
   }
