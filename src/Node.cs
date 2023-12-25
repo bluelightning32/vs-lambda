@@ -256,13 +256,9 @@ public class NodeTemplate {
     NodeTemplate parentTemplate =
         accessor.GetNode(pos.AddCopy(node.Parent.GetFace()), scopeNetwork,
                          node.Parent.GetOpposite(), out Node parent);
-    if (node.Source == parent.Source &&
-        parent.PropagationDistance < node.PropagationDistance) {
-      Debug.Assert(networkManager.IsPropagationDistanceInRange(
-          parent.PropagationDistance, node.PropagationDistance));
-      return true;
-    }
-    return false;
+    return node.Source == parent.Source &&
+           networkManager.IsPropagationDistanceInRange(
+               parent.PropagationDistance, node.PropagationDistance);
   }
 
   private void PropagateConnection(NodeAccessor accessor,

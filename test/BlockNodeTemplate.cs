@@ -743,4 +743,106 @@ public class BlockNodeTemplateTest {
     // Verify that the remaining connector blocks are still connected.
     AssertEjected(connectors);
   }
+
+  [TestMethod]
+  public void ReplaceWithShorterPath() {
+    // First, the following pattern is made. Connector 7 has a shorter distance
+    // than connector 5.
+    //
+    //  |
+    // -6-
+    //  |
+    //  |  |  |
+    // -5--4--3-
+    //  |  |  |
+    //  |     |
+    // -7-   -2-
+    //  |     |
+    //  |  |  |
+    // -S--0--1-
+    //  |  |  |
+    //
+    // Then connector 4 and connector 5 are broken.
+    //
+    //  |
+    // -6-
+    //  |
+    //        |
+    //       -3-
+    //        |
+    //  |     |
+    // -7-   -2-
+    //  |     |
+    //  |  |  |
+    // -S--0--1-
+    //  |  |  |
+    //
+    // Before stepping, connection 5 is placed again. Connector 5 now connects
+    // to connector 7, which means the distance between connector 5 and
+    // connector 6 is too great. Finishing the steps should cause connector 6's
+    // distance to get fixed.
+    //
+    //  |
+    // -6-
+    //  |
+    //  |     |
+    // -5-   -3-
+    //  |     |
+    //  |     |
+    // -7-   -2-
+    //  |     |
+    //  |  |  |
+    // -S--0--1-
+    //  |  |  |
+    //
+
+    // Place a source block.
+    BlockPos sourceBlock = new(0, 0, 0, 0);
+    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+
+    BlockPos[] connectors = {
+      /*connectors[0]=*/new(1, 0, 0, 0),
+      /*connectors[1]=*/new(2, 0, 0, 0),
+      /*connectors[2]=*/new(2, 0, 1, 0),
+      /*connectors[3]=*/new(2, 0, 2, 0),
+      /*connectors[4]=*/new(1, 0, 2, 0),
+      /*connectors[5]=*/new(0, 0, 2, 0),
+      /*connectors[6]=*/new(0, 0, 3, 0),
+      /*connectors[7]=*/new(0, 0, 1, 0),
+    };
+    foreach (BlockPos pos in connectors) {
+      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _manager.FinishPendingWork();
+    }
+    // Verify that connector 7 has a lower distance than connector 5, meaning
+    // that it connected directly to the source. This test relies on the edge
+    // preference of the algorithm.
+    Assert.IsTrue(_accessor.GetDistance(connectors[7], 0) <
+                  _accessor.GetDistance(connectors[5], 0));
+
+    // Verify that with the current distances, connector 6 cannot go through
+    // connector 5 and connector 7.
+    Assert.IsFalse(_manager.IsPropagationDistanceInRange(
+        /*parent=*/_accessor.GetDistance(connectors[7], 0) +
+            _manager.DefaultDistanceIncrement,
+        _accessor.GetDistance(connectors[6], 0)));
+
+    _accessor.RemoveBlock(connectors[4]);
+    _accessor.RemoveBlock(connectors[5]);
+    _accessor.SetBlock(connectors[5], _templates.ScopeCenterConnector);
+    _manager.FinishPendingWork();
+
+    // Verify that now connector 6 goes through connector 5 and connector 7 with
+    // the correct distances.
+    Assert.IsTrue(_manager.IsPropagationDistanceInRange(
+        _accessor.GetDistance(connectors[7], 0),
+        _accessor.GetDistance(connectors[5], 0)));
+    Assert.IsTrue(_manager.IsPropagationDistanceInRange(
+        _accessor.GetDistance(connectors[5], 0),
+        _accessor.GetDistance(connectors[6], 0)));
+
+    // Verify that all connectors (except 4 which was removed) are still
+    // connected.
+    AssertConnected(connectors.RemoveEntry(4), sourceBlock);
+  }
 }
