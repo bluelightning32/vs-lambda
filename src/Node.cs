@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Reflection.PortableExecutable;
 using System.Xml.Schema;
 
 using Newtonsoft.Json;
@@ -81,6 +82,18 @@ public struct Node {
     PropagationDistance =
         node.PropagationDistance + networkManager.DefaultDistanceIncrement;
   }
+
+  public void SetDisconnected() {
+    Parent = Edge.Unknown;
+    PropagationDistance = InfDistance;
+  }
+
+  public void SetEjected() {
+    SetDisconnected();
+    Scope = Scope.None;
+    Source.Block = null;
+    Source.NodeId = 0;
+  }
 }
 
 [JsonObject(MemberSerialization.OptIn)]
@@ -139,6 +152,43 @@ public class NodeTemplate {
     }
   }
 
+  public void OnRemoved(NodeAccessor accessor, NetworkManager manager,
+                        BlockPos pos, bool scopeNetwork,
+                        BlockNodeTemplate[] neighborTemplates,
+                        Node[][] neighbors, in Node node) {
+    manager.Debug("Block removed on {0} source set: {1}", manager.Side,
+                  node.Source.IsSet());
+    if (!node.Source.IsSet()) {
+      return;
+    }
+    foreach (Edge edge in Edges) {
+      BlockFacing face = edge.GetFace();
+      if (face == null) {
+        // The source edge does not have a face.
+        continue;
+      }
+      NodeTemplate neighborTemplate =
+          neighborTemplates[face.Index]?.GetNodeTemplate(scopeNetwork,
+                                                         edge.GetOpposite());
+      if (neighborTemplate == null) {
+        continue;
+      }
+      var neighborNode = neighbors[face.Index][neighborTemplate.Id];
+      if (neighborNode.Source == node.Source) {
+        if (neighborNode.Parent == edge.GetOpposite()) {
+          BlockPos neighborBlock = pos.AddCopy(face);
+          manager.EnqueueNode(neighborNode, neighborBlock, neighborTemplate.Id);
+          manager.EnqueueEjection(neighborNode, neighborBlock,
+                                  neighborTemplate.Id);
+        } else if (neighborNode.HasInfDistance) {
+          BlockPos neighborBlock = pos.AddCopy(face);
+          manager.EnqueueEjection(neighborNode, neighborBlock,
+                                  neighborTemplate.Id);
+        }
+      }
+    }
+  }
+
   public bool CanPlace(NetworkManager manager, BlockPos pos, bool scopeNetwork,
                        BlockNodeTemplate[] neighborTemplates,
                        Node[][] neighbors, ref string failureCode) {
@@ -181,6 +231,10 @@ public class NodeTemplate {
     if (ShouldPropagateConnection(accessor, networkManager, pos, scopeNetwork,
                                   node)) {
       PropagateConnection(accessor, networkManager, pos, scopeNetwork, node);
+    } else {
+      node.SetDisconnected();
+      accessor.SetNode(pos, Id, in node);
+      PropagateDisconnection(accessor, networkManager, pos, scopeNetwork, node);
     }
   }
 
@@ -195,6 +249,7 @@ public class NodeTemplate {
       return true;
     }
     Debug.Assert(node.PropagationDistance != 0);
+    Debug.Assert(!node.HasInfDistance);
     if (node.HasInfDistance) {
       return false;
     }
@@ -257,6 +312,66 @@ public class NodeTemplate {
         accessor.SetNode(neighborPosCopy, neighborTemplate.Id, in neighbor);
         networkManager.EnqueueNode(neighbor, neighborPosCopy,
                                    neighborTemplate.Id);
+      }
+    }
+  }
+
+  private void PropagateDisconnection(NodeAccessor accessor,
+                                      NetworkManager networkManager,
+                                      BlockPos pos, bool scopeNetwork,
+                                      Node node) {
+    BlockPos neighborPos = new(pos.dimension);
+    foreach (Edge edge in Edges) {
+      BlockFacing face = edge.GetFace();
+      // The face should not be null, because sources are never disconnected.
+      Debug.Assert(face != null);
+      neighborPos.Set(pos);
+      neighborPos.Offset(face);
+      NodeTemplate neighborTemplate = accessor.GetNode(
+          neighborPos, scopeNetwork, edge.GetOpposite(), out Node neighbor);
+      if (neighborTemplate == null) {
+        continue;
+      }
+
+      // Enqueue children, because they may need to be disconnected. Enqueue
+      // connected neighbors because they may reconnect this node.
+      if (neighbor.Source == node.Source && !neighbor.HasInfDistance) {
+        BlockPos neighborPosCopy = neighborPos.Copy();
+        networkManager.EnqueueNode(neighbor, neighborPosCopy,
+                                   neighborTemplate.Id);
+      }
+    }
+  }
+
+  public void EjectIfDisconnected(NodeAccessor accessor,
+                                  NetworkManager networkManager, NodePos source,
+                                  BlockPos pos, bool scopeNetwork, Node node) {
+    if (node.Source != source || !node.HasInfDistance) {
+      // Do not eject this node if it is no longer disconnected, or if it now
+      // belongs to a different source.
+      return;
+    }
+    node.SetEjected();
+    accessor.SetNode(pos, Id, in node);
+
+    BlockPos neighborPos = new(pos.dimension);
+    foreach (Edge edge in Edges) {
+      BlockFacing face = edge.GetFace();
+      if (face == null) {
+        // The source edge does not have a face.
+        continue;
+      }
+      neighborPos.Set(pos);
+      neighborPos.Offset(face);
+      NodeTemplate neighborTemplate = accessor.GetNode(
+          neighborPos, scopeNetwork, edge.GetOpposite(), out Node neighbor);
+      if (neighborTemplate == null) {
+        continue;
+      }
+
+      if (neighbor.Source == source && neighbor.HasInfDistance) {
+        networkManager.EnqueueEjection(neighbor, neighborPos.Copy(),
+                                       neighborTemplate.Id);
       }
     }
   }

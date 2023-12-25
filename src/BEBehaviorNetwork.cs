@@ -172,6 +172,11 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
     _template.OnPlaced(Pos, _nodes);
   }
 
+  public override void OnBlockRemoved() {
+    base.OnBlockRemoved();
+    _template.OnRemoved(Pos, _nodes);
+  }
+
   public void GenerateMesh(ref MeshData mesh) {
     ((ICoreClientAPI)Api)
         .Tesselator.TesselateShape("network", Block.Code, Block.Shape, out mesh,

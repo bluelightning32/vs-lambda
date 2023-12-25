@@ -30,9 +30,13 @@ public class BEBehaviorPortHole : BlockEntityBehavior,
   protected virtual void SetKey() {
     Block[] decors = Api.World.BlockAccessor.GetDecors(Pos);
     _portedSides = 0;
-    for (int i = 0; i < BlockFacing.ALLFACES.Length; ++i) {
-      if (decors[i] != null) {
-        _portedSides |= 1 << i;
+    // A null decors array indicates that none of the faces have a decor. See
+    // https://github.com/anegostudios/vsapi/issues/16.
+    if (decors != null) {
+      for (int i = 0; i < BlockFacing.ALLFACES.Length; ++i) {
+        if (decors[i] != null) {
+          _portedSides |= 1 << i;
+        }
       }
     }
   }

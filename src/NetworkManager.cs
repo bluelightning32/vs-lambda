@@ -54,7 +54,7 @@ public class SourcePendingUpdates {
   [ProtoMember(1)]
   public SortedSet<NodeQueueItem> Queue = new SortedSet<NodeQueueItem>();
   [ProtoMember(2)]
-  public List<NodePos> Ejections = new List<NodePos>();
+  public HashSet<NodePos> Ejections = new HashSet<NodePos>();
 
   public SourcePendingUpdates() {}
 
@@ -143,6 +143,7 @@ public class NetworkManager {
     }
     System.Diagnostics.Debug.Assert(_accessor.GetSource(pos, nodeId) ==
                                     node.Source);
+    System.Diagnostics.Debug.Assert(!node.HasInfDistance);
     System.Diagnostics.Debug.Assert(_accessor.GetDistance(pos, nodeId) ==
                                     node.PropagationDistance);
     SourcePendingUpdates sourceUpdates;
@@ -150,11 +151,30 @@ public class NetworkManager {
       sourceUpdates = new SourcePendingUpdates();
       _pendingUpdates.Add(node.Source, sourceUpdates);
     }
-    System.Diagnostics.Debug.Assert(!sourceUpdates.QueueContains(pos, nodeId));
-    sourceUpdates.Queue.Add(
+    bool added = sourceUpdates.Queue.Add(
         new NodeQueueItem(node.PropagationDistance, pos, nodeId));
-    Debug("Added node to queue. source={0} pos=<{1}>:{2} dist={3}", node.Source,
-          pos, nodeId, node.PropagationDistance);
+    Debug("Added node to queue. source={0} pos=<{1}>:{2} dist={3} added={4}",
+          node.Source, pos, nodeId, node.PropagationDistance, added);
+  }
+
+  // Puts the node in the pending ejections queue. This should only be called by
+  // NodeTemplate.
+  // The caller treat `pos` as immutable after the function call.
+  public virtual void EnqueueEjection(Node node, BlockPos pos, int nodeId) {
+    if (Side == EnumAppSide.Client) {
+      return;
+    }
+    System.Diagnostics.Debug.Assert(node.Source.IsSet());
+    System.Diagnostics.Debug.Assert(_accessor.GetSource(pos, nodeId) ==
+                                    node.Source);
+    SourcePendingUpdates sourceUpdates;
+    if (!_pendingUpdates.TryGetValue(node.Source, out sourceUpdates)) {
+      sourceUpdates = new SourcePendingUpdates();
+      _pendingUpdates.Add(node.Source, sourceUpdates);
+    }
+    bool added = sourceUpdates.Ejections.Add(new NodePos(pos, nodeId));
+    Debug("Added node to ejection queue. source={0} pos=<{1}>:{2} added={3}",
+          node.Source, pos, nodeId, added);
   }
 
   public bool HasPendingWork {
@@ -184,9 +204,12 @@ public class NetworkManager {
         builder.AppendLine($"  {firstN[i].ToEscapedString()}");
       }
       builder.AppendLine("  First 5 ejection updates:");
-      for (int i = 0; i < Math.Min(5, sourceQueue.Value.Ejections.Count); ++i) {
-        builder.AppendLine(
-            $"  sourceQueue.Value.Ejections[i].ToEscapedString()");
+      int printedEjections = 0;
+      foreach (NodePos ejection in sourceQueue.Value.Ejections) {
+        builder.AppendLine($"  {ejection.ToEscapedString()}");
+        if (++printedEjections >= 5) {
+          break;
+        }
       }
       if (++printed >= 2) {
         break;
@@ -225,13 +248,16 @@ public class NetworkManager {
 
   public void Step() {
     foreach (var sourceQueue in _pendingUpdates) {
-      StepSource(sourceQueue.Value);
+      StepSource(sourceQueue.Key, sourceQueue.Value);
+      if (!sourceQueue.Value.HasWork) {
+        _pendingUpdates.Remove(sourceQueue.Key);
+      }
     }
   }
 
-  private void StepSource(SourcePendingUpdates sourceQueue) {
+  private void StepSource(NodePos source, SourcePendingUpdates sourceQueue) {
+    System.Diagnostics.Debug.Assert(AreQueueDistancesConsistent());
     if (sourceQueue.Queue.Count > 0) {
-      System.Diagnostics.Debug.Assert(AreQueueDistancesConsistent());
       NodeQueueItem min = sourceQueue.Queue.Min;
       sourceQueue.Queue.Remove(min);
       System.Diagnostics.Debug.Assert(
@@ -244,6 +270,20 @@ public class NetworkManager {
         return;
       }
       template.Expand(_accessor, this, min.Pos, scopeNetwork, node);
+      return;
+    }
+
+    System.Diagnostics.Debug.Assert(sourceQueue.Ejections.Count > 0);
+    if (sourceQueue.Ejections.Count > 0) {
+      NodePos first = sourceQueue.Ejections.PopOne();
+      NodeTemplate template = _accessor.GetNode(
+          first.Block, first.NodeId, out Node node, out bool scopeNetwork);
+      System.Diagnostics.Debug.Assert(template != null);
+      if (template == null) {
+        return;
+      }
+      template.EjectIfDisconnected(_accessor, this, source, first.Block,
+                                   scopeNetwork, node);
       return;
     }
   }

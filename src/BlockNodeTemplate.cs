@@ -42,6 +42,16 @@ public class BlockNodeCategory {
     }
   }
 
+  public void OnRemoved(NodeAccessor accessor, NetworkManager manager,
+                        BlockPos pos, bool scopeNetwork,
+                        BlockNodeTemplate[] neighborTemplates,
+                        Node[][] neighbors, Node[] nodes) {
+    foreach (var template in NodeTemplates) {
+      template.OnRemoved(accessor, manager, pos, scopeNetwork,
+                         neighborTemplates, neighbors, in nodes[template.Id]);
+    }
+  }
+
   public bool CanPlace(NetworkManager manager, BlockPos pos, bool scopeNetwork,
                        BlockNodeTemplate[] neighborTemplates,
                        Node[][] neighbors, ref string failureCode) {
@@ -233,6 +243,16 @@ public class BlockNodeTemplate {
 
     _scope.OnPlaced(_manager, pos, true, neighborTemplates, neighbors, nodes);
     _match.OnPlaced(_manager, pos, false, neighborTemplates, neighbors, nodes);
+  }
+
+  public void OnRemoved(BlockPos pos, Node[] nodes) {
+    BlockNodeTemplate[] neighborTemplates =
+        GetNeighbors(pos, out Node[][] neighbors);
+
+    _scope.OnRemoved(_accessor, _manager, pos, true, neighborTemplates,
+                     neighbors, nodes);
+    _match.OnRemoved(_accessor, _manager, pos, false, neighborTemplates,
+                     neighbors, nodes);
   }
 
   public bool IsScopeNetwork(int nodeId) {

@@ -392,7 +392,7 @@ public static class MeshUtil {
                                     float faceAxisRange,
                                     TextureAtlasPosition original,
                                     TextureAtlasPosition replacement) {
-    if (mesh.TextureIndices == null) {
+    if (mesh.TextureIndices == null || mesh.TextureIndices.Length == 0) {
       return;
     }
     int faceCount = mesh.VerticesCount / mesh.VerticesPerFace;
@@ -445,7 +445,7 @@ public static class MeshUtil {
                                             Cuboidf bounds,
                                             TextureAtlasPosition original,
                                             TextureAtlasPosition replacement) {
-    if (mesh.TextureIndices == null) {
+    if (mesh.TextureIndices == null || mesh.TextureIndices.Length == 0) {
       return;
     }
     int faceCount = mesh.VerticesCount / mesh.VerticesPerFace;

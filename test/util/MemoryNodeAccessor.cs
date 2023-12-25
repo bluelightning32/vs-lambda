@@ -34,8 +34,15 @@ public class MemoryNodeAccessor : NodeAccessor {
     _nodes.Get(pos).Nodes[nodeId] = node;
   }
 
+  public void RemoveBlock(BlockPos pos) {
+    if (_nodes.Remove(pos, out BlockNodeInfo block)) {
+      block.Template.OnRemoved(pos, block.Nodes);
+    }
+  }
+
   // `pos` should be treated as immutable.
   public void SetBlock(BlockPos pos, BlockNodeTemplate block) {
+    RemoveBlock(pos);
     _nodes[pos] = new BlockNodeInfo(block, block.CreateNodes(pos));
     _nodes[pos].Template.OnPlaced(pos, _nodes[pos].Nodes);
   }
@@ -44,6 +51,11 @@ public class MemoryNodeAccessor : NodeAccessor {
                        BlockNodeTemplate block) {
     BlockPos pos = new(x, y, z, dimension);
     SetBlock(pos, block);
+  }
+
+  public void RemoveBlock(int x, int y, int z, int dimension) {
+    BlockPos pos = new(x, y, z, dimension);
+    RemoveBlock(pos);
   }
 
   public BlockNodeTemplate GetBlock(int x, int y, int z, int dimension,

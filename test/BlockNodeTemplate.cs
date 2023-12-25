@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
+using Vintagestory.API.Util;
 
 namespace LambdaFactory.Tests;
 
@@ -11,6 +12,27 @@ public class BlockNodeTemplateTest {
   private NetworkManager _manager;
   private MemoryNodeAccessor _accessor;
   private TestBlockNodeTemplates _templates;
+
+  void AssertEjected(BlockPos[] blocks) {
+    foreach (BlockPos pos in blocks) {
+      BlockNodeTemplate template = _accessor.GetBlock(pos, out Node[] nodes);
+      Assert.AreEqual(_templates.ScopeCenterConnector, template);
+      Assert.IsTrue(nodes[0].IsEjected());
+      Assert.IsTrue(!nodes[0].Source.IsSet());
+      Assert.IsTrue(nodes[0].HasInfDistance);
+      Assert.AreEqual(Edge.Unknown, nodes[0].Parent);
+    }
+  }
+
+  void AssertConnected(BlockPos[] blocks, BlockPos source) {
+    foreach (BlockPos pos in blocks) {
+      BlockNodeTemplate template = _accessor.GetBlock(pos, out Node[] nodes);
+      Assert.AreEqual(_templates.ScopeCenterConnector, template);
+      Assert.AreEqual(new NodePos(source, 0), nodes[0].Source,
+                      $"Block {pos} does not connect to the source.");
+      Assert.AreEqual(Scope.Function, nodes[0].Scope);
+    }
+  }
 
   [TestInitialize]
   public void Initialize() {
@@ -283,7 +305,7 @@ public class BlockNodeTemplateTest {
     //  |  |
     //
 
-    // Place a source block next to the connector.
+    // Place a source block.
     BlockPos sourceBlock = new(0, 0, 1, 0);
     _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
     Assert.AreEqual(0 * _manager.DefaultDistanceIncrement,
@@ -299,12 +321,310 @@ public class BlockNodeTemplateTest {
     }
 
     // Verify that the connector blocks are now connected to the source.
+    AssertConnected(connectors, sourceBlock);
+  }
+
+  [TestMethod]
+  public void RemoveOnlySource() {
+    _accessor.SetBlock(0, 0, 0, 0, _templates.ScopeCenterSource);
+    _accessor.RemoveBlock(0, 0, 0, 0);
+  }
+
+  [TestMethod]
+  public void RemoveSourcePropagate1() {
+    // First, the following pattern is made:
+    //
+    //  |  |
+    // -S--0-
+    //  |  |
+    //
+    // Then the source is broken, leaving the connectors disconnected.
+    //
+    //     |
+    //    -0-
+    //     |
+    //
+
+    // Place a source block.
+    BlockPos sourceBlock = new(0, 0, 0, 0);
+    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+
+    BlockPos[] connectors = { new(1, 0, 0, 0) };
     foreach (BlockPos pos in connectors) {
-      BlockNodeTemplate template = _accessor.GetBlock(pos, out Node[] nodes);
-      Assert.AreEqual(_templates.ScopeCenterConnector, template);
-      Assert.AreEqual(new NodePos(sourceBlock, 0), nodes[0].Source,
-                      $"Block {pos} does not connect to the source.");
-      Assert.AreEqual(Scope.Function, nodes[0].Scope);
+      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _manager.FinishPendingWork();
     }
+
+    _accessor.RemoveBlock(0, 0, 0, 0);
+    _manager.FinishPendingWork();
+
+    // Verify that the connector blocks are ejected.
+    AssertEjected(connectors);
+  }
+
+  [TestMethod]
+  public void RemoveSourcePropagate3() {
+    // First, the following pattern is made:
+    //
+    //  |  |  |  |
+    // -S--0--1--2-
+    //  |  |  |  |
+    //
+    // Then the source is broken, leaving the connectors disconnected.
+    //
+    //     |  |  |
+    //    -0--1--2-
+    //     |  |  |
+    //
+
+    // Place a source block.
+    BlockPos sourceBlock = new(0, 0, 0, 0);
+    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+
+    BlockPos[] connectors = { new(1, 0, 0, 0), new(2, 0, 0, 0),
+                              new(3, 0, 0, 0) };
+    foreach (BlockPos pos in connectors) {
+      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _manager.FinishPendingWork();
+    }
+
+    _accessor.RemoveBlock(0, 0, 0, 0);
+    _manager.FinishPendingWork();
+
+    // Verify that the connector blocks are ejected.
+    AssertEjected(connectors);
+  }
+
+  [TestMethod]
+  public void RemoveConnectorPropagateTwoWays() {
+    // First, the following pattern is made:
+    //
+    //     |
+    //    -1-
+    //     |
+    //  |  |
+    // -S--0-
+    //  |  |
+    //     |
+    //    -2-
+    //     |
+    //
+    // Then the connector is broken, leaving the other connectors disconnected.
+    //
+    //     |
+    //    -1-
+    //     |
+    //  |
+    // -S-
+    //  |
+    //     |
+    //    -2-
+    //     |
+    //
+
+    // Place a source block.
+    BlockPos sourceBlock = new(0, 0, 1, 0);
+    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+
+    BlockPos[] connectors = { new(1, 0, 1, 0), new(2, 0, 2, 0),
+                              new(3, 0, 0, 0) };
+    foreach (BlockPos pos in connectors) {
+      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _manager.FinishPendingWork();
+    }
+
+    BlockPos remove = new(1, 0, 1, 0);
+    connectors = connectors.Remove(remove);
+    _accessor.RemoveBlock(remove);
+    _manager.FinishPendingWork();
+
+    // Verify that the remaining connector blocks are ejected.
+    AssertEjected(connectors);
+  }
+
+  [TestMethod]
+  public void RemoveRedundantConnector() {
+    // First, the following pattern is made:
+    //
+    //  |  |
+    // -2--1-
+    //  |  |
+    //  |  |
+    // -S--0-
+    //  |  |
+    //
+    // Then the first connector is broken. The remaining connectors should
+    // remain connected.
+    //
+    //  |  |
+    // -2--1-
+    //  |  |
+    //  |
+    // -S-
+    //  |
+    //
+
+    // Place a source block.
+    BlockPos sourceBlock = new(0, 0, 0, 0);
+    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+
+    BlockPos[] connectors = { new(1, 0, 0, 0), new(1, 0, 1, 0),
+                              new(0, 0, 1, 0) };
+    foreach (BlockPos pos in connectors) {
+      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _manager.FinishPendingWork();
+    }
+
+    BlockPos remove = new(0, 0, 1, 0);
+    connectors = connectors.Remove(remove);
+    _accessor.RemoveBlock(remove);
+    _manager.FinishPendingWork();
+
+    // Verify that the remaining connector blocks are still connected.
+    AssertConnected(connectors, sourceBlock);
+  }
+
+  [TestMethod]
+  public void RemoveSecondConnectorInSquare() {
+    // First, the following pattern is made:
+    //
+    //     |  |
+    //    -3--2-
+    //     |  |
+    //  |  |  |
+    // -S--0--1-
+    //  |  |  |
+    //
+    // Then the second connector is broken. The remaining connectors should
+    // remain connected.
+    //
+    //     |  |
+    //    -3--2-
+    //     |  |
+    //  |  |
+    // -S--0-
+    //  |  |
+    //
+
+    // Place a source block.
+    BlockPos sourceBlock = new(0, 0, 0, 0);
+    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+
+    BlockPos[] connectors = {
+      new(1, 0, 0, 0),
+      new(2, 0, 0, 0),
+      new(2, 0, 1, 0),
+      new(1, 0, 1, 0),
+    };
+    foreach (BlockPos pos in connectors) {
+      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _manager.FinishPendingWork();
+    }
+
+    BlockPos remove = new(2, 0, 0, 0);
+    connectors = connectors.Remove(remove);
+    _accessor.RemoveBlock(remove);
+    _manager.FinishPendingWork();
+
+    // Verify that the remaining connector blocks are still connected.
+    AssertConnected(connectors, sourceBlock);
+  }
+
+  [TestMethod]
+  public void RemoveFirstConnectorInSquare() {
+    // First, the following pattern is made:
+    //
+    //     |  |
+    //    -3--2-
+    //     |  |
+    //  |  |  |
+    // -S--0--1-
+    //  |  |  |
+    //
+    // Then connector 0 is broken. The remaining connectors should be
+    // disconnected.
+    //
+    //     |  |
+    //    -3--2-
+    //     |  |
+    //  |     |
+    // -S-   -1-
+    //  |     |
+    //
+
+    // Place a source block.
+    BlockPos sourceBlock = new(0, 0, 0, 0);
+    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+
+    BlockPos[] connectors = {
+      new(1, 0, 0, 0),
+      new(2, 0, 0, 0),
+      new(2, 0, 1, 0),
+      new(1, 0, 1, 0),
+    };
+    foreach (BlockPos pos in connectors) {
+      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _manager.FinishPendingWork();
+    }
+
+    BlockPos remove = new(1, 0, 0, 0);
+    connectors = connectors.Remove(remove);
+    _accessor.RemoveBlock(remove);
+    _manager.FinishPendingWork();
+
+    // Verify that the remaining connector blocks are ejected.
+    AssertEjected(connectors);
+  }
+
+  [TestMethod]
+  public void RerouteToLongerPath() {
+    // First, the following pattern is made:
+    //
+    //  |  |  |
+    // -2--3--4-
+    //  |  |  |
+    //  |     |
+    // -S-   -5-
+    //  |     |
+    //  |  |  |
+    // -0--1--6-
+    //  |  |  |
+    //
+    // Then connector 0 is broken. The remaining connectors should remain
+    // connected. This means that connector 1 has to connect to connector 6 (or
+    // possibly 6 to 5), even though connector 6 previous had a greater distance
+    // than connector 1 (or 6 to 5).
+    //
+    //  |  |  |
+    // -2--3--4-
+    //  |  |  |
+    //  |     |
+    // -S-   -5-
+    //  |     |
+    //     |  |
+    //    -1--6-
+    //     |  |
+    //
+
+    // Place a source block.
+    BlockPos sourceBlock = new(0, 0, 1, 0);
+    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+
+    BlockPos[] connectors = {
+      new(0, 0, 0, 0), new(1, 0, 0, 0), new(0, 0, 2, 0), new(1, 0, 2, 0),
+      new(2, 0, 2, 0), new(2, 0, 1, 0), new(2, 0, 0, 0),
+    };
+    foreach (BlockPos pos in connectors) {
+      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _manager.FinishPendingWork();
+    }
+
+    BlockPos remove = new(0, 0, 0, 0);
+    connectors = connectors.Remove(remove);
+    _accessor.RemoveBlock(remove);
+    _manager.FinishPendingWork();
+
+    // Verify that the remaining connector blocks are still connected.
+    AssertConnected(connectors, sourceBlock);
   }
 }
