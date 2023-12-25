@@ -1,47 +1,97 @@
 {
   code: "puzzle",
   variantGroups: [
-    { code: "orientation", states: ["ns", "we"] },
+    { code: "side", loadFromProperties: "abstract/horizontalorientation" }
   ],
   behaviors: [
-    { name: "NWOrientable" },
-    { name: "BlockEntityForward" }
+    { name: "HorizontalOrientable" },
+    { name: "BlockEntityForward" },
+    { name: "Network" },
   ],
-  attributes: {
-    scope: "function"
-  },
-  entityclass: "Scope",
-  creativeinventory: { general: ["*"] },
+  entityclass: "CacheMesh",
+  entityBehaviors: [
+    {
+      name: "Network",
+      properties: {
+        scope: [
+          {
+            edgesByType: {
+              "*-north": ["east-right", "west-left", "down-up", "source"],
+              "*-south": ["east-left", "west-right", "down-down", "source"],
+              "*-west": ["north-right", "south-left", "down-right", "source"],
+              "*-east": ["north-left", "south-right", "down-left", "source"]
+            },
+            textures: ["eastwest", "northsouth", "up"],
+            sourceScope: "function"
+          }
+        ]
+      }
+    },
+    {name: "PortHole"
+    }
+  ],
+  creativeinventory: { general: ["*-north"] },
   blockmaterial: "Stone",
   drawtype: "json",
-  shape: {
-    base: "block/function-{orientation}"
-  },
-  sideopaque: {
-    all: false
+  shapeByType: {
+    "*-north": {
+      base: "block/function"
+    },
+    "*-east": {
+      base: "block/function",
+      rotateY: 270
+    },
+    "*-south": {
+      base: "block/function",
+      rotateY: 180
+    },
+    "*-west": {
+      base: "block/function",
+      rotateY: 90
+    }
   },
   textures: {
-    "north": {
-      base: "scope/northsouth",
+    "eastwest": {
+      base: "scope/eastwest"
     },
-    "east": {
-      base: "scope/eastwest",
-    },
-    "south": {
-      base: "scope/northsouth",
-    },
-    "west": {
-      base: "scope/eastwest",
+    "northsouth": {
+      base: "scope/northsouth"
     },
     "up": {
-      base: "scope/updown",
+      base: "scope/up"
     },
-    "down": {
-      base: "scope/updown",
-    },
-    "functionupside": {
-      base: "puzzle/upside"
+    "functionup": {
+      base: "puzzle/up"
     }
+  },
+  sideopaque: {
+    all: true,
+    up: false,
+  },
+  sideOpaqueByType: {
+    "*-north": {
+      north: false,
+      east: false,
+      west: false,
+    },
+    "*-east": {
+      east: false,
+      north: false,
+      south: false,
+    },
+    "*-south": {
+      south: false,
+      east: false,
+      west: false,
+    },
+    "*-west": {
+      west: false,
+      north: false,
+      south: false,
+    }
+  },
+  sidesolid: {
+    all: true
   },
   resistance: 3.5,
   sounds: {
