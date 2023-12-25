@@ -19,8 +19,6 @@ public class LambdaFactoryModSystem : ModSystem {
     api.RegisterBlockEntityClass("Scope",
                                  typeof(BlockEntityScope<ScopeCacheKey>));
     api.RegisterBlockEntityClass("Wire", typeof(BlockEntityWire));
-    api.RegisterBlockEntityBehaviorClass("DoubleScope",
-                                         typeof(BEBehaviorDoubleScope));
     api.RegisterBlockEntityBehaviorClass(BEBehaviorNetwork.Name,
                                          typeof(BEBehaviorNetwork));
     api.RegisterBlockEntityBehaviorClass("PortHole",
