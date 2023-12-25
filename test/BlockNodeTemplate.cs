@@ -627,4 +627,120 @@ public class BlockNodeTemplateTest {
     // Verify that the remaining connector blocks are still connected.
     AssertConnected(connectors, sourceBlock);
   }
+
+  [TestMethod]
+  public void BreakReplaceCycle1() {
+    // First, the following pattern is made:
+    //
+    //     |  |
+    //    -3--2-
+    //     |  |
+    //  |  |  |
+    // -S--0--1-
+    //  |  |  |
+    //
+    // Then the source and connector 0 are broken.
+    //
+    //     |  |
+    //    -3--2-
+    //     |  |
+    //        |
+    //       -1-
+    //        |
+    //
+    // Before stepping, connection 0 is placed again. This test case is tricky,
+    // because the new connector 0 may try to connect to connector 3, which
+    // would create a cycle. However, on the next step connector 1 will discover
+    // that its parent has a higher distance, and thus connector 1 will
+    // disconnect itself, and propagate that.
+    //
+    //     |  |
+    //    -3--2-
+    //     |  |
+    //     |  |
+    //    -0--1-
+    //     |  |
+    //
+
+    // Place a source block.
+    BlockPos sourceBlock = new(0, 0, 0, 0);
+    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+
+    BlockPos[] connectors = {
+      new(1, 0, 0, 0),
+      new(2, 0, 0, 0),
+      new(2, 0, 1, 0),
+      new(1, 0, 1, 0),
+    };
+    foreach (BlockPos pos in connectors) {
+      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _manager.FinishPendingWork();
+    }
+
+    _accessor.RemoveBlock(sourceBlock);
+    _accessor.RemoveBlock(connectors[0]);
+    _accessor.SetBlock(connectors[0], _templates.ScopeCenterConnector);
+    _manager.FinishPendingWork();
+
+    // Verify that the remaining connector blocks are still connected.
+    AssertEjected(connectors);
+  }
+
+  [TestMethod]
+  public void BreakReplaceCycle2() {
+    // First, the following pattern is made:
+    //
+    //     |  |
+    //    -1--2-
+    //     |  |
+    //  |  |  |
+    // -S--0--3-
+    //  |  |  |
+    //
+    // Then the source and connector 0 are broken.
+    //
+    //     |  |
+    //    -1--2-
+    //     |  |
+    //        |
+    //       -3-
+    //        |
+    //
+    // Before stepping, connection 0 is placed again. This test case is tricky,
+    // because the new connector 0 may try to connect to connector 3, which
+    // would create a cycle. However, on the next step connector 1 will discover
+    // that its parent has a higher distance, and thus connector 1 will
+    // disconnect itself, and propagate that.
+    //
+    //     |  |
+    //    -1--2-
+    //     |  |
+    //     |  |
+    //    -0--3-
+    //     |  |
+    //
+
+    // Place a source block.
+    BlockPos sourceBlock = new(0, 0, 0, 0);
+    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+
+    BlockPos[] connectors = {
+      new(1, 0, 0, 0),
+      new(1, 0, 1, 0),
+      new(2, 0, 1, 0),
+      new(2, 0, 0, 0),
+    };
+    foreach (BlockPos pos in connectors) {
+      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _manager.FinishPendingWork();
+    }
+
+    _accessor.RemoveBlock(sourceBlock);
+    _accessor.RemoveBlock(connectors[0]);
+    _accessor.SetBlock(connectors[0], _templates.ScopeCenterConnector);
+    _manager.FinishPendingWork();
+
+    // Verify that the remaining connector blocks are still connected.
+    AssertEjected(connectors);
+  }
 }

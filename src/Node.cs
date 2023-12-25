@@ -144,7 +144,6 @@ public class NodeTemplate {
         node.PropagationDistance =
             neighborNode.PropagationDistance + manager.DefaultDistanceIncrement;
       }
-      Debug.Assert(neighborNode.Parent != edge.GetOpposite());
       anyInfDistNeighbors |= neighborNode.HasInfDistance;
     }
     if (!node.HasInfDistance && anyInfDistNeighbors) {
@@ -161,6 +160,7 @@ public class NodeTemplate {
     if (!node.Source.IsSet()) {
       return;
     }
+    manager.RemoveNode(node, pos, Id);
     foreach (Edge edge in Edges) {
       BlockFacing face = edge.GetFace();
       if (face == null) {

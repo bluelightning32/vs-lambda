@@ -146,8 +146,8 @@ public class NetworkManager {
     System.Diagnostics.Debug.Assert(!node.HasInfDistance);
     System.Diagnostics.Debug.Assert(_accessor.GetDistance(pos, nodeId) ==
                                     node.PropagationDistance);
-    SourcePendingUpdates sourceUpdates;
-    if (!_pendingUpdates.TryGetValue(node.Source, out sourceUpdates)) {
+    if (!_pendingUpdates.TryGetValue(node.Source,
+                                     out SourcePendingUpdates sourceUpdates)) {
       sourceUpdates = new SourcePendingUpdates();
       _pendingUpdates.Add(node.Source, sourceUpdates);
     }
@@ -167,14 +167,29 @@ public class NetworkManager {
     System.Diagnostics.Debug.Assert(node.Source.IsSet());
     System.Diagnostics.Debug.Assert(_accessor.GetSource(pos, nodeId) ==
                                     node.Source);
-    SourcePendingUpdates sourceUpdates;
-    if (!_pendingUpdates.TryGetValue(node.Source, out sourceUpdates)) {
+    if (!_pendingUpdates.TryGetValue(node.Source,
+                                     out SourcePendingUpdates sourceUpdates)) {
       sourceUpdates = new SourcePendingUpdates();
       _pendingUpdates.Add(node.Source, sourceUpdates);
     }
     bool added = sourceUpdates.Ejections.Add(new NodePos(pos, nodeId));
     Debug("Added node to ejection queue. source={0} pos=<{1}>:{2} added={3}",
           node.Source, pos, nodeId, added);
+  }
+
+  // Removes the node from the pending updates queue and ejection queue. This
+  // should only be called by NodeTemplate when the block is broken.
+  public virtual void RemoveNode(Node node, BlockPos pos, int nodeId) {
+    if (Side == EnumAppSide.Client) {
+      return;
+    }
+    if (!_pendingUpdates.TryGetValue(node.Source,
+                                     out SourcePendingUpdates sourceUpdates)) {
+      return;
+    }
+    sourceUpdates.Queue.Remove(
+        new NodeQueueItem(node.PropagationDistance, pos, nodeId));
+    sourceUpdates.Ejections.Remove(new NodePos(pos, nodeId));
   }
 
   public bool HasPendingWork {
