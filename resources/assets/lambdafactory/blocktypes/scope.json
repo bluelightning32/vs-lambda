@@ -14,10 +14,27 @@
     { name: "OmniRotatable", properties: {rotateSides: true, facing: "block"
       }
     },
+    { name: "Network" },
   ],
   entityclass: "CacheMesh",
   entityBehaviors: [
-    {name: "Scope"
+    {
+      name: "Network",
+      properties: {
+        scope: [
+          {
+            edgesByType: {
+              "*-north": ["east-right", "up-up", "west-left", "down-up"],
+              "*-south": ["east-left", "up-down", "west-right", "down-down"],
+              "*-west": ["north-right", "up-left", "south-left", "down-right"],
+              "*-east": ["north-left", "up-right", "south-right", "down-left"],
+              "*-up": ["north-up", "east-up", "south-up", "west-up"],
+              "*-down": ["north-down", "east-down", "south-down", "west-down"]
+            },
+            textures: ["eastwest", "northsouth", "up"]
+          }
+        ]
+      }
     },
     {name: "PortHole"
     }
@@ -58,6 +75,18 @@
     },
   },
   textures: {
+    "down": {
+      base: "scope/down"
+    },
+    "eastwest": {
+      base: "scope/eastwest"
+    },
+    "northsouth": {
+      base: "scope/northsouth"
+    },
+    "up": {
+      base: "scope/up"
+    }
   },
   sideSolidOpaqueAo: {
     all: false
