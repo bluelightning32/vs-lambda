@@ -845,4 +845,71 @@ public class BlockNodeTemplateTest {
     // connected.
     AssertConnected(connectors.RemoveEntry(4), sourceBlock);
   }
+
+  [TestMethod]
+  public void RerouteShorterPath() {
+    // First, the following pattern is made. Connector 7 has a shorter distance
+    // than connector 5.
+    //
+    //  |
+    // -6-
+    //  |
+    //  |  |  |
+    // -5--4--3-
+    //  |  |  |
+    //  |     |
+    // -7-   -2-
+    //  |     |
+    //  |  |  |
+    // -S--0--1-
+    //  |  |  |
+    //
+    // Then connector 0 is broken. All of the remaining connectors should
+    // remain connected.
+    //
+    //  |
+    // -6-
+    //  |
+    //  |  |  |
+    // -5--4--3-
+    //  |  |  |
+    //  |     |
+    // -7-   -2-
+    //  |     |
+    //  |     |
+    // -S-   -1-
+    //  |     |
+    //
+
+    // Place a source block.
+    BlockPos sourceBlock = new(0, 0, 0, 0);
+    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+
+    BlockPos[] connectors = {
+      /*connectors[0]=*/new(1, 0, 0, 0),
+      /*connectors[1]=*/new(2, 0, 0, 0),
+      /*connectors[2]=*/new(2, 0, 1, 0),
+      /*connectors[3]=*/new(2, 0, 2, 0),
+      /*connectors[4]=*/new(1, 0, 2, 0),
+      /*connectors[5]=*/new(0, 0, 2, 0),
+      /*connectors[6]=*/new(0, 0, 3, 0),
+      /*connectors[7]=*/new(0, 0, 1, 0),
+    };
+    foreach (BlockPos pos in connectors) {
+      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _manager.FinishPendingWork();
+    }
+    // Verify that connector 7 has a lower distance than connector 5, meaning
+    // that it connected directly to the source. This test relies on the edge
+    // preference of the algorithm.
+    Assert.IsTrue(_accessor.GetDistance(connectors[7], 0) <
+                  _accessor.GetDistance(connectors[5], 0));
+
+    _accessor.RemoveBlock(connectors[0]);
+    _manager.FinishPendingWork();
+
+    // Verify that all connectors (except 0 which was removed) are still
+    // connected.
+    AssertConnected(connectors.RemoveEntry(0), sourceBlock);
+  }
 }

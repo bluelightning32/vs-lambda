@@ -157,6 +157,36 @@ public class NetworkManager {
           node.Source, pos, nodeId, node.PropagationDistance, added);
   }
 
+  // Removes the node from the pending updates queue with an old value, if it
+  // exists. Then puts the node in the pending updates queue with the new
+  // distance. This should only be called by NodeTemplate. The caller treat
+  // `pos` as immutable after the function call.
+  public virtual void RequeueNode(int oldDistance, Node node, BlockPos pos,
+                                  int nodeId) {
+    if (Side == EnumAppSide.Client) {
+      return;
+    }
+    System.Diagnostics.Debug.Assert(_accessor.GetSource(pos, nodeId) ==
+                                    node.Source);
+    System.Diagnostics.Debug.Assert(!node.HasInfDistance);
+    System.Diagnostics.Debug.Assert(_accessor.GetDistance(pos, nodeId) ==
+                                    node.PropagationDistance);
+    if (!_pendingUpdates.TryGetValue(node.Source,
+                                     out SourcePendingUpdates sourceUpdates)) {
+      sourceUpdates = new SourcePendingUpdates();
+      _pendingUpdates.Add(node.Source, sourceUpdates);
+    }
+    if (oldDistance != Node.InfDistance &&
+        oldDistance != node.PropagationDistance) {
+      // Remove the old entry before adding the new entry.
+      sourceUpdates.Queue.Remove(new NodeQueueItem(oldDistance, pos, nodeId));
+    }
+    bool added = sourceUpdates.Queue.Add(
+        new NodeQueueItem(node.PropagationDistance, pos, nodeId));
+    Debug("Added node to queue. source={0} pos=<{1}>:{2} dist={3} added={4}",
+          node.Source, pos, nodeId, node.PropagationDistance, added);
+  }
+
   // Puts the node in the pending ejections queue. This should only be called by
   // NodeTemplate.
   // The caller treat `pos` as immutable after the function call.

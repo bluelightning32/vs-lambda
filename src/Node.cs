@@ -284,19 +284,19 @@ public class NodeTemplate {
       }
 
       bool neighModified = false;
+      int neighborDistance = neighbor.PropagationDistance;
       if (neighbor.HasInfDistance) {
         neighbor.Connect(networkManager, node, edge.GetOpposite());
         neighModified = true;
       } else if (neighbor.Parent == edge.GetOpposite()) {
         Debug.Assert(neighbor.Source == node.Source);
-        if (networkManager.IsPropagationDistanceTooLow(
-                node.PropagationDistance, neighbor.PropagationDistance)) {
+        if (networkManager.IsPropagationDistanceTooLow(node.PropagationDistance,
+                                                       neighborDistance)) {
           neighbor.PropagationDistance =
               node.PropagationDistance + networkManager.MinDistanceIncrement;
           neighModified = true;
         } else if (networkManager.IsPropagationDistanceTooHigh(
-                       node.PropagationDistance,
-                       neighbor.PropagationDistance)) {
+                       node.PropagationDistance, neighborDistance)) {
           neighbor.PropagationDistance =
               node.PropagationDistance + networkManager.MaxDistanceIncrement;
           neighModified = true;
@@ -306,7 +306,7 @@ public class NodeTemplate {
         // Copy `neighborPos` so that it is immutable.
         BlockPos neighborPosCopy = neighborPos.Copy();
         accessor.SetNode(neighborPosCopy, neighborTemplate.Id, in neighbor);
-        networkManager.EnqueueNode(neighbor, neighborPosCopy,
+        networkManager.RequeueNode(neighborDistance, neighbor, neighborPosCopy,
                                    neighborTemplate.Id);
       }
     }
