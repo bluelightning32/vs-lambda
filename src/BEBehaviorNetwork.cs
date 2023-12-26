@@ -183,23 +183,7 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
                                    this);
   }
 
-  public object GetKey() {
-    if (Scope.Min < 0 || (int)Scope.Max > 7) {
-      throw new Exception("Scope range is too large for 3 bits.");
-    }
-    if (_nodes.Length > 64 / 3) {
-      throw new Exception(
-          $"Block {Block.Code} has more than the max supported networks.");
-    }
-
-    ulong key = 0;
-    foreach (Node node in _nodes) {
-      key <<= 3;
-      key |= (ulong)node.Scope;
-    }
-
-    return key;
-  }
+  public object GetKey() { return _template.GetTextureKey(_nodes); }
 
   public object GetImmutableKey() { return GetKey(); }
 
@@ -223,6 +207,10 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
     base.GetBlockInfo(forPlayer, dsc);
     if ((Api as ICoreClientAPI)?.Settings.Bool["extendedDebugInfo"] ?? false) {
       for (int i = 0; i < _nodes.Length; ++i) {
+        if (i == 13) {
+          dsc.AppendLine($"...");
+          break;
+        }
         dsc.AppendLine($"node[{i}] = {{ {_nodes[i].ToString()} }}");
       }
     }

@@ -33,6 +33,18 @@
             },
             textures: ["eastwest", "northsouth", "up"]
           }
+        ],
+        match: [
+          {
+            edgesByType: {
+              "*-north": ["east-center", "up-center", "west-center", "down-center"],
+              "*-south": ["east-center", "up-center", "west-center", "down-center"],
+              "*-west": ["north-center", "up-center", "south-center", "down-center"],
+              "*-east": ["north-center", "up-center", "south-center", "down-center"],
+              "*-up": ["north-center", "east-center", "south-center", "west-center"],
+              "*-down": ["north-center", "east-center", "south-center", "west-center"]
+            }
+          }
         ]
       }
     },

@@ -59,6 +59,11 @@
             edges: ["down-right", "west-down"],
             textures: ["downwest"]
           }
+        ],
+        match: [
+          {
+            edges: ["north-center", "east-center", "south-center", "west-center", "up-center", "down-center"],
+          }
         ]
       }
     }

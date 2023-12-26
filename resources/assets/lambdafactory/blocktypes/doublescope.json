@@ -39,6 +39,11 @@
             },
             textures: ["active2up", "active2ew", "active2ns"]
           }
+        ],
+        match: [
+          {
+            edges: ["north-center", "east-center", "south-center", "west-center", "up-center", "down-center"]
+          }
         ]
       }
     },

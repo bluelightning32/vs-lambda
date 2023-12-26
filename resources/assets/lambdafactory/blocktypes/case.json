@@ -24,6 +24,16 @@
             textures: ["eastwest", "northsouth", "up"],
             sourceScope: "case"
           }
+        ],
+        match: [
+          {
+            edges: ["north-center", "east-center", "south-center", "west-center", "down-center"],
+            replacementTextures: {
+              "none": {
+                "crystal": { base: "case/disconnected" }
+              }
+            }
+          }
         ]
       }
     },

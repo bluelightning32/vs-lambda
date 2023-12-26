@@ -77,8 +77,7 @@ public class BlockNodeTemplate {
   private readonly BlockNodeCategory _scope;
   private readonly BlockNodeCategory _match;
 
-  private readonly Dictionary<string, NodeTemplate> _textures =
-      new Dictionary<string, NodeTemplate>();
+  private readonly Dictionary<string, NodeTemplate> _textures = new();
 
   private readonly NodeAccessor _accessor;
   private readonly NetworkManager _manager;
@@ -93,19 +92,30 @@ public class BlockNodeTemplate {
         new BlockNodeCategory(_scope.NodeTemplates.Length,
                               loading.Match ?? Array.Empty<NodeTemplate>());
     foreach (NodeTemplate network in _scope.NodeTemplates) {
-      foreach (string texture in network.Textures) {
-        _textures.Add(texture, network);
-      }
+      AddTexturesToIndex(network);
     }
     foreach (NodeTemplate network in _match.NodeTemplates) {
-      foreach (string texture in network.Textures) {
-        _textures.Add(texture, network);
+      AddTexturesToIndex(network);
+    }
+  }
+
+  private void AddTexturesToIndex(NodeTemplate template) {
+    // HashSet is tolerant of adding the same key more than once, but _textures
+    // is not. So add the new textures to a hashset first, then add the hashset
+    // to the dictionary.
+    HashSet<string> newTextures = new(template.Textures);
+    foreach (var scopeEntry in template.ReplacementTextures) {
+      foreach (var entry in scopeEntry.Value) {
+        newTextures.Add(entry.Key);
       }
+    }
+    foreach (var texture in newTextures) {
+      _textures.Add(texture, template);
     }
   }
 
   public TreeArrayAttribute ToTreeAttributes(Node[] nodes) {
-    List<TreeAttribute> info = new List<TreeAttribute>(Count);
+    List<TreeAttribute> info = new(Count);
     foreach (var network in _scope.NodeTemplates) {
       info.Add(nodes[network.Id].ToTreeAttributes());
     }
@@ -150,16 +160,50 @@ public class BlockNodeTemplate {
     return needRefresh;
   }
 
+  private static TextureAtlasPosition BakeTexture(ICoreClientAPI capi,
+                                                  CompositeTexture texture) {
+    if (!texture.Base.HasDomain()) {
+      texture.Base.Domain = LambdaFactoryModSystem.Domain;
+    }
+    if (texture.BlendedOverlays != null) {
+      foreach (var overlay in texture.BlendedOverlays) {
+        if (!overlay.Base.HasDomain()) {
+          overlay.Base.Domain = LambdaFactoryModSystem.Domain;
+        }
+      }
+    }
+
+    texture.Bake(capi.Assets);
+    ITextureAtlasAPI atlas = capi.BlockTextureAtlas;
+    atlas.GetOrInsertTexture(
+        texture.Baked.BakedName, out int id, out TextureAtlasPosition tex,
+        () => atlas.LoadCompositeBitmap(texture.Baked.BakedName));
+    return tex;
+  }
+
   public TextureAtlasPosition GetTexture(string name, ICoreClientAPI capi,
                                          Block block, Node[] nodes) {
-    if (!_textures.TryGetValue(name, out NodeTemplate network)) {
+    if (!_textures.TryGetValue(name, out NodeTemplate template)) {
       return null;
     }
+    Scope scope = template.GetScope(nodes);
     CompositeTexture composite;
+    // Check for a complete replacement texture.
+    if (template.ReplacementTextures.TryGetValue(
+            scope,
+            out Dictionary<string, CompositeTexture> replacementTextures)) {
+      if (replacementTextures.TryGetValue(name, out composite)) {
+        return BakeTexture(capi, composite);
+      }
+    }
+    if (!template.Textures.Contains(name)) {
+      return null;
+    }
+    // The texture is in the list to add an overlay to. So read the block's base
+    // texture, then add the overlay based on the scope.
     if (!block.Textures.TryGetValue(name, out composite)) {
       return null;
     }
-    Scope scope = network.GetScope(nodes);
     if (scope != Scope.None) {
       composite = composite.Clone();
       BlendedOverlayTexture scopeBlend = new BlendedOverlayTexture();
@@ -171,12 +215,7 @@ public class BlockNodeTemplate {
           composite.BlendedOverlays?.Append(scopeBlend) ??
           new BlendedOverlayTexture[] { scopeBlend };
     }
-    composite.Bake(capi.Assets);
-    ITextureAtlasAPI atlas = capi.BlockTextureAtlas;
-    atlas.GetOrInsertTexture(
-        composite.Baked.BakedName, out int id, out TextureAtlasPosition tex,
-        () => atlas.LoadCompositeBitmap(composite.Baked.BakedName));
-    return tex;
+    return BakeTexture(capi, composite);
   }
 
   private void SetSourceScope(BlockPos pos, Node[] nodes) {
@@ -263,5 +302,37 @@ public class BlockNodeTemplate {
 
   public bool IsScopeNetwork(int nodeId) {
     return nodeId < _scope.NodeTemplates.Length;
+  }
+
+  public ulong GetTextureKey(Node[] nodes) {
+    if (Scope.Min < 0 || (int)Scope.Max > 7) {
+      throw new Exception("Scope range is too large for 3 bits.");
+    }
+    ulong key = 0;
+    int texturedNodes = 0;
+    foreach (NodeTemplate template in _scope.NodeTemplates) {
+      if (template.Textures.Count == 0 &&
+          template.ReplacementTextures.Count == 0) {
+        continue;
+      }
+      ++texturedNodes;
+      key <<= 3;
+      key |= (ulong)nodes[template.Id].Scope;
+    }
+    foreach (NodeTemplate template in _match.NodeTemplates) {
+      if (template.Textures.Count == 0 &&
+          template.ReplacementTextures.Count == 0) {
+        continue;
+      }
+      ++texturedNodes;
+      key <<= 3;
+      key |= (ulong)nodes[template.Id].Scope;
+    }
+    if (texturedNodes > 64 / 3) {
+      throw new Exception(
+          $"Block has more than the max supported networks with texture overrides.");
+    }
+
+    return key;
   }
 }
