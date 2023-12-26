@@ -1,44 +1,65 @@
 {
   code: "match",
   variantGroups: [
-    { code: "orientation", states: ["ns", "we"] },
+    { code: "side", loadFromProperties: "abstract/horizontalorientation" }
   ],
   behaviors: [
-    { name: "NWOrientable" },
-    { name: "BlockEntityForward" }
+    { name: "HorizontalOrientable" },
+    { name: "BlockEntityForward" },
+    { name: "Network" },
   ],
-  attributes: {
-    scope: "case"
-  },
-  entityclass: "Scope",
-  creativeinventory: { general: ["*"] },
+  entityclass: "CacheMesh",
+  entityBehaviors: [
+    {
+      name: "Network",
+      properties: {
+        match: [
+          {
+            edges: ["north-center", "east-center", "south-center", "west-center", "source"]
+          }
+        ]
+      }
+    },
+    {name: "PortHole"
+    }
+  ],
+  creativeinventory: { general: ["*-north"] },
   blockmaterial: "Stone",
   drawtype: "json",
-  shape: {
-    base: "block/match-{orientation}"
-  },
-  sideopaque: {
-    all: false
+  shapeByType: {
+    "*-north": {
+      base: "block/match"
+    },
+    "*-east": {
+      base: "block/match",
+      rotateY: 270
+    },
+    "*-south": {
+      base: "block/match",
+      rotateY: 180
+    },
+    "*-west": {
+      base: "block/match",
+      rotateY: 90
+    }
   },
   textures: {
-    "north": {
-      base: "scope/northsouth",
+    "eastwest": {
+      base: "scope/eastwest"
     },
-    "east": {
-      base: "scope/eastwest",
-    },
-    "south": {
-      base: "scope/northsouth",
-    },
-    "west": {
-      base: "scope/eastwest",
+    "northsouth": {
+      base: "scope/northsouth"
     },
     "up": {
-      base: "scope/updown",
+      base: "scope/up"
     },
-    "down": {
-      base: "scope/updown",
-    },
+  },
+  sideopaque: {
+    all: false,
+    down: true,
+  },
+  sidesolid: {
+    all: true
   },
   resistance: 3.5,
   sounds: {

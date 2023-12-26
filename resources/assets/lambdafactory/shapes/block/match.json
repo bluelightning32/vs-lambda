@@ -1,0 +1,43 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+		"crystal": "match/crystal",
+		"down": "scope/down"
+	},
+	"elements": [
+		{
+			"name": "base",
+			"from": [ 0.0, 0.0, 0.0 ],
+			"to": [ 16.0, 11.0, 16.0 ],
+			"faces": {
+				"north": { "texture": "#down", "uv": [ 0.0, 4.0, 16.0, 15.0 ], "windMode": [-1,-1,-1,-1] },
+				"east": { "texture": "#down", "uv": [ 0.0, 4.0, 16.0, 15.0 ], "windMode": [-1,-1,-1,-1] },
+				"south": { "texture": "#down", "uv": [ 16.0, 5.0, 0.0, 16.0 ], "autoUv": false },
+				"west": { "texture": "#down", "uv": [ 0.0, 4.0, 16.0, 15.0 ] },
+				"up": { "texture": "#down", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "windMode": [-1,-1,-1,-1] },
+				"down": { "texture": "#down", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
+			}
+		},
+		{
+			"name": "crystal",
+			"from": [ 5.0, 9.0, 2.7993 ],
+			"to": [ 11.0, 15.0, 12.7993 ],
+			"rotationOrigin": [ 8.0, 12.0, 8.0 ],
+			"rotationZ": 45.0,
+			"faces": {
+				"north": { "texture": "#crystal", "uv": [ 10.0, 0.0, 16.0, 6.0 ] },
+				"east": { "texture": "#crystal", "uv": [ 0.0, 0.0, 10.0, 6.0 ], "autoUv": false },
+				"south": { "texture": "#crystal", "uv": [ 10.0, 6.0, 16.0, 12.0 ] },
+				"west": { "texture": "#crystal", "uv": [ 0.0, 0.0, 10.0, 6.0 ] },
+				"up": { "texture": "#crystal", "uv": [ 0.0, 6.0, 10.0, 12.0 ], "rotation": 90 },
+				"down": { "texture": "#crystal", "uv": [ 0.0, 6.0, 10.0, 12.0 ], "rotation": 90, "windMode": [-1,-1,-1,-1] }
+			}
+		}
+	]}
