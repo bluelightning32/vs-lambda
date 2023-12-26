@@ -59,6 +59,9 @@
     },
     "up": {
       base: "scope/up"
+    },
+    "functionup": {
+      base: "puzzle/up"
     }
   },
   sideopaque: {
