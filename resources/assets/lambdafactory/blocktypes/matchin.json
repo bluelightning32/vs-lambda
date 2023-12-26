@@ -1,5 +1,5 @@
 {
-  code: "case",
+  code: "matchin",
   variantGroups: [
     { code: "side", loadFromProperties: "abstract/horizontalorientation" }
   ],
@@ -22,7 +22,7 @@
               "*-east": ["north-left", "south-right", "down-left", "source"]
             },
             textures: ["eastwest", "northsouth", "up"],
-            sourceScope: "case"
+            sourceScope: "matchin"
           }
         ],
         match: [
@@ -30,8 +30,7 @@
             edges: ["north-center", "east-center", "south-center", "west-center", "down-center"],
             replacementTextures: {
               "none": {
-                "center": { base: "case/center-disconnected" },
-                "diag": { base: "case/diag-disconnected" }
+                "crystal": { base: "matchin/crystal-disconnected" }
               }
             }
           }
@@ -46,18 +45,18 @@
   drawtype: "json",
   shapeByType: {
     "*-north": {
-      base: "block/case"
+      base: "block/matchin"
     },
     "*-east": {
-      base: "block/case",
+      base: "block/matchin",
       rotateY: 270
     },
     "*-south": {
-      base: "block/case",
+      base: "block/matchin",
       rotateY: 180
     },
     "*-west": {
-      base: "block/case",
+      base: "block/matchin",
       rotateY: 90
     }
   },
