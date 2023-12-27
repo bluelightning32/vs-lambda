@@ -13,9 +13,28 @@ namespace LambdaFactory;
 interface IMeshGenerator {
   public object GetKey();
   public object GetImmutableKey() { return ((ICloneable)GetKey()).Clone(); }
-  public void GenerateMesh(ref MeshData mesh);
+  public void EditMesh(MeshData mesh) {}
 
   public bool UpdatedPickedStack(ItemStack stack) { return false; }
+
+  public TextureAtlasPosition GetTexture(string textureCode) { return null; }
+}
+
+public class CacheMeshTextureSource : ITexPositionSource {
+  private BlockEntityCacheMesh _cache;
+  private ITexPositionSource _def;
+
+  public CacheMeshTextureSource(BlockEntityCacheMesh cache,
+                                ITexPositionSource def) {
+    _cache = cache;
+    _def = def;
+  }
+
+  public TextureAtlasPosition this[string textureCode] {
+    get { return _cache.GetTexture(textureCode) ?? _def[textureCode]; }
+  }
+
+  public Size2i AtlasSize => _def.AtlasSize;
 }
 
 public class BlockEntityCacheMesh : BlockEntity, IBlockEntityForward {
@@ -75,16 +94,32 @@ public class BlockEntityCacheMesh : BlockEntity, IBlockEntityForward {
         "lambda: Cache miss for {0} {1}. Dict has {2} entries.", Block.Code,
         ListEqualityComparer<object>.GetString(key), cache.Count);
 
-    _mesh = null;
-    GenerateMesh(ref _mesh);
+    ((ICoreClientAPI)Api)
+        .Tesselator.TesselateShape(
+            "network", Block.Code, Block.Shape, out _mesh,
+            new CacheMeshTextureSource(
+                this,
+                ((ICoreClientAPI)Api).Tesselator.GetTextureSource(Block)));
+    GenerateMesh(_mesh);
     List<object> cloned = GetClonedKey();
     cache[cloned] = _mesh;
   }
 
-  protected virtual void GenerateMesh(ref MeshData mesh) {
+  public virtual void GenerateMesh(MeshData mesh) {
     foreach (var behavior in Behaviors) {
-      (behavior as IMeshGenerator)?.GenerateMesh(ref mesh);
+      (behavior as IMeshGenerator)?.EditMesh(mesh);
     }
+  }
+
+  public virtual TextureAtlasPosition GetTexture(string textureCode) {
+    foreach (var behavior in Behaviors) {
+      TextureAtlasPosition result =
+          (behavior as IMeshGenerator)?.GetTexture(textureCode);
+      if (result != null) {
+        return result;
+      }
+    }
+    return null;
   }
 
   public override bool OnTesselation(ITerrainMeshPool mesher,

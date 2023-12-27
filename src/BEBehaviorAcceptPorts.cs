@@ -41,31 +41,17 @@ public class BEBehaviorAcceptPorts : BlockEntityBehavior,
     }
   }
 
-  public void GenerateMesh(ref MeshData mesh) {
-    bool blockDefault = false;
-    if (mesh == null) {
-      mesh = ((ICoreClientAPI)Api).TesselatorManager.GetDefaultBlockMesh(Block);
-      if (mesh == null) {
-        return;
-      }
-      blockDefault = true;
-    }
-    mesh = CutPortHoles(_portedSides, mesh, !blockDefault);
-  }
+  public void EditMesh(MeshData mesh) { CutPortHoles(_portedSides, mesh); }
 
-  public MeshData CutPortHoles(int sides, MeshData mesh, bool inPlace) {
+  public static void CutPortHoles(int sides, MeshData mesh) {
     if (mesh.VerticesPerFace != 4 || mesh.IndicesPerFace != 6) {
       throw new Exception("Unexpected VerticesPerFace or IndicesPerFace");
     }
     if (sides == 0) {
-      return mesh;
+      return;
     }
     Cuboidf faceBounds = new Cuboidf();
     int origFaceCount = mesh.VerticesCount / mesh.VerticesPerFace;
-    MeshData copy = mesh;
-    if (!inPlace) {
-      copy = copy.Clone();
-    }
     for (int face = 0; face < origFaceCount; face++) {
       MeshUtil.GetFaceBounds(faceBounds, mesh.xyz, face * mesh.VerticesPerFace,
                              (face + 1) * mesh.VerticesPerFace);
@@ -79,11 +65,10 @@ public class BEBehaviorAcceptPorts : BlockEntityBehavior,
                 0.1f &&
             faceBounds.Contains(facing.PlaneCenter.X, facing.PlaneCenter.Y,
                                 facing.PlaneCenter.Z)) {
-          MeshUtil.AddFaceHole(copy, facing.Axis, face, facing);
+          MeshUtil.AddFaceHole(mesh, facing.Axis, face, facing);
         }
       }
     }
-    return copy;
   }
 
   void IBlockEntityForward.OnNeighbourBlockChange(

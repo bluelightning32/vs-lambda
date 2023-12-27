@@ -10,9 +10,7 @@ using Vintagestory.API.Util;
 
 namespace LambdaFactory;
 
-public class BEBehaviorNetwork : BlockEntityBehavior,
-                                 IMeshGenerator,
-                                 ITexPositionSource {
+public class BEBehaviorNetwork : BlockEntityBehavior, IMeshGenerator {
   private BlockNodeTemplate _template;
   private Node[] _nodes;
 
@@ -177,30 +175,13 @@ public class BEBehaviorNetwork : BlockEntityBehavior,
     _template.OnRemoved(Pos, _nodes);
   }
 
-  public void GenerateMesh(ref MeshData mesh) {
-    ((ICoreClientAPI)Api)
-        .Tesselator.TesselateShape("network", Block.Code, Block.Shape, out mesh,
-                                   this);
-  }
-
   public object GetKey() { return _template.GetTextureKey(_nodes); }
 
   public object GetImmutableKey() { return GetKey(); }
 
-  public Size2i AtlasSize {
-    get {
-      ITexPositionSource def =
-          ((ICoreClientAPI)Api).Tesselator.GetTextureSource(Block);
-      return def.AtlasSize;
-    }
-  }
-
-  public TextureAtlasPosition this[string textureCode] {
-    get {
-      ICoreClientAPI capi = (ICoreClientAPI)Api;
-      return _template.GetTexture(textureCode, capi, Block, _nodes) ??
-             capi.Tesselator.GetTextureSource(Block)[textureCode];
-    }
+  public TextureAtlasPosition GetTexture(string textureCode) {
+    ICoreClientAPI capi = (ICoreClientAPI)Api;
+    return _template.GetTexture(textureCode, capi, Block, _nodes);
   }
 
   public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc) {
