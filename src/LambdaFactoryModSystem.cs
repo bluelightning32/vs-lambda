@@ -3,12 +3,23 @@ using System.Dynamic;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;
+using Vintagestory.API.Util;
 
 namespace LambdaFactory;
 
 public class LambdaFactoryModSystem : ModSystem {
   public static string Domain { get; private set; }
+
+  // Storing this field in the mod ensures that there is once instance per API
+  // instance. These fields cannot be stored in the object cache, because the
+  // object cache can be cleared with a command.
   public BEBehaviorNetwork.Manager NetworkManager { get; private set; }
+
+  public static LambdaFactoryModSystem GetInstance(ICoreAPI api) {
+    return ObjectCacheUtil.GetOrCreate(
+        api, $"lambdafactory",
+        () => api.ModLoader.GetModSystem<LambdaFactoryModSystem>());
+  }
 
   public override void Start(ICoreAPI api) {
     Domain = Mod.Info.ModID;

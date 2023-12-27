@@ -114,8 +114,7 @@ public class BEBehaviorNetwork : BlockEntityBehavior, IMeshGenerator {
         cache.Count);
     BlockNodeTemplateLoading loading =
         properties.AsObject<BlockNodeTemplateLoading>();
-    Manager manager =
-        api.ModLoader.GetModSystem<LambdaFactoryModSystem>().NetworkManager;
+    Manager manager = LambdaFactoryModSystem.GetInstance(api).NetworkManager;
     block = new BlockNodeTemplate(loading, ((IGetNodeAccessor)manager).Accessor,
                                   manager);
 
