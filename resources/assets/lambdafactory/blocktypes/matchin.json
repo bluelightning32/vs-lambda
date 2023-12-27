@@ -37,7 +37,7 @@
         ]
       }
     },
-    {name: "PortHole"
+    {name: "AcceptPorts"
     }
   ],
   creativeinventory: { general: ["*-north"] },

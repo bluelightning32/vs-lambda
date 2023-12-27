@@ -19,8 +19,8 @@ public class LambdaFactoryModSystem : ModSystem {
     api.RegisterBlockEntityClass("Wire", typeof(BlockEntityWire));
     api.RegisterBlockEntityBehaviorClass(BEBehaviorNetwork.Name,
                                          typeof(BEBehaviorNetwork));
-    api.RegisterBlockEntityBehaviorClass("PortHole",
-                                         typeof(BEBehaviorPortHole));
+    api.RegisterBlockEntityBehaviorClass("AcceptPorts",
+                                         typeof(BEBehaviorAcceptPorts));
     BlockEntityWire.OnModLoaded();
     NetworkManager = new BEBehaviorNetwork.Manager(api.World);
   }

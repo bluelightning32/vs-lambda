@@ -10,12 +10,12 @@ using Vintagestory.API.Util;
 
 namespace LambdaFactory;
 
-public class BEBehaviorPortHole : BlockEntityBehavior,
-                                  IBlockEntityForward,
-                                  IMeshGenerator {
+public class BEBehaviorAcceptPorts : BlockEntityBehavior,
+                                     IBlockEntityForward,
+                                     IMeshGenerator {
   private int _portedSides = 0;
 
-  public BEBehaviorPortHole(BlockEntity blockentity) : base(blockentity) {}
+  public BEBehaviorAcceptPorts(BlockEntity blockentity) : base(blockentity) {}
 
   public override void Initialize(ICoreAPI api, JsonObject properties) {
     base.Initialize(api, properties);
