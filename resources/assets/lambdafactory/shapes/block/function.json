@@ -25,20 +25,21 @@
 				"east": { "texture": "#down", "uv": [ 0.0, 4.0, 14.0, 16.0 ] },
 				"south": { "texture": "#down", "uv": [ 16.0, 5.0, 0.0, 16.0 ], "autoUv": false },
 				"west": { "texture": "#down", "uv": [ 16.0, 5.0, 0.0, 16.0 ], "autoUv": false },
+				"up": { "texture": "#down", "uv": [ 0.0, 0.0, 16.0, 14.0 ], "windMode": [-1,-1,-1,-1] },
 				"down": { "texture": "#down", "uv": [ 0.0, 2.0, 16.0, 16.0 ] }
 			}
 		},
 		{
 			"name": "crystal",
-			"from": [ 0.0, 12.0, 2.0 ],
-			"to": [ 16.0, 16.0, 16.0 ],
-			"rotationOrigin": [ -5.0, 9.0, -1.0 ],
+			"from": [ 1.0, 12.0, 2.0 ],
+			"to": [ 15.0, 16.0, 16.0 ],
+			"rotationOrigin": [ -4.0, 9.0, -1.0 ],
 			"faces": {
-				"north": { "texture": "#functionside", "uv": [ 0.0, 8.0, 16.0, 12.0 ] },
+				"north": { "texture": "#functionside", "uv": [ 0.0, 4.0, 14.0, 8.0 ] },
 				"east": { "texture": "#functionside", "uv": [ 0.0, 0.0, 14.0, 4.0 ] },
-				"south": { "texture": "#functionside", "uv": [ 0.0, 12.0, 16.0, 16.0 ] },
+				"south": { "texture": "#functionside", "uv": [ 0.0, 0.0, 14.0, 4.0 ] },
 				"west": { "texture": "#functionside", "uv": [ 0.0, 4.0, 14.0, 8.0 ] },
-				"up": { "texture": "#functionup", "uv": [ 0.0, 0.0, 16.0, 14.0 ] }
+				"up": { "texture": "#functionup", "uv": [ 0.0, 0.0, 14.0, 14.0 ] }
 			}
 		},
 		{
