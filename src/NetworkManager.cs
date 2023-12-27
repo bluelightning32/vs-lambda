@@ -352,27 +352,26 @@ public class NetworkManager {
       System.Diagnostics.Debug.Assert(
           _accessor.GetDistance(min.Pos, min.NodeId) ==
           min.PropagationDistance);
-      NodeTemplate template = _accessor.GetNode(
-          min.Pos, min.NodeId, out Node node, out bool scopeNetwork);
+      NodeTemplate template =
+          _accessor.GetNode(min.Pos, min.NodeId, out Node node);
       System.Diagnostics.Debug.Assert(template != null);
       if (template == null) {
         return;
       }
-      template.Expand(_accessor, this, min.Pos, scopeNetwork, node);
+      template.Expand(_accessor, this, min.Pos, node);
       return;
     }
 
     System.Diagnostics.Debug.Assert(sourceQueue.Ejections.Count > 0);
     if (sourceQueue.Ejections.Count > 0) {
       NodePos first = sourceQueue.Ejections.PopOne();
-      NodeTemplate template = _accessor.GetNode(
-          first.Block, first.NodeId, out Node node, out bool scopeNetwork);
+      NodeTemplate template =
+          _accessor.GetNode(first.Block, first.NodeId, out Node node);
       System.Diagnostics.Debug.Assert(template != null);
       if (template == null) {
         return;
       }
-      template.EjectIfDisconnected(_accessor, this, source, first.Block,
-                                   scopeNetwork, node);
+      template.EjectIfDisconnected(_accessor, this, source, first.Block, node);
       return;
     }
   }

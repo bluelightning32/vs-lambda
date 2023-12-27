@@ -122,7 +122,7 @@ public class NodeTemplate {
     }
   }
 
-  public void OnPlaced(NetworkManager manager, BlockPos pos, bool scopeNetwork,
+  public void OnPlaced(NetworkManager manager, BlockPos pos,
                        BlockNodeTemplate[] neighborTemplates,
                        Node[][] neighbors, ref Node node) {
     manager.Debug("Block placed on {0} source set: {1}", manager.Side,
@@ -136,8 +136,7 @@ public class NodeTemplate {
         continue;
       }
       NodeTemplate neighborTemplate =
-          neighborTemplates[face.Index]?.GetNodeTemplate(scopeNetwork,
-                                                         edge.GetOpposite());
+          neighborTemplates[face.Index]?.GetNodeTemplate(edge.GetOpposite());
       if (neighborTemplate == null) {
         continue;
       }
@@ -157,8 +156,7 @@ public class NodeTemplate {
   }
 
   public void OnRemoved(NodeAccessor accessor, NetworkManager manager,
-                        BlockPos pos, bool scopeNetwork,
-                        BlockNodeTemplate[] neighborTemplates,
+                        BlockPos pos, BlockNodeTemplate[] neighborTemplates,
                         Node[][] neighbors, in Node node) {
     manager.Debug("Block removed on {0} source set: {1}", manager.Side,
                   node.Source.IsSet());
@@ -173,8 +171,7 @@ public class NodeTemplate {
         continue;
       }
       NodeTemplate neighborTemplate =
-          neighborTemplates[face.Index]?.GetNodeTemplate(scopeNetwork,
-                                                         edge.GetOpposite());
+          neighborTemplates[face.Index]?.GetNodeTemplate(edge.GetOpposite());
       if (neighborTemplate == null) {
         continue;
       }
@@ -194,7 +191,7 @@ public class NodeTemplate {
     }
   }
 
-  public bool CanPlace(NetworkManager manager, BlockPos pos, bool scopeNetwork,
+  public bool CanPlace(NetworkManager manager, BlockPos pos,
                        BlockNodeTemplate[] neighborTemplates,
                        Node[][] neighbors, ref string failureCode) {
     NodePos source = new NodePos();
@@ -209,8 +206,7 @@ public class NodeTemplate {
         continue;
       }
       NodeTemplate neighborTemplate =
-          neighborTemplates[face.Index]?.GetNodeTemplate(scopeNetwork,
-                                                         edge.GetOpposite());
+          neighborTemplates[face.Index]?.GetNodeTemplate(edge.GetOpposite());
       if (neighborTemplate == null) {
         continue;
       }
@@ -232,14 +228,13 @@ public class NodeTemplate {
   }
 
   public void Expand(NodeAccessor accessor, NetworkManager networkManager,
-                     BlockPos pos, bool scopeNetwork, Node node) {
-    if (ShouldPropagateConnection(accessor, networkManager, pos, scopeNetwork,
-                                  node)) {
-      PropagateConnection(accessor, networkManager, pos, scopeNetwork, node);
+                     BlockPos pos, Node node) {
+    if (ShouldPropagateConnection(accessor, networkManager, pos, node)) {
+      PropagateConnection(accessor, networkManager, pos, node);
     } else {
       node.SetDisconnected();
       accessor.SetNode(pos, Id, in node);
-      PropagateDisconnection(accessor, networkManager, pos, scopeNetwork, node);
+      PropagateDisconnection(accessor, networkManager, pos, node);
     }
   }
 
@@ -248,8 +243,7 @@ public class NodeTemplate {
   // called on a node other than the one that's getting expanded.
   private bool ShouldPropagateConnection(NodeAccessor accessor,
                                          NetworkManager networkManager,
-                                         BlockPos pos, bool scopeNetwork,
-                                         Node node) {
+                                         BlockPos pos, Node node) {
     if (Source) {
       return true;
     }
@@ -259,7 +253,7 @@ public class NodeTemplate {
       return false;
     }
     NodeTemplate parentTemplate =
-        accessor.GetNode(pos.AddCopy(node.Parent.GetFace()), scopeNetwork,
+        accessor.GetNode(pos.AddCopy(node.Parent.GetFace()),
                          node.Parent.GetOpposite(), out Node parent);
     return node.Source == parent.Source &&
            networkManager.IsPropagationDistanceInRange(
@@ -268,7 +262,7 @@ public class NodeTemplate {
 
   private void PropagateConnection(NodeAccessor accessor,
                                    NetworkManager networkManager, BlockPos pos,
-                                   bool scopeNetwork, Node node) {
+                                   Node node) {
     BlockPos neighborPos = new(pos.dimension);
     foreach (Edge edge in Edges) {
       if (edge == node.Parent) {
@@ -282,8 +276,8 @@ public class NodeTemplate {
       }
       neighborPos.Set(pos);
       neighborPos.Offset(face);
-      NodeTemplate neighborTemplate = accessor.GetNode(
-          neighborPos, scopeNetwork, edge.GetOpposite(), out Node neighbor);
+      NodeTemplate neighborTemplate =
+          accessor.GetNode(neighborPos, edge.GetOpposite(), out Node neighbor);
       if (neighborTemplate == null) {
         continue;
       }
@@ -319,8 +313,7 @@ public class NodeTemplate {
 
   private void PropagateDisconnection(NodeAccessor accessor,
                                       NetworkManager networkManager,
-                                      BlockPos pos, bool scopeNetwork,
-                                      Node node) {
+                                      BlockPos pos, Node node) {
     BlockPos neighborPos = new(pos.dimension);
     foreach (Edge edge in Edges) {
       BlockFacing face = edge.GetFace();
@@ -328,8 +321,8 @@ public class NodeTemplate {
       Debug.Assert(face != null);
       neighborPos.Set(pos);
       neighborPos.Offset(face);
-      NodeTemplate neighborTemplate = accessor.GetNode(
-          neighborPos, scopeNetwork, edge.GetOpposite(), out Node neighbor);
+      NodeTemplate neighborTemplate =
+          accessor.GetNode(neighborPos, edge.GetOpposite(), out Node neighbor);
       if (neighborTemplate == null) {
         continue;
       }
@@ -346,7 +339,7 @@ public class NodeTemplate {
 
   public void EjectIfDisconnected(NodeAccessor accessor,
                                   NetworkManager networkManager, NodePos source,
-                                  BlockPos pos, bool scopeNetwork, Node node) {
+                                  BlockPos pos, Node node) {
     if (node.Source != source || !node.HasInfDistance) {
       // Do not eject this node if it is no longer disconnected, or if it now
       // belongs to a different source.
@@ -364,8 +357,8 @@ public class NodeTemplate {
       }
       neighborPos.Set(pos);
       neighborPos.Offset(face);
-      NodeTemplate neighborTemplate = accessor.GetNode(
-          neighborPos, scopeNetwork, edge.GetOpposite(), out Node neighbor);
+      NodeTemplate neighborTemplate =
+          accessor.GetNode(neighborPos, edge.GetOpposite(), out Node neighbor);
       if (neighborTemplate == null) {
         continue;
       }

@@ -11,7 +11,8 @@ namespace LambdaFactory;
 
 // Forwards more methods from the Block to the BlockEntity.
 public class BlockBehaviorNetwork : BlockBehavior {
-  private BlockNodeTemplate _blockTemplate;
+  private List<BlockNodeTemplate> _blockTemplates =
+      new List<BlockNodeTemplate>();
 
   public BlockBehaviorNetwork(Block block) : base(block) {}
 
@@ -22,13 +23,14 @@ public class BlockBehaviorNetwork : BlockBehavior {
     foreach (var beb in block.BlockEntityBehaviors) {
       if (networkManagers.TryGetValue(beb.Name,
                                       out AutoStepNetworkManager manager)) {
-        _blockTemplate = manager.ParseBlockNodeTemplate(beb.properties);
+        _blockTemplates.Add(manager.ParseBlockNodeTemplate(beb.properties));
         break;
       }
     }
-    if (_blockTemplate == null) {
+    if (_blockTemplates.Count == 0) {
       throw new ArgumentException(
-          "The network block behavior may only be used on a block if the network block entity behavior is also used.");
+          "The network block behavior may only be used on a block if the " +
+          "block also has one or more network block entity behaviors.");
     }
   }
 
@@ -36,9 +38,11 @@ public class BlockBehaviorNetwork : BlockBehavior {
                                      BlockSelection blockSel,
                                      ref EnumHandling handling,
                                      ref string failureCode) {
-    if (!_blockTemplate.CanPlace(blockSel.Position, ref failureCode)) {
-      handling = EnumHandling.PreventSubsequent;
-      return false;
+    foreach (BlockNodeTemplate template in _blockTemplates) {
+      if (!template.CanPlace(blockSel.Position, ref failureCode)) {
+        handling = EnumHandling.PreventSubsequent;
+        return false;
+      }
     }
     return true;
   }

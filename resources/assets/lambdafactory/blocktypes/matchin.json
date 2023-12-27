@@ -11,31 +11,32 @@
   entityclass: "CacheMesh",
   entityBehaviors: [
     {
-      name: "Network",
-      properties: {
-        scope: [
-          {
-            edgesByType: {
-              "*-north": ["east-right", "west-left", "down-up", "source"],
-              "*-south": ["east-left", "west-right", "down-down", "source"],
-              "*-west": ["north-right", "south-left", "down-right", "source"],
-              "*-east": ["north-left", "south-right", "down-left", "source"]
-            },
-            textures: ["eastwest", "northsouth", "up"],
-            sourceScope: "matchin"
-          }
-        ],
-        match: [
-          {
-            edges: ["north-center", "east-center", "south-center", "west-center", "down-center"],
-            replacementTextures: {
-              "none": {
-                "crystal": { base: "matchin/crystal-disconnected" }
-              }
+      name: "ScopeNetwork",
+      properties: [
+        {
+          edgesByType: {
+            "*-north": ["east-right", "west-left", "down-up", "source"],
+            "*-south": ["east-left", "west-right", "down-down", "source"],
+            "*-west": ["north-right", "south-left", "down-right", "source"],
+            "*-east": ["north-left", "south-right", "down-left", "source"]
+          },
+          textures: ["eastwest", "northsouth", "up"],
+          sourceScope: "matchin"
+        }
+      ]
+    },
+    {
+      name: "MatchNetwork",
+      properties: [
+        {
+          edges: ["north-center", "east-center", "south-center", "west-center", "down-center"],
+          replacementTextures: {
+            "none": {
+              "crystal": { base: "matchin/crystal-disconnected" }
             }
           }
-        ]
-      }
+        }
+      ]
     },
     {name: "AcceptPorts"
     }

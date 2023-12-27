@@ -11,14 +11,12 @@
   entityclass: "CacheMesh",
   entityBehaviors: [
     {
-      name: "Network",
-      properties: {
-        match: [
-          {
-            edges: ["north-center", "east-center", "south-center", "west-center", "source"]
-          }
-        ]
-      }
+      name: "MatchNetwork",
+      properties: [
+        {
+          edges: ["north-center", "east-center", "south-center", "west-center", "source"]
+        }
+      ]
     },
     {name: "AcceptPorts"
     }

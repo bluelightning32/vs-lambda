@@ -12,90 +12,33 @@ using Vintagestory.API.Util;
 
 namespace LambdaFactory;
 
-[JsonArray]
-public class BlockNodeCategory {
-  public readonly NodeTemplate[] NodeTemplates;
-  public readonly Dictionary<Edge, NodeTemplate> Index =
-      new Dictionary<Edge, NodeTemplate>();
-
-  public BlockNodeCategory(int firstId, NodeTemplate[] networks) {
-    NodeTemplates = networks;
-    foreach (var network in networks) {
-      network.Id = firstId++;
-      foreach (var edge in network.Edges) {
-        if (edge == Edge.Source) {
-          network.Source = true;
-        }
-        if (edge != Edge.Unknown) {
-          Index.Add(edge, network);
-        }
-      }
-    }
-  }
-
-  public void OnPlaced(NetworkManager manager, BlockPos pos, bool scopeNetwork,
-                       BlockNodeTemplate[] neighborTemplates,
-                       Node[][] neighbors, Node[] nodes) {
-    foreach (var template in NodeTemplates) {
-      template.OnPlaced(manager, pos, scopeNetwork, neighborTemplates,
-                        neighbors, ref nodes[template.Id]);
-    }
-  }
-
-  public void OnRemoved(NodeAccessor accessor, NetworkManager manager,
-                        BlockPos pos, bool scopeNetwork,
-                        BlockNodeTemplate[] neighborTemplates,
-                        Node[][] neighbors, Node[] nodes) {
-    foreach (var template in NodeTemplates) {
-      template.OnRemoved(accessor, manager, pos, scopeNetwork,
-                         neighborTemplates, neighbors, in nodes[template.Id]);
-    }
-  }
-
-  public bool CanPlace(NetworkManager manager, BlockPos pos, bool scopeNetwork,
-                       BlockNodeTemplate[] neighborTemplates,
-                       Node[][] neighbors, ref string failureCode) {
-    foreach (var network in NodeTemplates) {
-      if (!network.CanPlace(manager, pos, scopeNetwork, neighborTemplates,
-                            neighbors, ref failureCode)) {
-        return false;
-      }
-    }
-    return true;
-  }
-}
-
-[JsonObject(MemberSerialization.OptIn)]
-public class BlockNodeTemplateLoading {
-  [JsonProperty]
-  public NodeTemplate[] Scope;
-  [JsonProperty]
-  public NodeTemplate[] Match;
-}
-
 public class BlockNodeTemplate {
-  private readonly BlockNodeCategory _scope;
-  private readonly BlockNodeCategory _match;
+  private readonly NodeTemplate[] _nodeTemplates;
+  private readonly Dictionary<Edge, NodeTemplate> _index =
+      new Dictionary<Edge, NodeTemplate>();
 
   private readonly Dictionary<string, NodeTemplate> _textures = new();
 
   private readonly NodeAccessor _accessor;
   private readonly NetworkManager _manager;
 
-  public BlockNodeTemplate(BlockNodeTemplateLoading loading,
-                           NodeAccessor accessor, NetworkManager manager) {
+  public BlockNodeTemplate(NodeAccessor accessor, NetworkManager manager,
+                           NodeTemplate[] nodeTemplates) {
     _accessor = accessor;
     _manager = manager;
-    _scope =
-        new BlockNodeCategory(0, loading.Scope ?? Array.Empty<NodeTemplate>());
-    _match =
-        new BlockNodeCategory(_scope.NodeTemplates.Length,
-                              loading.Match ?? Array.Empty<NodeTemplate>());
-    foreach (NodeTemplate network in _scope.NodeTemplates) {
-      AddTexturesToIndex(network);
-    }
-    foreach (NodeTemplate network in _match.NodeTemplates) {
-      AddTexturesToIndex(network);
+    _nodeTemplates = nodeTemplates;
+    for (int i = 0; i < nodeTemplates.Length; ++i) {
+      var nodeTemplate = nodeTemplates[i];
+      nodeTemplate.Id = i;
+      foreach (var edge in nodeTemplate.Edges) {
+        if (edge == Edge.Source) {
+          nodeTemplate.Source = true;
+        }
+        if (edge != Edge.Unknown) {
+          _index.Add(edge, nodeTemplate);
+        }
+      }
+      AddTexturesToIndex(nodeTemplate);
     }
   }
 
@@ -116,11 +59,8 @@ public class BlockNodeTemplate {
 
   public TreeArrayAttribute ToTreeAttributes(Node[] nodes) {
     List<TreeAttribute> info = new(Count);
-    foreach (var network in _scope.NodeTemplates) {
-      info.Add(nodes[network.Id].ToTreeAttributes());
-    }
-    foreach (var network in _match.NodeTemplates) {
-      info.Add(nodes[network.Id].ToTreeAttributes());
+    foreach (var nodeTemplate in _nodeTemplates) {
+      info.Add(nodes[nodeTemplate.Id].ToTreeAttributes());
     }
     if (info.Count == 0) {
       return null;
@@ -130,7 +70,7 @@ public class BlockNodeTemplate {
   }
 
   public int Count {
-    get { return _scope.NodeTemplates.Length + _match.NodeTemplates.Length; }
+    get { return _nodeTemplates.Length; }
   }
 
   public bool FromTreeAttributes(BlockPos pos, TreeArrayAttribute info,
@@ -145,16 +85,10 @@ public class BlockNodeTemplate {
       return true;
     }
     int index = 0;
-    foreach (var network in _scope.NodeTemplates) {
+    foreach (var _nodeTemplate in _nodeTemplates) {
       if (index < info.value.Length) {
         needRefresh |=
-            nodes[network.Id].FromTreeAttributes(info.value[index++]);
-      }
-    }
-    foreach (var network in _match.NodeTemplates) {
-      if (index < info.value.Length) {
-        needRefresh |=
-            nodes[network.Id].FromTreeAttributes(info.value[index++]);
+            nodes[_nodeTemplate.Id].FromTreeAttributes(info.value[index++]);
       }
     }
     return needRefresh;
@@ -219,20 +153,12 @@ public class BlockNodeTemplate {
   }
 
   private void SetSourceScope(BlockPos pos, Node[] nodes) {
-    foreach (var network in _scope.NodeTemplates) {
-      if (network.Source) {
-        nodes[network.Id].Scope = network.SourceScope;
-        nodes[network.Id].Source.Block = pos;
-        nodes[network.Id].Source.NodeId = network.Id;
-        nodes[network.Id].PropagationDistance = 0;
-      }
-    }
-    foreach (var network in _match.NodeTemplates) {
-      if (network.Source) {
-        nodes[network.Id].Scope = network.SourceScope;
-        nodes[network.Id].Source.Block = pos;
-        nodes[network.Id].Source.NodeId = network.Id;
-        nodes[network.Id].PropagationDistance = 0;
+    foreach (var nodeTemplate in _nodeTemplates) {
+      if (nodeTemplate.Source) {
+        nodes[nodeTemplate.Id].Scope = nodeTemplate.SourceScope;
+        nodes[nodeTemplate.Id].Source.Block = pos;
+        nodes[nodeTemplate.Id].Source.NodeId = nodeTemplate.Id;
+        nodes[nodeTemplate.Id].PropagationDistance = 0;
       }
     }
   }
@@ -245,9 +171,8 @@ public class BlockNodeTemplate {
     return nodes;
   }
 
-  public NodeTemplate GetNodeTemplate(bool scopeNetwork, Edge edge) {
-    BlockNodeCategory network = scopeNetwork ? _scope : _match;
-    return !network.Index.TryGetValue(edge, out NodeTemplate n) ? null : n;
+  public NodeTemplate GetNodeTemplate(Edge edge) {
+    return !_index.TryGetValue(edge, out NodeTemplate n) ? null : n;
   }
 
   private BlockNodeTemplate[] GetNeighbors(BlockPos pos,
@@ -268,40 +193,36 @@ public class BlockNodeTemplate {
     BlockNodeTemplate[] neighborTemplates =
         GetNeighbors(pos, out Node[][] neighbors);
 
-    return _scope.CanPlace(_manager, pos, true, neighborTemplates, neighbors,
-                           ref failureCode) &&
-           _match.CanPlace(_manager, pos, false, neighborTemplates, neighbors,
-                           ref failureCode);
+    foreach (var template in _nodeTemplates) {
+      if (!template.CanPlace(_manager, pos, neighborTemplates, neighbors,
+                             ref failureCode)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   public NodeTemplate GetNodeTemplate(int nodeId) {
-    if (nodeId < _scope.NodeTemplates.Length) {
-      return _scope.NodeTemplates[nodeId];
-    }
-    nodeId -= _scope.NodeTemplates.Length;
-    return _match.NodeTemplates[nodeId];
+    return _nodeTemplates[nodeId];
   }
 
   public void OnPlaced(BlockPos pos, Node[] nodes) {
     BlockNodeTemplate[] neighborTemplates =
         GetNeighbors(pos, out Node[][] neighbors);
-
-    _scope.OnPlaced(_manager, pos, true, neighborTemplates, neighbors, nodes);
-    _match.OnPlaced(_manager, pos, false, neighborTemplates, neighbors, nodes);
+    foreach (var template in _nodeTemplates) {
+      template.OnPlaced(_manager, pos, neighborTemplates, neighbors,
+                        ref nodes[template.Id]);
+    }
   }
 
   public void OnRemoved(BlockPos pos, Node[] nodes) {
     BlockNodeTemplate[] neighborTemplates =
         GetNeighbors(pos, out Node[][] neighbors);
-
-    _scope.OnRemoved(_accessor, _manager, pos, true, neighborTemplates,
-                     neighbors, nodes);
-    _match.OnRemoved(_accessor, _manager, pos, false, neighborTemplates,
-                     neighbors, nodes);
-  }
-
-  public bool IsScopeNetwork(int nodeId) {
-    return nodeId < _scope.NodeTemplates.Length;
+    foreach (var template in _nodeTemplates) {
+      template.OnRemoved(_accessor, _manager, pos, neighborTemplates, neighbors,
+                         in nodes[template.Id]);
+    }
   }
 
   public ulong GetTextureKey(Node[] nodes) {
@@ -310,16 +231,7 @@ public class BlockNodeTemplate {
     }
     ulong key = 0;
     int texturedNodes = 0;
-    foreach (NodeTemplate template in _scope.NodeTemplates) {
-      if (template.Textures.Count == 0 &&
-          template.ReplacementTextures.Count == 0) {
-        continue;
-      }
-      ++texturedNodes;
-      key <<= 3;
-      key |= (ulong)nodes[template.Id].Scope;
-    }
-    foreach (NodeTemplate template in _match.NodeTemplates) {
+    foreach (NodeTemplate template in _nodeTemplates) {
       if (template.Textures.Count == 0 &&
           template.ReplacementTextures.Count == 0) {
         continue;

@@ -21,8 +21,8 @@ interface IMeshGenerator {
 }
 
 public class CacheMeshTextureSource : ITexPositionSource {
-  private BlockEntityCacheMesh _cache;
-  private ITexPositionSource _def;
+  private readonly BlockEntityCacheMesh _cache;
+  private readonly ITexPositionSource _def;
 
   public CacheMeshTextureSource(BlockEntityCacheMesh cache,
                                 ITexPositionSource def) {

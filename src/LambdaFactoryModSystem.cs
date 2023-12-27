@@ -14,7 +14,8 @@ public class LambdaFactoryModSystem : ModSystem {
   // Storing this field in the mod ensures that there is once instance per API
   // instance. These fields cannot be stored in the object cache, because the
   // object cache can be cleared with a command.
-  public BEBehaviorNetwork.Manager NetworkManager { get; private set; }
+  public AutoStepNetworkManager ScopeNetworkManager { get; private set; }
+  public AutoStepNetworkManager MatchNetworkManager { get; private set; }
 
   private readonly Dictionary<string, AutoStepNetworkManager> _networkManagers =
       new Dictionary<string, AutoStepNetworkManager>();
@@ -35,13 +36,17 @@ public class LambdaFactoryModSystem : ModSystem {
     api.RegisterBlockBehaviorClass("Network", typeof(BlockBehaviorNetwork));
     api.RegisterBlockEntityClass("CacheMesh", typeof(BlockEntityCacheMesh));
     api.RegisterBlockEntityClass("Wire", typeof(BlockEntityWire));
-    api.RegisterBlockEntityBehaviorClass(BEBehaviorNetwork.Name,
-                                         typeof(BEBehaviorNetwork));
+    api.RegisterBlockEntityBehaviorClass(BEBehaviorScopeNetwork.Name,
+                                         typeof(BEBehaviorScopeNetwork));
+    api.RegisterBlockEntityBehaviorClass(BEBehaviorMatchNetwork.Name,
+                                         typeof(BEBehaviorMatchNetwork));
     api.RegisterBlockEntityBehaviorClass("AcceptPorts",
                                          typeof(BEBehaviorAcceptPorts));
     BlockEntityWire.OnModLoaded();
-    _networkManagers[BEBehaviorNetwork.Name] = NetworkManager =
-        new BEBehaviorNetwork.Manager(api.World);
+    _networkManagers[BEBehaviorScopeNetwork.Name] = ScopeNetworkManager =
+        new BEBehaviorScopeNetwork.Manager(api.World);
+    _networkManagers[BEBehaviorMatchNetwork.Name] = MatchNetworkManager =
+        new BEBehaviorMatchNetwork.Manager(api.World);
   }
 
   public void RegisterNetworkDebugCommands(IChatCommandApi api, string name,
@@ -87,6 +92,9 @@ public class LambdaFactoryModSystem : ModSystem {
   public override void StartClientSide(ICoreClientAPI api) {}
 
   public override void StartServerSide(ICoreServerAPI api) {
-    RegisterNetworkDebugCommands(api.ChatCommands, "netowrk", NetworkManager);
+    RegisterNetworkDebugCommands(api.ChatCommands, "scope",
+                                 ScopeNetworkManager);
+    RegisterNetworkDebugCommands(api.ChatCommands, "match",
+                                 MatchNetworkManager);
   }
 }

@@ -8,29 +8,25 @@ namespace LambdaFactory;
 public abstract class NodeAccessor {
   // Gets the node and its template at `pos`. If the node does not exist, then
   // null is returned.
-  public virtual NodeTemplate GetNode(BlockPos pos, int nodeId, out Node node,
-                                      out bool scopeNetwork) {
+  public virtual NodeTemplate GetNode(BlockPos pos, int nodeId, out Node node) {
     BlockNodeTemplate block = GetBlock(pos, out Node[] nodes);
     if (block == null) {
       node = new Node();
-      scopeNetwork = false;
       return null;
     }
     node = nodes[nodeId];
-    scopeNetwork = block.IsScopeNetwork(nodeId);
     return block.GetNodeTemplate(nodeId);
   }
 
-  // Returns the node in `pos` that contains `edge` in `scopeNetwork`. Returns
+  // Returns the node in `pos` that contains `edge`. Returns
   // null if the block does not exist or does not contain the edge.
-  public virtual NodeTemplate GetNode(BlockPos pos, bool scopeNetwork,
-                                      Edge edge, out Node node) {
+  public virtual NodeTemplate GetNode(BlockPos pos, Edge edge, out Node node) {
     BlockNodeTemplate block = GetBlock(pos, out Node[] nodes);
     if (block == null) {
       node = new Node();
       return null;
     }
-    NodeTemplate template = block.GetNodeTemplate(scopeNetwork, edge);
+    NodeTemplate template = block.GetNodeTemplate(edge);
     if (template == null) {
       node = new Node();
       return null;
@@ -47,14 +43,12 @@ public abstract class NodeAccessor {
   public abstract void SetNode(BlockPos pos, int nodeId, in Node node);
 
   public virtual int GetDistance(BlockPos pos, int nodeId) {
-    NodeTemplate template =
-        GetNode(pos, nodeId, out Node node, out bool scopeNetwork);
+    NodeTemplate template = GetNode(pos, nodeId, out Node node);
     return node.PropagationDistance;
   }
 
   public virtual NodePos GetSource(BlockPos pos, int nodeId) {
-    NodeTemplate template =
-        GetNode(pos, nodeId, out Node node, out bool scopeNetwork);
+    NodeTemplate template = GetNode(pos, nodeId, out Node node);
     return node.Source;
   }
 }

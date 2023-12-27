@@ -11,21 +11,19 @@
   entityclass: "CacheMesh",
   entityBehaviors: [
     {
-      name: "Network",
-      properties: {
-        scope: [
-          {
-            edgesByType: {
-              "*-north": ["east-right", "west-left", "down-up", "source"],
-              "*-south": ["east-left", "west-right", "down-down", "source"],
-              "*-west": ["north-right", "south-left", "down-right", "source"],
-              "*-east": ["north-left", "south-right", "down-left", "source"]
-            },
-            textures: ["eastwest", "northsouth", "up"],
-            sourceScope: "function"
-          }
-        ]
-      }
+      name: "ScopeNetwork",
+      properties: [
+        {
+          edgesByType: {
+            "*-north": ["east-right", "west-left", "down-up", "source"],
+            "*-south": ["east-left", "west-right", "down-down", "source"],
+            "*-west": ["north-right", "south-left", "down-right", "source"],
+            "*-east": ["north-left", "south-right", "down-left", "source"]
+          },
+          textures: ["eastwest", "northsouth", "up"],
+          sourceScope: "function"
+        }
+      ]
     },
     {name: "AcceptPorts"
     }

@@ -46,7 +46,7 @@ public class BlockNodeTemplateTest {
     BlockNodeTemplate template = _templates.ScopeCenterSource;
     Assert.AreEqual(1, template.Count);
     NodeTemplate nodeTemplate =
-        _templates.ScopeCenterSource.GetNodeTemplate(true, Edge.NorthCenter);
+        _templates.ScopeCenterSource.GetNodeTemplate(Edge.NorthCenter);
     Assert.IsNotNull(nodeTemplate);
     Assert.IsTrue(nodeTemplate.Source);
   }
