@@ -1,0 +1,58 @@
+{
+  code: "app",
+  variantGroups: [
+    { code: "side", loadFromProperties: "abstract/horizontalorientation" }
+  ],
+  behaviors: [
+    { name: "HorizontalOrientable" },
+    { name: "BlockEntityForward" },
+  ],
+  entityclass: "CacheMesh",
+  entityBehaviors: [
+    {name: "PortHole"
+    }
+  ],
+  creativeinventory: { general: ["*-north"] },
+  blockmaterial: "Stone",
+  drawtype: "json",
+  shapeByType: {
+    "*-north": {
+      base: "block/app"
+    },
+    "*-east": {
+      base: "block/app",
+      rotateY: 270
+    },
+    "*-south": {
+      base: "block/app",
+      rotateY: 180
+    },
+    "*-west": {
+      base: "block/app",
+      rotateY: 90
+    }
+  },
+  textures: {
+    "eastwest": {
+      base: "scope/eastwest"
+    },
+    "northsouth": {
+      base: "scope/northsouth"
+    },
+    "up": {
+      base: "scope/up"
+    },
+  },
+  sideopaque: {
+    all: false,
+    down: true,
+  },
+  sidesolid: {
+    all: true
+  },
+  resistance: 3.5,
+  sounds: {
+    place: "game:block/ceramicplace",
+    walk: "game:walk/stone1"
+  }
+}

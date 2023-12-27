@@ -1,0 +1,112 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+		"center-sides": "app/center-sides",
+		"crystal": "app/crystal",
+		"down": "scope/down"
+	},
+	"elements": [
+		{
+			"name": "base",
+			"from": [ 0.0, 0.0, 0.0 ],
+			"to": [ 16.0, 12.0, 16.0 ],
+			"faces": {
+				"north": { "texture": "#down", "uv": [ 0.0, 4.0, 16.0, 16.0 ], "windMode": [-1,-1,-1,-1] },
+				"east": { "texture": "#down", "uv": [ 0.0, 4.0, 16.0, 16.0 ], "windMode": [-1,-1,-1,-1] },
+				"south": { "texture": "#down", "uv": [ 16.0, 5.0, 0.0, 16.0 ], "autoUv": false },
+				"west": { "texture": "#down", "uv": [ 0.0, 4.0, 16.0, 16.0 ] },
+				"up": { "texture": "#down", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "windMode": [-1,-1,-1,-1] },
+				"down": { "texture": "#down", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
+			}
+		},
+		{
+			"name": "crystal",
+			"from": [ 1.0, 12.0, 4.0 ],
+			"to": [ 15.0, 16.0, 14.0 ],
+			"rotationOrigin": [ 8.0, 15.0, 11.0 ],
+			"faces": {
+				"north": { "texture": "#center-sides", "uv": [ 0.0, 0.0, 14.0, 4.0 ] },
+				"east": { "texture": "#center-sides", "uv": [ 0.0, 8.0, 10.0, 12.0 ] },
+				"south": { "texture": "#center-sides", "uv": [ 0.0, 4.0, 14.0, 8.0 ] },
+				"west": { "texture": "#center-sides", "uv": [ 0.0, 12.0, 10.0, 16.0 ] },
+				"up": { "texture": "#crystal", "uv": [ 0.0, 0.0, 14.0, 10.0 ] }
+			},
+			"children": [
+				{
+					"name": "NW",
+					"from": [ 0.0, 0.0, 0.0 ],
+					"to": [ 3.0, 3.5, 3.0 ],
+					"rotationOrigin": [ 0.0, 0.0, 0.0 ],
+					"rotationY": 45.0,
+					"faces": {
+						"north": { "texture": "#crystal", "uv": [ 3.0, 13.0, 6.5, 16.0 ], "rotation": 90 },
+						"east": { "texture": "#crystal", "uv": [ 6.5, 13.0, 10.0, 16.0 ], "rotation": 90, "windMode": [-1,-1,-1,-1] },
+						"up": { "texture": "#crystal", "uv": [ 0.0, 13.0, 3.0, 16.0 ] }
+					}
+				},
+				{
+					"name": "NE",
+					"from": [ 11.0, 0.0, -3.0 ],
+					"to": [ 14.0, 3.5, 0.0 ],
+					"rotationOrigin": [ 14.0, 0.0, 0.0 ],
+					"rotationY": 45.0,
+					"faces": {
+						"north": { "texture": "#crystal", "uv": [ 6.5, 13.0, 10.0, 16.0 ], "rotation": 90, "windMode": [-1,-1,-1,-1] },
+						"east": { "texture": "#crystal", "uv": [ 3.0, 13.0, 6.5, 16.0 ], "rotation": 90 },
+						"up": { "texture": "#crystal", "uv": [ 0.0, 13.0, 3.0, 16.0 ] }
+					}
+				},
+				{
+					"name": "SE",
+					"from": [ 11.0, 0.0, 7.0 ],
+					"to": [ 14.0, 3.5, 10.0 ],
+					"rotationOrigin": [ 14.0, 3.0, 10.0 ],
+					"rotationY": 45.0,
+					"faces": {
+						"south": { "texture": "#crystal", "uv": [ 3.0, 13.0, 6.5, 16.0 ], "rotation": 90 },
+						"west": { "texture": "#crystal", "uv": [ 6.5, 13.0, 10.0, 16.0 ], "rotation": 90, "windMode": [-1,-1,-1,-1] },
+						"up": { "texture": "#crystal", "uv": [ 0.0, 13.0, 3.0, 16.0 ] }
+					}
+				},
+				{
+					"name": "SW",
+					"from": [ 0.0, 0.0, 10.0 ],
+					"to": [ 3.0, 3.5, 13.0 ],
+					"rotationOrigin": [ 0.0, 0.0, 10.0 ],
+					"rotationY": 45.0,
+					"faces": {
+						"south": { "texture": "#crystal", "uv": [ 6.5, 13.0, 10.0, 16.0 ], "rotation": 90 },
+						"west": { "texture": "#crystal", "uv": [ 3.0, 13.0, 6.5, 16.0 ], "rotation": 90 },
+						"up": { "texture": "#crystal", "uv": [ 0.0, 13.0, 3.0, 16.0 ] }
+					}
+				},
+				{
+					"name": "south",
+					"from": [ 2.12, 0.0, 10.0 ],
+					"to": [ 11.877, 3.0, 12.121 ],
+					"rotationOrigin": [ 2.0, 3.0, 12.0 ],
+					"faces": {
+						"south": { "texture": "#crystal", "uv": [ 0.0, 10.0, 10.0, 13.0 ], "autoUv": false },
+						"up": { "texture": "#crystal", "uv": [ 14.0, 0.0, 16.0, 10.0 ], "rotation": 270, "autoUv": false }
+					}
+				},
+				{
+					"name": "north",
+					"from": [ 2.12, 0.0, -2.12 ],
+					"to": [ 11.877, 3.0, 0.001 ],
+					"rotationOrigin": [ 2.0, 3.0, 0.0 ],
+					"faces": {
+						"north": { "texture": "#crystal", "uv": [ 0.0, 10.0, 10.0, 13.0 ], "autoUv": false },
+						"up": { "texture": "#crystal", "uv": [ 14.0, 0.0, 16.0, 10.0 ], "rotation": 90, "autoUv": false }
+					}
+				}
+			]
+		}
+	]}
