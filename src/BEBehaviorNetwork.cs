@@ -42,51 +42,27 @@ public class BEBehaviorNetwork : BlockEntityBehavior, IMeshGenerator {
     }
   }
 
-  private interface IGetNodeAccessor {
-    public NodeAccessor Accessor { get; }
-  }
-
-  public class Manager : NetworkManager, IGetNodeAccessor {
-    public bool SingleStep = false;
-
-    private readonly IEventAPI _eventAPI;
-    private bool _stepEnqueued = false;
-
-    NodeAccessor IGetNodeAccessor.Accessor {
-      get { return _accessor; }
-    }
-
+  public class Manager : AutoStepNetworkManager {
     public Manager(IWorldAccessor world)
-        : base(world.Api.Side, world.Logger, new NetworkNodeAccessor(world)) {
-      _eventAPI = world.Api.Event;
-    }
+        : base(world, new NetworkNodeAccessor(world)) {}
 
-    private void MaybeEnqueueStep() {
-      if (!_stepEnqueued && !SingleStep) {
-        _eventAPI.EnqueueMainThreadTask(() => {
-          _stepEnqueued = false;
-          if (!SingleStep) {
-            Step();
-            if (HasPendingWork) {
-              MaybeEnqueueStep();
-            }
-          }
-        }, "lambdanetwork");
-        _stepEnqueued = true;
+    public override
+        BlockNodeTemplate ParseBlockNodeTemplate(JsonObject properties) {
+      Dictionary<JsonObject, BlockNodeTemplate> cache =
+          ObjectCacheUtil.GetOrCreate(
+              _world.Api, $"lambdafactory-network-properties",
+              () => new Dictionary<JsonObject, BlockNodeTemplate>());
+      if (cache.TryGetValue(properties, out BlockNodeTemplate block)) {
+        return block;
       }
-    }
+      Debug("lambda: Network properties cache miss. Dict has {0} entries.",
+            cache.Count);
+      BlockNodeTemplateLoading loading =
+          properties.AsObject<BlockNodeTemplateLoading>();
+      block = new BlockNodeTemplate(loading, _accessor, this);
 
-    public void ToggleSingleStep() {
-      SingleStep = !SingleStep;
-      // `MaybeEnqueueStep` checks that SingleStep is false.
-      if (HasPendingWork) {
-        MaybeEnqueueStep();
-      }
-    }
-
-    public override void EnqueueNode(Node node, BlockPos pos, int nodeId) {
-      base.EnqueueNode(node, pos, nodeId);
-      MaybeEnqueueStep();
+      cache.Add(properties, block);
+      return block;
     }
   }
 
@@ -100,26 +76,10 @@ public class BEBehaviorNetwork : BlockEntityBehavior, IMeshGenerator {
     }
   }
 
-  public static BlockNodeTemplate
+  private static BlockNodeTemplate
   ParseBlockNodeTemplate(ICoreAPI api, JsonObject properties) {
-    Dictionary<JsonObject, BlockNodeTemplate> cache =
-        ObjectCacheUtil.GetOrCreate(
-            api, $"lambdafactory-network-properties",
-            () => new Dictionary<JsonObject, BlockNodeTemplate>());
-    if (cache.TryGetValue(properties, out BlockNodeTemplate block)) {
-      return block;
-    }
-    api.Logger.Notification(
-        "lambda: Network properties cache miss. Dict has {0} entries.",
-        cache.Count);
-    BlockNodeTemplateLoading loading =
-        properties.AsObject<BlockNodeTemplateLoading>();
     Manager manager = LambdaFactoryModSystem.GetInstance(api).NetworkManager;
-    block = new BlockNodeTemplate(loading, ((IGetNodeAccessor)manager).Accessor,
-                                  manager);
-
-    cache.Add(properties, block);
-    return block;
+    return manager.ParseBlockNodeTemplate(properties);
   }
 
   public override void

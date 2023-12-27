@@ -6,6 +6,7 @@ using System.Text;
 using ProtoBuf;
 
 using Vintagestory.API.Common;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
@@ -72,6 +73,49 @@ public class SourcePendingUpdates {
     }
     return false;
   }
+}
+
+public abstract class AutoStepNetworkManager : NetworkManager {
+  public bool SingleStep = false;
+
+  protected readonly IWorldAccessor _world;
+  private bool _stepEnqueued = false;
+
+  public AutoStepNetworkManager(IWorldAccessor world, NodeAccessor accessor)
+      : base(world.Api.Side, world.Logger, accessor) {
+    _world = world;
+  }
+
+  private void MaybeEnqueueStep() {
+    if (!_stepEnqueued && !SingleStep) {
+      _world.Api.Event.EnqueueMainThreadTask(() => {
+        _stepEnqueued = false;
+        if (!SingleStep) {
+          Step();
+          if (HasPendingWork) {
+            MaybeEnqueueStep();
+          }
+        }
+      }, "lambdanetwork");
+      _stepEnqueued = true;
+    }
+  }
+
+  public void ToggleSingleStep() {
+    SingleStep = !SingleStep;
+    // `MaybeEnqueueStep` checks that SingleStep is false.
+    if (HasPendingWork) {
+      MaybeEnqueueStep();
+    }
+  }
+
+  public override void EnqueueNode(Node node, BlockPos pos, int nodeId) {
+    base.EnqueueNode(node, pos, nodeId);
+    MaybeEnqueueStep();
+  }
+
+  public abstract
+      BlockNodeTemplate ParseBlockNodeTemplate(JsonObject properties);
 }
 
 public class NetworkManager {

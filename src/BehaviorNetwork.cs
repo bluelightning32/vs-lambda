@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 using Newtonsoft.Json.Serialization;
 
@@ -16,10 +17,12 @@ public class BlockBehaviorNetwork : BlockBehavior {
 
   public override void OnLoaded(ICoreAPI api) {
     base.OnLoaded(api);
+    IReadOnlyDictionary<string, AutoStepNetworkManager> networkManagers =
+        LambdaFactoryModSystem.GetInstance(api).NetworkManagers;
     foreach (var beb in block.BlockEntityBehaviors) {
-      if (beb.Name == BEBehaviorNetwork.Name) {
-        _blockTemplate =
-            BEBehaviorNetwork.ParseBlockNodeTemplate(api, beb.properties);
+      if (networkManagers.TryGetValue(beb.Name,
+                                      out AutoStepNetworkManager manager)) {
+        _blockTemplate = manager.ParseBlockNodeTemplate(beb.properties);
         break;
       }
     }
