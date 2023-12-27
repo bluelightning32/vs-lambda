@@ -1,50 +1,22 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 
-using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
-using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
 namespace LambdaFactory;
 
-public class BEBehaviorNetwork : BlockEntityBehavior, IMeshGenerator {
-  private BlockNodeTemplate _template;
-  private Node[] _nodes;
+public class BEBehaviorNetwork : BEBehaviorAbstractNetwork {
 
   public static string Name {
     get { return "Network"; }
   }
 
-  private class NetworkNodeAccessor : NodeAccessor {
-    private readonly IWorldAccessor _world;
-    public NetworkNodeAccessor(IWorldAccessor world) { _world = world; }
-
-    public override BlockNodeTemplate GetBlock(BlockPos pos, out Node[] nodes) {
-      BEBehaviorNetwork behavior = _world.BlockAccessor.GetBlockEntity(pos)
-                                       ?.GetBehavior<BEBehaviorNetwork>();
-      if (behavior == null) {
-        nodes = null;
-        return null;
-      }
-      nodes = behavior._nodes;
-      return behavior._template;
-    }
-
-    public override void SetNode(BlockPos pos, int nodeId, in Node node) {
-      BlockEntity block = _world.BlockAccessor.GetBlockEntity(pos);
-      BEBehaviorNetwork behavior = block?.GetBehavior<BEBehaviorNetwork>();
-      bool redraw = behavior._nodes[nodeId].Scope != node.Scope;
-      behavior._nodes[nodeId] = node;
-      block.MarkDirty(redraw);
-    }
-  }
-
   public class Manager : AutoStepNetworkManager {
     public Manager(IWorldAccessor world)
-        : base(world, new NetworkNodeAccessor(world)) {}
+        : base(world, new NetworkNodeAccessor(
+                          (pos) => world.BlockAccessor.GetBlockEntity(pos)
+                                       ?.GetBehavior<BEBehaviorNetwork>())) {}
 
     public override
         BlockNodeTemplate ParseBlockNodeTemplate(JsonObject properties) {
@@ -68,91 +40,9 @@ public class BEBehaviorNetwork : BlockEntityBehavior, IMeshGenerator {
 
   public BEBehaviorNetwork(BlockEntity blockentity) : base(blockentity) {}
 
-  public override void ToTreeAttributes(ITreeAttribute tree) {
-    base.ToTreeAttributes(tree);
-    TreeArrayAttribute nodes = _template.ToTreeAttributes(_nodes);
-    if (nodes != null) {
-      tree["nodes"] = nodes;
-    }
-  }
+  protected override string GetNetworkName() { return "node"; }
 
-  private static BlockNodeTemplate
-  ParseBlockNodeTemplate(ICoreAPI api, JsonObject properties) {
-    Manager manager = LambdaFactoryModSystem.GetInstance(api).NetworkManager;
-    return manager.ParseBlockNodeTemplate(properties);
-  }
-
-  public override void
-  FromTreeAttributes(ITreeAttribute tree,
-                     IWorldAccessor worldAccessForResolve) {
-    base.FromTreeAttributes(tree, worldAccessForResolve);
-    // FromTreeAttributes is called before Initialize, so ParseNetworks needs to
-    // be called before accessing _networks.
-    _template = ParseBlockNodeTemplate(worldAccessForResolve.Api, properties);
-
-    StringBuilder dsc = new StringBuilder();
-    for (int i = 0; i < (_nodes?.Length ?? 0); ++i) {
-      dsc.AppendLine($"oldnode[{i}] = {{ {_nodes[i].ToString()} }}");
-    }
-
-    if (_template.FromTreeAttributes(Pos, tree["nodes"] as TreeArrayAttribute,
-                                     ref _nodes) &&
-        Api != null) {
-      // Only update the mesh here if the behavior was already initialized
-      // (indicated by the non-null Api), and the template indicates that the
-      // nodes changed significantly enough to require a mesh update.
-      (Blockentity as BlockEntityCacheMesh)?.UpdateMesh();
-      Blockentity.MarkDirty(true);
-    }
-
-    for (int i = 0; i < _nodes.Length; ++i) {
-      dsc.AppendLine($"newnode[{i}] = {{ {_nodes[i].ToString()} }}");
-    }
-    worldAccessForResolve.Api.Logger.Debug(
-        "FromTreeAttributes on {0} api set {1}: {2}",
-        worldAccessForResolve.Api.Side, Api != null, dsc);
-  }
-
-  public override void Initialize(ICoreAPI api, JsonObject properties) {
-    base.Initialize(api, properties);
-    // _networks and _nodes may have already been initialized in
-    // `FromTreeAttributes`. Reinitializing it would wipe out the _nodes
-    // information.
-    if (_template == null) {
-      _template = ParseBlockNodeTemplate(Api, properties);
-      _nodes = _template.CreateNodes(Pos);
-    }
-  }
-
-  public override void OnBlockPlaced(ItemStack byItemStack = null) {
-    base.OnBlockPlaced(byItemStack);
-    _template.OnPlaced(Pos, _nodes);
-  }
-
-  public override void OnBlockRemoved() {
-    base.OnBlockRemoved();
-    _template.OnRemoved(Pos, _nodes);
-  }
-
-  public object GetKey() { return _template.GetTextureKey(_nodes); }
-
-  public object GetImmutableKey() { return GetKey(); }
-
-  public TextureAtlasPosition GetTexture(string textureCode) {
-    ICoreClientAPI capi = (ICoreClientAPI)Api;
-    return _template.GetTexture(textureCode, capi, Block, _nodes);
-  }
-
-  public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc) {
-    base.GetBlockInfo(forPlayer, dsc);
-    if ((Api as ICoreClientAPI)?.Settings.Bool["extendedDebugInfo"] ?? false) {
-      for (int i = 0; i < _nodes.Length; ++i) {
-        if (i == 13) {
-          dsc.AppendLine($"...");
-          break;
-        }
-        dsc.AppendLine($"node[{i}] = {{ {_nodes[i].ToString()} }}");
-      }
-    }
+  protected override AutoStepNetworkManager GetManager(ICoreAPI api) {
+    return LambdaFactoryModSystem.GetInstance(api).NetworkManager;
   }
 }
