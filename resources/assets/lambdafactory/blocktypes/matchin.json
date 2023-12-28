@@ -37,8 +37,6 @@
           }
         }
       ]
-    },
-    {name: "AcceptPorts"
     }
   ],
   creativeinventory: { general: ["*-north"] },

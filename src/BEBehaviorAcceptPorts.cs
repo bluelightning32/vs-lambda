@@ -1,5 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -10,15 +14,89 @@ using Vintagestory.API.Util;
 
 namespace LambdaFactory;
 
+[JsonConverter(typeof(StringEnumConverter))]
+public enum PortDirection {
+  [EnumMember(Value = "none")] None = 0,
+  [EnumMember(Value = "in")] In = 1,
+  [EnumMember(Value = "out")] Out = 2,
+}
+
+public class PortOption {
+  public string Name;
+  public PortDirection[] Directions;
+  public BlockFacing[] Faces = Array.Empty<BlockFacing>();
+
+  public PortOption(string name, PortDirection[] directions, string[] faces) {
+    Name = name;
+    Directions = directions;
+    Faces = new BlockFacing[faces.Length];
+    for (int i = 0; i < faces.Length; ++i) {
+      Faces[i] = BlockFacing.FromCode(faces[i]);
+      if (Faces[i] == null) {
+        throw new ArgumentException($"Bad facing code: {faces[i]}");
+      }
+    }
+  }
+}
+
+[JsonObject(MemberSerialization.OptIn)]
+public class PortConfiguration {
+  [JsonProperty]
+  public readonly PortOption[] Ports;
+  private readonly Dictionary<BlockFacing, PortOption> _faceIndex =
+      new Dictionary<BlockFacing, PortOption>();
+  public IReadOnlyDictionary<BlockFacing, PortOption> FaceIndex {
+    get { return _faceIndex; }
+  }
+
+  public PortConfiguration(PortOption[] ports) {
+    if (ports == null) {
+      ports = Array.Empty<PortOption>();
+    }
+    Ports = ports;
+    foreach (PortOption port in ports) {
+      foreach (BlockFacing face in port.Faces) {
+        _faceIndex.Add(face, port);
+      }
+    }
+  }
+}
+
+public interface IAcceptPorts {
+  bool SetPort(Block port, PortDirection direction, BlockFacing face,
+               out string failureCode);
+}
+
 public class BEBehaviorAcceptPorts : BlockEntityBehavior,
-                                     IBlockEntityForward,
+                                     IAcceptPorts,
                                      IMeshGenerator {
   private int _portedSides = 0;
+  PortConfiguration _configuration;
 
   public BEBehaviorAcceptPorts(BlockEntity blockentity) : base(blockentity) {}
 
+  private static PortConfiguration ParseConfiguration(ICoreAPI api,
+                                                      JsonObject properties) {
+    Dictionary<JsonObject, PortConfiguration> cache =
+        ObjectCacheUtil.GetOrCreate(
+            api, $"lambdafactory-accept-ports",
+            () => new Dictionary<JsonObject, PortConfiguration>());
+    if (cache.TryGetValue(properties, out PortConfiguration configuration)) {
+      return configuration;
+    }
+    api.Logger.Debug(
+        "lambda: Accept ports properties cache miss. Dict has {0} entries.",
+        cache.Count);
+    configuration = properties.AsObject<PortConfiguration>() ??
+                    new PortConfiguration(Array.Empty<PortOption>());
+    cache.Add(properties, configuration);
+    return configuration;
+  }
+
   public override void Initialize(ICoreAPI api, JsonObject properties) {
     base.Initialize(api, properties);
+    _configuration = ParseConfiguration(api, properties);
+
     SetKey();
   }
 
@@ -34,7 +112,7 @@ public class BEBehaviorAcceptPorts : BlockEntityBehavior,
     // https://github.com/anegostudios/vsapi/issues/16.
     if (decors != null) {
       for (int i = 0; i < BlockFacing.ALLFACES.Length; ++i) {
-        if (decors[i] != null) {
+        if (decors[i]?.GetBehavior<BlockBehaviorPort>() != null) {
           _portedSides |= 1 << i;
         }
       }
@@ -71,17 +149,43 @@ public class BEBehaviorAcceptPorts : BlockEntityBehavior,
     }
   }
 
-  void IBlockEntityForward.OnNeighbourBlockChange(
-      Vintagestory.API.MathTools.BlockPos neibpos,
-      ref Vintagestory.API.Common.EnumHandling handling) {
-    int oldPortedSides = _portedSides;
-    SetKey();
-    if (oldPortedSides != _portedSides) {
-      (Blockentity as BlockEntityCacheMesh)?.UpdateMesh();
-    }
-  }
-
   public object GetKey() { return _portedSides; }
 
   public object GetImmutableKey() { return _portedSides; }
+
+  public virtual bool CanAcceptPort(PortOption option, BlockFacing face,
+                                    out string failureCode) {
+    // Verify the port option isn't full from a different side.
+    foreach (BlockFacing faceOption in option.Faces) {
+      if ((_portedSides & (1 << faceOption.Index)) != 0) {
+        failureCode = "portfull";
+        return false;
+      }
+    }
+    failureCode = string.Empty;
+    return true;
+  }
+
+  public bool SetPort(Block port, PortDirection direction, BlockFacing face,
+                      out string failureCode) {
+    if (!_configuration.FaceIndex.TryGetValue(face,
+                                              out PortOption portOption)) {
+      failureCode = "noporthere";
+      return false;
+    }
+    if (!portOption.Directions.Contains(direction)) {
+      failureCode = "wrongdirection";
+      return false;
+    }
+    if (!CanAcceptPort(portOption, face, out failureCode)) {
+      return false;
+    }
+    if (Api.World.BlockAccessor.SetDecor(port, Pos, face)) {
+      _portedSides |= 1 << face.Index;
+      (Blockentity as BlockEntityCacheMesh)?.UpdateMesh();
+      return true;
+    }
+    failureCode = "existingdecorinplace";
+    return false;
+  }
 }

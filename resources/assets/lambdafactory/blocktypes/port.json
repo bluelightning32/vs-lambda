@@ -2,12 +2,16 @@
   code: "port",
   behaviors: [
     {
-      name: "Decor",
+      name: "Port",
       properties: {
-        sides: ["north", "east", "south", "west", "up", "down"],
         notFullFace: true,
         removable: true,
         thickness: 0.125,
+        directionByType: {
+          "*-direct-in": "in",
+          "*-direct-out": "out",
+          "*": "none"
+        },
       }
     }
   ],
@@ -23,10 +27,10 @@
     "*-passthrough-*": {
       "port": { base: "port/passthrough" }
     },
-    "*-direct-in-*": {
+    "*-direct-in": {
       "port": { base: "port/in" }
     },
-    "*-direct-out-*": {
+    "*-direct-out": {
       "port": { base: "port/out" }
     },
   },

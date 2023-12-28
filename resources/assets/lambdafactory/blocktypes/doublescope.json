@@ -48,7 +48,30 @@
         }
       ]
     },
-    {name: "AcceptPorts"
+    {
+      name: "AcceptPorts",
+      properties: {
+        ports: [
+          {
+            name: "port1",
+            directions: ["in", "out"],
+            facesByType: {
+              "*-ns": ["north"],
+              "*-we": ["west"],
+              "*-ud": ["up"]
+            }
+          },
+          {
+            name: "port2",
+            directions: ["in", "out"],
+            facesByType: {
+              "*-ns": ["south"],
+              "*-we": ["east"],
+              "*-ud": ["down"]
+            }
+          }
+        ]
+      }
     }
   ],
   creativeinventory: { general: [

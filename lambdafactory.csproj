@@ -71,10 +71,10 @@
             <HintPath>$(VINTAGE_STORY)/Lib/protobuf-net.dll</HintPath>
             <Private>false</Private>
         </Reference>
-        <!-- <Reference Include="VintagestoryAPI">
+        <Reference Include="VSEssentials">
             <HintPath>$(VINTAGE_STORY)/Mods/VSEssentials.dll</HintPath>
             <Private>false</Private>
-        </Reference> -->
+        </Reference>
         <!-- <Reference Include="VintagestoryAPI">
             <HintPath>$(VINTAGE_STORY)/Mods/VSSurvivalMod.dll</HintPath>
             <Private>false</Private>

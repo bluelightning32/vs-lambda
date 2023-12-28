@@ -11,7 +11,7 @@ namespace LambdaFactory;
 
 // Forwards more methods from the Block to the BlockEntity.
 public class BlockBehaviorNetwork : BlockBehavior {
-  private List<BlockNodeTemplate> _blockTemplates =
+  private readonly List<BlockNodeTemplate> _blockTemplates =
       new List<BlockNodeTemplate>();
 
   public BlockBehaviorNetwork(Block block) : base(block) {}

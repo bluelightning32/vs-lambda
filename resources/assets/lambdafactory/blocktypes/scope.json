@@ -49,7 +49,17 @@
         }
       ]
     },
-    {name: "AcceptPorts"
+    {
+      name: "AcceptPorts",
+      properties: {
+        ports: [
+          {
+            name: "port",
+            directions: ["in", "out"],
+            faces: ["{rot}"]
+          }
+        ]
+      }
     }
   ],
   creativeinventory: { general: [
