@@ -37,6 +37,11 @@
               "*-east": ["north", "south", "west"],
               "*-west": ["north", "east", "south"],
               "*-south": ["north", "east", "west"]
+            },
+            fullTextures: {
+              "porthole": {
+                base: "scope/down"
+              }
             }
           }
         ]

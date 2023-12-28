@@ -9,7 +9,8 @@
 	},
 	"textures": {
 		"crystal": "match/crystal",
-		"down": "scope/down"
+		"down": "scope/down",
+		"porthole": "scope/down-porthole"
 	},
 	"elements": [
 		{
@@ -18,9 +19,9 @@
 			"to": [ 16.0, 12.0, 16.0 ],
 			"faces": {
 				"north": { "texture": "#down", "uv": [ 0.0, 4.0, 16.0, 16.0 ], "windMode": [-1,-1,-1,-1] },
-				"east": { "texture": "#down", "uv": [ 0.0, 4.0, 16.0, 16.0 ], "windMode": [-1,-1,-1,-1] },
+				"east": { "texture": "#porthole", "uv": [ 0.0, 4.0, 16.0, 16.0 ], "windMode": [-1,-1,-1,-1] },
 				"south": { "texture": "#down", "uv": [ 16.0, 5.0, 0.0, 16.0 ], "autoUv": false },
-				"west": { "texture": "#down", "uv": [ 0.0, 4.0, 16.0, 16.0 ] },
+				"west": { "texture": "#porthole", "uv": [ 0.0, 4.0, 16.0, 16.0 ] },
 				"up": { "texture": "#down", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "windMode": [-1,-1,-1,-1] },
 				"down": { "texture": "#down", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
 			}

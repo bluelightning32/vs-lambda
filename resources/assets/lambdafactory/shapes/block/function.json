@@ -11,6 +11,7 @@
 		"functionside": "function/side",
 		"functionup": "function/up",
 		"down": "scope/down",
+		"down-porthole": "scope/down-porthole",
 		"eastwest": "scope/eastwest",
 		"northsouth": "scope/northsouth",
 		"up": "scope/up"
@@ -23,7 +24,7 @@
 			"rotationOrigin": [ 0.0, 0.0, 2.0 ],
 			"faces": {
 				"east": { "texture": "#down", "uv": [ 0.0, 4.0, 14.0, 16.0 ] },
-				"south": { "texture": "#down", "uv": [ 16.0, 5.0, 0.0, 16.0 ], "autoUv": false },
+				"south": { "texture": "#down-porthole", "uv": [ 0.0, 4.0, 16.0, 16.0 ] },
 				"west": { "texture": "#down", "uv": [ 16.0, 5.0, 0.0, 16.0 ], "autoUv": false },
 				"up": { "texture": "#down", "uv": [ 0.0, 0.0, 16.0, 14.0 ], "windMode": [-1,-1,-1,-1] },
 				"down": { "texture": "#down", "uv": [ 0.0, 2.0, 16.0, 16.0 ] }

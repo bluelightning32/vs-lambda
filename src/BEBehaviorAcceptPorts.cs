@@ -25,8 +25,10 @@ public class PortOption {
   public string Name;
   public PortDirection[] Directions;
   public BlockFacing[] Faces = Array.Empty<BlockFacing>();
+  public Dictionary<string, CompositeTexture> FullTextures;
 
-  public PortOption(string name, PortDirection[] directions, string[] faces) {
+  public PortOption(string name, PortDirection[] directions, string[] faces,
+                    Dictionary<string, CompositeTexture> fullTextures) {
     Name = name;
     Directions = directions;
     Faces = new BlockFacing[faces.Length];
@@ -36,6 +38,7 @@ public class PortOption {
         throw new ArgumentException($"Bad facing code: {faces[i]}");
       }
     }
+    FullTextures = fullTextures;
   }
 }
 
@@ -87,8 +90,9 @@ public class BEBehaviorAcceptPorts : BlockEntityBehavior,
     api.Logger.Debug(
         "lambda: Accept ports properties cache miss. Dict has {0} entries.",
         cache.Count);
-    configuration = properties.AsObject<PortConfiguration>() ??
-                    new PortConfiguration(Array.Empty<PortOption>());
+    configuration = properties.AsObject<PortConfiguration>(
+        new PortConfiguration(Array.Empty<PortOption>()),
+        LambdaFactoryModSystem.Domain);
     cache.Add(properties, configuration);
     return configuration;
   }
@@ -187,5 +191,28 @@ public class BEBehaviorAcceptPorts : BlockEntityBehavior,
     }
     failureCode = "existingdecorinplace";
     return false;
+  }
+
+  public TextureAtlasPosition GetTexture(string textureCode) {
+    foreach (PortOption option in _configuration.Ports) {
+      if (option.FullTextures == null ||
+          !option.FullTextures.TryGetValue(textureCode,
+                                           out CompositeTexture replacement)) {
+        continue;
+      }
+      ICoreClientAPI capi = (ICoreClientAPI)Api;
+      foreach (BlockFacing faceOption in option.Faces) {
+        if ((_portedSides & (1 << faceOption.Index)) != 0) {
+          replacement.Bake(capi.Assets);
+          ITextureAtlasAPI atlas = capi.BlockTextureAtlas;
+          atlas.GetOrInsertTexture(
+              replacement.Baked.BakedName, out int id,
+              out TextureAtlasPosition tex,
+              () => atlas.LoadCompositeBitmap(replacement.Baked.BakedName));
+          return tex;
+        }
+      }
+    }
+    return null;
   }
 }
