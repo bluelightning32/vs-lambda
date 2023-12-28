@@ -16,9 +16,12 @@ public class LambdaFactoryModSystem : ModSystem {
   // object cache can be cleared with a command.
   public AutoStepNetworkManager ScopeNetworkManager { get; private set; }
   public AutoStepNetworkManager MatchNetworkManager { get; private set; }
+  public BEBehaviorTermNetwork.Manager TermNetworkManager { get; private set; }
 
+  // Indexed by behavior name
   private readonly Dictionary<string, AutoStepNetworkManager> _networkManagers =
       new Dictionary<string, AutoStepNetworkManager>();
+  // Indexed by behavior name
   public IReadOnlyDictionary<string, AutoStepNetworkManager> NetworkManagers {
     get { return _networkManagers; }
   }
@@ -41,6 +44,8 @@ public class LambdaFactoryModSystem : ModSystem {
                                          typeof(BEBehaviorScopeNetwork));
     api.RegisterBlockEntityBehaviorClass(BEBehaviorMatchNetwork.Name,
                                          typeof(BEBehaviorMatchNetwork));
+    api.RegisterBlockEntityBehaviorClass(BEBehaviorTermNetwork.Name,
+                                         typeof(BEBehaviorTermNetwork));
     api.RegisterBlockEntityBehaviorClass("AcceptPorts",
                                          typeof(BEBehaviorAcceptPorts));
     BlockEntityWire.OnModLoaded();
@@ -48,6 +53,8 @@ public class LambdaFactoryModSystem : ModSystem {
         new BEBehaviorScopeNetwork.Manager(api.World);
     _networkManagers[BEBehaviorMatchNetwork.Name] = MatchNetworkManager =
         new BEBehaviorMatchNetwork.Manager(api.World);
+    _networkManagers[BEBehaviorTermNetwork.Name] = TermNetworkManager =
+        new BEBehaviorTermNetwork.Manager(api.World);
   }
 
   public void RegisterNetworkDebugCommands(IChatCommandApi api, string name,
@@ -93,9 +100,9 @@ public class LambdaFactoryModSystem : ModSystem {
   public override void StartClientSide(ICoreClientAPI api) {}
 
   public override void StartServerSide(ICoreServerAPI api) {
-    RegisterNetworkDebugCommands(api.ChatCommands, "scope",
-                                 ScopeNetworkManager);
-    RegisterNetworkDebugCommands(api.ChatCommands, "match",
-                                 MatchNetworkManager);
+    foreach (var manager in _networkManagers) {
+      RegisterNetworkDebugCommands(
+          api.ChatCommands, manager.Value.GetNetworkName(), manager.Value);
+    }
   }
 }

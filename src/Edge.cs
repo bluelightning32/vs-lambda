@@ -98,4 +98,14 @@ static class EdgeExtension {
 
                          _ => Edge.Unknown };
   }
+
+  public static Edge GetFaceCenter(BlockFacing face) {
+    return face.Index switch { BlockFacing.indexNORTH => Edge.NorthCenter,
+                               BlockFacing.indexEAST => Edge.EastCenter,
+                               BlockFacing.indexSOUTH => Edge.SouthCenter,
+                               BlockFacing.indexWEST => Edge.WestCenter,
+                               BlockFacing.indexUP => Edge.UpCenter,
+                               BlockFacing.indexDOWN => Edge.DownCenter,
+                               _ => Edge.Unknown };
+  }
 }

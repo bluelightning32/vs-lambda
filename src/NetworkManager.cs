@@ -381,4 +381,6 @@ public class NetworkManager {
       Step();
     }
   }
+
+  public virtual string GetNetworkName() { return "test"; }
 }

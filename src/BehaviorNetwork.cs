@@ -39,7 +39,7 @@ public class BlockBehaviorNetwork : BlockBehavior {
                                      ref EnumHandling handling,
                                      ref string failureCode) {
     foreach (BlockNodeTemplate template in _blockTemplates) {
-      if (!template.CanPlace(blockSel.Position, ref failureCode)) {
+      if (!template.CanPlace(blockSel.Position, out failureCode)) {
         handling = EnumHandling.PreventSubsequent;
         return false;
       }

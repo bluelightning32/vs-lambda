@@ -56,7 +56,7 @@ public class BlockNodeTemplateTest {
     _accessor.SetBlock(0, 0, 0, 0, _templates.ScopeCenterSource);
     string failureCode = null;
     Assert.IsTrue(_templates.ScopeCenterConnector.CanPlace(
-        new BlockPos(1, 0, 0, 0), ref failureCode));
+        new BlockPos(1, 0, 0, 0), out failureCode));
   }
 
   [TestMethod]
@@ -65,7 +65,7 @@ public class BlockNodeTemplateTest {
 
     string failureCode = null;
     Assert.IsFalse(_templates.ScopeCenterSource.CanPlace(
-        new BlockPos(1, 0, 0, 0), ref failureCode));
+        new BlockPos(1, 0, 0, 0), out failureCode));
     Assert.AreEqual("conflictingsources", failureCode);
   }
 
@@ -75,7 +75,7 @@ public class BlockNodeTemplateTest {
 
     string failureCode = null;
     Assert.IsTrue(_templates.ScopeCenterSource.CanPlace(
-        new BlockPos(1, 0, 0, 0), ref failureCode));
+        new BlockPos(1, 0, 0, 0), out failureCode));
   }
 
   [TestMethod]
@@ -85,7 +85,7 @@ public class BlockNodeTemplateTest {
 
     string failureCode = null;
     Assert.IsFalse(_templates.ScopeCenterConnector.CanPlace(
-        new BlockPos(1, 0, 0, 0), ref failureCode));
+        new BlockPos(1, 0, 0, 0), out failureCode));
     Assert.AreEqual("conflictingsources", failureCode);
   }
 

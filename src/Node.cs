@@ -193,7 +193,7 @@ public class NodeTemplate {
 
   public bool CanPlace(NetworkManager manager, BlockPos pos,
                        BlockNodeTemplate[] neighborTemplates,
-                       Node[][] neighbors, ref string failureCode) {
+                       Node[][] neighbors, out string failureCode) {
     NodePos source = new NodePos();
     if (Source) {
       source.Block = pos;
@@ -224,6 +224,7 @@ public class NodeTemplate {
         }
       }
     }
+    failureCode = string.Empty;
     return true;
   }
 

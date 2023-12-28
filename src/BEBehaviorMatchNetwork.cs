@@ -38,11 +38,11 @@ public class BEBehaviorMatchNetwork : BEBehaviorAbstractNetwork {
       cache.Add(properties, block);
       return block;
     }
+
+    public override string GetNetworkName() { return "match"; }
   }
 
   public BEBehaviorMatchNetwork(BlockEntity blockentity) : base(blockentity) {}
-
-  protected override string GetNetworkName() { return "match"; }
 
   protected override AutoStepNetworkManager GetManager(ICoreAPI api) {
     return LambdaFactoryModSystem.GetInstance(api).MatchNetworkManager;

@@ -34,7 +34,7 @@ public class BlockNodeTemplate {
         if (edge == Edge.Source) {
           nodeTemplate.Source = true;
         }
-        if (edge != Edge.Unknown) {
+        if (edge != Edge.Unknown && edge != Edge.Source) {
           _index.Add(edge, nodeTemplate);
         }
       }
@@ -152,7 +152,7 @@ public class BlockNodeTemplate {
     return BakeTexture(capi, composite);
   }
 
-  private void SetSourceScope(BlockPos pos, Node[] nodes) {
+  public void SetSourceScope(BlockPos pos, Node[] nodes) {
     foreach (var nodeTemplate in _nodeTemplates) {
       if (nodeTemplate.Source) {
         nodes[nodeTemplate.Id].Scope = nodeTemplate.SourceScope;
@@ -189,17 +189,17 @@ public class BlockNodeTemplate {
     return neighborTemplates;
   }
 
-  public bool CanPlace(BlockPos pos, ref string failureCode) {
+  public bool CanPlace(BlockPos pos, out string failureCode) {
     BlockNodeTemplate[] neighborTemplates =
         GetNeighbors(pos, out Node[][] neighbors);
 
     foreach (var template in _nodeTemplates) {
       if (!template.CanPlace(_manager, pos, neighborTemplates, neighbors,
-                             ref failureCode)) {
+                             out failureCode)) {
         return false;
       }
     }
-
+    failureCode = string.Empty;
     return true;
   }
 
@@ -214,6 +214,13 @@ public class BlockNodeTemplate {
       template.OnPlaced(_manager, pos, neighborTemplates, neighbors,
                         ref nodes[template.Id]);
     }
+  }
+
+  public void OnNodePlaced(BlockPos pos, int id, ref Node node) {
+    BlockNodeTemplate[] neighborTemplates =
+        GetNeighbors(pos, out Node[][] neighbors);
+    _nodeTemplates[id].OnPlaced(_manager, pos, neighborTemplates, neighbors,
+                                ref node);
   }
 
   public void OnRemoved(BlockPos pos, Node[] nodes) {
@@ -247,4 +254,6 @@ public class BlockNodeTemplate {
 
     return key;
   }
+
+  public string GetNetworkName() => _manager.GetNetworkName();
 }

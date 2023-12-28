@@ -44,15 +44,19 @@ public abstract class BEBehaviorAbstractNetwork : BlockEntityBehavior,
   public BEBehaviorAbstractNetwork(BlockEntity blockentity)
       : base(blockentity) {}
 
-  protected abstract string GetNetworkName();
   protected abstract AutoStepNetworkManager GetManager(ICoreAPI api);
 
   public override void ToTreeAttributes(ITreeAttribute tree) {
     base.ToTreeAttributes(tree);
     TreeArrayAttribute nodes = _template.ToTreeAttributes(_nodes);
     if (nodes != null) {
-      tree[GetNetworkName()] = nodes;
+      tree[_template.GetNetworkName()] = nodes;
     }
+  }
+
+  protected virtual BlockNodeTemplate
+  ParseBlockNodeTemplate(IWorldAccessor world, JsonObject properties) {
+    return GetManager(world.Api).ParseBlockNodeTemplate(properties);
   }
 
   public override void
@@ -61,17 +65,17 @@ public abstract class BEBehaviorAbstractNetwork : BlockEntityBehavior,
     base.FromTreeAttributes(tree, worldAccessForResolve);
     // FromTreeAttributes is called before Initialize, so ParseNetworks needs to
     // be called before accessing _template.
-    _template = GetManager(worldAccessForResolve.Api)
-                    .ParseBlockNodeTemplate(properties);
+    _template = ParseBlockNodeTemplate(worldAccessForResolve, properties);
 
     StringBuilder dsc = new StringBuilder();
     for (int i = 0; i < (_nodes?.Length ?? 0); ++i) {
       dsc.AppendLine(
-          $"old{GetNetworkName()}[{i}] = {{ {_nodes[i].ToString()} }}");
+          $"old{_template.GetNetworkName()}[{i}] = {{ {_nodes[i].ToString()} }}");
     }
 
     if (_template.FromTreeAttributes(
-            Pos, tree[GetNetworkName()] as TreeArrayAttribute, ref _nodes) &&
+            Pos, tree[_template.GetNetworkName()] as TreeArrayAttribute,
+            ref _nodes) &&
         Api != null) {
       // Only update the mesh here if the behavior was already initialized
       // (indicated by the non-null Api), and the template indicates that the
@@ -82,7 +86,7 @@ public abstract class BEBehaviorAbstractNetwork : BlockEntityBehavior,
 
     for (int i = 0; i < _nodes.Length; ++i) {
       dsc.AppendLine(
-          $"new{GetNetworkName()}[{i}] = {{ {_nodes[i].ToString()} }}");
+          $"new{_template.GetNetworkName()}[{i}] = {{ {_nodes[i].ToString()} }}");
     }
     worldAccessForResolve.Api.Logger.Debug(
         "FromTreeAttributes on {0} api set {1}: {2}",
@@ -95,7 +99,7 @@ public abstract class BEBehaviorAbstractNetwork : BlockEntityBehavior,
     // `FromTreeAttributes`. Reinitializing it would wipe out the _nodes
     // information.
     if (_template == null) {
-      _template = GetManager(api).ParseBlockNodeTemplate(properties);
+      _template = ParseBlockNodeTemplate(api.World, properties);
       _nodes = _template.CreateNodes(Pos);
     }
   }
@@ -110,11 +114,11 @@ public abstract class BEBehaviorAbstractNetwork : BlockEntityBehavior,
     _template.OnRemoved(Pos, _nodes);
   }
 
-  public object GetKey() { return _template.GetTextureKey(_nodes); }
+  public virtual object GetKey() { return _template.GetTextureKey(_nodes); }
 
-  public object GetImmutableKey() { return GetKey(); }
+  public virtual object GetImmutableKey() { return GetKey(); }
 
-  public TextureAtlasPosition GetTexture(string textureCode) {
+  public virtual TextureAtlasPosition GetTexture(string textureCode) {
     ICoreClientAPI capi = (ICoreClientAPI)Api;
     return _template.GetTexture(textureCode, capi, Block, _nodes);
   }
@@ -128,7 +132,7 @@ public abstract class BEBehaviorAbstractNetwork : BlockEntityBehavior,
           break;
         }
         dsc.AppendLine(
-            $"{GetNetworkName()}[{i}] = {{ {_nodes[i].ToString()} }}");
+            $"{_template.GetNetworkName()}[{i}] = {{ {_nodes[i].ToString()} }}");
       }
     }
   }

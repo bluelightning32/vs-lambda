@@ -70,16 +70,19 @@ public interface IAcceptPorts {
                out string failureCode);
 }
 
-public class BEBehaviorAcceptPorts : BlockEntityBehavior,
+public class BEBehaviorAcceptPorts : BEBehaviorTermNetwork,
                                      IAcceptPorts,
                                      IMeshGenerator {
+  // Each face uses 1 bit to indicate whether a port is present.
   private int _portedSides = 0;
+  // Each face uses 2 bits to indicate which kind of port is present.
+  private int _occupiedPorts = 0;
   PortConfiguration _configuration;
 
   public BEBehaviorAcceptPorts(BlockEntity blockentity) : base(blockentity) {}
 
-  private static PortConfiguration ParseConfiguration(ICoreAPI api,
-                                                      JsonObject properties) {
+  public static PortConfiguration ParseConfiguration(ICoreAPI api,
+                                                     JsonObject properties) {
     Dictionary<JsonObject, PortConfiguration> cache =
         ObjectCacheUtil.GetOrCreate(
             api, $"lambdafactory-accept-ports",
@@ -95,6 +98,18 @@ public class BEBehaviorAcceptPorts : BlockEntityBehavior,
         LambdaFactoryModSystem.Domain);
     cache.Add(properties, configuration);
     return configuration;
+  }
+
+  private BlockNodeTemplate ParseBlockNodeTemplate(IWorldAccessor world,
+                                                   JsonObject properties,
+                                                   int occupiedPorts) {
+    return GetManager(world.Api).ParseAcceptPortsTemplate(properties,
+                                                          occupiedPorts);
+  }
+
+  protected override BlockNodeTemplate
+  ParseBlockNodeTemplate(IWorldAccessor world, JsonObject properties) {
+    return ParseBlockNodeTemplate(world, properties, _occupiedPorts);
   }
 
   public override void Initialize(ICoreAPI api, JsonObject properties) {
@@ -116,11 +131,14 @@ public class BEBehaviorAcceptPorts : BlockEntityBehavior,
     // https://github.com/anegostudios/vsapi/issues/16.
     if (decors != null) {
       for (int i = 0; i < BlockFacing.ALLFACES.Length; ++i) {
-        if (decors[i]?.GetBehavior<BlockBehaviorPort>() != null) {
+        BlockBehaviorPort port = decors[i]?.GetBehavior<BlockBehaviorPort>();
+        if (port != null) {
           _portedSides |= 1 << i;
+          _occupiedPorts |= (int)port.Direction << (i << 1);
         }
       }
     }
+    _template = ParseBlockNodeTemplate(Api.World, properties);
   }
 
   public void EditMesh(MeshData mesh) { CutPortHoles(_portedSides, mesh); }
@@ -153,12 +171,12 @@ public class BEBehaviorAcceptPorts : BlockEntityBehavior,
     }
   }
 
-  public object GetKey() { return _portedSides; }
+  public override object GetKey() { return _portedSides; }
 
-  public object GetImmutableKey() { return _portedSides; }
+  public override object GetImmutableKey() { return _portedSides; }
 
-  public virtual bool CanAcceptPort(PortOption option, BlockFacing face,
-                                    out string failureCode) {
+  public virtual bool CanAcceptPort(PortOption option, PortDirection direction,
+                                    BlockFacing face, out string failureCode) {
     // Verify the port option isn't full from a different side.
     foreach (BlockFacing faceOption in option.Faces) {
       if ((_portedSides & (1 << faceOption.Index)) != 0) {
@@ -166,8 +184,10 @@ public class BEBehaviorAcceptPorts : BlockEntityBehavior,
         return false;
       }
     }
-    failureCode = string.Empty;
-    return true;
+    BlockNodeTemplate newTemplate = ParseBlockNodeTemplate(
+        Api.World, properties,
+        _occupiedPorts | ((int)direction << (face.Index << 1)));
+    return newTemplate.CanPlace(Pos, out failureCode);
   }
 
   public bool SetPort(Block port, PortDirection direction, BlockFacing face,
@@ -181,11 +201,17 @@ public class BEBehaviorAcceptPorts : BlockEntityBehavior,
       failureCode = "wrongdirection";
       return false;
     }
-    if (!CanAcceptPort(portOption, face, out failureCode)) {
+    if (!CanAcceptPort(portOption, direction, face, out failureCode)) {
       return false;
     }
     if (Api.World.BlockAccessor.SetDecor(port, Pos, face)) {
       _portedSides |= 1 << face.Index;
+      _occupiedPorts |= (int)direction << (face.Index << 1);
+      _template = ParseBlockNodeTemplate(Api.World, properties);
+      _template.SetSourceScope(Pos, _nodes);
+      int nodeId =
+          _template.GetNodeTemplate(EdgeExtension.GetFaceCenter(face)).Id;
+      _template.OnNodePlaced(Pos, nodeId, ref _nodes[nodeId]);
       (Blockentity as BlockEntityCacheMesh)?.UpdateMesh();
       return true;
     }
@@ -193,7 +219,7 @@ public class BEBehaviorAcceptPorts : BlockEntityBehavior,
     return false;
   }
 
-  public TextureAtlasPosition GetTexture(string textureCode) {
+  public override TextureAtlasPosition GetTexture(string textureCode) {
     foreach (PortOption option in _configuration.Ports) {
       if (option.FullTextures == null ||
           !option.FullTextures.TryGetValue(textureCode,
