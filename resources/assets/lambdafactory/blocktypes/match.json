@@ -12,11 +12,13 @@
   entityBehaviors: [
     {
       name: "MatchNetwork",
-      properties: [
-        {
-          edges: ["north-center", "east-center", "south-center", "west-center", "source"]
-        }
-      ]
+      properties: {
+        nodes: [
+          {
+            edges: ["north-center", "east-center", "south-center", "west-center", "source"]
+          }
+        ]
+      }
     },
     {
       name: "AcceptPorts",

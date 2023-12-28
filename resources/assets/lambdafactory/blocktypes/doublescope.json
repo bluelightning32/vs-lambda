@@ -21,32 +21,36 @@
   entityBehaviors: [
     {
       name: "ScopeNetwork",
-      properties: [
-        {
-          edgesByType: {
-            "*-ns": ["east-right", "up-up", "west-left", "down-up"],
-            "*-we": ["north-right", "up-left", "south-left", "down-right"],
-            "*-ud": ["north-up", "east-up", "south-up", "west-up"]
+      properties: {
+        nodes: [
+          {
+            edgesByType: {
+              "*-ns": ["east-right", "up-up", "west-left", "down-up"],
+              "*-we": ["north-right", "up-left", "south-left", "down-right"],
+              "*-ud": ["north-up", "east-up", "south-up", "west-up"]
+            },
+            textures: ["active1up", "active1ew", "active1ns"]
           },
-          textures: ["active1up", "active1ew", "active1ns"]
-        },
-        {
-          edgesByType: {
-            "*-ns": ["east-left", "up-down", "west-right", "down-down"],
-            "*-we": ["north-left", "up-right", "south-right", "down-left"],
-            "*-ud": ["north-down", "east-down", "south-down", "west-down"]
-          },
-          textures: ["active2up", "active2ew", "active2ns"]
-        }
-      ],
+          {
+            edgesByType: {
+              "*-ns": ["east-left", "up-down", "west-right", "down-down"],
+              "*-we": ["north-left", "up-right", "south-right", "down-left"],
+              "*-ud": ["north-down", "east-down", "south-down", "west-down"]
+            },
+            textures: ["active2up", "active2ew", "active2ns"]
+          }
+        ]
+      }
     },
     {
       name: "MatchNetwork",
-      properties: [
-        {
-          edges: ["north-center", "east-center", "south-center", "west-center", "up-center", "down-center"]
-        }
-      ]
+      properties: {
+        nodes: [
+          {
+            edges: ["north-center", "east-center", "south-center", "west-center", "up-center", "down-center"]
+          }
+        ]
+      }
     },
     {
       name: "AcceptPorts",

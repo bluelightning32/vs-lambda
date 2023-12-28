@@ -20,34 +20,38 @@
   entityBehaviors: [
     {
       name: "ScopeNetwork",
-      properties: [
-        {
-          edgesByType: {
-            "*-north": ["east-right", "up-up", "west-left", "down-up"],
-            "*-south": ["east-left", "up-down", "west-right", "down-down"],
-            "*-west": ["north-right", "up-left", "south-left", "down-right"],
-            "*-east": ["north-left", "up-right", "south-right", "down-left"],
-            "*-up": ["north-up", "east-up", "south-up", "west-up"],
-            "*-down": ["north-down", "east-down", "south-down", "west-down"]
-          },
-          textures: ["eastwest", "northsouth", "up"]
-        }
-      ],
+      properties: {
+          nodes: [
+          {
+            edgesByType: {
+              "*-north": ["east-right", "up-up", "west-left", "down-up"],
+              "*-south": ["east-left", "up-down", "west-right", "down-down"],
+              "*-west": ["north-right", "up-left", "south-left", "down-right"],
+              "*-east": ["north-left", "up-right", "south-right", "down-left"],
+              "*-up": ["north-up", "east-up", "south-up", "west-up"],
+              "*-down": ["north-down", "east-down", "south-down", "west-down"]
+            },
+            textures: ["eastwest", "northsouth", "up"]
+          }
+        ]
+      }
     },
     {
       name: "MatchNetwork",
-      properties: [
-        {
-          edgesByType: {
-            "*-north": ["east-center", "up-center", "west-center", "down-center"],
-            "*-south": ["east-center", "up-center", "west-center", "down-center"],
-            "*-west": ["north-center", "up-center", "south-center", "down-center"],
-            "*-east": ["north-center", "up-center", "south-center", "down-center"],
-            "*-up": ["north-center", "east-center", "south-center", "west-center"],
-            "*-down": ["north-center", "east-center", "south-center", "west-center"]
+      properties: {
+        nodes: [
+          {
+            edgesByType: {
+              "*-north": ["east-center", "up-center", "west-center", "down-center"],
+              "*-south": ["east-center", "up-center", "west-center", "down-center"],
+              "*-west": ["north-center", "up-center", "south-center", "down-center"],
+              "*-east": ["north-center", "up-center", "south-center", "down-center"],
+              "*-up": ["north-center", "east-center", "south-center", "west-center"],
+              "*-down": ["north-center", "east-center", "south-center", "west-center"]
+            }
           }
-        }
-      ]
+        ]
+      }
     },
     {
       name: "AcceptPorts",

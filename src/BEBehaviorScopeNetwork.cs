@@ -31,7 +31,8 @@ public class BEBehaviorScopeNetwork : BEBehaviorAbstractNetwork {
       Debug(
           "lambda: Scope network properties cache miss. Dict has {0} entries.",
           cache.Count);
-      NodeTemplate[] nodeTemplates = properties.AsObject<NodeTemplate[]>();
+      NodeTemplate[] nodeTemplates =
+          properties["nodes"]?.AsObject<NodeTemplate[]>();
       block = new BlockNodeTemplate(_accessor, this, nodeTemplates);
 
       cache.Add(properties, block);

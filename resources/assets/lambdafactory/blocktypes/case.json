@@ -12,32 +12,36 @@
   entityBehaviors: [
     {
       name: "ScopeNetwork",
-      properties: [
-        {
-          edgesByType: {
-            "*-north": ["east-right", "west-left", "down-up", "source"],
-            "*-south": ["east-left", "west-right", "down-down", "source"],
-            "*-west": ["north-right", "south-left", "down-right", "source"],
-            "*-east": ["north-left", "south-right", "down-left", "source"]
-          },
-          textures: ["eastwest", "northsouth", "up"],
-          sourceScope: "case"
-        }
-      ]
+      properties: {
+        nodes: [
+          {
+            edgesByType: {
+              "*-north": ["east-right", "west-left", "down-up", "source"],
+              "*-south": ["east-left", "west-right", "down-down", "source"],
+              "*-west": ["north-right", "south-left", "down-right", "source"],
+              "*-east": ["north-left", "south-right", "down-left", "source"]
+            },
+            textures: ["eastwest", "northsouth", "up"],
+            sourceScope: "case"
+          }
+        ]
+      }
     },
     {
       name: "MatchNetwork",
-      properties: [
-        {
-          edges: ["north-center", "east-center", "south-center", "west-center", "down-center"],
-          replacementTextures: {
-            "none": {
-              "center": { base: "case/center-disconnected" },
-              "diag": { base: "case/diag-disconnected" }
+      properties: {
+        nodes: [
+          {
+            edges: ["north-center", "east-center", "south-center", "west-center", "down-center"],
+            replacementTextures: {
+              "none": {
+                "center": { base: "case/center-disconnected" },
+                "diag": { base: "case/diag-disconnected" }
+              }
             }
           }
-        }
-      ]
+        ]
+      }
     }
   ],
   creativeinventory: { general: ["*-north"] },

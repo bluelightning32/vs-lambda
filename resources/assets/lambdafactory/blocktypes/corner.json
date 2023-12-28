@@ -9,64 +9,68 @@
   entityBehaviors: [
     {
       name: "ScopeNetwork",
-      properties: [
-        {
-          edges: ["north-left", "east-right"],
-          textures: ["northeast"]
-        },
-        {
-          edges: ["east-left", "south-right"],
-          textures: ["southeast"]
-        },
-        {
-          edges: ["south-left", "west-right"],
-          textures: ["southwest"]
-        },
-        {
-          edges: ["west-left", "north-right"],
-          textures: ["northwest"]
-        },
-        {
-          edges: ["up-up", "north-up"],
-          textures: ["upnorth"]
-        },
-        {
-          edges: ["up-right", "east-up"],
-          textures: ["upeast"]
-        },
-        {
-          edges: ["up-down", "south-up"],
-          textures: ["upsouth"]
-        },
-        {
-          edges: ["up-left", "west-up"],
-          textures: ["upwest"]
-        },
-        {
-          edges: ["down-up", "north-down"],
-          textures: ["downnorth"]
-        },
-        {
-          edges: ["down-left", "east-down"],
-          textures: ["downeast"]
-        },
-        {
-          edges: ["down-down", "south-down"],
-          textures: ["downsouth"]
-        },
-        {
-          edges: ["down-right", "west-down"],
-          textures: ["downwest"]
-        }
-      ]
+      properties: {
+        nodes: [
+          {
+            edges: ["north-left", "east-right"],
+            textures: ["northeast"]
+          },
+          {
+            edges: ["east-left", "south-right"],
+            textures: ["southeast"]
+          },
+          {
+            edges: ["south-left", "west-right"],
+            textures: ["southwest"]
+          },
+          {
+            edges: ["west-left", "north-right"],
+            textures: ["northwest"]
+          },
+          {
+            edges: ["up-up", "north-up"],
+            textures: ["upnorth"]
+          },
+          {
+            edges: ["up-right", "east-up"],
+            textures: ["upeast"]
+          },
+          {
+            edges: ["up-down", "south-up"],
+            textures: ["upsouth"]
+          },
+          {
+            edges: ["up-left", "west-up"],
+            textures: ["upwest"]
+          },
+          {
+            edges: ["down-up", "north-down"],
+            textures: ["downnorth"]
+          },
+          {
+            edges: ["down-left", "east-down"],
+            textures: ["downeast"]
+          },
+          {
+            edges: ["down-down", "south-down"],
+            textures: ["downsouth"]
+          },
+          {
+            edges: ["down-right", "west-down"],
+            textures: ["downwest"]
+          }
+        ]
+      }
     },
     {
       name: "MatchNetwork",
-      properties: [
-        {
-          edges: ["north-center", "east-center", "south-center", "west-center", "up-center", "down-center"],
-        }
-      ]
+      properties: {
+          nodes: [
+          {
+            edges: ["north-center", "east-center", "south-center", "west-center", "up-center", "down-center"],
+          }
+        ]
+      }
     }
   ],
   creativeinventory: { general: ["*"] },
