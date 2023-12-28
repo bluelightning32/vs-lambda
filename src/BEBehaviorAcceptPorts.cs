@@ -70,9 +70,7 @@ public interface IAcceptPorts {
                out string failureCode);
 }
 
-public class BEBehaviorAcceptPorts : BEBehaviorTermNetwork,
-                                     IAcceptPorts,
-                                     IMeshGenerator {
+public class BEBehaviorAcceptPorts : BEBehaviorTermNetwork, IAcceptPorts {
   // Each face uses 1 bit to indicate whether a port is present.
   private int _portedSides = 0;
   // Each face uses 2 bits to indicate which kind of port is present.

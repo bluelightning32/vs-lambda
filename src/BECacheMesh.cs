@@ -82,6 +82,16 @@ public class BlockEntityCacheMesh : BlockEntity, IBlockEntityForward {
     return result;
   }
 
+  public MeshData TessellateShape(CompositeShape shape) {
+    ((ICoreClientAPI)Api)
+        .Tesselator.TesselateShape(
+            "cachemesh", Block.Code, shape, out MeshData mesh,
+            new CacheMeshTextureSource(
+                this,
+                ((ICoreClientAPI)Api).Tesselator.GetTextureSource(Block)));
+    return mesh;
+  }
+
   public void UpdateMesh() {
     if (Api.Side == EnumAppSide.Server)
       return;
@@ -94,18 +104,13 @@ public class BlockEntityCacheMesh : BlockEntity, IBlockEntityForward {
         "lambda: Cache miss for {0} {1}. Dict has {2} entries.", Block.Code,
         ListEqualityComparer<object>.GetString(key), cache.Count);
 
-    ((ICoreClientAPI)Api)
-        .Tesselator.TesselateShape(
-            "network", Block.Code, Block.Shape, out _mesh,
-            new CacheMeshTextureSource(
-                this,
-                ((ICoreClientAPI)Api).Tesselator.GetTextureSource(Block)));
-    GenerateMesh(_mesh);
+    _mesh = TessellateShape(Block.Shape);
+    EditMesh(_mesh);
     List<object> cloned = GetClonedKey();
     cache[cloned] = _mesh;
   }
 
-  public virtual void GenerateMesh(MeshData mesh) {
+  public virtual void EditMesh(MeshData mesh) {
     foreach (var behavior in Behaviors) {
       (behavior as IMeshGenerator)?.EditMesh(mesh);
     }

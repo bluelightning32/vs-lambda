@@ -80,14 +80,88 @@ public class BlockBehaviorBlockEntityForward : StrongBlockBehavior {
   public override Cuboidf[] GetSelectionBoxes(IBlockAccessor blockAccessor,
                                               BlockPos pos,
                                               ref EnumHandling handled) {
-    handled = EnumHandling.PassThrough;
-    return GetForward(blockAccessor, pos)?.GetSelectionBoxes(ref handled);
+    Cuboidf[] result = null;
+    BlockEntity entity = blockAccessor.GetBlockEntity(pos);
+    if (entity != null) {
+      foreach (BlockEntityBehavior behavior in entity.Behaviors) {
+        if (behavior is IBlockEntityForward forward) {
+          EnumHandling behaviorHandled = EnumHandling.PassThrough;
+          Cuboidf[] behaviorResult =
+              forward.GetSelectionBoxes(ref behaviorHandled);
+          if (behaviorHandled != EnumHandling.PassThrough) {
+            handled = behaviorHandled;
+            result = behaviorResult;
+          }
+          if (handled == EnumHandling.PreventSubsequent) {
+            return result;
+          }
+        }
+      }
+      if (handled == EnumHandling.PreventDefault) {
+        return result;
+      }
+      {
+        if (entity is IBlockEntityForward forward) {
+          EnumHandling entityHandled = EnumHandling.PassThrough;
+          Cuboidf[] entityResult = forward.GetSelectionBoxes(ref entityHandled);
+          if (entityHandled != EnumHandling.PassThrough) {
+            handled = entityHandled;
+            result = entityResult;
+          }
+          if (handled == EnumHandling.PreventSubsequent) {
+            return result;
+          }
+        }
+      }
+    }
+    if (handled != EnumHandling.PassThrough) {
+      return result;
+    }
+
+    return base.GetSelectionBoxes(blockAccessor, pos, ref handled);
   }
 
   public override Cuboidf[] GetCollisionBoxes(IBlockAccessor blockAccessor,
                                               BlockPos pos,
                                               ref EnumHandling handled) {
-    handled = EnumHandling.PassThrough;
-    return GetForward(blockAccessor, pos)?.GetCollisionBoxes(ref handled);
+    Cuboidf[] result = null;
+    BlockEntity entity = blockAccessor.GetBlockEntity(pos);
+    if (entity != null) {
+      foreach (BlockEntityBehavior behavior in entity.Behaviors) {
+        if (behavior is IBlockEntityForward forward) {
+          EnumHandling behaviorHandled = EnumHandling.PassThrough;
+          Cuboidf[] behaviorResult =
+              forward.GetCollisionBoxes(ref behaviorHandled);
+          if (behaviorHandled != EnumHandling.PassThrough) {
+            handled = behaviorHandled;
+            result = behaviorResult;
+          }
+          if (handled == EnumHandling.PreventSubsequent) {
+            return result;
+          }
+        }
+      }
+      if (handled == EnumHandling.PreventDefault) {
+        return result;
+      }
+      {
+        if (entity is IBlockEntityForward forward) {
+          EnumHandling entityHandled = EnumHandling.PassThrough;
+          Cuboidf[] entityResult = forward.GetCollisionBoxes(ref entityHandled);
+          if (entityHandled != EnumHandling.PassThrough) {
+            handled = entityHandled;
+            result = entityResult;
+          }
+          if (handled == EnumHandling.PreventSubsequent) {
+            return result;
+          }
+        }
+      }
+    }
+    if (handled != EnumHandling.PassThrough) {
+      return result;
+    }
+
+    return base.GetCollisionBoxes(blockAccessor, pos, ref handled);
   }
 }

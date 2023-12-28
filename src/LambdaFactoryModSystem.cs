@@ -39,16 +39,15 @@ public class LambdaFactoryModSystem : ModSystem {
     api.RegisterBlockBehaviorClass("Network", typeof(BlockBehaviorNetwork));
     api.RegisterBlockBehaviorClass("Port", typeof(BlockBehaviorPort));
     api.RegisterBlockEntityClass("CacheMesh", typeof(BlockEntityCacheMesh));
-    api.RegisterBlockEntityClass("Wire", typeof(BlockEntityWire));
     api.RegisterBlockEntityBehaviorClass(BEBehaviorScopeNetwork.Name,
                                          typeof(BEBehaviorScopeNetwork));
     api.RegisterBlockEntityBehaviorClass(BEBehaviorMatchNetwork.Name,
                                          typeof(BEBehaviorMatchNetwork));
     api.RegisterBlockEntityBehaviorClass(BEBehaviorTermNetwork.Name,
                                          typeof(BEBehaviorTermNetwork));
+    api.RegisterBlockEntityBehaviorClass("Wire", typeof(BEBehaviorWire));
     api.RegisterBlockEntityBehaviorClass("AcceptPorts",
                                          typeof(BEBehaviorAcceptPorts));
-    BlockEntityWire.OnModLoaded();
     _networkManagers[BEBehaviorScopeNetwork.Name] = ScopeNetworkManager =
         new BEBehaviorScopeNetwork.Manager(api.World);
     _networkManagers[BEBehaviorMatchNetwork.Name] = MatchNetworkManager =

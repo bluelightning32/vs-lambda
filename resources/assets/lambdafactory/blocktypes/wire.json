@@ -6,9 +6,6 @@
   behaviors: [
     { name: "BlockEntityForward" }
   ],
-  variantGroups: [
-    { code: "connection", states: ["ns", "ew", "ud", "entity"], }
-  ],
   textures: {
     "center": {
       base: "wire/center",
@@ -17,47 +14,86 @@
       base: "wire/straight",
     },
   },
-  entityClassByType: {
-    "*-entity": "Wire"
-  },
+  entityClass: "CacheMesh",
+  entityBehaviors: [
+    {
+      name: "Wire",
+      properties: {
+        directionshapes: {
+          "north": {
+            base: "block/wire/up",
+            rotateX: 270
+          },
+          "east": {
+            base: "block/wire/up",
+            rotateX: 270,
+            rotateZ: 270
+          },
+          "south": {
+            base: "block/wire/up",
+            rotateX: 270,
+            rotateZ: 180
+          },
+          "west": {
+            base: "block/wire/up",
+            rotateX: 270,
+            rotateZ: 90
+          },
+          "up": {
+            base: "block/wire/up"
+          },
+          "down": {
+            base: "block/wire/up",
+            rotateX: 180,
+            rotateY: 180
+          }
+        },
+        overrides: [
+          {
+            directions: ["north", "south"],
+            shape: {
+              base: "block/wire/updown",
+              rotateX: 90
+            }
+          },
+          {
+            directions: ["east", "west"],
+            shape: {
+              base: "block/wire/updown",
+              rotateZ: 90
+            }
+          },
+          {
+            directions: ["up", "down"],
+            shape: {
+              base: "block/wire/updown"
+            }
+          }
+        ]
+      }
+    }
+  ],
   sideSolid: {
     all: false
   },
   sideOpaque: {
     all: false
   },
-  collisionSelectionBoxByType: {
-    "*-ns": {
-      x1: 0.40625, y1: 0.40625, z1:0, x2: 0.59375, y2: 0.59375, z2: 1
-    },
-    "*-ew": {
-      x1: 0, y1: 0.40625, z1: 0.40625, x2: 1, y2: 0.59375, z2: 0.59375
-    },
-    "*-ud": {
-      x1: 0.40625, y1: 0, z1: 0.40625, x2: 0.59375, y2: 1, z2: 0.59375
-    },
-    "*": {
-      x1: 0.40625, y1: 0.40625, z1: 0.40625, x2: 0.59375, y2: 0.59375, z2: 0.59375
-    },
+  collisionSelectionBox: {
+    x1: 0.40625, y1: 0.40625, z1: 0.40625, x2: 0.59375, y2: 0.59375, z2: 0.59375
   },
   creativeinventory: { general: ["*"] },
   blockmaterial: "Metal",
   drawtype: "json",
-  shapeByType: {
-    "*-ns": {
-      base: "block/wire/updown",
-      rotateX: 90,
-    },
-    "*-ew": {
-      base: "block/wire/updown",
-      rotateZ: 90
-    },
-    "*-ud": {
-      base: "block/wire/updown"
-    },
-    "*-entity": {
-      base: "block/wire/center"
-    },
+  shape: {
+    base: "block/wire/center",
+    // These alternates will not be directly rendered as alternates. Instead,
+    // the alternates are used to force the rest of the necessary shapes to
+    // get loaded into the cache so that the wire behavior can use them later.
+    alternates: [
+      {base: "block/wire/updown"},
+      {base: "block/wire/up"},
+    ]
   },
   resistance: 3.5,
   sounds: {
