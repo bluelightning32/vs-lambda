@@ -7,9 +7,9 @@
    viewBox="0 0 32 32"
    version="1.1"
    id="svg1"
-   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
    sodipodi:docname="center.svg"
-   inkscape:export-filename="center.png"
+   inkscape:export-filename="center-disconnected.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -28,14 +28,14 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      showgrid="true"
-     inkscape:zoom="13.070427"
-     inkscape:cx="-0.15301719"
-     inkscape:cy="8.3011825"
-     inkscape:window-width="1955"
-     inkscape:window-height="1041"
-     inkscape:window-x="26"
-     inkscape:window-y="23"
-     inkscape:window-maximized="0"
+     inkscape:zoom="18.484375"
+     inkscape:cx="11.198647"
+     inkscape:cy="11.766695"
+     inkscape:window-width="2560"
+     inkscape:window-height="1371"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
      inkscape:current-layer="g208">
     <inkscape:grid
        id="grid1"
@@ -115,7 +115,7 @@
        inkscape:swatch="solid"
        inkscape:label="braid1">
       <stop
-         style="stop-color:#1e2d2d;stop-opacity:1;"
+         style="stop-color:#113232;stop-opacity:1;"
          offset="0"
          id="stop170" />
     </linearGradient>
@@ -132,9 +132,10 @@
     <linearGradient
        id="swatch1079"
        inkscape:swatch="solid"
-       inkscape:label="braid3">
+       inkscape:label="braid3"
+       gradientTransform="translate(1.7027684,1)">
       <stop
-         style="stop-color:#1b2f2f;stop-opacity:1;"
+         style="stop-color:#164848;stop-opacity:1;"
          offset="0"
          id="stop1079" />
     </linearGradient>
@@ -153,7 +154,7 @@
        inkscape:swatch="solid"
        inkscape:label="braid4">
       <stop
-         style="stop-color:#213030;stop-opacity:1;"
+         style="stop-color:#204f4f;stop-opacity:1;"
          offset="0"
          id="stop1088" />
     </linearGradient>
@@ -181,7 +182,7 @@
        inkscape:swatch="solid"
        inkscape:label="braid2">
       <stop
-         style="stop-color:#222f2f;stop-opacity:1;"
+         style="stop-color:#173f3f;stop-opacity:1;"
          offset="0"
          id="stop207" />
     </linearGradient>
@@ -399,6 +400,30 @@
        x2="32"
        y2="16"
        gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#swatch170"
+       id="linearGradient15"
+       gradientTransform="matrix(0.92497754,0,0,1,0.60017972,0)"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#swatch207"
+       id="linearGradient22"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.92497754,0,0,1,1.6001797,1)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#swatch1079"
+       id="linearGradient29"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.92497754,0,0,1,2.6001797,2)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#swatch1088"
+       id="linearGradient30"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.92497754,0,0,1,3.6001797,3)" />
   </defs>
   <g
      inkscape:label="template"
@@ -700,7 +725,7 @@
      id="g208"
      style="display:inline">
     <rect
-       style="fill:url(#linearGradient1);fill-opacity:1;-inkscape-stroke:none;font-variation-settings:normal;opacity:1;vector-effect:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1"
+       style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:url(#linearGradient1);fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
        id="rect1"
        width="32"
        height="32"
@@ -951,7 +976,7 @@
        x="-3"
        y="10" />
     <rect
-       style="font-variation-settings:normal;display:inline;vector-effect:none;fill:#1f3d3d;fill-opacity:0.474321;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none"
+       style="font-variation-settings:normal;display:inline;vector-effect:none;fill:#1d3535;fill-opacity:0.75686276;stroke:none;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none"
        id="use1199"
        width="1"
        height="8"
@@ -1315,5 +1340,46 @@
        xlink:href="#use314"
        id="use315"
        transform="translate(-9.805325,2.1649979)" />
+    <rect
+       style="fill:url(#linearGradient15);stroke-width:0.760337;-inkscape-stroke:none"
+       id="rect15"
+       width="5"
+       height="5"
+       x="3"
+       y="-10" />
+    <rect
+       style="fill:url(#linearGradient22);stroke-width:0.760337;-inkscape-stroke:none"
+       id="rect22"
+       width="5"
+       height="5"
+       x="4"
+       y="-9" />
+    <rect
+       style="fill:url(#linearGradient29);stroke-width:0.760337;-inkscape-stroke:none"
+       id="rect29"
+       width="5"
+       height="5"
+       x="5"
+       y="-8" />
+    <rect
+       style="fill:url(#linearGradient30);stroke-width:0.760337;-inkscape-stroke:none"
+       id="rect30"
+       width="5"
+       height="5"
+       x="6"
+       y="-7" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="disconnected"
+     style="display:inline;opacity:1;mix-blend-mode:normal">
+    <rect
+       style="fill:#999999;fill-opacity:0.596611;stroke-width:0.79057;-inkscape-stroke:none"
+       id="rect8"
+       width="32"
+       height="32"
+       x="0"
+       y="0" />
   </g>
 </svg>

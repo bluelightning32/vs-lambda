@@ -69,6 +69,16 @@
               base: "block/wire/updown"
             }
           }
+        ],
+        nodes: [
+          {
+            replacementTextures: {
+              "none": {
+                "center": { base: "wire/center-disconnected" },
+                "straight": { base: "wire/straight-disconnected" }
+              }
+            }
+          }
         ]
       }
     }

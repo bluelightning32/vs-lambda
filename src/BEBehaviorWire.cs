@@ -42,10 +42,8 @@ public class WireTemplate {
   }
 }
 
-public class BEBehaviorWire : BlockEntityBehavior,
-                              IMeshGenerator,
-                              IBlockEntityForward {
-  private WireTemplate _template = null;
+public class BEBehaviorWire : BEBehaviorTermNetwork, IBlockEntityForward {
+  private WireTemplate _WireTemplate = null;
   private int _directions = 63;
   private Cuboidf[] _selectionBoxes = null;
 
@@ -53,12 +51,12 @@ public class BEBehaviorWire : BlockEntityBehavior,
 
   public override void Initialize(ICoreAPI api, JsonObject properties) {
     base.Initialize(api, properties);
-    _template = ParseTemplate(api, properties);
+    _WireTemplate = ParseTemplate(api, properties);
     _selectionBoxes = GetSelectionBoxes(api, _directions);
   }
 
   public ItemStack OnPickBlock(ref EnumHandling handling) {
-    ItemStack stack = new ItemStack(Block, 1);
+    ItemStack stack = new(Block, 1);
     stack.Attributes.SetInt("directions", _directions);
 
     handling = EnumHandling.PreventDefault;
@@ -71,16 +69,21 @@ public class BEBehaviorWire : BlockEntityBehavior,
   }
 
   public override void OnBlockPlaced(ItemStack byItemStack) {
-    base.OnBlockPlaced(byItemStack);
+    // Update `_template` before calling `base.OnBlockPlaced`, because it
+    // accesses `_template`.
     _directions = byItemStack.Attributes.GetAsInt("directions", _directions);
     _selectionBoxes = GetSelectionBoxes(Api, _directions);
+    _template = ParseBlockNodeTemplate(Api.World, properties);
+    base.OnBlockPlaced(byItemStack);
   }
 
   public override void
   FromTreeAttributes(ITreeAttribute tree,
                      IWorldAccessor worldAccessForResolve) {
-    base.FromTreeAttributes(tree, worldAccessForResolve);
+    // Set `_directions` before calling `base.FromTreeAttributes`, because it
+    // accesses `_directions` in the process of setting `_template`.
     _directions = tree.GetInt("directions", _directions);
+    base.FromTreeAttributes(tree, worldAccessForResolve);
     // No need to update the selection boxes here. Initialize will be called
     // before the block is rendered.
   }
@@ -97,6 +100,11 @@ public class BEBehaviorWire : BlockEntityBehavior,
     template = properties.AsObject<WireTemplate>(null, Block.Code.Domain);
     cache.Add(properties, template);
     return template;
+  }
+
+  protected override BlockNodeTemplate
+  ParseBlockNodeTemplate(IWorldAccessor world, JsonObject properties) {
+    return GetManager(world.Api).ParseWireTemplate(properties, _directions);
   }
 
   private static Cuboidf[] GetSelectionBoxes(ICoreAPI api, int directions) {
@@ -144,20 +152,22 @@ public class BEBehaviorWire : BlockEntityBehavior,
     return cache[directions] = boxes.ToArray();
   }
 
-  public void EditMesh(MeshData mesh) {
-    if (_template.IndexedOverrides.TryGetValue(_directions,
-                                               out ShapeOverride over)) {
+  public override void EditMesh(MeshData mesh) {
+    if (_WireTemplate.IndexedOverrides.TryGetValue(_directions,
+                                                   out ShapeOverride over)) {
       mesh.Clear();
       mesh.AddMeshData(
           (Blockentity as BlockEntityCacheMesh)?.TessellateShape(over.Shape));
       return;
     }
     for (int i = 0; i < 6; ++i) {
-      if ((_directions & (1 << i)) != 0 && _template.IndexedShapes[i] != null) {
+      if ((_directions & (1 << i)) != 0 &&
+          _WireTemplate.IndexedShapes[i] != null) {
         mesh.AddMeshData((Blockentity as BlockEntityCacheMesh)
-                             ?.TessellateShape(_template.IndexedShapes[i]));
+                             ?.TessellateShape(_WireTemplate.IndexedShapes[i]));
       }
     }
+    base.EditMesh(mesh);
   }
 
   public Cuboidf[] GetSelectionBoxes(ref EnumHandling handled) {
@@ -170,7 +180,9 @@ public class BEBehaviorWire : BlockEntityBehavior,
     return _selectionBoxes;
   }
 
-  public object GetKey() { return _directions; }
+  public override object GetKey() {
+    return _directions + ((_nodes[0].Source.IsSet() ? 1 : 0) << 6);
+  }
 
-  public object GetImmutableKey() { return _directions; }
+  public override object GetImmutableKey() { return GetKey(); }
 }

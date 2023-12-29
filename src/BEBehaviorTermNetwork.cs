@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
 namespace LambdaFactory;
@@ -81,6 +83,38 @@ public class BEBehaviorTermNetwork : BEBehaviorAbstractNetwork {
     }
 
     public override string GetNetworkName() { return "term"; }
+
+    internal BlockNodeTemplate ParseWireTemplate(JsonObject properties,
+                                                 int directions) {
+      Dictionary<Tuple<JsonObject, int>, BlockNodeTemplate> cache =
+          ObjectCacheUtil.GetOrCreate(
+              _world.Api, $"lambdafactory-term-wire-properties",
+              () =>
+                  new Dictionary<Tuple<JsonObject, int>, BlockNodeTemplate>());
+      Tuple<JsonObject, int> key = Tuple.Create(properties, directions);
+      if (cache.TryGetValue(key, out BlockNodeTemplate block)) {
+        return block;
+      }
+      Debug("lambda: Accept ports properties cache miss. Dict has {0} entries.",
+            cache.Count);
+      NodeTemplate[] nodeTemplates =
+          properties["nodes"]?.AsObject<NodeTemplate[]>();
+      if (nodeTemplates == null || nodeTemplates.Length < 1) {
+        nodeTemplates = new NodeTemplate[1] { new() };
+      }
+      HashSet<Edge> connectedEdges = new(nodeTemplates[0].Edges);
+      for (int i = 0; i < 6; ++i) {
+        BlockFacing face = BlockFacing.ALLFACES[i];
+        if ((directions & (1 << i)) != 0) {
+          connectedEdges.Add(EdgeExtension.GetFaceCenter(face));
+        }
+      }
+      nodeTemplates[0].Edges = connectedEdges.ToArray();
+      block = new BlockNodeTemplate(_accessor, this, nodeTemplates);
+
+      cache.Add(key, block);
+      return block;
+    }
   }
 
   public BEBehaviorTermNetwork(BlockEntity blockentity) : base(blockentity) {}

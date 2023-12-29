@@ -139,7 +139,10 @@ public class BEBehaviorAcceptPorts : BEBehaviorTermNetwork, IAcceptPorts {
     _template = ParseBlockNodeTemplate(Api.World, properties);
   }
 
-  public void EditMesh(MeshData mesh) { CutPortHoles(_portedSides, mesh); }
+  public override void EditMesh(MeshData mesh) {
+    CutPortHoles(_portedSides, mesh);
+    base.EditMesh(mesh);
+  }
 
   public static void CutPortHoles(int sides, MeshData mesh) {
     if (mesh.VerticesPerFace != 4 || mesh.IndicesPerFace != 6) {

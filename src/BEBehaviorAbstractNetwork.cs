@@ -136,4 +136,6 @@ public abstract class BEBehaviorAbstractNetwork : BlockEntityBehavior,
       }
     }
   }
+
+  public virtual void EditMesh(MeshData mesh) {}
 }
