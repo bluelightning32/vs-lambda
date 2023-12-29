@@ -383,4 +383,19 @@ public class NetworkManager {
   }
 
   public virtual string GetNetworkName() { return "test"; }
+
+  // Returns whether the node exists. If it exists, then the source of the node
+  // is stored in `source`.
+  public bool GetSource(BlockPos pos, Edge edge, out NodePos source) {
+    if (_accessor.GetNode(pos, edge, out Node node) == null) {
+      source = new NodePos();
+      return false;
+    }
+    source = node.Source;
+    return true;
+  }
+
+  public bool IsBlockInNetwork(BlockPos pos) {
+    return _accessor.GetBlock(pos, out Node[] nodes) != null;
+  }
 }

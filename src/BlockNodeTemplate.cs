@@ -152,14 +152,19 @@ public class BlockNodeTemplate {
     return BakeTexture(capi, composite);
   }
 
+  private static void SetSourceScope(BlockPos pos, NodeTemplate nodeTemplate,
+                                     ref Node node) {
+    if (nodeTemplate.Source) {
+      node.Scope = nodeTemplate.SourceScope;
+      node.Source.Block = pos;
+      node.Source.NodeId = nodeTemplate.Id;
+      node.PropagationDistance = 0;
+    }
+  }
+
   public void SetSourceScope(BlockPos pos, Node[] nodes) {
     foreach (var nodeTemplate in _nodeTemplates) {
-      if (nodeTemplate.Source) {
-        nodes[nodeTemplate.Id].Scope = nodeTemplate.SourceScope;
-        nodes[nodeTemplate.Id].Source.Block = pos;
-        nodes[nodeTemplate.Id].Source.NodeId = nodeTemplate.Id;
-        nodes[nodeTemplate.Id].PropagationDistance = 0;
-      }
+      SetSourceScope(pos, nodeTemplate, ref nodes[nodeTemplate.Id]);
     }
   }
 
@@ -219,6 +224,18 @@ public class BlockNodeTemplate {
   public void OnNodePlaced(BlockPos pos, int id, ref Node node) {
     BlockNodeTemplate[] neighborTemplates =
         GetNeighbors(pos, out Node[][] neighbors);
+    _nodeTemplates[id].OnPlaced(_manager, pos, neighborTemplates, neighbors,
+                                ref node);
+  }
+
+  public void OnNodeChanged(BlockPos pos, int id, ref Node node) {
+    BlockNodeTemplate[] neighborTemplates =
+        GetNeighbors(pos, out Node[][] neighbors);
+    _nodeTemplates[id].OnRemoved(_accessor, _manager, pos, neighborTemplates,
+                                 neighbors, in node);
+    node = new Node();
+    SetSourceScope(pos, _nodeTemplates[id], ref node);
+
     _nodeTemplates[id].OnPlaced(_manager, pos, neighborTemplates, neighbors,
                                 ref node);
   }

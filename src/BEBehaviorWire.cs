@@ -42,9 +42,11 @@ public class WireTemplate {
   }
 }
 
-public class BEBehaviorWire : BEBehaviorTermNetwork, IBlockEntityForward {
+public class BEBehaviorWire : BEBehaviorTermNetwork,
+                              IBlockEntityForward,
+                              IConnectable {
   private WireTemplate _WireTemplate = null;
-  private int _directions = 63;
+  private int _directions = 0;
   private Cuboidf[] _selectionBoxes = null;
 
   public BEBehaviorWire(BlockEntity blockentity) : base(blockentity) {}
@@ -55,14 +57,6 @@ public class BEBehaviorWire : BEBehaviorTermNetwork, IBlockEntityForward {
     _selectionBoxes = GetSelectionBoxes(api, _directions);
   }
 
-  public ItemStack OnPickBlock(ref EnumHandling handling) {
-    ItemStack stack = new(Block, 1);
-    stack.Attributes.SetInt("directions", _directions);
-
-    handling = EnumHandling.PreventDefault;
-    return stack;
-  }
-
   public override void ToTreeAttributes(ITreeAttribute tree) {
     base.ToTreeAttributes(tree);
     tree.SetInt("directions", _directions);
@@ -71,7 +65,9 @@ public class BEBehaviorWire : BEBehaviorTermNetwork, IBlockEntityForward {
   public override void OnBlockPlaced(ItemStack byItemStack) {
     // Update `_template` before calling `base.OnBlockPlaced`, because it
     // accesses `_template`.
-    _directions = byItemStack.Attributes.GetAsInt("directions", _directions);
+    if (byItemStack != null) {
+      _directions = byItemStack.Attributes.GetAsInt("directions", _directions);
+    }
     _selectionBoxes = GetSelectionBoxes(Api, _directions);
     _template = ParseBlockNodeTemplate(Api.World, properties);
     base.OnBlockPlaced(byItemStack);
@@ -185,4 +181,33 @@ public class BEBehaviorWire : BEBehaviorTermNetwork, IBlockEntityForward {
   }
 
   public override object GetImmutableKey() { return GetKey(); }
+
+  public bool CanAddEdge(Edge edge, out NodePos source) {
+    if (!edge.IsFaceCenter() || (_directions & edge.GetFace().Flag) != 0) {
+      source = new();
+      return false;
+    }
+    source = _nodes[0].Source;
+    return true;
+  }
+
+  public void AddEdge(Edge edge) {
+    _directions |= edge.GetFace().Flag;
+    _selectionBoxes = GetSelectionBoxes(Api, _directions);
+    _template = ParseBlockNodeTemplate(Api.World, properties);
+    _template.OnNodeChanged(Pos, 0, ref _nodes[0]);
+    (Blockentity as BlockEntityCacheMesh)?.UpdateMesh();
+  }
+
+  NetworkManager IConnectable.GetManager(ICoreAPI api) {
+    return GetManager(api);
+  }
+
+  public void RemoveEdge(Edge edge) {
+    _directions &= ~edge.GetFace().Flag;
+    _selectionBoxes = GetSelectionBoxes(Api, _directions);
+    _template = ParseBlockNodeTemplate(Api.World, properties);
+    _template.OnNodeChanged(Pos, 0, ref _nodes[0]);
+    (Blockentity as BlockEntityCacheMesh)?.UpdateMesh();
+  }
 }

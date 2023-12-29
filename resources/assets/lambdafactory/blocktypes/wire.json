@@ -4,7 +4,8 @@
   // GetSelectionBoxes to the behaviors.
   class: "BlockGeneric",
   behaviors: [
-    { name: "BlockEntityForward" }
+    { name: "BlockEntityForward" },
+    { name: "Connect" }
   ],
   textures: {
     "center": {

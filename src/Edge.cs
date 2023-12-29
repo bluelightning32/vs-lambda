@@ -108,4 +108,14 @@ static class EdgeExtension {
                                BlockFacing.indexDOWN => Edge.DownCenter,
                                _ => Edge.Unknown };
   }
+
+  public static bool IsFaceCenter(this Edge edge) {
+    return edge switch { Edge.NorthCenter => true,
+                         Edge.EastCenter => true,
+                         Edge.SouthCenter => true,
+                         Edge.WestCenter => true,
+                         Edge.UpCenter => true,
+                         Edge.DownCenter => true,
+                         _ => false };
+  }
 }
