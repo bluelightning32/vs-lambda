@@ -38,6 +38,7 @@ public class LambdaFactoryModSystem : ModSystem {
                                    typeof(BlockBehaviorBlockEntityForward));
     api.RegisterBlockBehaviorClass("Connect", typeof(BlockBehaviorConnect));
     api.RegisterBlockBehaviorClass("Network", typeof(BlockBehaviorNetwork));
+    api.RegisterBlockBehaviorClass("Orient", typeof(BlockBehaviorOrient));
     api.RegisterBlockBehaviorClass("Port", typeof(BlockBehaviorPort));
     api.RegisterBlockEntityClass("CacheMesh", typeof(BlockEntityCacheMesh));
     api.RegisterBlockEntityBehaviorClass(BEBehaviorScopeNetwork.Name,

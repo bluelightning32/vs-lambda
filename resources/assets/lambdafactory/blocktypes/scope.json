@@ -11,8 +11,8 @@
   behaviors: [
     { name: "BlockEntityForward"
     },
-    { name: "OmniRotatable", properties: {rotateSides: true, facing: "block"
-      }
+    {
+      name: "Orient", properties: {mode: "slab"}
     },
     { name: "Network" },
   ],
