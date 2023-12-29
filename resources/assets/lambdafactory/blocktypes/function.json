@@ -4,7 +4,14 @@
     { code: "side", loadFromProperties: "abstract/horizontalorientation" }
   ],
   behaviors: [
-    { name: "HorizontalOrientable" },
+    {
+      name: "Orient",
+      properties: {
+        mode: "horizontals",
+        flip: true,
+        facingCode: "side"
+      }
+    },
     { name: "BlockEntityForward" },
     { name: "Network" },
   ],
@@ -80,8 +87,8 @@
     }
   },
   sideopaque: {
-    all: true,
-    up: false,
+    all: false,
+    down: true,
   },
   sideOpaqueByType: {
     "*-north": {

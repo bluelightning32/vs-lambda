@@ -4,7 +4,14 @@
     { code: "side", loadFromProperties: "abstract/horizontalorientation" }
   ],
   behaviors: [
-    { name: "HorizontalOrientable" },
+    {
+      name: "Orient",
+      properties: {
+        mode: "horizontals",
+        flip: true,
+        facingCode: "side"
+      }
+    },
     { name: "BlockEntityForward" },
   ],
   entityclass: "CacheMesh",
