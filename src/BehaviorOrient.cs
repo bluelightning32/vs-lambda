@@ -9,17 +9,19 @@ using Vintagestory.API.MathTools;
 
 namespace LambdaFactory;
 
-enum OrientationMode { Slab, Horizontals, Pillar }
+enum OrientationMode { Slab, AllFaces, Horizontals }
 
 // Forwards more methods from the Block to the BlockEntity.
 public class BlockBehaviorOrient : BlockBehavior {
   private string _facingCode;
   private OrientationMode _mode;
   private bool _flip;
+  private int _rotateY;
+  private bool _pillar;
   // If true, rotate the block so that it connects to the selected block face.
-  private bool _connectToSelected;
+  private bool _orientToSelected;
   // If true, rotate the block so that it connects to any of the neighbors.
-  private bool _connectToAny;
+  private bool _orientToAny;
 
   public BlockBehaviorOrient(Block block) : base(block) {}
 
@@ -32,8 +34,10 @@ public class BlockBehaviorOrient : BlockBehavior {
     _mode = properties["mode"].Token?.ToObject<OrientationMode>() ??
             OrientationMode.Slab;
     _flip = properties["flip"].AsBool(false);
-    _connectToSelected = properties["connectToSelected"].AsBool(true);
-    _connectToAny = properties["connectToAny"].AsBool(true);
+    _rotateY = properties["rotateY"].AsInt(0);
+    _pillar = properties["pillar"].AsBool(false);
+    _orientToSelected = properties["orientToSelected"].AsBool(true);
+    _orientToAny = properties["orientToAny"].AsBool(true);
   }
 
   public override bool TryPlaceBlock(IWorldAccessor world, IPlayer byPlayer,
@@ -65,8 +69,19 @@ public class BlockBehaviorOrient : BlockBehavior {
     if (_flip) {
       face = face.Opposite;
     }
+    face = face.GetHorizontalRotated(_rotateY);
+    string orientation;
+    if (_pillar) {
+      orientation = face.Axis switch {
+        EnumAxis.X => "we",
+        EnumAxis.Y => "ud",
+        _ => "ns",
+      };
+    } else {
+      orientation = face.Code;
+    }
     Block oriented = world.BlockAccessor.GetBlock(
-        block.CodeWithVariant(_facingCode, face.Code));
+        block.CodeWithVariant(_facingCode, orientation));
     if (!oriented.CanPlaceBlock(world, byPlayer, blockSel, ref failureCode)) {
       handling = EnumHandling.PreventDefault;
       return false;

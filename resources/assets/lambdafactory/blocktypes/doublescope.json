@@ -12,7 +12,12 @@
   behaviors: [
     { name: "BlockEntityForward"
     },
-    { name: "Pillar", properties: {invertedPlacement: true
+    {
+      name: "Orient",
+      properties: {
+        mode: "slab",
+        pillar: true,
+        facingCode: "orientation"
       }
     },
     { name: "Network" },
