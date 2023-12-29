@@ -9,7 +9,8 @@
       properties: {
         mode: "horizontals",
         flip: true,
-        facingCode: "side"
+        facingCode: "side",
+        networks: ["MatchNetwork"]
       }
     },
     { name: "BlockEntityForward" },

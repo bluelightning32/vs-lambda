@@ -273,4 +273,18 @@ public class BlockNodeTemplate {
   }
 
   public string GetNetworkName() => _manager.GetNetworkName();
+
+  // Returns true if any of the edges in this template match edges on the
+  // neighbor's template on `face`.
+  public bool CanAnyPair(BlockFacing face, BlockNodeTemplate neighbor) {
+    foreach (var edge in _index) {
+      if (edge.Key.GetFace() != face) {
+        continue;
+      }
+      if (neighbor._index.ContainsKey(edge.Key.GetOpposite())) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

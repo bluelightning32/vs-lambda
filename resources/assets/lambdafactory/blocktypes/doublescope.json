@@ -17,7 +17,8 @@
       properties: {
         mode: "slab",
         pillar: true,
-        facingCode: "orientation"
+        facingCode: "orientation",
+        networks: ["ScopeNetwork", "MatchNetwork"]
       }
     },
     { name: "Network" },

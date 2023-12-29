@@ -398,4 +398,18 @@ public class NetworkManager {
   public bool IsBlockInNetwork(BlockPos pos) {
     return _accessor.GetBlock(pos, out Node[] nodes) != null;
   }
+
+  // Set entries in `templates` to null if they have no edges that pair with the
+  // edges at `pos`. Nulls in `templates` are ignored.
+  public void RemoveUnpaired(List<BlockNodeTemplate> templates, BlockPos pos,
+                             BlockFacing face) {
+    BlockNodeTemplate neighbor =
+        _accessor.GetBlock(pos.AddCopy(face), out Node[] nodes);
+    for (int i = 0; i < templates.Count; ++i) {
+      if (templates[i] != null &&
+          (neighbor == null || !templates[i].CanAnyPair(face, neighbor))) {
+        templates[i] = null;
+      }
+    }
+  }
 }

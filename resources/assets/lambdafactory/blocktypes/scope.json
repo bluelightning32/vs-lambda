@@ -12,7 +12,11 @@
     { name: "BlockEntityForward"
     },
     {
-      name: "Orient", properties: {mode: "slab"}
+      name: "Orient",
+      properties: {
+        mode: "slab",
+        networks: ["ScopeNetwork", "MatchNetwork"]
+      }
     },
     { name: "Network" },
   ],

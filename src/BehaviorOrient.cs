@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Newtonsoft.Json.Serialization;
 
@@ -18,11 +19,10 @@ public class BlockBehaviorOrient : BlockBehavior {
   private bool _flip;
   private int _rotateY;
   private bool _pillar;
-  // If true, rotate the block so that it connects to the selected block face.
-  private bool _orientToSelected;
-  // If true, rotate the block so that it connects to any of the neighbors.
-  private bool _orientToAny;
+  private string[] _networks;
 
+  // If true, rotate the block so that it connects to any of the neighbors.
+  private bool _pairToAny;
   public BlockBehaviorOrient(Block block) : base(block) {}
 
   public override void Initialize(JsonObject properties) {
@@ -36,8 +36,8 @@ public class BlockBehaviorOrient : BlockBehavior {
     _flip = properties["flip"].AsBool(false);
     _rotateY = properties["rotateY"].AsInt(0);
     _pillar = properties["pillar"].AsBool(false);
-    _orientToSelected = properties["orientToSelected"].AsBool(true);
-    _orientToAny = properties["orientToAny"].AsBool(true);
+    _pairToAny = properties["pairToAny"].AsBool(true);
+    _networks = properties["networks"].AsArray<string>(Array.Empty<string>());
   }
 
   public override bool TryPlaceBlock(IWorldAccessor world, IPlayer byPlayer,
@@ -82,11 +82,105 @@ public class BlockBehaviorOrient : BlockBehavior {
     }
     Block oriented = world.BlockAccessor.GetBlock(
         block.CodeWithVariant(_facingCode, orientation));
+    if (!byPlayer.Entity.Controls.ShiftKey && _networks.Length != 0) {
+      List<Block> matching = GetConnectedOrientations(world, blockSel.Position,
+                                                      blockSel.Face.Opposite);
+      if (!matching.Contains(oriented)) {
+        oriented = matching.First(block => block != null);
+      }
+    }
     if (!oriented.CanPlaceBlock(world, byPlayer, blockSel, ref failureCode)) {
       handling = EnumHandling.PreventDefault;
       return false;
     }
     handling = EnumHandling.PreventSubsequent;
     return oriented.DoPlaceBlock(world, byPlayer, blockSel, itemstack);
+  }
+
+  private List<Block> GetConnectedOrientations(IWorldAccessor world,
+                                               BlockPos pos,
+                                               BlockFacing preferredNeighbor) {
+    string[] orientations;
+    if (_mode == OrientationMode.Horizontals) {
+      if (_pillar) {
+        orientations = new string[] { "we", "ns" };
+      } else {
+        orientations =
+            BlockFacing.HORIZONTALS.Select(face => face.Code).ToArray();
+      }
+    } else {
+      if (_pillar) {
+        orientations = new string[] { "we", "ud", "ns" };
+      } else {
+        orientations = BlockFacing.ALLFACES.Select(face => face.Code).ToArray();
+      }
+    }
+    List<Block> filtered =
+        orientations
+            .Select(orientation => world.BlockAccessor.GetBlock(
+                        block.CodeWithVariant(_facingCode, orientation)))
+            .ToList();
+
+    IReadOnlyDictionary<string, AutoStepNetworkManager> networkManagers =
+        LambdaFactoryModSystem.GetInstance(world.Api).NetworkManagers;
+    foreach (string network in _networks) {
+      if (!networkManagers.TryGetValue(network,
+                                       out AutoStepNetworkManager manager)) {
+        world.Api.Logger.Error($"network {network} not registered.");
+        continue;
+      }
+      List<BlockNodeTemplate> blockTemplates = new();
+      foreach (Block block in filtered) {
+        if (block == null) {
+          blockTemplates.Add(null);
+        } else {
+          BlockEntityBehaviorType found = null;
+          foreach (var beb in block.BlockEntityBehaviors) {
+            if (beb.Name == network) {
+              found = beb;
+              break;
+            }
+          }
+          if (found == null) {
+            world.Api.Logger.Error(
+                $"Block entity behavior {network} not found.");
+            blockTemplates.Add(null);
+          }
+          blockTemplates.Add(manager.ParseBlockNodeTemplate(found.properties));
+        }
+      }
+      List<BlockNodeTemplate> matched = new(blockTemplates);
+      manager.RemoveUnpaired(matched, pos, preferredNeighbor);
+      if (!matched.Any(template => template != null)) {
+        if (_pairToAny) {
+          // No matches were found on the preferred neighbor. See if any of the
+          // neighbors match.
+          foreach (BlockFacing facing in BlockFacing.ALLFACES) {
+            if (facing == preferredNeighbor) {
+              continue;
+            }
+            List<BlockNodeTemplate> addMatched = new(blockTemplates);
+            manager.RemoveUnpaired(addMatched, pos, facing);
+            for (int i = 0; i < addMatched.Count; ++i) {
+              if (addMatched[i] != null) {
+                matched[i] = addMatched[i];
+              }
+            }
+          }
+        }
+        if (!matched.Any(template => template != null)) {
+          // None of the neighbors are connectable. Skip filtering on this
+          // network.
+          continue;
+        }
+      }
+      // Filter `filtered` based on which templates could connect.
+      for (int i = 0; i < matched.Count; ++i) {
+        if (matched[i] == null) {
+          filtered[i] = null;
+        }
+      }
+    }
+    return filtered;
   }
 }
