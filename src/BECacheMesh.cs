@@ -15,8 +15,6 @@ interface IMeshGenerator {
   public object GetImmutableKey() { return ((ICloneable)GetKey()).Clone(); }
   public void EditMesh(MeshData mesh) {}
 
-  public bool UpdatedPickedStack(ItemStack stack) { return false; }
-
   public TextureAtlasPosition GetTexture(string textureCode) { return null; }
 }
 
@@ -37,7 +35,7 @@ public class CacheMeshTextureSource : ITexPositionSource {
   public Size2i AtlasSize => _def.AtlasSize;
 }
 
-public class BlockEntityCacheMesh : BlockEntity, IBlockEntityForward {
+public class BlockEntityCacheMesh : BlockEntity {
   private MeshData _mesh;
 
   public override void Initialize(ICoreAPI api) {
@@ -134,22 +132,5 @@ public class BlockEntityCacheMesh : BlockEntity, IBlockEntityForward {
     }
     mesher.AddMeshData(_mesh);
     return true;
-  }
-
-  public virtual bool UpdatedPickedStack(ItemStack stack) {
-    bool useResult = false;
-    foreach (var behavior in Behaviors) {
-      useResult |=
-          (behavior as IMeshGenerator)?.UpdatedPickedStack(stack) ?? false;
-    }
-    return useResult;
-  }
-
-  public ItemStack OnPickBlock(ref EnumHandling handling) {
-    ItemStack stack = new ItemStack(Block, 1);
-    if (UpdatedPickedStack(stack)) {
-      handling = EnumHandling.PreventDefault;
-    }
-    return stack;
   }
 }
