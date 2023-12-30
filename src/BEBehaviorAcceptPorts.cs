@@ -110,8 +110,8 @@ public class BEBehaviorAcceptPorts : BEBehaviorTermNetwork, IAcceptPorts {
     return ParseBlockNodeTemplate(world, properties, _occupiedPorts);
   }
 
-  public override void Initialize(ICoreAPI api, JsonObject properties) {
-    base.Initialize(api, properties);
+  public override void Initialize(ICoreAPI api) {
+    base.Initialize(api);
     _configuration = ParseConfiguration(api, properties);
 
     SetKey();
@@ -213,7 +213,7 @@ public class BEBehaviorAcceptPorts : BEBehaviorTermNetwork, IAcceptPorts {
       int nodeId =
           _template.GetNodeTemplate(EdgeExtension.GetFaceCenter(face)).Id;
       _template.OnNodePlaced(Pos, nodeId, ref _nodes[nodeId]);
-      (Blockentity as BlockEntityCacheMesh)?.UpdateMesh();
+      Blockentity.GetBehavior<BEBehaviorCacheMesh>()?.UpdateMesh();
       return true;
     }
     failureCode = "existingdecorinplace";

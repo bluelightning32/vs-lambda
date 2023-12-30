@@ -16,8 +16,8 @@
     { name: "BlockEntityForward" },
     { name: "Network" },
   ],
-  entityclass: "CacheMesh",
   entityBehaviors: [
+    { name: "CacheMesh" },
     {
       name: "MatchNetwork",
       properties: {

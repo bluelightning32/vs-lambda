@@ -11,6 +11,10 @@ using Vintagestory.API.Util;
 namespace LambdaFactory;
 
 interface IMeshGenerator {
+  // This may be called shortly before or after BlockEntityBehavior.Initialize.
+  // This function should prepare the object for a call to `GetKey` and
+  // `GetImmutableKey`.
+  public void Initialize(ICoreAPI api);
   public object GetKey();
   public object GetImmutableKey() { return ((ICloneable)GetKey()).Clone(); }
   public void EditMesh(MeshData mesh) {}
@@ -19,10 +23,10 @@ interface IMeshGenerator {
 }
 
 public class CacheMeshTextureSource : ITexPositionSource {
-  private readonly BlockEntityCacheMesh _cache;
+  private readonly BEBehaviorCacheMesh _cache;
   private readonly ITexPositionSource _def;
 
-  public CacheMeshTextureSource(BlockEntityCacheMesh cache,
+  public CacheMeshTextureSource(BEBehaviorCacheMesh cache,
                                 ITexPositionSource def) {
     _cache = cache;
     _def = def;
@@ -35,16 +39,19 @@ public class CacheMeshTextureSource : ITexPositionSource {
   public Size2i AtlasSize => _def.AtlasSize;
 }
 
-public class BlockEntityCacheMesh : BlockEntity {
+public class BEBehaviorCacheMesh : BlockEntityBehavior {
   private MeshData _mesh;
 
-  public override void Initialize(ICoreAPI api) {
-    base.Initialize(api);
-    UpdateMesh();
-  }
+  public BEBehaviorCacheMesh(BlockEntity blockentity) : base(blockentity) {}
 
-  public override void OnBlockPlaced(ItemStack byItemStack) {
-    base.OnBlockPlaced(byItemStack);
+  public override void Initialize(ICoreAPI api, JsonObject properties) {
+    base.Initialize(api, properties);
+    foreach (var behavior in Blockentity.Behaviors) {
+      if (behavior is not IMeshGenerator generator) {
+        continue;
+      }
+      generator.Initialize(api);
+    }
     UpdateMesh();
   }
 
@@ -58,9 +65,8 @@ public class BlockEntityCacheMesh : BlockEntity {
 
   private List<object> GetKey() {
     List<object> result = new List<object>();
-    foreach (var behavior in Behaviors) {
-      IMeshGenerator generator = behavior as IMeshGenerator;
-      if (generator == null) {
+    foreach (var behavior in Blockentity.Behaviors) {
+      if (behavior is not IMeshGenerator generator) {
         continue;
       }
       result.Add(generator.GetKey());
@@ -70,9 +76,8 @@ public class BlockEntityCacheMesh : BlockEntity {
 
   private List<object> GetClonedKey() {
     List<object> result = new List<object>();
-    foreach (var behavior in Behaviors) {
-      IMeshGenerator generator = behavior as IMeshGenerator;
-      if (generator == null) {
+    foreach (var behavior in Blockentity.Behaviors) {
+      if (behavior is not IMeshGenerator generator) {
         continue;
       }
       result.Add(generator.GetImmutableKey());
@@ -109,13 +114,13 @@ public class BlockEntityCacheMesh : BlockEntity {
   }
 
   public virtual void EditMesh(MeshData mesh) {
-    foreach (var behavior in Behaviors) {
+    foreach (var behavior in Blockentity.Behaviors) {
       (behavior as IMeshGenerator)?.EditMesh(mesh);
     }
   }
 
   public virtual TextureAtlasPosition GetTexture(string textureCode) {
-    foreach (var behavior in Behaviors) {
+    foreach (var behavior in Blockentity.Behaviors) {
       TextureAtlasPosition result =
           (behavior as IMeshGenerator)?.GetTexture(textureCode);
       if (result != null) {

@@ -80,7 +80,7 @@ public abstract class BEBehaviorAbstractNetwork : BlockEntityBehavior,
       // Only update the mesh here if the behavior was already initialized
       // (indicated by the non-null Api), and the template indicates that the
       // nodes changed significantly enough to require a mesh update.
-      (Blockentity as BlockEntityCacheMesh)?.UpdateMesh();
+      Blockentity.GetBehavior<BEBehaviorCacheMesh>()?.UpdateMesh();
       Blockentity.MarkDirty(true);
     }
 
@@ -93,8 +93,8 @@ public abstract class BEBehaviorAbstractNetwork : BlockEntityBehavior,
         worldAccessForResolve.Api.Side, Api != null, dsc);
   }
 
-  public override void Initialize(ICoreAPI api, JsonObject properties) {
-    base.Initialize(api, properties);
+  public virtual void Initialize(ICoreAPI api) {
+    Api = api;
     // _networks and _nodes may have already been initialized in
     // `FromTreeAttributes`. Reinitializing it would wipe out the _nodes
     // information.
@@ -106,7 +106,9 @@ public abstract class BEBehaviorAbstractNetwork : BlockEntityBehavior,
 
   public override void OnBlockPlaced(ItemStack byItemStack = null) {
     base.OnBlockPlaced(byItemStack);
-    _template.OnPlaced(Pos, _nodes);
+    if (_template.OnPlaced(Pos, _nodes)) {
+      Blockentity.GetBehavior<BEBehaviorCacheMesh>()?.UpdateMesh();
+    }
   }
 
   public override void OnBlockRemoved() {

@@ -14,8 +14,8 @@
     },
     { name: "BlockEntityForward" },
   ],
-  entityclass: "CacheMesh",
   entityBehaviors: [
+    { name: "CacheMesh" },
     {
       name: "AcceptPorts",
       properties: {

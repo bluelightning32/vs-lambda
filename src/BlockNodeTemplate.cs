@@ -212,13 +212,16 @@ public class BlockNodeTemplate {
     return _nodeTemplates[nodeId];
   }
 
-  public void OnPlaced(BlockPos pos, Node[] nodes) {
+  public bool OnPlaced(BlockPos pos, Node[] nodes) {
     BlockNodeTemplate[] neighborTemplates =
         GetNeighbors(pos, out Node[][] neighbors);
+    bool hasSource = false;
     foreach (var template in _nodeTemplates) {
       template.OnPlaced(_manager, pos, neighborTemplates, neighbors,
                         ref nodes[template.Id]);
+      hasSource |= nodes[template.Id].Source.IsSet();
     }
+    return hasSource;
   }
 
   public void OnNodePlaced(BlockPos pos, int id, ref Node node) {

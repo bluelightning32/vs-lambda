@@ -51,8 +51,8 @@ public class BEBehaviorWire : BEBehaviorTermNetwork,
 
   public BEBehaviorWire(BlockEntity blockentity) : base(blockentity) {}
 
-  public override void Initialize(ICoreAPI api, JsonObject properties) {
-    base.Initialize(api, properties);
+  public override void Initialize(ICoreAPI api) {
+    base.Initialize(api);
     _WireTemplate = ParseTemplate(api, properties);
     _selectionBoxes = GetSelectionBoxes(api, _directions);
   }
@@ -153,14 +153,16 @@ public class BEBehaviorWire : BEBehaviorTermNetwork,
                                                    out ShapeOverride over)) {
       mesh.Clear();
       mesh.AddMeshData(
-          (Blockentity as BlockEntityCacheMesh)?.TessellateShape(over.Shape));
+          Blockentity.GetBehavior<BEBehaviorCacheMesh>()?.TessellateShape(
+              over.Shape));
       return;
     }
     for (int i = 0; i < 6; ++i) {
       if ((_directions & (1 << i)) != 0 &&
           _WireTemplate.IndexedShapes[i] != null) {
-        mesh.AddMeshData((Blockentity as BlockEntityCacheMesh)
-                             ?.TessellateShape(_WireTemplate.IndexedShapes[i]));
+        mesh.AddMeshData(
+            Blockentity.GetBehavior<BEBehaviorCacheMesh>()?.TessellateShape(
+                _WireTemplate.IndexedShapes[i]));
       }
     }
     base.EditMesh(mesh);
@@ -196,7 +198,7 @@ public class BEBehaviorWire : BEBehaviorTermNetwork,
     _selectionBoxes = GetSelectionBoxes(Api, _directions);
     _template = ParseBlockNodeTemplate(Api.World, properties);
     _template.OnNodeChanged(Pos, 0, ref _nodes[0]);
-    (Blockentity as BlockEntityCacheMesh)?.UpdateMesh();
+    Blockentity.GetBehavior<BEBehaviorCacheMesh>()?.UpdateMesh();
   }
 
   NetworkManager IConnectable.GetManager(ICoreAPI api) {
@@ -208,6 +210,6 @@ public class BEBehaviorWire : BEBehaviorTermNetwork,
     _selectionBoxes = GetSelectionBoxes(Api, _directions);
     _template = ParseBlockNodeTemplate(Api.World, properties);
     _template.OnNodeChanged(Pos, 0, ref _nodes[0]);
-    (Blockentity as BlockEntityCacheMesh)?.UpdateMesh();
+    Blockentity.GetBehavior<BEBehaviorCacheMesh>()?.UpdateMesh();
   }
 }

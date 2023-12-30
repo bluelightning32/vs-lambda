@@ -3,7 +3,7 @@
   creativeinventory: { general: ["*"] },
   blockmaterial: "Ceramic",
   drawtype: "json",
-  shape: { base: "block/basic/cube" },
+  shape: { base: "game:block/basic/cube" },
   textures: {
 		"north": { base: "edgereference-north"},
 		"east": { base: "edgereference-east"},

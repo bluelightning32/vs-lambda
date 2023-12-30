@@ -15,8 +15,8 @@
       base: "wire/straight",
     },
   },
-  entityClass: "CacheMesh",
   entityBehaviors: [
+    { name: "CacheMesh" },
     {
       name: "Wire",
       properties: {

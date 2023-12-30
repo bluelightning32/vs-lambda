@@ -5,8 +5,8 @@
     },
     { name: "Network" },
   ],
-  entityclass: "CacheMesh",
   entityBehaviors: [
+    { name: "CacheMesh" },
     {
       name: "ScopeNetwork",
       properties: {
