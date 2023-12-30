@@ -1,0 +1,51 @@
+{
+  code: "constructor",
+  variantgroups: [
+    {
+      code: "constructs", states: ["unit", "nat", "sum", "prod"]
+    },
+    {
+      code: "unit", combine: "SelectiveMultiply", onVariant: "constructs",
+      states: ["tt"]
+    },
+    {
+      code: "nat", combine: "SelectiveMultiply", onVariant: "constructs",
+      states: ["o", "s"]
+    },
+    {
+      code: "sum", combine: "SelectiveMultiply", onVariant: "constructs",
+      states: ["inl", "inr"]
+    },
+    {
+      code: "prod", combine: "SelectiveMultiply", onVariant: "constructs",
+      states: ["pair"]
+    },
+  ],
+  creativeinventory: { "general": ["*"], "terms": ["*"]},
+  shape: { base: "game:item/gem/rough/normal/malachite" },
+  behaviors: [
+    {
+      name: "Term",
+      properties: {
+        "constructs": "{constructs}",
+        "termByType": {
+          "*-unit-*": "{unit}",
+          "*-nat-o": "O",
+          "*-nat-s": "S",
+          "*-sum-inl": "@inl",
+          "*-sum-inr": "@inr",
+          "*-prod-pair": "@pair",
+        },
+        "typeByType": {
+          "*-unit-tt": "unit",
+          "*-nat-S": "nat -> nat",
+          "*-nat-O": "nat",
+          "*-sum-inl": "forall A B : Type, A -> A + B",
+          "*-sum-inr": "forall A B : Type, B -> A + B",
+          "*-prod-pair": "forall A B : Type, A -> B -> prod A B",
+        },
+        "isType": false
+      }
+    }
+  ]
+}

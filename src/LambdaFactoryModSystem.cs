@@ -34,6 +34,7 @@ public class LambdaFactoryModSystem : ModSystem {
 
   public override void Start(ICoreAPI api) {
     Domain = Mod.Info.ModID;
+    api.RegisterCollectibleBehaviorClass("Term", typeof(BehaviorTerm));
     api.RegisterBlockBehaviorClass("BlockEntityForward",
                                    typeof(BlockBehaviorBlockEntityForward));
     api.RegisterBlockBehaviorClass("Connect", typeof(BlockBehaviorConnect));
