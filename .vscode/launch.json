@@ -9,6 +9,10 @@
     "args": [
       "--addModPath", "${workspaceFolder}/bin/Debug",
       "--addOrigin", "${workspaceFolder}/resources/assets"
-    ]
+    ],
+    "justMyCode": false,
+    "sourceFileMap": {
+      "c:\\Users\\Tyron\\Documents\\vintagestory\\game\\VintagestoryApi\\": "${env:VINTAGE_STORY}/source/vsapi/"
+    }
   }]
 }
