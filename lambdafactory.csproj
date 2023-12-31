@@ -75,10 +75,10 @@
             <HintPath>$(VINTAGE_STORY)/Mods/VSEssentials.dll</HintPath>
             <Private>false</Private>
         </Reference>
-        <!-- <Reference Include="VintagestoryAPI">
+        <Reference Include="VSSurvivalMod">
             <HintPath>$(VINTAGE_STORY)/Mods/VSSurvivalMod.dll</HintPath>
             <Private>false</Private>
-        </Reference> -->
+        </Reference>
 
         <!--
             Store the list of files to package in a zip file in the @(Package)

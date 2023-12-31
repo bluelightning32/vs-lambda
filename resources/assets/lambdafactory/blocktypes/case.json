@@ -15,7 +15,13 @@
     },
     { name: "BlockEntityForward" },
     { name: "Network" },
+    { name: "Container" }
   ],
+  entityClass: "TermContainer",
+  attributes: {
+    inventoryClassName: "case",
+    dialogTitleLangCode: "case-container"
+  },
   entityBehaviors: [
     { name: "CacheMesh" },
     {
