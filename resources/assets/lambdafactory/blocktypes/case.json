@@ -22,6 +22,9 @@
     inventoryClassName: "case",
     dialogTitleLangCode: "lambdafactory:case-container-title",
     dialogDescLangCode: "lambdafactory:case-container-description",
+    requireConstructor: true,
+    maxSlotStackSize: 1,
+    hidePerishRate: true,
   },
   entityBehaviors: [
     { name: "CacheMesh" },

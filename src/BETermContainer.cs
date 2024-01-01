@@ -23,7 +23,34 @@ public class BlockEntityTermContainer : BlockEntityOpenableContainer {
     base.CreateBehaviors(block, worldForResolve);
     _inventoryClassName =
         block.Attributes["inventoryClassName"].AsString("term");
-    _inventory = new InventoryGeneric(1, null, null, null);
+    // Pass in null for the API and inventory class name for now. The correct
+    // values will be passed by `BlockEntityOpenableContainer` when it calls
+    // LateInitialize later.
+    _inventory = new InventoryGeneric(1, null, null, CreateSlot);
+  }
+
+  private bool CanAccept(ItemSlot sourceSlot) {
+    BehaviorTerm term =
+        sourceSlot.Itemstack.Collectible.GetBehavior<BehaviorTerm>();
+    if (Block.Attributes["requireTerm"].AsBool()) {
+      if (term == null) {
+        return false;
+      }
+    }
+    if (Block.Attributes["requireConstructor"].AsBool()) {
+      if (term?.GetConstructs(sourceSlot.Itemstack) == null) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private int GetMaxSlotStackSize() {
+    return Block.Attributes["maxSlotStackSize"].AsInt(999999);
+  }
+
+  private ItemSlot CreateSlot(int slotId, InventoryGeneric self) {
+    return new SelectiveItemSlot(self, CanAccept, GetMaxSlotStackSize);
   }
 
   public override bool OnPlayerRightClick(IPlayer byPlayer,
@@ -39,5 +66,18 @@ public class BlockEntityTermContainer : BlockEntityOpenableContainer {
       });
     }
     return true;
+  }
+
+  public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc) {
+    if (Block.Attributes["hidePerishRate"].AsBool()) {
+      // BlockEntityOpenableContainer adds the message that we're trying to
+      // hide. So skip calling the base class, and call the behaviors directly
+      // instead.
+      foreach (var behavior in Behaviors) {
+        behavior.GetBlockInfo(forPlayer, dsc);
+      }
+      return;
+    }
+    base.GetBlockInfo(forPlayer, dsc);
   }
 }
