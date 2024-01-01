@@ -35,18 +35,20 @@ public class LambdaFactoryModSystem : ModSystem {
 
   public override void Start(ICoreAPI api) {
     Domain = Mod.Info.ModID;
-    api.RegisterCollectibleBehaviorClass("Term", typeof(BehaviorTerm));
+    api.RegisterCollectibleBehaviorClass("Term",
+                                         typeof(CollectibleBehavior.Term));
     api.RegisterBlockBehaviorClass("BlockEntityForward",
-                                   typeof(BlockBehaviorBlockEntityForward));
-    api.RegisterBlockBehaviorClass("Connect", typeof(BlockBehaviorConnect));
-    api.RegisterBlockBehaviorClass("Inventory", typeof(BlockBehaviorInventory));
-    api.RegisterBlockBehaviorClass("Network", typeof(BlockBehaviorNetwork));
-    api.RegisterBlockBehaviorClass("Orient", typeof(BlockBehaviorOrient));
-    api.RegisterBlockBehaviorClass("Port", typeof(BlockBehaviorPort));
+                                   typeof(BlockBehavior.BlockEntityForward));
+    api.RegisterBlockBehaviorClass("Connect", typeof(BlockBehavior.Connect));
+    api.RegisterBlockBehaviorClass("Inventory",
+                                   typeof(BlockBehavior.Inventory));
+    api.RegisterBlockBehaviorClass("Network", typeof(BlockBehavior.Network));
+    api.RegisterBlockBehaviorClass("Orient", typeof(BlockBehavior.Orient));
+    api.RegisterBlockBehaviorClass("Port", typeof(BlockBehavior.Port));
     api.RegisterBlockEntityClass("TermContainer",
-                                 typeof(BlockEntityTermContainer));
+                                 typeof(BlockEntity.TermContainer));
     api.RegisterBlockEntityBehaviorClass(
-        "AcceptPorts", typeof(BlockEntityBehavior.AcceptPorts));
+        "AcceptPort", typeof(BlockEntityBehavior.AcceptPort));
     api.RegisterBlockEntityBehaviorClass("CacheMesh",
                                          typeof(BlockEntityBehavior.CacheMesh));
     api.RegisterBlockEntityBehaviorClass(

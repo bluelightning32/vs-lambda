@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 
+using LambdaFactory.BlockBehavior;
+
 using Newtonsoft.Json;
 
 using Vintagestory.API.Client;
@@ -9,6 +11,7 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
 namespace LambdaFactory.BlockEntityBehavior;
+using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 
 public class ShapeOverride {
   public HashSet<string> Directions;
@@ -46,7 +49,7 @@ public class BEBehaviorWire : TermNetwork, IBlockEntityForward, IConnectable {
   private int _directions = 0;
   private Cuboidf[] _selectionBoxes = null;
 
-  public BEBehaviorWire(BlockEntity blockentity) : base(blockentity) {}
+  public BEBehaviorWire(VSBlockEntity blockentity) : base(blockentity) {}
 
   public override void Initialize(ICoreAPI api) {
     base.Initialize(api);
@@ -196,7 +199,7 @@ public class BEBehaviorWire : TermNetwork, IBlockEntityForward, IConnectable {
     Blockentity.GetBehavior<CacheMesh>()?.UpdateMesh();
   }
 
-  NetworkManager IConnectable.GetManager(ICoreAPI api) {
+  NetworkManager BlockBehavior.IConnectable.GetManager(ICoreAPI api) {
     return GetManager(api);
   }
 

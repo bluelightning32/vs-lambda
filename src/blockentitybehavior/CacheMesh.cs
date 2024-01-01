@@ -10,6 +10,7 @@ using Vintagestory.API.Util;
 namespace LambdaFactory.BlockEntityBehavior;
 
 using VSBlockEntityBehavior = Vintagestory.API.Common.BlockEntityBehavior;
+using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 
 interface IMeshGenerator {
   // This may be called shortly before or after BlockEntityBehavior.Initialize.
@@ -42,7 +43,7 @@ public class CacheMeshTextureSource : ITexPositionSource {
 public class CacheMesh : VSBlockEntityBehavior {
   private MeshData _mesh;
 
-  public CacheMesh(BlockEntity blockentity) : base(blockentity) {}
+  public CacheMesh(VSBlockEntity blockentity) : base(blockentity) {}
 
   public override void Initialize(ICoreAPI api, JsonObject properties) {
     base.Initialize(api, properties);

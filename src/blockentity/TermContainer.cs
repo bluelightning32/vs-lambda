@@ -4,7 +4,7 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;
 
-namespace LambdaFactory;
+namespace LambdaFactory.BlockEntity;
 
 public interface IInventoryControl {
   public string GetTitle();
@@ -14,8 +14,10 @@ public interface IInventoryControl {
   public void OnSlotModified() {}
 }
 
-// Forwards more methods from the Block to the BlockEntity.
-public class BlockEntityTermContainer : BlockEntityOpenableContainer {
+// Creates a container with a single slot. Decisions about format of the dialog
+// and what kind of items to accept are forwarded to the first behavior that
+// implements `IInventoryControl`.
+public class TermContainer : BlockEntityOpenableContainer {
   // Pass in null for the API and inventory class name for now. The correct
   // values will be passed by `BlockEntityOpenableContainer` when it calls
   // LateInitialize from inside of `BlockEntityOpenableContainer.Initialize`.
@@ -26,9 +28,7 @@ public class BlockEntityTermContainer : BlockEntityOpenableContainer {
   private string _inventoryClassName;
   public override string InventoryClassName => _inventoryClassName;
 
-  public BlockEntityTermContainer() {
-    _inventory.SlotModified += OnSlotModified;
-  }
+  public TermContainer() { _inventory.SlotModified += OnSlotModified; }
 
   private IInventoryControl GetInventoryControl() {
     // Don't use `Block.GetInterface`, because that uses the block accessor to
@@ -73,8 +73,8 @@ public class BlockEntityTermContainer : BlockEntityOpenableContainer {
       string description = GetInventoryControl()?.GetDescription();
       if (title != null) {
         toggleInventoryDialogClient(byPlayer, () => {
-          return new GuiDialogTermInventory(title, description, Inventory, Pos,
-                                            Api as ICoreClientAPI);
+          return new Gui.DialogTermInventory(title, description, Inventory, Pos,
+                                             Api as ICoreClientAPI);
         });
       }
     }

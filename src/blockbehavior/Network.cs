@@ -3,14 +3,17 @@ using System.Collections.Generic;
 
 using Vintagestory.API.Common;
 
-namespace LambdaFactory;
+namespace LambdaFactory.BlockBehavior;
 
-// Forwards more methods from the Block to the BlockEntity.
-public class BlockBehaviorNetwork : BlockBehavior {
+using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
+
+// Prevents the block from being placed if it would cause a network conflict by
+// connecting two sources in the same network.
+public class Network : VSBlockBehavior {
   private readonly List<BlockNodeTemplate> _blockTemplates =
       new List<BlockNodeTemplate>();
 
-  public BlockBehaviorNetwork(Block block) : base(block) {}
+  public Network(Block block) : base(block) {}
 
   public override void OnLoaded(ICoreAPI api) {
     base.OnLoaded(api);

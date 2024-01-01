@@ -1,10 +1,14 @@
 using System.Collections.Generic;
 
+using LambdaFactory.BlockEntity;
+
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
-namespace LambdaFactory;
+namespace LambdaFactory.BlockBehavior;
+
+using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
 
 public class InventoryOptions {
   public bool RequireTerm;
@@ -17,7 +21,8 @@ public class InventoryOptions {
   public Dictionary<string, CompositeTexture> FullTextures;
 
   public bool CanAccept(ItemStack item) {
-    BehaviorTerm term = item.Collectible.GetBehavior<BehaviorTerm>();
+    CollectibleBehavior.Term term =
+        item.Collectible.GetBehavior<CollectibleBehavior.Term>();
     if (RequireTerm) {
       if (term == null) {
         return false;
@@ -37,11 +42,11 @@ public class InventoryOptions {
   }
 }
 
-// The block entity must inherit from BlockEntityTermContainer for this behavior
-// to do anything.
-public class BlockBehaviorInventory : BlockBehavior, IInventoryControl {
+// Controls what kind of item the container can hold. The block entity must
+// inherit from BlockEntityTermContainer for this behavior to do anything.
+public class Inventory : VSBlockBehavior, IInventoryControl {
 
-  public BlockBehaviorInventory(Block block) : base(block) {}
+  public Inventory(Block block) : base(block) {}
 
   private InventoryOptions _options;
 

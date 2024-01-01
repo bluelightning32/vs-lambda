@@ -6,11 +6,17 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 
-namespace LambdaFactory;
+namespace LambdaFactory.BlockBehavior;
+
+using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
 
 enum OrientationMode { Slab, AllFaces, Horizontals }
 
-public class BlockBehaviorOrient : BlockBehavior {
+// Orients the block on placement. The orientation depends on which block face
+// the player selected for the placement and the direction of the player. If
+// `_networks` is non-empty, then the player selected orientation will be
+// overridden to connect the new block to the neighboring blocks.
+public class Orient : VSBlockBehavior {
   private string _facingCode;
   private OrientationMode _mode;
   private bool _flip;
@@ -20,7 +26,7 @@ public class BlockBehaviorOrient : BlockBehavior {
 
   // If true, rotate the block so that it connects to any of the neighbors.
   private bool _pairToAny;
-  public BlockBehaviorOrient(Block block) : base(block) {}
+  public Orient(Block block) : base(block) {}
 
   public override void Initialize(JsonObject properties) {
     base.Initialize(properties);

@@ -8,6 +8,7 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
 namespace LambdaFactory.BlockEntityBehavior;
+using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 
 public class TermNetwork : AbstractNetwork {
 
@@ -38,7 +39,7 @@ public class TermNetwork : AbstractNetwork {
           new(properties["nodes"]?.AsObject<NodeTemplate[]>() ??
               Array.Empty<NodeTemplate>());
       PortConfiguration ports =
-          AcceptPorts.ParseConfiguration(_world.Api, properties);
+          AcceptPort.ParseConfiguration(_world.Api, properties);
       foreach (var port in ports.Ports) {
         NodeTemplate node = new();
         foreach (var face in port.Faces) {
@@ -116,7 +117,7 @@ public class TermNetwork : AbstractNetwork {
     }
   }
 
-  public TermNetwork(BlockEntity blockentity) : base(blockentity) {}
+  public TermNetwork(VSBlockEntity blockentity) : base(blockentity) {}
 
   protected override Manager GetManager(ICoreAPI api) {
     return LambdaFactoryModSystem.GetInstance(api).TermNetworkManager;

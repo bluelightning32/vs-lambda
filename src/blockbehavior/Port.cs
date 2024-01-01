@@ -2,15 +2,24 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 
-namespace LambdaFactory;
+namespace LambdaFactory.BlockBehavior;
+
+using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
+using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 
 using PortDirection = BlockEntityBehavior.PortDirection;
 
-// Forwards more methods from the Block to the BlockEntity.
-public class BlockBehaviorPort : Vintagestory.GameContent.BlockBehaviorDecor {
+public interface IAcceptPort {
+  bool SetPort(Block port, PortDirection direction, BlockFacing face,
+               out string failureCode);
+}
+
+// Places the block as a decor. The decision of whether or not to accept the
+// port is forwarded to block entity behaviors that implement `IAcceptPort`.
+public class Port : Vintagestory.GameContent.BlockBehaviorDecor {
   public PortDirection Direction { get; private set; }
 
-  public BlockBehaviorPort(Block block) : base(block) {}
+  public Port(Block block) : base(block) {}
 
   public override void Initialize(JsonObject properties) {
     base.Initialize(properties);
@@ -30,7 +39,7 @@ public class BlockBehaviorPort : Vintagestory.GameContent.BlockBehaviorDecor {
 
     BlockPos pos = blockSel.Position.AddCopy(blockSel.Face.Opposite);
 
-    BlockEntity parentBlock = world.BlockAccessor.GetBlockEntity(pos);
+    VSBlockEntity parentBlock = world.BlockAccessor.GetBlockEntity(pos);
     if (parentBlock == null) {
       failureCode = "doesnotacceptports";
       return false;
@@ -38,7 +47,7 @@ public class BlockBehaviorPort : Vintagestory.GameContent.BlockBehaviorDecor {
 
     bool foundAcceptor = false;
     foreach (var behavior in parentBlock.Behaviors) {
-      if (behavior is not BlockEntityBehavior.IAcceptPorts acceptor) {
+      if (behavior is not IAcceptPort acceptor) {
         continue;
       }
       foundAcceptor = true;

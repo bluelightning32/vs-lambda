@@ -5,6 +5,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
 
 namespace LambdaFactory.BlockEntityBehavior;
+using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 
 public class MatchNetwork : AbstractNetwork {
 
@@ -41,7 +42,7 @@ public class MatchNetwork : AbstractNetwork {
     public override string GetNetworkName() { return "match"; }
   }
 
-  public MatchNetwork(BlockEntity blockentity) : base(blockentity) {}
+  public MatchNetwork(VSBlockEntity blockentity) : base(blockentity) {}
 
   protected override AutoStepNetworkManager GetManager(ICoreAPI api) {
     return LambdaFactoryModSystem.GetInstance(api).MatchNetworkManager;

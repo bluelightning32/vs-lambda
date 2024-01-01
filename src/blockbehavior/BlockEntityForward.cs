@@ -1,8 +1,10 @@
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
-namespace LambdaFactory;
+namespace LambdaFactory.BlockBehavior;
 
+using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
+using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 using VSBlockEntityBehavior = Vintagestory.API.Common.BlockEntityBehavior;
 
 // The BlockEntity should implement this interface.
@@ -18,8 +20,8 @@ public interface IBlockEntityForward {
 }
 
 // Forwards more methods from the Block to the BlockEntity.
-public class BlockBehaviorBlockEntityForward : StrongBlockBehavior {
-  public BlockBehaviorBlockEntityForward(Block block) : base(block) {}
+public class BlockEntityForward : StrongBlockBehavior {
+  public BlockEntityForward(Block block) : base(block) {}
 
   private IBlockEntityForward GetForward(IWorldAccessor world, BlockPos pos) {
     return GetForward(world.BlockAccessor, pos);
@@ -39,7 +41,7 @@ public class BlockBehaviorBlockEntityForward : StrongBlockBehavior {
     // The base sets handling to EnumHandling.PassThrough. So call the block
     // entity afterwards so that it has a chance to override it.
     base.OnNeighbourBlockChange(world, pos, neibpos, ref handling);
-    BlockEntity entity = world.BlockAccessor.GetBlockEntity(pos);
+    VSBlockEntity entity = world.BlockAccessor.GetBlockEntity(pos);
     if (entity != null) {
       foreach (VSBlockEntityBehavior behavior in entity.Behaviors) {
         IBlockEntityForward forward = behavior as IBlockEntityForward;
@@ -83,7 +85,7 @@ public class BlockBehaviorBlockEntityForward : StrongBlockBehavior {
                                               BlockPos pos,
                                               ref EnumHandling handled) {
     Cuboidf[] result = null;
-    BlockEntity entity = blockAccessor.GetBlockEntity(pos);
+    VSBlockEntity entity = blockAccessor.GetBlockEntity(pos);
     if (entity != null) {
       foreach (VSBlockEntityBehavior behavior in entity.Behaviors) {
         if (behavior is IBlockEntityForward forward) {
@@ -127,7 +129,7 @@ public class BlockBehaviorBlockEntityForward : StrongBlockBehavior {
                                               BlockPos pos,
                                               ref EnumHandling handled) {
     Cuboidf[] result = null;
-    BlockEntity entity = blockAccessor.GetBlockEntity(pos);
+    VSBlockEntity entity = blockAccessor.GetBlockEntity(pos);
     if (entity != null) {
       foreach (VSBlockEntityBehavior behavior in entity.Behaviors) {
         if (behavior is IBlockEntityForward forward) {

@@ -22,7 +22,7 @@
   entityBehaviors: [
     { name: "CacheMesh" },
     {
-      name: "AcceptPorts",
+      name: "AcceptPort",
       properties: {
         ports: [
           {

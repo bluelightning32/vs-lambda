@@ -59,7 +59,7 @@
       }
     },
     {
-      name: "AcceptPorts",
+      name: "AcceptPort",
       properties: {
         ports: [
           {

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 
+using LambdaFactory.BlockBehavior;
+using LambdaFactory.BlockEntity;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -13,6 +16,8 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
 namespace LambdaFactory.BlockEntityBehavior;
+
+using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 
 [JsonConverter(typeof(StringEnumConverter))]
 public enum PortDirection {
@@ -69,19 +74,14 @@ public class PortConfiguration {
   }
 }
 
-public interface IAcceptPorts {
-  bool SetPort(Block port, PortDirection direction, BlockFacing face,
-               out string failureCode);
-}
-
-public class AcceptPorts : TermNetwork, IAcceptPorts, IInventoryControl {
+public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
   // Each face uses 1 bit to indicate whether a port is present.
   private int _portedSides = 0;
   // Each face uses 2 bits to indicate which kind of port is present.
   private int _occupiedPorts = 0;
   PortConfiguration _configuration;
 
-  public AcceptPorts(BlockEntity blockentity) : base(blockentity) {}
+  public AcceptPort(VSBlockEntity blockentity) : base(blockentity) {}
 
   public static PortConfiguration ParseConfiguration(ICoreAPI api,
                                                      JsonObject properties) {
@@ -133,7 +133,7 @@ public class AcceptPorts : TermNetwork, IAcceptPorts, IInventoryControl {
     // https://github.com/anegostudios/vsapi/issues/16.
     if (decors != null) {
       for (int i = 0; i < BlockFacing.ALLFACES.Length; ++i) {
-        BlockBehaviorPort port = decors[i]?.GetBehavior<BlockBehaviorPort>();
+        Port port = decors[i]?.GetBehavior<Port>();
         if (port != null) {
           _portedSides |= 1 << i;
           _occupiedPorts |= (int)port.Direction << (i << 1);
@@ -178,8 +178,7 @@ public class AcceptPorts : TermNetwork, IAcceptPorts, IInventoryControl {
 
   public override object GetKey() {
     bool inventoryFull =
-        (Blockentity as BlockEntityTermContainer)?.Inventory[0].Itemstack !=
-        null;
+        (Blockentity as TermContainer)?.Inventory[0].Itemstack != null;
     return _portedSides | ((inventoryFull ? 1 : 0) << 6);
   }
 
@@ -193,8 +192,7 @@ public class AcceptPorts : TermNetwork, IAcceptPorts, IInventoryControl {
       return false;
     }
     if (GetInventoryPort() == option) {
-      ItemStack item =
-          (Blockentity as BlockEntityTermContainer)?.Inventory[0].Itemstack;
+      ItemStack item = (Blockentity as TermContainer)?.Inventory[0].Itemstack;
       if (item != null &&
           !(GetNextInventoryPort()?.Inventory.CanAccept(item) ?? false)) {
         failureCode = "portinventoryfull";
@@ -232,7 +230,7 @@ public class AcceptPorts : TermNetwork, IAcceptPorts, IInventoryControl {
       _template.OnNodePlaced(Pos, nodeId, ref _nodes[nodeId]);
       Blockentity.GetBehavior<CacheMesh>()?.UpdateMesh();
       if (GetInventoryOptions() != oldInventory) {
-        (Blockentity as BlockEntityTermContainer)?.InventoryChanged();
+        (Blockentity as TermContainer)?.InventoryChanged();
       }
       return true;
     }
@@ -276,8 +274,7 @@ public class AcceptPorts : TermNetwork, IAcceptPorts, IInventoryControl {
     if (option != GetInventoryPort()) {
       return false;
     }
-    return (Blockentity as BlockEntityTermContainer)?.Inventory[0].Itemstack !=
-           null;
+    return (Blockentity as TermContainer)?.Inventory[0].Itemstack != null;
   }
 
   PortOption GetInventoryPort() {

@@ -2,7 +2,9 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 
-namespace LambdaFactory;
+namespace LambdaFactory.BlockBehavior;
+
+using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
 
 public interface IConnectable {
   NetworkManager GetManager(ICoreAPI api);
@@ -11,9 +13,16 @@ public interface IConnectable {
   void RemoveEdge(Edge edge);
 }
 
-public class BlockBehaviorConnect : BlockBehavior {
+// Asks the neighbor blocks to modify their BlockNodeTemplates to add edges to
+// the newly placed block. Also adds edges on the newly placed block to the
+// neighboring blocks.
+//
+// This is used by the wire blocks, where they actually add edges when placed.
+// For other blocks, the possible edges are static, and the edges are either
+// paired or unpaired depending on whether the neighboring block reciprocates.
+public class Connect : VSBlockBehavior {
   private bool _singleConnect = false;
-  public BlockBehaviorConnect(Block block) : base(block) {}
+  public Connect(Block block) : base(block) {}
 
   public override void Initialize(JsonObject properties) {
     base.Initialize(properties);

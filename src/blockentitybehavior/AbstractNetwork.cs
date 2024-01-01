@@ -8,6 +8,7 @@ using Vintagestory.API.MathTools;
 namespace LambdaFactory.BlockEntityBehavior;
 
 using VSBlockEntityBehavior = Vintagestory.API.Common.BlockEntityBehavior;
+using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 
 public abstract class AbstractNetwork : VSBlockEntityBehavior, IMeshGenerator {
   protected BlockNodeTemplate _template;
@@ -41,7 +42,7 @@ public abstract class AbstractNetwork : VSBlockEntityBehavior, IMeshGenerator {
 
   private void MarkDirty(bool redraw) { Blockentity.MarkDirty(redraw); }
 
-  public AbstractNetwork(BlockEntity blockentity) : base(blockentity) {}
+  public AbstractNetwork(VSBlockEntity blockentity) : base(blockentity) {}
 
   protected abstract AutoStepNetworkManager GetManager(ICoreAPI api);
 

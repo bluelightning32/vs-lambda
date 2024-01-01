@@ -3,7 +3,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 
-namespace LambdaFactory;
+namespace LambdaFactory.Gui;
 
 public static partial class GuiComposerHelpers {
   public static GuiComposer AddDialogTitleBar(this GuiComposer composer,
@@ -14,11 +14,11 @@ public static partial class GuiComposerHelpers {
   }
 }
 
-public class GuiDialogTermInventory : GuiDialogBlockEntity {
+public class DialogTermInventory : GuiDialogBlockEntity {
   private static int _instance = 0;
-  public GuiDialogTermInventory(string title, string description,
-                                InventoryBase inventory, BlockPos blockPos,
-                                ICoreClientAPI capi)
+  public DialogTermInventory(string title, string description,
+                             InventoryBase inventory, BlockPos blockPos,
+                             ICoreClientAPI capi)
       : base(title, inventory, blockPos, capi) {
     int instance = _instance++;
     ElementBounds dialogBounds =

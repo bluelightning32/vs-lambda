@@ -3,16 +3,18 @@ using System.Text;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
-namespace LambdaFactory;
+namespace LambdaFactory.CollectibleBehavior;
 
-// Forwards more methods from the Block to the BlockEntity.
-public class BehaviorTerm : CollectibleBehavior {
+using VSCollectibleBehavior = Vintagestory.API.Common.CollectibleBehavior;
+
+// Identifies the item as a Coq term and provides introspection of the term.
+public class Term : VSCollectibleBehavior {
   private string _term;
   private string _type;
   private string _constructs;
   private bool? _isType;
 
-  public BehaviorTerm(CollectibleObject collObj) : base(collObj) {}
+  public Term(CollectibleObject collObj) : base(collObj) {}
 
   public override void Initialize(JsonObject properties) {
     base.Initialize(properties);
