@@ -7,6 +7,15 @@ using Vintagestory.API.MathTools;
 
 namespace LambdaFactory;
 
+public static partial class GuiComposerHelpers {
+  public static GuiComposer AddDialogTitleBar(this GuiComposer composer,
+                                              string text, string key) {
+    composer.AddInteractiveElement(
+        new GuiElementDialogTitleBar(composer.Api, text, composer), key);
+    return composer;
+  }
+}
+
 public class GuiDialogTermInventory : GuiDialogBlockEntity {
   private static int _instance = 0;
   public GuiDialogTermInventory(string title, string description,
@@ -23,8 +32,10 @@ public class GuiDialogTermInventory : GuiDialogBlockEntity {
     bgBounds.BothSizing = ElementSizing.FitToChildren;
 
     ElementBounds textBounds =
-        ElementBounds.Fixed(0, GuiStyle.TitleBarHeight, 300, 80)
-            .WithFixedPadding(2 * GuiStyle.HalfPadding);
+        ElementBounds
+            .Fixed(2.5 * GuiStyle.HalfPadding,
+                   GuiStyle.TitleBarHeight + GuiStyle.HalfPadding, 300, 80)
+            .WithFixedPadding(GuiStyle.HalfPadding);
     ElementBounds gridBounds =
         ElementStdBounds.SlotGrid(EnumDialogArea.CenterTop, 0, 0, 1, 1)
             .FixedUnder(textBounds)
@@ -35,10 +46,10 @@ public class GuiDialogTermInventory : GuiDialogBlockEntity {
         capi.Gui
             .CreateCompo("terminventory" + BlockEntityPosition, dialogBounds)
             .AddShadedDialogBG(bgBounds)
-            .AddDialogTitleBar(Lang.Get(title))
+            .AddDialogTitleBar(Lang.Get(title), "title")
             .BeginChildElements(bgBounds)
-            .AddStaticText(Lang.Get(description), CairoFont.WhiteSmallText(),
-                           textBounds)
+            .AddRichtext(Lang.Get(description), CairoFont.WhiteSmallText(),
+                         textBounds, "description")
             .AddItemSlotGrid(Inventory, DoSendPacket, 1, gridBounds)
             .EndChildElements();
     bgBounds.CalcWorldBounds();
