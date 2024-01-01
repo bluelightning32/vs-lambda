@@ -20,7 +20,8 @@
   entityClass: "TermContainer",
   attributes: {
     inventoryClassName: "case",
-    dialogTitleLangCode: "case-container"
+    dialogTitleLangCode: "lambdafactory:case-container-title",
+    dialogDescLangCode: "lambdafactory:case-container-description",
   },
   entityBehaviors: [
     { name: "CacheMesh" },

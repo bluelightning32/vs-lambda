@@ -30,9 +30,12 @@ public class BlockEntityTermContainer : BlockEntityOpenableContainer {
                                           BlockSelection blockSel) {
     if (Api.Side == EnumAppSide.Client) {
       toggleInventoryDialogClient(byPlayer, () => {
-        return new GuiDialogBlockEntityInventory(
-            Lang.Get(Block.Attributes["title"].AsString("term-container")),
-            Inventory, Pos, 1, Api as ICoreClientAPI);
+        return new GuiDialogTermInventory(
+            Block.Attributes["dialogTitleLangCode"].AsString(
+                "term-container-title"),
+            Block.Attributes["dialogDescLangCode"].AsString(
+                "term-container-description"),
+            Inventory, Pos, Api as ICoreClientAPI);
       });
     }
     return true;
