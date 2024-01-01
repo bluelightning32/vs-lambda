@@ -11,7 +11,9 @@
 		"center-sides": "app/center-sides",
 		"crystal": "app/crystal",
 		"down": "scope/down",
-		"down-porthole": "scope/down-porthole"
+		"output": "scope/down-porthole",
+		"argument": "scope/down-porthole",
+		"applicand": "scope/down-porthole"
 	},
 	"elements": [
 		{
@@ -19,10 +21,10 @@
 			"from": [ 0.0, 0.0, 0.0 ],
 			"to": [ 16.0, 12.0, 16.0 ],
 			"faces": {
-				"north": { "texture": "#down-porthole", "uv": [ 0.0, 4.0, 16.0, 16.0 ], "windMode": [-1,-1,-1,-1] },
-				"east": { "texture": "#down-porthole", "uv": [ 0.0, 4.0, 16.0, 16.0 ], "windMode": [-1,-1,-1,-1] },
+				"north": { "texture": "#argument", "uv": [ 0.0, 4.0, 16.0, 16.0 ], "windMode": [-1,-1,-1,-1] },
+				"east": { "texture": "#applicand", "uv": [ 0.0, 4.0, 16.0, 16.0 ], "windMode": [-1,-1,-1,-1] },
 				"south": { "texture": "#down", "uv": [ 16.0, 5.0, 0.0, 16.0 ], "autoUv": false },
-				"west": { "texture": "#down-porthole", "uv": [ 0.0, 4.0, 16.0, 16.0 ] },
+				"west": { "texture": "#output", "uv": [ 0.0, 4.0, 16.0, 16.0 ] },
 				"up": { "texture": "#down", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "windMode": [-1,-1,-1,-1] },
 				"down": { "texture": "#down", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
 			}

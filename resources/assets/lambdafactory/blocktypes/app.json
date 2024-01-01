@@ -13,7 +13,12 @@
       }
     },
     { name: "BlockEntityForward" },
+    { name: "Container" }
   ],
+  entityClass: "TermContainer",
+  attributes: {
+    inventoryClassName: "app"
+  },
   entityBehaviors: [
     { name: "CacheMesh" },
     {
@@ -31,16 +36,6 @@
             }
           },
           {
-            name: "applicand",
-            directions: ["in"],
-            facesByType: {
-              "*-north": ["east"],
-              "*-east": ["south"],
-              "*-south": ["west"],
-              "*-west": ["north"]
-            }
-          },
-          {
             name: "argument",
             directions: ["in"],
             facesByType: {
@@ -48,6 +43,44 @@
               "*-east": ["east"],
               "*-south": ["south"],
               "*-west": ["west"]
+            },
+            inventory: {
+              dialogTitleLangCode: "lambdafactory:app-argument-container-title",
+              dialogDescLangCode: "lambdafactory:app-argument-container-description",
+              requireTerm: true,
+              maxSlotStackSize: 1,
+              hidePerishRate: true,
+              fullTextures: {
+                "argument": {
+                  base: "scope/down"
+                },
+                "applicand": {
+                  base: "scope/down"
+                }
+              }
+            }
+          },
+          {
+            name: "applicand",
+            directions: ["in"],
+            facesByType: {
+              "*-north": ["east"],
+              "*-east": ["south"],
+              "*-south": ["west"],
+              "*-west": ["north"]
+            },
+            inventory: {
+              dialogTitleLangCode: "lambdafactory:app-applicand-container-title",
+              dialogDescLangCode: "lambdafactory:app-applicand-container-description",
+              requireTerm: true,
+              requireFunction: true,
+              maxSlotStackSize: 1,
+              hidePerishRate: true,
+              fullTextures: {
+                "applicand": {
+                  base: "scope/down"
+                }
+              }
             }
           }
         ]

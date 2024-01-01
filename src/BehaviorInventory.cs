@@ -1,55 +1,69 @@
+using System.Collections.Generic;
+
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
 namespace LambdaFactory;
 
-// The block entity must inherit from BlockEntityTermContainer for this behavior
-// to do anything.
-public class BlockBehaviorInventory : BlockBehavior, IInventoryControl {
-  private bool _requireTerm;
-  private bool _requireConstructor;
-  private int _maxSlotStackSize;
-  private string _dialogTitleLangCode;
-  private string _dialogDescLangCode;
-  private bool _hidePerishRate;
+public class InventoryOptions {
+  public bool RequireTerm;
+  public bool RequireConstructor;
+  public bool RequireFunction;
+  public int MaxSlotStackSize;
+  public string DialogTitleLangCode;
+  public string DialogDescLangCode;
+  public bool HidePerishRate;
+  public Dictionary<string, CompositeTexture> FullTextures;
 
-  public BlockBehaviorInventory(Block block) : base(block) {}
-
-  public override void Initialize(JsonObject properties) {
-    base.Initialize(properties);
-    _requireTerm = properties["requireTerm"].AsBool(false);
-    _requireConstructor = properties["requireConstructor"].AsBool(false);
-    _maxSlotStackSize = properties["maxSlotStackSize"].AsInt(999999);
-    _dialogTitleLangCode =
-        properties["dialogTitleLangCode"].AsString("term-container-title");
-    _dialogDescLangCode =
-        properties["dialogDescLangCode"].AsString("term-container-description");
-    _hidePerishRate = properties["hidePerishRate"].AsBool();
-  }
-
-  bool IInventoryControl.GetHidePerishRate() { return _hidePerishRate; }
-
-  private bool CanAccept(ItemSlot sourceSlot) {
-    BehaviorTerm term =
-        sourceSlot.Itemstack.Collectible.GetBehavior<BehaviorTerm>();
-    if (_requireTerm) {
+  public bool CanAccept(ItemStack item) {
+    BehaviorTerm term = item.Collectible.GetBehavior<BehaviorTerm>();
+    if (RequireTerm) {
       if (term == null) {
         return false;
       }
     }
-    if (_requireConstructor) {
-      if (term?.GetConstructs(sourceSlot.Itemstack) == null) {
+    if (RequireFunction) {
+      if (!(term?.IsFunction(item) ?? false)) {
+        return false;
+      }
+    }
+    if (RequireConstructor) {
+      if (term?.GetConstructs(item) == null) {
         return false;
       }
     }
     return true;
   }
+}
 
-  ItemSlot IInventoryControl.GetSlot(InventoryGeneric inventory) {
-    return new SelectiveItemSlot(inventory, CanAccept, _maxSlotStackSize);
+// The block entity must inherit from BlockEntityTermContainer for this behavior
+// to do anything.
+public class BlockBehaviorInventory : BlockBehavior, IInventoryControl {
+
+  public BlockBehaviorInventory(Block block) : base(block) {}
+
+  private InventoryOptions _options;
+
+  public override void Initialize(JsonObject properties) {
+    base.Initialize(properties);
+    _options = properties.AsObject<InventoryOptions>();
   }
 
-  string IInventoryControl.GetTitle() { return _dialogTitleLangCode; }
+  bool IInventoryControl.GetHidePerishRate() { return _options.HidePerishRate; }
 
-  string IInventoryControl.GetDescription() { return _dialogDescLangCode; }
+  private bool CanAccept(ItemSlot sourceSlot) {
+    return _options.CanAccept(sourceSlot.Itemstack);
+  }
+
+  ItemSlot IInventoryControl.GetSlot(InventoryGeneric inventory) {
+    return new SelectiveItemSlot(inventory, CanAccept,
+                                 _options.MaxSlotStackSize);
+  }
+
+  string IInventoryControl.GetTitle() { return _options.DialogTitleLangCode; }
+
+  string IInventoryControl.GetDescription() {
+    return _options.DialogDescLangCode;
+  }
 }

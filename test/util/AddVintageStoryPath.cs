@@ -1,6 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Reflection;
-using System.IO;
 using System.Runtime.CompilerServices;
 
 namespace LambdaFactory.Tests;

@@ -2,8 +2,6 @@ using System.Text;
 
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Config;
-using Vintagestory.API.Datastructures;
 using Vintagestory.GameContent;
 
 namespace LambdaFactory;
@@ -13,6 +11,7 @@ public interface IInventoryControl {
   public string GetDescription() { return null; }
   public ItemSlot GetSlot(InventoryGeneric inventory);
   public bool GetHidePerishRate();
+  public void OnSlotModified() {}
 }
 
 // Forwards more methods from the Block to the BlockEntity.
@@ -27,6 +26,34 @@ public class BlockEntityTermContainer : BlockEntityOpenableContainer {
   private string _inventoryClassName;
   public override string InventoryClassName => _inventoryClassName;
 
+  public BlockEntityTermContainer() {
+    _inventory.SlotModified += OnSlotModified;
+  }
+
+  private IInventoryControl GetInventoryControl() {
+    // Don't use `Block.GetInterface`, because that uses the block accessor to
+    // look up the block entity at the block position, but `GetInventoryControl`
+    // might be called before the block entity is linked to the map.
+    {
+      if (Block is IInventoryControl result) {
+        return result;
+      }
+    }
+    foreach (var behavior in Block.CollectibleBehaviors) {
+      if (behavior is IInventoryControl result) {
+        return result;
+      }
+    }
+    return GetBehavior<IInventoryControl>();
+  }
+
+  private void SetSlot() {
+    ItemStack item = _inventory[0].Itemstack;
+    _inventory[0] = GetInventoryControl()?.GetSlot(_inventory) ??
+                    new ItemSlotOutput(_inventory);
+    _inventory[0].Itemstack = item;
+  }
+
   public override void Initialize(ICoreAPI api) {
     // `base.Initialize` will access `InventoryClassName`, so
     // `_inventoryClassName` must be set first.
@@ -36,19 +63,14 @@ public class BlockEntityTermContainer : BlockEntityOpenableContainer {
 
     // The inventory was created with a generic slot. Set the correct slot type
     // now.
-    _inventory[0] = Block.GetInterface<IInventoryControl>(Api.World, Pos)
-                        ?.GetSlot(_inventory) ??
-                    new ItemSlotOutput(_inventory);
+    SetSlot();
   }
 
   public override bool OnPlayerRightClick(IPlayer byPlayer,
                                           BlockSelection blockSel) {
     if (Api.Side == EnumAppSide.Client) {
-      string title =
-          Block.GetInterface<IInventoryControl>(Api.World, Pos)?.GetTitle();
-      string description =
-          Block.GetInterface<IInventoryControl>(Api.World, Pos)
-              ?.GetDescription();
+      string title = GetInventoryControl()?.GetTitle();
+      string description = GetInventoryControl()?.GetDescription();
       if (title != null) {
         toggleInventoryDialogClient(byPlayer, () => {
           return new GuiDialogTermInventory(title, description, Inventory, Pos,
@@ -60,9 +82,7 @@ public class BlockEntityTermContainer : BlockEntityOpenableContainer {
   }
 
   public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc) {
-    if (Block.GetInterface<IInventoryControl>(Api.World, Pos)
-            ?.GetHidePerishRate() ??
-        false) {
+    if (GetInventoryControl()?.GetHidePerishRate() ?? false) {
       // BlockEntityOpenableContainer adds the message that we're trying to
       // hide. So skip calling the base class, and call the behaviors directly
       // instead.
@@ -72,5 +92,20 @@ public class BlockEntityTermContainer : BlockEntityOpenableContainer {
       return;
     }
     base.GetBlockInfo(forPlayer, dsc);
+  }
+
+  private void OnSlotModified(int slotId) {
+    GetInventoryControl()?.OnSlotModified();
+  }
+
+  public void InventoryChanged() {
+    if (invDialog != null) {
+      invDialog?.TryClose();
+
+      invDialog?.Dispose();
+      invDialog = null;
+    }
+    // Recreate the inventory slot.
+    SetSlot();
   }
 }

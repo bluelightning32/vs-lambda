@@ -1,11 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-using Newtonsoft.Json.Serialization;
-
 using Vintagestory.API.Common;
-using Vintagestory.API.Datastructures;
-using Vintagestory.API.MathTools;
 
 namespace LambdaFactory;
 

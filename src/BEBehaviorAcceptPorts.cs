@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 
 using Newtonsoft.Json;
@@ -7,7 +8,6 @@ using Newtonsoft.Json.Converters;
 
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
@@ -27,8 +27,11 @@ public class PortOption {
   public BlockFacing[] Faces = Array.Empty<BlockFacing>();
   public Dictionary<string, CompositeTexture> FullTextures;
 
+  public InventoryOptions Inventory;
+
   public PortOption(string name, PortDirection[] directions, string[] faces,
-                    Dictionary<string, CompositeTexture> fullTextures) {
+                    Dictionary<string, CompositeTexture> fullTextures,
+                    InventoryOptions inventory) {
     Name = name;
     Directions = directions;
     Faces = new BlockFacing[faces.Length];
@@ -39,6 +42,7 @@ public class PortOption {
       }
     }
     FullTextures = fullTextures;
+    Inventory = inventory;
   }
 }
 
@@ -70,7 +74,9 @@ public interface IAcceptPorts {
                out string failureCode);
 }
 
-public class BEBehaviorAcceptPorts : BEBehaviorTermNetwork, IAcceptPorts {
+public class BEBehaviorAcceptPorts : BEBehaviorTermNetwork,
+                                     IAcceptPorts,
+                                     IInventoryControl {
   // Each face uses 1 bit to indicate whether a port is present.
   private int _portedSides = 0;
   // Each face uses 2 bits to indicate which kind of port is present.
@@ -172,16 +178,28 @@ public class BEBehaviorAcceptPorts : BEBehaviorTermNetwork, IAcceptPorts {
     }
   }
 
-  public override object GetKey() { return _portedSides; }
+  public override object GetKey() {
+    bool inventoryFull =
+        (Blockentity as BlockEntityTermContainer)?.Inventory[0].Itemstack !=
+        null;
+    return _portedSides | ((inventoryFull ? 1 : 0) << 6);
+  }
 
-  public override object GetImmutableKey() { return _portedSides; }
+  public override object GetImmutableKey() { return GetKey(); }
 
   public virtual bool CanAcceptPort(PortOption option, PortDirection direction,
                                     BlockFacing face, out string failureCode) {
     // Verify the port option isn't full from a different side.
-    foreach (BlockFacing faceOption in option.Faces) {
-      if ((_portedSides & (1 << faceOption.Index)) != 0) {
-        failureCode = "portfull";
+    if (IsPortFull(option)) {
+      failureCode = "portfull";
+      return false;
+    }
+    if (GetInventoryPort() == option) {
+      ItemStack item =
+          (Blockentity as BlockEntityTermContainer)?.Inventory[0].Itemstack;
+      if (item != null &&
+          !(GetNextInventoryPort()?.Inventory.CanAccept(item) ?? false)) {
+        failureCode = "portinventoryfull";
         return false;
       }
     }
@@ -206,6 +224,7 @@ public class BEBehaviorAcceptPorts : BEBehaviorTermNetwork, IAcceptPorts {
       return false;
     }
     if (Api.World.BlockAccessor.SetDecor(port, Pos, face)) {
+      InventoryOptions oldInventory = GetInventoryOptions();
       _portedSides |= 1 << face.Index;
       _occupiedPorts |= (int)direction << (face.Index << 1);
       _template = ParseBlockNodeTemplate(Api.World, properties);
@@ -214,32 +233,112 @@ public class BEBehaviorAcceptPorts : BEBehaviorTermNetwork, IAcceptPorts {
           _template.GetNodeTemplate(EdgeExtension.GetFaceCenter(face)).Id;
       _template.OnNodePlaced(Pos, nodeId, ref _nodes[nodeId]);
       Blockentity.GetBehavior<BEBehaviorCacheMesh>()?.UpdateMesh();
+      if (GetInventoryOptions() != oldInventory) {
+        (Blockentity as BlockEntityTermContainer)?.InventoryChanged();
+      }
       return true;
     }
     failureCode = "existingdecorinplace";
     return false;
   }
 
+  private bool IsPortFull(PortOption option) {
+    foreach (BlockFacing faceOption in option.Faces) {
+      if ((_portedSides & (1 << faceOption.Index)) != 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public override TextureAtlasPosition GetTexture(string textureCode) {
     foreach (PortOption option in _configuration.Ports) {
-      if (option.FullTextures == null ||
-          !option.FullTextures.TryGetValue(textureCode,
-                                           out CompositeTexture replacement)) {
-        continue;
-      }
-      ICoreClientAPI capi = (ICoreClientAPI)Api;
-      foreach (BlockFacing faceOption in option.Faces) {
-        if ((_portedSides & (1 << faceOption.Index)) != 0) {
-          replacement.Bake(capi.Assets);
-          ITextureAtlasAPI atlas = capi.BlockTextureAtlas;
-          atlas.GetOrInsertTexture(
-              replacement.Baked.BakedName, out int id,
-              out TextureAtlasPosition tex,
-              () => atlas.LoadCompositeBitmap(replacement.Baked.BakedName));
-          return tex;
-        }
+      if ((option.FullTextures != null &&
+           option.FullTextures.TryGetValue(textureCode,
+                                           out CompositeTexture replacement) &&
+           IsPortFull(option)) ||
+          (option.Inventory?.FullTextures != null &&
+           option.Inventory.FullTextures.TryGetValue(textureCode,
+                                                     out replacement) &&
+           IsPortInventoryFull(option))) {
+        ICoreClientAPI capi = (ICoreClientAPI)Api;
+        replacement.Bake(capi.Assets);
+        ITextureAtlasAPI atlas = capi.BlockTextureAtlas;
+        atlas.GetOrInsertTexture(
+            replacement.Baked.BakedName, out int id,
+            out TextureAtlasPosition tex,
+            () => atlas.LoadCompositeBitmap(replacement.Baked.BakedName));
+        return tex;
       }
     }
     return null;
+  }
+
+  bool IsPortInventoryFull(PortOption option) {
+    if (option != GetInventoryPort()) {
+      return false;
+    }
+    return (Blockentity as BlockEntityTermContainer)?.Inventory[0].Itemstack !=
+           null;
+  }
+
+  PortOption GetInventoryPort() {
+    foreach (PortOption option in _configuration.Ports) {
+      if (option.Inventory != null && !IsPortFull(option)) {
+        return option;
+      }
+    }
+    return null;
+  }
+
+  PortOption GetNextInventoryPort() {
+    bool foundFirst = false;
+    foreach (PortOption option in _configuration.Ports) {
+      if (option.Inventory != null && !IsPortFull(option)) {
+        if (foundFirst) {
+          return option;
+        }
+        foundFirst = true;
+      }
+    }
+    return null;
+  }
+
+  InventoryOptions GetInventoryOptions() {
+    return GetInventoryPort()?.Inventory;
+  }
+
+  string IInventoryControl.GetTitle() {
+    return GetInventoryOptions()?.DialogTitleLangCode;
+  }
+
+  string IInventoryControl.GetDescription() {
+    return GetInventoryOptions()?.DialogDescLangCode;
+  }
+
+  private bool CanAccept(ItemSlot sourceSlot) {
+    return GetInventoryOptions()?.CanAccept(sourceSlot.Itemstack) ?? false;
+  }
+
+  ItemSlot IInventoryControl.GetSlot(InventoryGeneric inventory) {
+    InventoryOptions options = GetInventoryOptions();
+    if (options == null) {
+      return null;
+    }
+    return new SelectiveItemSlot(inventory, CanAccept,
+                                 options.MaxSlotStackSize);
+  }
+
+  bool IInventoryControl.GetHidePerishRate() {
+    return GetInventoryOptions()?.HidePerishRate ?? false;
+  }
+
+  void IInventoryControl.OnSlotModified() {
+    if ((GetInventoryOptions()?.FullTextures?.Count ?? 0) != 0) {
+      Blockentity.GetBehavior<BEBehaviorCacheMesh>()?.UpdateMesh();
+      if (Api.Side == EnumAppSide.Client) {
+        Blockentity.MarkDirty(true);
+      }
+    }
   }
 }

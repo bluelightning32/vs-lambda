@@ -1,14 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Reflection.PortableExecutable;
-using System.Xml.Schema;
 
 using Newtonsoft.Json;
 
 using Vintagestory.API.Client;
-using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 

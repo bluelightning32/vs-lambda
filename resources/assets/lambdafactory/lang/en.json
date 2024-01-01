@@ -1,4 +1,8 @@
 {
-  "case-container-title": "Case Block",
-  "case-container-description": "Place the constructor item here to identify the case to handle.",
+  "case-container-title": "Case constructor",
+  "case-container-description": "Constructor item to identify the case to handle.",
+  "app-argument-container-title": "Argument",
+  "app-argument-container-description": "Argument item or constant item, depending on whether the block has an applicand port.",
+  "app-applicand-container-title": "Applicand",
+  "app-applicand-container-description": "Function item to apply to the argument."
 }

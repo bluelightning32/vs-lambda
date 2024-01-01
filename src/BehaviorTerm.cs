@@ -2,7 +2,6 @@ using System.Text;
 
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
-using Vintagestory.API.MathTools;
 
 namespace LambdaFactory;
 
@@ -37,6 +36,13 @@ public class BehaviorTerm : CollectibleBehavior {
 
   public string GetConstructs(ItemStack stack) {
     return _constructs ?? stack.Attributes.GetAsString("constructs");
+  }
+
+  public bool IsFunction(ItemStack stack) {
+    string type = GetType(stack);
+    // For now do a very primitive test that the term is a function. Check
+    // whether it has a -> or forall in the type.
+    return type.Contains("->") || type.Contains("forall");
   }
 
   public bool GetIsType(ItemStack stack) {
