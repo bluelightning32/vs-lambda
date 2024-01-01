@@ -43,11 +43,16 @@
             name: "result",
             directions: ["out"],
             facesByType: {
-              "*-north": ["east", "south", "west"],
-              "*-east": ["north", "south", "west"],
-              "*-west": ["north", "east", "south"],
-              "*-south": ["north", "east", "west"]
+              "*-north": ["south"],
+              "*-east": ["west"],
+              "*-west": ["east"],
+              "*-south": ["north"]
             }
+          },
+          {
+            name: "parameter",
+            directions: ["in", "out"],
+            faces: ["{side}"]
           }
         ]
       }

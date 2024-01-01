@@ -62,7 +62,7 @@
       properties: {
         ports: [
           {
-            name: "port",
+            name: "parameter",
             directions: ["in", "out"],
             faces: ["{rot}"]
           }
