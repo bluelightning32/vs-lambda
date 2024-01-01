@@ -15,16 +15,21 @@
     },
     { name: "BlockEntityForward" },
     { name: "Network" },
+    {
+      name: "Inventory",
+      properties: {
+        dialogTitleLangCode: "lambdafactory:case-container-title",
+        dialogDescLangCode: "lambdafactory:case-container-description",
+        requireConstructor: true,
+        maxSlotStackSize: 1,
+        hidePerishRate: true
+      }
+    },
     { name: "Container" }
   ],
   entityClass: "TermContainer",
   attributes: {
-    inventoryClassName: "case",
-    dialogTitleLangCode: "lambdafactory:case-container-title",
-    dialogDescLangCode: "lambdafactory:case-container-description",
-    requireConstructor: true,
-    maxSlotStackSize: 1,
-    hidePerishRate: true,
+    inventoryClassName: "case"
   },
   entityBehaviors: [
     { name: "CacheMesh" },

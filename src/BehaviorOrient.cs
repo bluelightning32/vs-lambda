@@ -12,7 +12,6 @@ namespace LambdaFactory;
 
 enum OrientationMode { Slab, AllFaces, Horizontals }
 
-// Forwards more methods from the Block to the BlockEntity.
 public class BlockBehaviorOrient : BlockBehavior {
   private string _facingCode;
   private OrientationMode _mode;
