@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 
+using LambdaFactory.Network;
+
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
@@ -13,7 +15,7 @@ public class ScopeNetwork : AbstractNetwork {
     get { return "ScopeNetwork"; }
   }
 
-  public class Manager : AutoStepNetworkManager {
+  public class Manager : AutoStepManager {
     public Manager(IWorldAccessor world)
         : base(world, new NetworkNodeAccessor(
                           (pos) => world.BlockAccessor.GetBlockEntity(pos)
@@ -44,7 +46,7 @@ public class ScopeNetwork : AbstractNetwork {
 
   public ScopeNetwork(VSBlockEntity blockentity) : base(blockentity) {}
 
-  protected override AutoStepNetworkManager GetManager(ICoreAPI api) {
+  protected override AutoStepManager GetManager(ICoreAPI api) {
     return LambdaFactoryModSystem.GetInstance(api).ScopeNetworkManager;
   }
 }

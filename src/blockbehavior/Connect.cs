@@ -1,3 +1,5 @@
+using LambdaFactory.Network;
+
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
@@ -7,7 +9,7 @@ namespace LambdaFactory.BlockBehavior;
 using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
 
 public interface IConnectable {
-  NetworkManager GetManager(ICoreAPI api);
+  Manager GetManager(ICoreAPI api);
   bool CanAddEdge(Edge edge, out NodePos source);
   void AddEdge(Edge edge);
   void RemoveEdge(Edge edge);

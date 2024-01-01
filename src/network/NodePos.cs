@@ -2,7 +2,7 @@ using System;
 
 using Vintagestory.API.MathTools;
 
-namespace LambdaFactory;
+namespace LambdaFactory.Network;
 
 public struct NodePos : IEquatable<NodePos> {
   public BlockPos Block;

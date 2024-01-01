@@ -8,7 +8,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace LambdaFactory;
+namespace LambdaFactory.Network;
 
 public class BlockNodeTemplate {
   private readonly NodeTemplate[] _nodeTemplates;
@@ -18,9 +18,9 @@ public class BlockNodeTemplate {
   private readonly Dictionary<string, NodeTemplate> _textures = new();
 
   private readonly NodeAccessor _accessor;
-  private readonly NetworkManager _manager;
+  private readonly Manager _manager;
 
-  public BlockNodeTemplate(NodeAccessor accessor, NetworkManager manager,
+  public BlockNodeTemplate(NodeAccessor accessor, Manager manager,
                            NodeTemplate[] nodeTemplates) {
     _accessor = accessor;
     _manager = manager;

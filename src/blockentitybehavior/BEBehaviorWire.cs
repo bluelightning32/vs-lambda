@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 
 using LambdaFactory.BlockBehavior;
+using LambdaFactory.Network;
 
 using Newtonsoft.Json;
 
@@ -199,7 +200,7 @@ public class BEBehaviorWire : TermNetwork, IBlockEntityForward, IConnectable {
     Blockentity.GetBehavior<CacheMesh>()?.UpdateMesh();
   }
 
-  NetworkManager BlockBehavior.IConnectable.GetManager(ICoreAPI api) {
+  Network.Manager IConnectable.GetManager(ICoreAPI api) {
     return GetManager(api);
   }
 

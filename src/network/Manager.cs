@@ -9,7 +9,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace LambdaFactory;
+namespace LambdaFactory.Network;
 
 public struct NodeQueueItem : IComparable<NodeQueueItem> {
   public int PropagationDistance = Node.InfDistance;
@@ -74,13 +74,13 @@ public class SourcePendingUpdates {
   }
 }
 
-public abstract class AutoStepNetworkManager : NetworkManager {
+public abstract class AutoStepManager : Manager {
   public bool SingleStep = false;
 
   protected readonly IWorldAccessor _world;
   private bool _stepEnqueued = false;
 
-  public AutoStepNetworkManager(IWorldAccessor world, NodeAccessor accessor)
+  public AutoStepManager(IWorldAccessor world, NodeAccessor accessor)
       : base(world.Api.Side, world.Logger, accessor) {
     _world = world;
   }
@@ -117,7 +117,7 @@ public abstract class AutoStepNetworkManager : NetworkManager {
       BlockNodeTemplate ParseBlockNodeTemplate(JsonObject properties);
 }
 
-public class NetworkManager {
+public class Manager {
   Dictionary<NodePos, SourcePendingUpdates> _pendingUpdates =
       new Dictionary<NodePos, SourcePendingUpdates>();
 
@@ -141,8 +141,7 @@ public class NetworkManager {
 
   private readonly ILogger _logger;
 
-  public NetworkManager(EnumAppSide side, ILogger logger,
-                        NodeAccessor accessor) {
+  public Manager(EnumAppSide side, ILogger logger, NodeAccessor accessor) {
     Side = side;
     _logger = logger;
     _accessor = accessor;

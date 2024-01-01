@@ -1,4 +1,5 @@
 {
+  enabled: false,
   code: "scope",
   variantGroups: [
     { code: "porthole",

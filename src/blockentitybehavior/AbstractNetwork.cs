@@ -1,5 +1,7 @@
 using System.Text;
 
+using LambdaFactory.Network;
+
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
@@ -44,7 +46,7 @@ public abstract class AbstractNetwork : VSBlockEntityBehavior, IMeshGenerator {
 
   public AbstractNetwork(VSBlockEntity blockentity) : base(blockentity) {}
 
-  protected abstract AutoStepNetworkManager GetManager(ICoreAPI api);
+  protected abstract AutoStepManager GetManager(ICoreAPI api);
 
   public override void ToTreeAttributes(ITreeAttribute tree) {
     base.ToTreeAttributes(tree);

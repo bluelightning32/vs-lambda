@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 
 using LambdaFactory.BlockBehavior;
 using LambdaFactory.BlockEntity;
+using LambdaFactory.Network;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;

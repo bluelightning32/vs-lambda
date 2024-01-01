@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using LambdaFactory.Network;
+
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
@@ -124,11 +126,10 @@ public class Orient : VSBlockBehavior {
                         block.CodeWithVariant(_facingCode, orientation)))
             .ToList();
 
-    IReadOnlyDictionary<string, AutoStepNetworkManager> networkManagers =
+    IReadOnlyDictionary<string, AutoStepManager> networkManagers =
         LambdaFactoryModSystem.GetInstance(world.Api).NetworkManagers;
     foreach (string network in _networks) {
-      if (!networkManagers.TryGetValue(network,
-                                       out AutoStepNetworkManager manager)) {
+      if (!networkManagers.TryGetValue(network, out AutoStepManager manager)) {
         world.Api.Logger.Error($"network {network} not registered.");
         continue;
       }

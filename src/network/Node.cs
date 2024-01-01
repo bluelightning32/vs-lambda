@@ -8,7 +8,7 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 
-namespace LambdaFactory;
+namespace LambdaFactory.Network;
 
 public struct Node {
   public NodePos Source;
@@ -71,8 +71,7 @@ public struct Node {
     return $"source=&lt;{Source.Block?.ToString() ?? "null"}&gt;:{Source.NodeId}, parent={Parent}, dist={PropagationDistance}";
   }
 
-  public void Connect(NetworkManager networkManager, Node node,
-                      Edge parentEdge) {
+  public void Connect(Manager networkManager, Node node, Edge parentEdge) {
     Source = node.Source;
     Scope = node.Scope;
     Parent = parentEdge;
@@ -118,7 +117,7 @@ public class NodeTemplate {
     }
   }
 
-  public void OnPlaced(NetworkManager manager, BlockPos pos,
+  public void OnPlaced(Manager manager, BlockPos pos,
                        BlockNodeTemplate[] neighborTemplates,
                        Node[][] neighbors, ref Node node) {
     manager.Debug("Block placed on {0} source set: {1}", manager.Side,
@@ -151,8 +150,8 @@ public class NodeTemplate {
     }
   }
 
-  public void OnRemoved(NodeAccessor accessor, NetworkManager manager,
-                        BlockPos pos, BlockNodeTemplate[] neighborTemplates,
+  public void OnRemoved(NodeAccessor accessor, Manager manager, BlockPos pos,
+                        BlockNodeTemplate[] neighborTemplates,
                         Node[][] neighbors, in Node node) {
     manager.Debug("Block removed on {0} source set: {1}", manager.Side,
                   node.Source.IsSet());
@@ -187,7 +186,7 @@ public class NodeTemplate {
     }
   }
 
-  public bool CanPlace(NetworkManager manager, BlockPos pos,
+  public bool CanPlace(Manager manager, BlockPos pos,
                        BlockNodeTemplate[] neighborTemplates,
                        Node[][] neighbors, out string failureCode) {
     NodePos source = new NodePos();
@@ -224,7 +223,7 @@ public class NodeTemplate {
     return true;
   }
 
-  public void Expand(NodeAccessor accessor, NetworkManager networkManager,
+  public void Expand(NodeAccessor accessor, Manager networkManager,
                      BlockPos pos, Node node) {
     if (ShouldPropagateConnection(accessor, networkManager, pos, node)) {
       PropagateConnection(accessor, networkManager, pos, node);
@@ -239,8 +238,8 @@ public class NodeTemplate {
   // This function is private, because its debug asserts can fail if it is
   // called on a node other than the one that's getting expanded.
   private bool ShouldPropagateConnection(NodeAccessor accessor,
-                                         NetworkManager networkManager,
-                                         BlockPos pos, Node node) {
+                                         Manager networkManager, BlockPos pos,
+                                         Node node) {
     if (Source) {
       return true;
     }
@@ -258,7 +257,7 @@ public class NodeTemplate {
   }
 
   private void PropagateConnection(NodeAccessor accessor,
-                                   NetworkManager networkManager, BlockPos pos,
+                                   Manager networkManager, BlockPos pos,
                                    Node node) {
     BlockPos neighborPos = new(pos.dimension);
     foreach (Edge edge in Edges) {
@@ -309,8 +308,8 @@ public class NodeTemplate {
   }
 
   private void PropagateDisconnection(NodeAccessor accessor,
-                                      NetworkManager networkManager,
-                                      BlockPos pos, Node node) {
+                                      Manager networkManager, BlockPos pos,
+                                      Node node) {
     BlockPos neighborPos = new(pos.dimension);
     foreach (Edge edge in Edges) {
       BlockFacing face = edge.GetFace();
@@ -334,9 +333,8 @@ public class NodeTemplate {
     }
   }
 
-  public void EjectIfDisconnected(NodeAccessor accessor,
-                                  NetworkManager networkManager, NodePos source,
-                                  BlockPos pos, Node node) {
+  public void EjectIfDisconnected(NodeAccessor accessor, Manager networkManager,
+                                  NodePos source, BlockPos pos, Node node) {
     if (node.Source != source || !node.HasInfDistance) {
       // Do not eject this node if it is no longer disconnected, or if it now
       // belongs to a different source.

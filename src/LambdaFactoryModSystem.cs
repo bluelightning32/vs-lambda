@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 
+using LambdaFactory.Network;
+
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;
@@ -13,17 +15,17 @@ public class LambdaFactoryModSystem : ModSystem {
   // Storing this field in the mod ensures that there is once instance per API
   // instance. These fields cannot be stored in the object cache, because the
   // object cache can be cleared with a command.
-  public AutoStepNetworkManager ScopeNetworkManager { get; private set; }
-  public AutoStepNetworkManager MatchNetworkManager { get; private set; }
+  public AutoStepManager ScopeNetworkManager { get; private set; }
+  public AutoStepManager MatchNetworkManager { get; private set; }
   public BlockEntityBehavior.TermNetwork.Manager TermNetworkManager {
     get; private set;
   }
 
   // Indexed by behavior name
-  private readonly Dictionary<string, AutoStepNetworkManager> _networkManagers =
-      new Dictionary<string, AutoStepNetworkManager>();
+  private readonly Dictionary<string, AutoStepManager> _networkManagers =
+      new Dictionary<string, AutoStepManager>();
   // Indexed by behavior name
-  public IReadOnlyDictionary<string, AutoStepNetworkManager> NetworkManagers {
+  public IReadOnlyDictionary<string, AutoStepManager> NetworkManagers {
     get { return _networkManagers; }
   }
 
@@ -74,7 +76,7 @@ public class LambdaFactoryModSystem : ModSystem {
   }
 
   public void RegisterNetworkDebugCommands(IChatCommandApi api, string name,
-                                           AutoStepNetworkManager manager) {
+                                           AutoStepManager manager) {
     IChatCommand network =
         api.GetOrCreate("debug").BeginSubCommand(name).WithDescription(
             "Debug commands for network propagation in the Lambda mod.");

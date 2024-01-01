@@ -1,3 +1,5 @@
+using LambdaFactory.Network;
+
 using Vintagestory.API.Common;
 
 namespace LambdaFactory.Tests;
@@ -9,7 +11,7 @@ public class TestBlockNodeTemplates {
 
   public BlockNodeTemplate ScopeCenterSource;
 
-  public TestBlockNodeTemplates(NodeAccessor accessor, NetworkManager manager) {
+  public TestBlockNodeTemplates(NodeAccessor accessor, Manager manager) {
     ScopeCenterConnector = new BlockNodeTemplate(
         accessor, manager, JsonUtil.FromString<NodeTemplate[]>(@"
         [

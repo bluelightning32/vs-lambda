@@ -1,3 +1,5 @@
+using LambdaFactory.Network;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Vintagestory.API.Common;
@@ -8,7 +10,7 @@ namespace LambdaFactory.Tests;
 
 [TestClass]
 public class BlockNodeTemplateTest {
-  private NetworkManager _manager;
+  private Manager _manager;
   private MemoryNodeAccessor _accessor;
   private TestBlockNodeTemplates _templates;
 
@@ -36,7 +38,7 @@ public class BlockNodeTemplateTest {
   [TestInitialize]
   public void Initialize() {
     _accessor = new MemoryNodeAccessor();
-    _manager = new NetworkManager(EnumAppSide.Server, null, _accessor);
+    _manager = new Manager(EnumAppSide.Server, null, _accessor);
     _templates = new TestBlockNodeTemplates(_accessor, _manager);
   }
 

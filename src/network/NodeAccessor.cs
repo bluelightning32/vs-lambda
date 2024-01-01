@@ -1,6 +1,6 @@
 using Vintagestory.API.MathTools;
 
-namespace LambdaFactory;
+namespace LambdaFactory.Network;
 
 public abstract class NodeAccessor {
   // Gets the node and its template at `pos`. If the node does not exist, then

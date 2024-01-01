@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using LambdaFactory.Network;
+
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
@@ -16,7 +18,7 @@ public class TermNetwork : AbstractNetwork {
     get { return "TermNetwork"; }
   }
 
-  public class Manager : AutoStepNetworkManager {
+  public class Manager : AutoStepManager {
     public Manager(IWorldAccessor world)
         : base(world, new NetworkNodeAccessor(
                           (pos) => world.BlockAccessor.GetBlockEntity(pos)
