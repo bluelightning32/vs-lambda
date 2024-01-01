@@ -360,7 +360,6 @@ public class Manager {
       return;
     }
 
-    System.Diagnostics.Debug.Assert(sourceQueue.Ejections.Count > 0);
     if (sourceQueue.Ejections.Count > 0) {
       NodePos first = sourceQueue.Ejections.PopOne();
       NodeTemplate template =

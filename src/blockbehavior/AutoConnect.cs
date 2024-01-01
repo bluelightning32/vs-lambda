@@ -22,31 +22,53 @@ public interface IConnectable {
 // This is used by the wire blocks, where they actually add edges when placed.
 // For other blocks, the possible edges are static, and the edges are either
 // paired or unpaired depending on whether the neighboring block reciprocates.
-public class Connect : VSBlockBehavior {
+public class AutoConnect : VSBlockBehavior {
   private bool _singleConnect = false;
-  public Connect(Block block) : base(block) {}
+  // Disconnect the edge on this block when a neighbor loses its corresponding
+  // edge, even if the neighbor does not have the connect behavior.
+  private bool _disconnectOnNeighborChange = false;
+  // When this block is broken, disconnect any auto connectible neighbors.
+  private bool _disconnectOnBreak;
+  public AutoConnect(Block block) : base(block) {}
 
   public override void Initialize(JsonObject properties) {
     base.Initialize(properties);
     _singleConnect = properties["singleConnect"].AsBool();
+    _disconnectOnNeighborChange =
+        properties["disconnectOnNeighborChange"].AsBool();
+    _disconnectOnBreak = properties["disconnectOnBreak"].AsBool(true);
   }
 
   public override void OnNeighbourBlockChange(IWorldAccessor world,
                                               BlockPos pos, BlockPos neibpos,
                                               ref EnumHandling handling) {
-    IConnectable connectable = block.GetInterface<IConnectable>(world, pos);
-    if (connectable != null) {
-      foreach (BlockFacing face in BlockFacing.ALLFACES) {
-        BlockPos neighborPos = pos.AddCopy(face);
-        if (!connectable.GetManager(world.Api).GetSource(
-                neighborPos, EdgeExtension.GetFaceCenter(face.Opposite),
-                out NodePos source)) {
-          connectable.RemoveEdge(EdgeExtension.GetFaceCenter(face));
+    if (_disconnectOnNeighborChange) {
+      IConnectable connectable = block.GetInterface<IConnectable>(world, pos);
+      if (connectable != null) {
+        foreach (BlockFacing face in BlockFacing.ALLFACES) {
+          BlockPos neighborPos = pos.AddCopy(face);
+          if (!connectable.GetManager(world.Api).GetSource(
+                  neighborPos, EdgeExtension.GetFaceCenter(face.Opposite),
+                  out NodePos source)) {
+            connectable.RemoveEdge(EdgeExtension.GetFaceCenter(face));
+          }
         }
       }
     }
 
     base.OnNeighbourBlockChange(world, pos, neibpos, ref handling);
+  }
+
+  public override void OnBlockBroken(IWorldAccessor world, BlockPos pos,
+                                     IPlayer byPlayer,
+                                     ref EnumHandling handling) {
+    base.OnBlockBroken(world, pos, byPlayer, ref handling);
+    foreach (BlockFacing face in BlockFacing.ALLFACES) {
+      BlockPos neighborPos = pos.AddCopy(face);
+      IConnectable connectable =
+          block.GetInterface<IConnectable>(world, neighborPos);
+      connectable?.RemoveEdge(EdgeExtension.GetFaceCenter(face.Opposite));
+    }
   }
 
   public override bool DoPlaceBlock(IWorldAccessor world, IPlayer byPlayer,

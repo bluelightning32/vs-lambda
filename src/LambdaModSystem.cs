@@ -40,7 +40,8 @@ public class LambdaModSystem : ModSystem {
                                          typeof(CollectibleBehavior.Term));
     api.RegisterBlockBehaviorClass("BlockEntityForward",
                                    typeof(BlockBehavior.BlockEntityForward));
-    api.RegisterBlockBehaviorClass("Connect", typeof(BlockBehavior.Connect));
+    api.RegisterBlockBehaviorClass("AutoConnect",
+                                   typeof(BlockBehavior.AutoConnect));
     api.RegisterBlockBehaviorClass("Inventory",
                                    typeof(BlockBehavior.Inventory));
     api.RegisterBlockBehaviorClass("Network", typeof(BlockBehavior.Network));
@@ -61,8 +62,8 @@ public class LambdaModSystem : ModSystem {
     api.RegisterBlockEntityBehaviorClass(
         BlockEntityBehavior.TermNetwork.Name,
         typeof(BlockEntityBehavior.TermNetwork));
-    api.RegisterBlockEntityBehaviorClass(
-        "Wire", typeof(BlockEntityBehavior.BEBehaviorWire));
+    api.RegisterBlockEntityBehaviorClass("Wire",
+                                         typeof(BlockEntityBehavior.Wire));
     _networkManagers[BlockEntityBehavior.ScopeNetwork.Name] =
         ScopeNetworkManager =
             new BlockEntityBehavior.ScopeNetwork.Manager(api.World);

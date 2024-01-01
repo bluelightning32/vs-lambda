@@ -45,12 +45,12 @@ public class WireTemplate {
   }
 }
 
-public class BEBehaviorWire : TermNetwork, IBlockEntityForward, IConnectable {
+public class Wire : TermNetwork, IBlockEntityForward, IConnectable {
   private WireTemplate _WireTemplate = null;
   private int _directions = 0;
   private Cuboidf[] _selectionBoxes = null;
 
-  public BEBehaviorWire(VSBlockEntity blockentity) : base(blockentity) {}
+  public Wire(VSBlockEntity blockentity) : base(blockentity) {}
 
   public override void Initialize(ICoreAPI api) {
     base.Initialize(api);
@@ -115,35 +115,20 @@ public class BEBehaviorWire : TermNetwork, IBlockEntityForward, IConnectable {
     List<Cuboidf> boxes = new();
     Cuboidf center = new Cuboidf(6.5f / 16, 6.5f / 16, 6.5f / 16, 9.5f / 16,
                                  9.5f / 16, 9.5f / 16);
-    int remaining = directions;
-    for (int i = 0; i < BlockFacing.indexUP; ++i) {
-      int j = BlockFacing.ALLFACES[i].Opposite.Index;
-      if ((remaining & (1 << i)) != 0 && (remaining & (1 << j)) != 0) {
-        center.Expand(BlockFacing.ALLFACES[i], 6.5f / 16);
-        center.Expand(BlockFacing.ALLFACES[j], 6.5f / 16);
-        boxes.Add(center);
-        remaining &= ~((1 << i) | (1 << j));
-        center = null;
-        break;
-      }
-    }
+    boxes.Add(center);
     for (int i = 0; i < 6; ++i) {
-      if ((remaining & (1 << i)) != 0) {
-        if (center != null) {
-          center.Expand(BlockFacing.ALLFACES[i], 6.5f / 16);
-          boxes.Add(center);
-          center = null;
-        } else {
-          Cuboidf side = new Cuboidf(6.5f / 16, 6.5f / 16, 6.5f / 16, 9.5f / 16,
-                                     9.5f / 16, 9.5f / 16);
-          side.Expand(BlockFacing.ALLFACES[i], 6.5f / 16);
-          side.Expand(BlockFacing.ALLFACES[i].Opposite, -3f / 16);
-          boxes.Add(side);
-        }
+      if ((directions & (1 << i)) != 0) {
+        // Start with the center cube.
+        Cuboidf side = new Cuboidf(6.5f / 16, 6.5f / 16, 6.5f / 16, 9.5f / 16,
+                                   9.5f / 16, 9.5f / 16);
+        // Expand the cuboid in the direction that the wire segment faces. After
+        // this the cuboid will contain both the wire segment and the center.
+        side.Expand(BlockFacing.ALLFACES[i], 6.5f / 16);
+        // Now remove the center so that the cuboid contains just the wire
+        // segment.
+        side.Expand(BlockFacing.ALLFACES[i].Opposite, -3f / 16);
+        boxes.Add(side);
       }
-    }
-    if (center != null) {
-      boxes.Add(center);
     }
 
     return cache[directions] = boxes.ToArray();
@@ -205,6 +190,10 @@ public class BEBehaviorWire : TermNetwork, IBlockEntityForward, IConnectable {
   }
 
   public void RemoveEdge(Edge edge) {
+    if ((_directions & edge.GetFace().Flag) == 0) {
+      // The block doesn't currently have that edge.
+      return;
+    }
     _directions &= ~edge.GetFace().Flag;
     _selectionBoxes = GetSelectionBoxes(Api, _directions);
     _template = ParseBlockNodeTemplate(Api.World, properties);

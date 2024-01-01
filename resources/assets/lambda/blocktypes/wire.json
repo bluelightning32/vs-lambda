@@ -5,7 +5,7 @@
   class: "BlockGeneric",
   behaviors: [
     { name: "BlockEntityForward" },
-    { name: "Connect" }
+    { name: "AutoConnect" }
   ],
   textures: {
     "center": {
