@@ -8,7 +8,7 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 
-namespace LambdaFactory.Network;
+namespace Lambda.Network;
 
 public struct Node {
   public NodePos Source;

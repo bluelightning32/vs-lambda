@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
-using LambdaFactory.BlockBehavior;
-using LambdaFactory.Network;
+using Lambda.BlockBehavior;
+using Lambda.Network;
 
 using Newtonsoft.Json;
 
@@ -11,7 +11,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace LambdaFactory.BlockEntityBehavior;
+namespace Lambda.BlockEntityBehavior;
 using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 
 public class ShapeOverride {
@@ -89,7 +89,7 @@ public class BEBehaviorWire : TermNetwork, IBlockEntityForward, IConnectable {
     if (api.Side == EnumAppSide.Server)
       return null;
     Dictionary<JsonObject, WireTemplate> cache = ObjectCacheUtil.GetOrCreate(
-        api, $"lambdafactory-wire-mesh",
+        api, $"lambda-wire-mesh",
         () => new Dictionary<JsonObject, WireTemplate>());
     if (cache.TryGetValue(properties, out WireTemplate template)) {
       return template;
@@ -105,9 +105,9 @@ public class BEBehaviorWire : TermNetwork, IBlockEntityForward, IConnectable {
   }
 
   private static Cuboidf[] GetSelectionBoxes(ICoreAPI api, int directions) {
-    Dictionary<int, Cuboidf[]> cache = ObjectCacheUtil.GetOrCreate(
-        api, "lambdafactory-wire-collisionSelectionBoxes",
-        () => new Dictionary<int, Cuboidf[]>());
+    Dictionary<int, Cuboidf[]> cache =
+        ObjectCacheUtil.GetOrCreate(api, "lambda-wire-collisionSelectionBoxes",
+                                    () => new Dictionary<int, Cuboidf[]>());
     if (cache.TryGetValue(directions, out Cuboidf[] selectionBoxes)) {
       return selectionBoxes;
     }

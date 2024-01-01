@@ -1,9 +1,9 @@
-using LambdaFactory.Network;
+using Lambda.Network;
 
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace LambdaFactory.Tests;
+namespace Lambda.Tests;
 
 public struct BlockNodeInfo {
   public BlockNodeTemplate Template;

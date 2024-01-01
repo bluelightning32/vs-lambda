@@ -1,7 +1,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace LambdaFactory.Tests;
+namespace Lambda.Tests;
 
 // This class allows the Vintagestory dlls to be loaded from $(VINTAGE_STORY).
 public class AddVintageStoryPath {

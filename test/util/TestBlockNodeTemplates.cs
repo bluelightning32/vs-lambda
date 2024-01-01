@@ -1,8 +1,8 @@
-using LambdaFactory.Network;
+using Lambda.Network;
 
 using Vintagestory.API.Common;
 
-namespace LambdaFactory.Tests;
+namespace Lambda.Tests;
 
 public class TestBlockNodeTemplates {
   public BlockNodeTemplate ScopeCenterConnector;

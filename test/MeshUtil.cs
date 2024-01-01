@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Vintagestory.API.Client;
 using Vintagestory.API.MathTools;
 
-namespace LambdaFactory.Tests;
+namespace Lambda.Tests;
 
 [TestClass]
 public class MeshUtilTest {

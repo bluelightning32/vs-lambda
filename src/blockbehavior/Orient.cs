@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using LambdaFactory.Network;
+using Lambda.Network;
 
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 
-namespace LambdaFactory.BlockBehavior;
+namespace Lambda.BlockBehavior;
 
 using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
 
@@ -127,7 +127,7 @@ public class Orient : VSBlockBehavior {
             .ToList();
 
     IReadOnlyDictionary<string, AutoStepManager> networkManagers =
-        LambdaFactoryModSystem.GetInstance(world.Api).NetworkManagers;
+        LambdaModSystem.GetInstance(world.Api).NetworkManagers;
     foreach (string network in _networks) {
       if (!networkManagers.TryGetValue(network, out AutoStepManager manager)) {
         world.Api.Logger.Error($"network {network} not registered.");

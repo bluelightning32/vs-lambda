@@ -1,4 +1,4 @@
-using LambdaFactory.Network;
+using Lambda.Network;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -6,7 +6,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace LambdaFactory.Tests;
+namespace Lambda.Tests;
 
 [TestClass]
 public class BlockNodeTemplateTest {

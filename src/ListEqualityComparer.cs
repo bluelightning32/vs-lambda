@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
-namespace LambdaFactory;
+namespace Lambda;
 
 class ListEqualityComparer<T> : IEqualityComparer<List<T>> {
   public bool Equals(List<T> x, List<T> y) {

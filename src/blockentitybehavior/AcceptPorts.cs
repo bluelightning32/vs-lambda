@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 
-using LambdaFactory.BlockBehavior;
-using LambdaFactory.BlockEntity;
-using LambdaFactory.Network;
+using Lambda.BlockBehavior;
+using Lambda.BlockEntity;
+using Lambda.Network;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -16,7 +16,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace LambdaFactory.BlockEntityBehavior;
+namespace Lambda.BlockEntityBehavior;
 
 using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 
@@ -88,7 +88,7 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
                                                      JsonObject properties) {
     Dictionary<JsonObject, PortConfiguration> cache =
         ObjectCacheUtil.GetOrCreate(
-            api, $"lambdafactory-accept-ports",
+            api, $"lambda-accept-ports",
             () => new Dictionary<JsonObject, PortConfiguration>());
     if (cache.TryGetValue(properties, out PortConfiguration configuration)) {
       return configuration;
@@ -98,7 +98,7 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
         cache.Count);
     configuration = properties.AsObject<PortConfiguration>(
         new PortConfiguration(Array.Empty<PortOption>()),
-        LambdaFactoryModSystem.Domain);
+        LambdaModSystem.Domain);
     cache.Add(properties, configuration);
     return configuration;
   }

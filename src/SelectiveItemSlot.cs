@@ -1,6 +1,6 @@
 using Vintagestory.API.Common;
 
-namespace LambdaFactory;
+namespace Lambda;
 
 class SelectiveItemSlot : ItemSlot {
   public delegate bool CanAcceptDelegate(ItemSlot source);

@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 
-using LambdaFactory.BlockEntity;
+using Lambda.BlockEntity;
 
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
-namespace LambdaFactory.BlockBehavior;
+namespace Lambda.BlockBehavior;
 
 using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
 

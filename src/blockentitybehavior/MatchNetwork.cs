@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 
-using LambdaFactory.Network;
+using Lambda.Network;
 
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
 
-namespace LambdaFactory.BlockEntityBehavior;
+namespace Lambda.BlockEntityBehavior;
 using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 
 public class MatchNetwork : AbstractNetwork {
@@ -25,7 +25,7 @@ public class MatchNetwork : AbstractNetwork {
         BlockNodeTemplate ParseBlockNodeTemplate(JsonObject properties) {
       Dictionary<JsonObject, BlockNodeTemplate> cache =
           ObjectCacheUtil.GetOrCreate(
-              _world.Api, $"lambdafactory-match-network-properties",
+              _world.Api, $"lambda-match-network-properties",
               () => new Dictionary<JsonObject, BlockNodeTemplate>());
       if (cache.TryGetValue(properties, out BlockNodeTemplate block)) {
         return block;
@@ -47,6 +47,6 @@ public class MatchNetwork : AbstractNetwork {
   public MatchNetwork(VSBlockEntity blockentity) : base(blockentity) {}
 
   protected override AutoStepManager GetManager(ICoreAPI api) {
-    return LambdaFactoryModSystem.GetInstance(api).MatchNetworkManager;
+    return LambdaModSystem.GetInstance(api).MatchNetworkManager;
   }
 }

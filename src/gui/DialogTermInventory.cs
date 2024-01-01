@@ -3,7 +3,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 
-namespace LambdaFactory.Gui;
+namespace Lambda.Gui;
 
 public static partial class GuiComposerHelpers {
   public static GuiComposer AddDialogTitleBar(this GuiComposer composer,

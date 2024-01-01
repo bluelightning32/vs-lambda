@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using LambdaFactory.Network;
+using Lambda.Network;
 
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace LambdaFactory.BlockEntityBehavior;
+namespace Lambda.BlockEntityBehavior;
 using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 
 public class TermNetwork : AbstractNetwork {
@@ -28,7 +28,7 @@ public class TermNetwork : AbstractNetwork {
                                                       int occupiedPorts) {
       Dictionary<Tuple<JsonObject, int>, BlockNodeTemplate> cache =
           ObjectCacheUtil.GetOrCreate(
-              _world.Api, $"lambdafactory-term-accept-ports-properties",
+              _world.Api, $"lambda-term-accept-ports-properties",
               () =>
                   new Dictionary<Tuple<JsonObject, int>, BlockNodeTemplate>());
       Tuple<JsonObject, int> key = Tuple.Create(properties, occupiedPorts);
@@ -69,7 +69,7 @@ public class TermNetwork : AbstractNetwork {
         BlockNodeTemplate ParseBlockNodeTemplate(JsonObject properties) {
       Dictionary<JsonObject, BlockNodeTemplate> cache =
           ObjectCacheUtil.GetOrCreate(
-              _world.Api, $"lambdafactory-term-network-properties",
+              _world.Api, $"lambda-term-network-properties",
               () => new Dictionary<JsonObject, BlockNodeTemplate>());
       if (cache.TryGetValue(properties, out BlockNodeTemplate block)) {
         return block;
@@ -90,7 +90,7 @@ public class TermNetwork : AbstractNetwork {
                                                  int directions) {
       Dictionary<Tuple<JsonObject, int>, BlockNodeTemplate> cache =
           ObjectCacheUtil.GetOrCreate(
-              _world.Api, $"lambdafactory-term-wire-properties",
+              _world.Api, $"lambda-term-wire-properties",
               () =>
                   new Dictionary<Tuple<JsonObject, int>, BlockNodeTemplate>());
       Tuple<JsonObject, int> key = Tuple.Create(properties, directions);
@@ -122,6 +122,6 @@ public class TermNetwork : AbstractNetwork {
   public TermNetwork(VSBlockEntity blockentity) : base(blockentity) {}
 
   protected override Manager GetManager(ICoreAPI api) {
-    return LambdaFactoryModSystem.GetInstance(api).TermNetworkManager;
+    return LambdaModSystem.GetInstance(api).TermNetworkManager;
   }
 }

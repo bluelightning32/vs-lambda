@@ -2,7 +2,7 @@ using System.Runtime.Serialization;
 
 using Vintagestory.API.MathTools;
 
-namespace LambdaFactory.Network;
+namespace Lambda.Network;
 
 public enum Edge {
   [EnumMember(Value = "unknown")] Unknown = 0,

@@ -1,14 +1,14 @@
 {
 	"type": "code",
-	"name": "Lambda Factory",
-	"modid": "lambdafactory",
+	"name": "Lambda",
+	"modid": "lambda",
 	"version": "0.1.0",
 	
 	"description" : "Solve puzzles in Coq.",
-	"website": "https://github.com/bluelightning32/lambda-factory",
+	"website": "https://github.com/bluelightning32/vs-lambda",
 	"authors": [ "bluelightning32" ],
 	
 	"dependencies": {
-		"game": "1.18.13"
+		"game": "1.19.0-rc.4"
 	}
 }

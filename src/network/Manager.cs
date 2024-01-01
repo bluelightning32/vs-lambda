@@ -9,7 +9,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace LambdaFactory.Network;
+namespace Lambda.Network;
 
 public struct NodeQueueItem : IComparable<NodeQueueItem> {
   public int PropagationDistance = Node.InfDistance;

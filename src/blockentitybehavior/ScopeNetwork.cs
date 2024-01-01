@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 
-using LambdaFactory.Network;
+using Lambda.Network;
 
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
 
-namespace LambdaFactory.BlockEntityBehavior;
+namespace Lambda.BlockEntityBehavior;
 using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 
 public class ScopeNetwork : AbstractNetwork {
@@ -25,7 +25,7 @@ public class ScopeNetwork : AbstractNetwork {
         BlockNodeTemplate ParseBlockNodeTemplate(JsonObject properties) {
       Dictionary<JsonObject, BlockNodeTemplate> cache =
           ObjectCacheUtil.GetOrCreate(
-              _world.Api, $"lambdafactory-scope-network-properties",
+              _world.Api, $"lambda-scope-network-properties",
               () => new Dictionary<JsonObject, BlockNodeTemplate>());
       if (cache.TryGetValue(properties, out BlockNodeTemplate block)) {
         return block;
@@ -47,6 +47,6 @@ public class ScopeNetwork : AbstractNetwork {
   public ScopeNetwork(VSBlockEntity blockentity) : base(blockentity) {}
 
   protected override AutoStepManager GetManager(ICoreAPI api) {
-    return LambdaFactoryModSystem.GetInstance(api).ScopeNetworkManager;
+    return LambdaModSystem.GetInstance(api).ScopeNetworkManager;
   }
 }

@@ -1,15 +1,15 @@
 using System.Collections.Generic;
 
-using LambdaFactory.Network;
+using Lambda.Network;
 
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 
-namespace LambdaFactory;
+namespace Lambda;
 
-public class LambdaFactoryModSystem : ModSystem {
+public class LambdaModSystem : ModSystem {
   public static string Domain { get; private set; }
 
   // Storing this field in the mod ensures that there is once instance per API
@@ -29,10 +29,9 @@ public class LambdaFactoryModSystem : ModSystem {
     get { return _networkManagers; }
   }
 
-  public static LambdaFactoryModSystem GetInstance(ICoreAPI api) {
+  public static LambdaModSystem GetInstance(ICoreAPI api) {
     return ObjectCacheUtil.GetOrCreate(
-        api, $"lambdafactory",
-        () => api.ModLoader.GetModSystem<LambdaFactoryModSystem>());
+        api, $"lambda", () => api.ModLoader.GetModSystem<LambdaModSystem>());
   }
 
   public override void Start(ICoreAPI api) {

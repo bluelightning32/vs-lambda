@@ -7,7 +7,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace LambdaFactory.BlockEntityBehavior;
+namespace Lambda.BlockEntityBehavior;
 
 using VSBlockEntityBehavior = Vintagestory.API.Common.BlockEntityBehavior;
 using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
@@ -59,7 +59,7 @@ public class CacheMesh : VSBlockEntityBehavior {
   static private Dictionary<List<object>, MeshData> GetMeshCache(ICoreAPI api,
                                                                  Block block) {
     return ObjectCacheUtil.GetOrCreate(
-        api, $"lambdafactory-mesh-{block.Code}",
+        api, $"lambda-mesh-{block.Code}",
         () => new Dictionary<List<object>, MeshData>(
             new ListEqualityComparer<object>()));
   }

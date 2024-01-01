@@ -1,6 +1,6 @@
 using System;
 
-namespace LambdaFactory.Network;
+namespace Lambda.Network;
 
 public enum Scope {
   None = 0,

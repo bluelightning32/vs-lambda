@@ -18,8 +18,8 @@
     {
       name: "Inventory",
       properties: {
-        dialogTitleLangCode: "lambdafactory:case-container-title",
-        dialogDescLangCode: "lambdafactory:case-container-description",
+        dialogTitleLangCode: "lambda:case-container-title",
+        dialogDescLangCode: "lambda:case-container-description",
         requireConstructor: true,
         maxSlotStackSize: 1,
         hidePerishRate: true

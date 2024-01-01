@@ -3,7 +3,7 @@ using System.Text;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
-namespace LambdaFactory.CollectibleBehavior;
+namespace Lambda.CollectibleBehavior;
 
 using VSCollectibleBehavior = Vintagestory.API.Common.CollectibleBehavior;
 

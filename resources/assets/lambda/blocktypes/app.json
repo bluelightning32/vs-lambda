@@ -45,8 +45,8 @@
               "*-west": ["west"]
             },
             inventory: {
-              dialogTitleLangCode: "lambdafactory:app-argument-container-title",
-              dialogDescLangCode: "lambdafactory:app-argument-container-description",
+              dialogTitleLangCode: "lambda:app-argument-container-title",
+              dialogDescLangCode: "lambda:app-argument-container-description",
               requireTerm: true,
               maxSlotStackSize: 1,
               hidePerishRate: true,
@@ -70,8 +70,8 @@
               "*-west": ["north"]
             },
             inventory: {
-              dialogTitleLangCode: "lambdafactory:app-applicand-container-title",
-              dialogDescLangCode: "lambdafactory:app-applicand-container-description",
+              dialogTitleLangCode: "lambda:app-applicand-container-title",
+              dialogDescLangCode: "lambda:app-applicand-container-description",
               requireTerm: true,
               requireFunction: true,
               maxSlotStackSize: 1,

@@ -1,7 +1,7 @@
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
-namespace LambdaFactory.BlockBehavior;
+namespace Lambda.BlockBehavior;
 
 using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
 using VSBlockEntity = Vintagestory.API.Common.BlockEntity;

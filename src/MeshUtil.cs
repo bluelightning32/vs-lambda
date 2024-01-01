@@ -3,7 +3,7 @@ using System;
 using Vintagestory.API.Client;
 using Vintagestory.API.MathTools;
 
-namespace LambdaFactory;
+namespace Lambda;
 
 public static class MeshUtil {
   static public void GetFaceAxisBounds(EnumAxis axis, float[] xyz,
