@@ -5,24 +5,24 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 
-namespace LambdaFactory;
+namespace LambdaFactory.BlockEntityBehavior;
 
-public abstract class BEBehaviorAbstractNetwork : BlockEntityBehavior,
-                                                  IMeshGenerator {
+using VSBlockEntityBehavior = Vintagestory.API.Common.BlockEntityBehavior;
+
+public abstract class AbstractNetwork : VSBlockEntityBehavior, IMeshGenerator {
   protected BlockNodeTemplate _template;
   protected Node[] _nodes;
 
   protected class NetworkNodeAccessor : NodeAccessor {
-    private readonly System
-        .Func<BlockPos, BEBehaviorAbstractNetwork> _getBehavior;
+    private readonly System.Func<BlockPos, AbstractNetwork> _getBehavior;
 
     public NetworkNodeAccessor(
-        System.Func<BlockPos, BEBehaviorAbstractNetwork> getBehavior) {
+        System.Func<BlockPos, AbstractNetwork> getBehavior) {
       _getBehavior = getBehavior;
     }
 
     public override BlockNodeTemplate GetBlock(BlockPos pos, out Node[] nodes) {
-      BEBehaviorAbstractNetwork behavior = _getBehavior(pos);
+      AbstractNetwork behavior = _getBehavior(pos);
       if (behavior == null) {
         nodes = null;
         return null;
@@ -32,7 +32,7 @@ public abstract class BEBehaviorAbstractNetwork : BlockEntityBehavior,
     }
 
     public override void SetNode(BlockPos pos, int nodeId, in Node node) {
-      BEBehaviorAbstractNetwork behavior = _getBehavior(pos);
+      AbstractNetwork behavior = _getBehavior(pos);
       bool redraw = behavior._nodes[nodeId].Scope != node.Scope;
       behavior._nodes[nodeId] = node;
       behavior.MarkDirty(redraw);
@@ -41,8 +41,7 @@ public abstract class BEBehaviorAbstractNetwork : BlockEntityBehavior,
 
   private void MarkDirty(bool redraw) { Blockentity.MarkDirty(redraw); }
 
-  public BEBehaviorAbstractNetwork(BlockEntity blockentity)
-      : base(blockentity) {}
+  public AbstractNetwork(BlockEntity blockentity) : base(blockentity) {}
 
   protected abstract AutoStepNetworkManager GetManager(ICoreAPI api);
 
@@ -80,7 +79,7 @@ public abstract class BEBehaviorAbstractNetwork : BlockEntityBehavior,
       // Only update the mesh here if the behavior was already initialized
       // (indicated by the non-null Api), and the template indicates that the
       // nodes changed significantly enough to require a mesh update.
-      Blockentity.GetBehavior<BEBehaviorCacheMesh>()?.UpdateMesh();
+      Blockentity.GetBehavior<CacheMesh>()?.UpdateMesh();
       Blockentity.MarkDirty(true);
     }
 
@@ -107,7 +106,7 @@ public abstract class BEBehaviorAbstractNetwork : BlockEntityBehavior,
   public override void OnBlockPlaced(ItemStack byItemStack = null) {
     base.OnBlockPlaced(byItemStack);
     if (_template.OnPlaced(Pos, _nodes)) {
-      Blockentity.GetBehavior<BEBehaviorCacheMesh>()?.UpdateMesh();
+      Blockentity.GetBehavior<CacheMesh>()?.UpdateMesh();
     }
   }
 

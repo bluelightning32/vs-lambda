@@ -7,9 +7,9 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace LambdaFactory;
+namespace LambdaFactory.BlockEntityBehavior;
 
-public class BEBehaviorTermNetwork : BEBehaviorAbstractNetwork {
+public class TermNetwork : AbstractNetwork {
 
   public static string Name {
     get { return "TermNetwork"; }
@@ -17,10 +17,9 @@ public class BEBehaviorTermNetwork : BEBehaviorAbstractNetwork {
 
   public class Manager : AutoStepNetworkManager {
     public Manager(IWorldAccessor world)
-        : base(world,
-               new NetworkNodeAccessor(
-                   (pos) => world.BlockAccessor.GetBlockEntity(pos)
-                                ?.GetBehavior<BEBehaviorTermNetwork>())) {}
+        : base(world, new NetworkNodeAccessor(
+                          (pos) => world.BlockAccessor.GetBlockEntity(pos)
+                                       ?.GetBehavior<TermNetwork>())) {}
 
     public BlockNodeTemplate ParseAcceptPortsTemplate(JsonObject properties,
                                                       int occupiedPorts) {
@@ -39,7 +38,7 @@ public class BEBehaviorTermNetwork : BEBehaviorAbstractNetwork {
           new(properties["nodes"]?.AsObject<NodeTemplate[]>() ??
               Array.Empty<NodeTemplate>());
       PortConfiguration ports =
-          BEBehaviorAcceptPorts.ParseConfiguration(_world.Api, properties);
+          AcceptPorts.ParseConfiguration(_world.Api, properties);
       foreach (var port in ports.Ports) {
         NodeTemplate node = new();
         foreach (var face in port.Faces) {
@@ -117,7 +116,7 @@ public class BEBehaviorTermNetwork : BEBehaviorAbstractNetwork {
     }
   }
 
-  public BEBehaviorTermNetwork(BlockEntity blockentity) : base(blockentity) {}
+  public TermNetwork(BlockEntity blockentity) : base(blockentity) {}
 
   protected override Manager GetManager(ICoreAPI api) {
     return LambdaFactoryModSystem.GetInstance(api).TermNetworkManager;

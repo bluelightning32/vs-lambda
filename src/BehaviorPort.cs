@@ -4,6 +4,8 @@ using Vintagestory.API.MathTools;
 
 namespace LambdaFactory;
 
+using PortDirection = BlockEntityBehavior.PortDirection;
+
 // Forwards more methods from the Block to the BlockEntity.
 public class BlockBehaviorPort : Vintagestory.GameContent.BlockBehaviorDecor {
   public PortDirection Direction { get; private set; }
@@ -36,7 +38,7 @@ public class BlockBehaviorPort : Vintagestory.GameContent.BlockBehaviorDecor {
 
     bool foundAcceptor = false;
     foreach (var behavior in parentBlock.Behaviors) {
-      if (behavior is not IAcceptPorts acceptor) {
+      if (behavior is not BlockEntityBehavior.IAcceptPorts acceptor) {
         continue;
       }
       foundAcceptor = true;

@@ -15,7 +15,9 @@ public class LambdaFactoryModSystem : ModSystem {
   // object cache can be cleared with a command.
   public AutoStepNetworkManager ScopeNetworkManager { get; private set; }
   public AutoStepNetworkManager MatchNetworkManager { get; private set; }
-  public BEBehaviorTermNetwork.Manager TermNetworkManager { get; private set; }
+  public BlockEntityBehavior.TermNetwork.Manager TermNetworkManager {
+    get; private set;
+  }
 
   // Indexed by behavior name
   private readonly Dictionary<string, AutoStepNetworkManager> _networkManagers =
@@ -43,23 +45,30 @@ public class LambdaFactoryModSystem : ModSystem {
     api.RegisterBlockBehaviorClass("Port", typeof(BlockBehaviorPort));
     api.RegisterBlockEntityClass("TermContainer",
                                  typeof(BlockEntityTermContainer));
-    api.RegisterBlockEntityBehaviorClass("AcceptPorts",
-                                         typeof(BEBehaviorAcceptPorts));
+    api.RegisterBlockEntityBehaviorClass(
+        "AcceptPorts", typeof(BlockEntityBehavior.AcceptPorts));
     api.RegisterBlockEntityBehaviorClass("CacheMesh",
-                                         typeof(BEBehaviorCacheMesh));
-    api.RegisterBlockEntityBehaviorClass(BEBehaviorScopeNetwork.Name,
-                                         typeof(BEBehaviorScopeNetwork));
-    api.RegisterBlockEntityBehaviorClass(BEBehaviorMatchNetwork.Name,
-                                         typeof(BEBehaviorMatchNetwork));
-    api.RegisterBlockEntityBehaviorClass(BEBehaviorTermNetwork.Name,
-                                         typeof(BEBehaviorTermNetwork));
-    api.RegisterBlockEntityBehaviorClass("Wire", typeof(BEBehaviorWire));
-    _networkManagers[BEBehaviorScopeNetwork.Name] = ScopeNetworkManager =
-        new BEBehaviorScopeNetwork.Manager(api.World);
-    _networkManagers[BEBehaviorMatchNetwork.Name] = MatchNetworkManager =
-        new BEBehaviorMatchNetwork.Manager(api.World);
-    _networkManagers[BEBehaviorTermNetwork.Name] = TermNetworkManager =
-        new BEBehaviorTermNetwork.Manager(api.World);
+                                         typeof(BlockEntityBehavior.CacheMesh));
+    api.RegisterBlockEntityBehaviorClass(
+        BlockEntityBehavior.ScopeNetwork.Name,
+        typeof(BlockEntityBehavior.ScopeNetwork));
+    api.RegisterBlockEntityBehaviorClass(
+        BlockEntityBehavior.MatchNetwork.Name,
+        typeof(BlockEntityBehavior.MatchNetwork));
+    api.RegisterBlockEntityBehaviorClass(
+        BlockEntityBehavior.TermNetwork.Name,
+        typeof(BlockEntityBehavior.TermNetwork));
+    api.RegisterBlockEntityBehaviorClass(
+        "Wire", typeof(BlockEntityBehavior.BEBehaviorWire));
+    _networkManagers[BlockEntityBehavior.ScopeNetwork.Name] =
+        ScopeNetworkManager =
+            new BlockEntityBehavior.ScopeNetwork.Manager(api.World);
+    _networkManagers[BlockEntityBehavior.MatchNetwork.Name] =
+        MatchNetworkManager =
+            new BlockEntityBehavior.MatchNetwork.Manager(api.World);
+    _networkManagers[BlockEntityBehavior.TermNetwork.Name] =
+        TermNetworkManager =
+            new BlockEntityBehavior.TermNetwork.Manager(api.World);
   }
 
   public void RegisterNetworkDebugCommands(IChatCommandApi api, string name,

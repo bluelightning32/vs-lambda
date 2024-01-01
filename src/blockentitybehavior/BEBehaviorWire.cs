@@ -8,7 +8,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace LambdaFactory;
+namespace LambdaFactory.BlockEntityBehavior;
 
 public class ShapeOverride {
   public HashSet<string> Directions;
@@ -41,9 +41,7 @@ public class WireTemplate {
   }
 }
 
-public class BEBehaviorWire : BEBehaviorTermNetwork,
-                              IBlockEntityForward,
-                              IConnectable {
+public class BEBehaviorWire : TermNetwork, IBlockEntityForward, IConnectable {
   private WireTemplate _WireTemplate = null;
   private int _directions = 0;
   private Cuboidf[] _selectionBoxes = null;
@@ -152,16 +150,14 @@ public class BEBehaviorWire : BEBehaviorTermNetwork,
                                                    out ShapeOverride over)) {
       mesh.Clear();
       mesh.AddMeshData(
-          Blockentity.GetBehavior<BEBehaviorCacheMesh>()?.TessellateShape(
-              over.Shape));
+          Blockentity.GetBehavior<CacheMesh>()?.TessellateShape(over.Shape));
       return;
     }
     for (int i = 0; i < 6; ++i) {
       if ((_directions & (1 << i)) != 0 &&
           _WireTemplate.IndexedShapes[i] != null) {
-        mesh.AddMeshData(
-            Blockentity.GetBehavior<BEBehaviorCacheMesh>()?.TessellateShape(
-                _WireTemplate.IndexedShapes[i]));
+        mesh.AddMeshData(Blockentity.GetBehavior<CacheMesh>()?.TessellateShape(
+            _WireTemplate.IndexedShapes[i]));
       }
     }
     base.EditMesh(mesh);
@@ -197,7 +193,7 @@ public class BEBehaviorWire : BEBehaviorTermNetwork,
     _selectionBoxes = GetSelectionBoxes(Api, _directions);
     _template = ParseBlockNodeTemplate(Api.World, properties);
     _template.OnNodeChanged(Pos, 0, ref _nodes[0]);
-    Blockentity.GetBehavior<BEBehaviorCacheMesh>()?.UpdateMesh();
+    Blockentity.GetBehavior<CacheMesh>()?.UpdateMesh();
   }
 
   NetworkManager IConnectable.GetManager(ICoreAPI api) {
@@ -209,6 +205,6 @@ public class BEBehaviorWire : BEBehaviorTermNetwork,
     _selectionBoxes = GetSelectionBoxes(Api, _directions);
     _template = ParseBlockNodeTemplate(Api.World, properties);
     _template.OnNodeChanged(Pos, 0, ref _nodes[0]);
-    Blockentity.GetBehavior<BEBehaviorCacheMesh>()?.UpdateMesh();
+    Blockentity.GetBehavior<CacheMesh>()?.UpdateMesh();
   }
 }

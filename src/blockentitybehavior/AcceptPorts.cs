@@ -12,7 +12,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace LambdaFactory;
+namespace LambdaFactory.BlockEntityBehavior;
 
 [JsonConverter(typeof(StringEnumConverter))]
 public enum PortDirection {
@@ -74,16 +74,14 @@ public interface IAcceptPorts {
                out string failureCode);
 }
 
-public class BEBehaviorAcceptPorts : BEBehaviorTermNetwork,
-                                     IAcceptPorts,
-                                     IInventoryControl {
+public class AcceptPorts : TermNetwork, IAcceptPorts, IInventoryControl {
   // Each face uses 1 bit to indicate whether a port is present.
   private int _portedSides = 0;
   // Each face uses 2 bits to indicate which kind of port is present.
   private int _occupiedPorts = 0;
   PortConfiguration _configuration;
 
-  public BEBehaviorAcceptPorts(BlockEntity blockentity) : base(blockentity) {}
+  public AcceptPorts(BlockEntity blockentity) : base(blockentity) {}
 
   public static PortConfiguration ParseConfiguration(ICoreAPI api,
                                                      JsonObject properties) {
@@ -232,7 +230,7 @@ public class BEBehaviorAcceptPorts : BEBehaviorTermNetwork,
       int nodeId =
           _template.GetNodeTemplate(EdgeExtension.GetFaceCenter(face)).Id;
       _template.OnNodePlaced(Pos, nodeId, ref _nodes[nodeId]);
-      Blockentity.GetBehavior<BEBehaviorCacheMesh>()?.UpdateMesh();
+      Blockentity.GetBehavior<CacheMesh>()?.UpdateMesh();
       if (GetInventoryOptions() != oldInventory) {
         (Blockentity as BlockEntityTermContainer)?.InventoryChanged();
       }
@@ -335,7 +333,7 @@ public class BEBehaviorAcceptPorts : BEBehaviorTermNetwork,
 
   void IInventoryControl.OnSlotModified() {
     if ((GetInventoryOptions()?.FullTextures?.Count ?? 0) != 0) {
-      Blockentity.GetBehavior<BEBehaviorCacheMesh>()?.UpdateMesh();
+      Blockentity.GetBehavior<CacheMesh>()?.UpdateMesh();
       if (Api.Side == EnumAppSide.Client) {
         Blockentity.MarkDirty(true);
       }

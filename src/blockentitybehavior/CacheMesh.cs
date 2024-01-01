@@ -7,7 +7,9 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace LambdaFactory;
+namespace LambdaFactory.BlockEntityBehavior;
+
+using VSBlockEntityBehavior = Vintagestory.API.Common.BlockEntityBehavior;
 
 interface IMeshGenerator {
   // This may be called shortly before or after BlockEntityBehavior.Initialize.
@@ -22,11 +24,10 @@ interface IMeshGenerator {
 }
 
 public class CacheMeshTextureSource : ITexPositionSource {
-  private readonly BEBehaviorCacheMesh _cache;
+  private readonly CacheMesh _cache;
   private readonly ITexPositionSource _def;
 
-  public CacheMeshTextureSource(BEBehaviorCacheMesh cache,
-                                ITexPositionSource def) {
+  public CacheMeshTextureSource(CacheMesh cache, ITexPositionSource def) {
     _cache = cache;
     _def = def;
   }
@@ -38,10 +39,10 @@ public class CacheMeshTextureSource : ITexPositionSource {
   public Size2i AtlasSize => _def.AtlasSize;
 }
 
-public class BEBehaviorCacheMesh : BlockEntityBehavior {
+public class CacheMesh : VSBlockEntityBehavior {
   private MeshData _mesh;
 
-  public BEBehaviorCacheMesh(BlockEntity blockentity) : base(blockentity) {}
+  public CacheMesh(BlockEntity blockentity) : base(blockentity) {}
 
   public override void Initialize(ICoreAPI api, JsonObject properties) {
     base.Initialize(api, properties);
