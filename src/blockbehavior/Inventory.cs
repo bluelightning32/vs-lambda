@@ -14,7 +14,7 @@ public class InventoryOptions {
   public bool RequireTerm;
   public bool RequireConstructor;
   public bool RequireFunction;
-  public int MaxSlotStackSize;
+  public int MaxSlotStackSize = 999999;
   public string DialogTitleLangCode;
   public string DialogDescLangCode;
   public bool HidePerishRate;

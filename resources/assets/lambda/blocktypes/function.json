@@ -15,7 +15,12 @@
     },
     { name: "BlockEntityForward" },
     { name: "Network" },
+    { name: "Container" }
   ],
+  entityClass: "TermContainer",
+  attributes: {
+    inventoryClassName: "function"
+  },
   entityBehaviors: [
     { name: "CacheMesh" },
     {
@@ -47,6 +52,17 @@
               "*-east": ["west"],
               "*-west": ["east"],
               "*-south": ["north"]
+            },
+            inventory: {
+              dialogTitleLangCode: "lambda:function-container-title",
+              dialogDescLangCode: "unused",
+              requireTerm: false,
+              hidePerishRate: false,
+              fullTextures: {
+                "result": {
+                  base: "scope/down"
+                }
+              }
             }
           },
           {
