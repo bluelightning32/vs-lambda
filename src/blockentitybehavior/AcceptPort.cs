@@ -93,9 +93,6 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
     if (cache.TryGetValue(properties, out PortConfiguration configuration)) {
       return configuration;
     }
-    api.Logger.Debug(
-        "lambda: Accept ports properties cache miss. Dict has {0} entries.",
-        cache.Count);
     configuration = properties.AsObject<PortConfiguration>(
         new PortConfiguration(Array.Empty<PortOption>()),
         LambdaModSystem.Domain);

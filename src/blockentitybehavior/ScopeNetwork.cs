@@ -30,9 +30,6 @@ public class ScopeNetwork : AbstractNetwork {
       if (cache.TryGetValue(properties, out BlockNodeTemplate block)) {
         return block;
       }
-      Debug(
-          "lambda: Scope network properties cache miss. Dict has {0} entries.",
-          cache.Count);
       NodeTemplate[] nodeTemplates =
           properties["nodes"]?.AsObject<NodeTemplate[]>();
       block = new BlockNodeTemplate(_accessor, this, nodeTemplates);

@@ -195,8 +195,6 @@ public class Manager {
     }
     bool added = sourceUpdates.Queue.Add(
         new NodeQueueItem(node.PropagationDistance, pos, nodeId));
-    Debug("Added node to queue. source={0} pos=<{1}>:{2} dist={3} added={4}",
-          node.Source, pos, nodeId, node.PropagationDistance, added);
   }
 
   // Removes the node from the pending updates queue with an old value, if it
@@ -225,8 +223,6 @@ public class Manager {
     }
     bool added = sourceUpdates.Queue.Add(
         new NodeQueueItem(node.PropagationDistance, pos, nodeId));
-    Debug("Added node to queue. source={0} pos=<{1}>:{2} dist={3} added={4}",
-          node.Source, pos, nodeId, node.PropagationDistance, added);
   }
 
   // Puts the node in the pending ejections queue. This should only be called by
@@ -245,8 +241,6 @@ public class Manager {
       _pendingUpdates.Add(node.Source, sourceUpdates);
     }
     bool added = sourceUpdates.Ejections.Add(new NodePos(pos, nodeId));
-    Debug("Added node to ejection queue. source={0} pos=<{1}>:{2} added={3}",
-          node.Source, pos, nodeId, added);
   }
 
   // Removes the node from the pending updates queue and ejection queue. This

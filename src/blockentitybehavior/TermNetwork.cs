@@ -35,8 +35,6 @@ public class TermNetwork : AbstractNetwork {
       if (cache.TryGetValue(key, out BlockNodeTemplate block)) {
         return block;
       }
-      Debug("lambda: Accept ports properties cache miss. Dict has {0} entries.",
-            cache.Count);
       List<NodeTemplate> nodeTemplates =
           new(properties["nodes"]?.AsObject<NodeTemplate[]>() ??
               Array.Empty<NodeTemplate>());
@@ -74,8 +72,6 @@ public class TermNetwork : AbstractNetwork {
       if (cache.TryGetValue(properties, out BlockNodeTemplate block)) {
         return block;
       }
-      Debug("lambda: Term network properties cache miss. Dict has {0} entries.",
-            cache.Count);
       NodeTemplate[] nodeTemplates =
           properties["nodes"]?.AsObject<NodeTemplate[]>();
       block = new BlockNodeTemplate(_accessor, this, nodeTemplates);
@@ -97,8 +93,6 @@ public class TermNetwork : AbstractNetwork {
       if (cache.TryGetValue(key, out BlockNodeTemplate block)) {
         return block;
       }
-      Debug("lambda: Accept ports properties cache miss. Dict has {0} entries.",
-            cache.Count);
       NodeTemplate[] nodeTemplates =
           properties["nodes"]?.AsObject<NodeTemplate[]>();
       if (nodeTemplates == null || nodeTemplates.Length < 1) {

@@ -120,8 +120,6 @@ public class NodeTemplate {
   public void OnPlaced(Manager manager, BlockPos pos,
                        BlockNodeTemplate[] neighborTemplates,
                        Node[][] neighbors, ref Node node) {
-    manager.Debug("Block placed on {0} source set: {1}", manager.Side,
-                  node.Source.IsSet());
     Debug.Assert(Source || !node.Source.IsSet());
     bool anyInfDistNeighbors = false;
     foreach (Edge edge in Edges) {
@@ -153,8 +151,6 @@ public class NodeTemplate {
   public void OnRemoved(NodeAccessor accessor, Manager manager, BlockPos pos,
                         BlockNodeTemplate[] neighborTemplates,
                         Node[][] neighbors, in Node node) {
-    manager.Debug("Block removed on {0} source set: {1}", manager.Side,
-                  node.Source.IsSet());
     if (!node.Source.IsSet()) {
       return;
     }

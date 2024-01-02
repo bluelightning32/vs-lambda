@@ -90,9 +90,6 @@ public abstract class AbstractNetwork : VSBlockEntityBehavior, IMeshGenerator {
       dsc.AppendLine(
           $"new{_template.GetNetworkName()}[{i}] = {{ {_nodes[i].ToString()} }}");
     }
-    worldAccessForResolve.Api.Logger.Debug(
-        "FromTreeAttributes on {0} api set {1}: {2}",
-        worldAccessForResolve.Api.Side, Api != null, dsc);
   }
 
   public virtual void Initialize(ICoreAPI api) {
