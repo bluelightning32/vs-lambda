@@ -25,12 +25,12 @@ public class TermContainer : BlockEntityOpenableContainer {
       new InventoryGeneric(1, null, null);
   public override InventoryBase Inventory => _inventory;
 
-  private string _inventoryClassName;
+  protected string _inventoryClassName = "term";
   public override string InventoryClassName => _inventoryClassName;
 
   public TermContainer() { _inventory.SlotModified += OnSlotModified; }
 
-  private IInventoryControl GetInventoryControl() {
+  protected IInventoryControl GetInventoryControl() {
     // Don't use `Block.GetInterface`, because that uses the block accessor to
     // look up the block entity at the block position, but `GetInventoryControl`
     // might be called before the block entity is linked to the map.
@@ -58,7 +58,7 @@ public class TermContainer : BlockEntityOpenableContainer {
     // `base.Initialize` will access `InventoryClassName`, so
     // `_inventoryClassName` must be set first.
     _inventoryClassName =
-        Block.Attributes["inventoryClassName"].AsString("term");
+        Block.Attributes["inventoryClassName"].AsString(_inventoryClassName);
     base.Initialize(api);
 
     // The inventory was created with a generic slot. Set the correct slot type
@@ -66,16 +66,18 @@ public class TermContainer : BlockEntityOpenableContainer {
     SetSlot();
   }
 
+  protected virtual GuiDialogBlockEntity CreateDialog(string title) {
+    string description = GetInventoryControl()?.GetDescription();
+    return new Gui.DialogTermInventory(title, description, Inventory, Pos,
+                                       Api as ICoreClientAPI);
+  }
+
   public override bool OnPlayerRightClick(IPlayer byPlayer,
                                           BlockSelection blockSel) {
     if (Api.Side == EnumAppSide.Client) {
       string title = GetInventoryControl()?.GetTitle();
-      string description = GetInventoryControl()?.GetDescription();
       if (title != null) {
-        toggleInventoryDialogClient(byPlayer, () => {
-          return new Gui.DialogTermInventory(title, description, Inventory, Pos,
-                                             Api as ICoreClientAPI);
-        });
+        toggleInventoryDialogClient(byPlayer, () => CreateDialog(title));
       }
     }
     return true;
@@ -94,10 +96,13 @@ public class TermContainer : BlockEntityOpenableContainer {
     base.GetBlockInfo(forPlayer, dsc);
   }
 
-  private void OnSlotModified(int slotId) {
+  protected void OnSlotModified(int slotId) {
     GetInventoryControl()?.OnSlotModified();
   }
 
+  // Update the slot and dialog options.
+  // The behavior that's providing the inventory control should call this when
+  // it changes its inventory options.
   public void InventoryChanged() {
     if (invDialog != null) {
       invDialog?.TryClose();

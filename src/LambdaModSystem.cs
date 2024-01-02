@@ -47,6 +47,8 @@ public class LambdaModSystem : ModSystem {
     api.RegisterBlockBehaviorClass("Network", typeof(BlockBehavior.Network));
     api.RegisterBlockBehaviorClass("Orient", typeof(BlockBehavior.Orient));
     api.RegisterBlockBehaviorClass("Port", typeof(BlockBehavior.Port));
+    api.RegisterBlockEntityClass("FunctionContainer",
+                                 typeof(BlockEntity.FunctionContainer));
     api.RegisterBlockEntityClass("TermContainer",
                                  typeof(BlockEntity.TermContainer));
     api.RegisterBlockEntityBehaviorClass(

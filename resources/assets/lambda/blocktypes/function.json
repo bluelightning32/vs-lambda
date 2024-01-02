@@ -17,7 +17,7 @@
     { name: "Network" },
     { name: "Container" }
   ],
-  entityClass: "TermContainer",
+  entityClass: "FunctionContainer",
   attributes: {
     inventoryClassName: "function"
   },

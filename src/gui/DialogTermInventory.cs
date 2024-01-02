@@ -31,13 +31,14 @@ public class DialogTermInventory : GuiDialogBlockEntity {
 
     ElementBounds textBounds =
         ElementBounds
-            .Fixed(2.5 * GuiStyle.HalfPadding,
-                   GuiStyle.TitleBarHeight + GuiStyle.HalfPadding, 300, 80)
-            .WithFixedPadding(GuiStyle.HalfPadding);
+            .Fixed(GuiStyle.ElementToDialogPadding,
+                   GuiStyle.TitleBarHeight + GuiStyle.ElementToDialogPadding,
+                   300, 100)
+            .WithFixedPadding(GuiStyle.ElementToDialogPadding / 2, 0);
     ElementBounds gridBounds =
         ElementStdBounds.SlotGrid(EnumDialogArea.CenterTop, 0, 0, 1, 1)
-            .FixedUnder(textBounds)
-            .WithFixedPadding(2 * GuiStyle.HalfPadding);
+            .FixedUnder(textBounds, -GuiStyle.ElementToDialogPadding)
+            .WithFixedPadding(0, GuiStyle.ElementToDialogPadding);
 
     ClearComposers();
     SingleComposer =
