@@ -1,8 +1,11 @@
 {
-  "case-container-title": "Case constructor",
-  "case-container-description": "Constructor item to identify the case to handle.",
   "app-argument-container-title": "Argument",
   "app-argument-container-description": "Argument item or constant item, depending on whether the block has an applicand port.",
   "app-applicand-container-title": "Applicand",
-  "app-applicand-container-description": "Function item to apply to the argument."
+  "app-applicand-container-description": "Function item to apply to the argument.",
+  "case-container-title": "Case constructor",
+  "case-container-description": "Constructor item to identify the case to handle.",
+  "inscribe": "Inscribe",
+  "tab-container": "container",
+  "tab-errors": "errors"
 }
