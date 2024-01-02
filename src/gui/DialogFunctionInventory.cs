@@ -58,7 +58,7 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
                                    (float)GuiStyle.SmallFontSize),
                                "tabs")
             .AddShadedDialogBG(bgBounds)
-            .AddDialogTitleBar(DialogTitle, "title")
+            .AddDialogTitleBar(DialogTitle, () => TryClose(), "title")
             .BeginChildElements(bgBounds);
 
     SingleComposer.GetHorizontalTabs("tabs").SetValue(_tab, false);

@@ -1,3 +1,5 @@
+using System;
+
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -7,9 +9,11 @@ namespace Lambda.Gui;
 
 public static partial class GuiComposerHelpers {
   public static GuiComposer AddDialogTitleBar(this GuiComposer composer,
-                                              string text, string key) {
+                                              string text, Action onClose,
+                                              string key) {
     composer.AddInteractiveElement(
-        new GuiElementDialogTitleBar(composer.Api, text, composer), key);
+        new GuiElementDialogTitleBar(composer.Api, text, composer, onClose),
+        key);
     return composer;
   }
 }
@@ -19,7 +23,7 @@ public class DialogTermInventory : GuiDialogBlockEntity {
   public DialogTermInventory(string title, string description,
                              InventoryBase inventory, BlockPos blockPos,
                              ICoreClientAPI capi)
-      : base(title, inventory, blockPos, capi) {
+      : base(Lang.Get(title), inventory, blockPos, capi) {
     int instance = _instance++;
     ElementBounds dialogBounds =
         ElementStdBounds.AutosizedMainDialog
@@ -45,7 +49,7 @@ public class DialogTermInventory : GuiDialogBlockEntity {
         capi.Gui
             .CreateCompo("terminventory" + BlockEntityPosition, dialogBounds)
             .AddShadedDialogBG(bgBounds)
-            .AddDialogTitleBar(Lang.Get(title), "title")
+            .AddDialogTitleBar(DialogTitle, () => TryClose(), "title")
             .BeginChildElements(bgBounds)
             .AddRichtext(Lang.Get(description), CairoFont.WhiteSmallText(),
                          textBounds, "description")
