@@ -46,6 +46,8 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
 
     ElementBounds bgBounds = ElementBounds.Fill;
     bgBounds.BothSizing = ElementSizing.FitToChildren;
+    bgBounds.WithFixedPosition(0, 0);
+    bgBounds.WithFixedPadding(GuiStyle.ElementToDialogPadding);
 
     SingleComposer.Clear(dialogBounds);
     SingleComposer =
@@ -64,22 +66,15 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
     SingleComposer.GetHorizontalTabs("tabs").SetValue(_tab, false);
 
     ElementBounds textBounds =
-        ElementBounds
-            .Fixed(GuiStyle.ElementToDialogPadding,
-                   GuiStyle.TitleBarHeight + GuiStyle.ElementToDialogPadding,
-                   300, 100)
-            .WithFixedPadding(GuiStyle.ElementToDialogPadding / 2, 0);
+        ElementBounds.Fixed(0, GuiStyle.TitleBarHeight, 300, 100);
     ElementBounds gridBounds =
-        ElementStdBounds
-            .SlotGrid(EnumDialogArea.LeftTop, GuiStyle.ElementToDialogPadding,
-                      0, 1, 1)
-            .FixedUnder(textBounds, -GuiStyle.ElementToDialogPadding)
-            .WithFixedPadding(0, GuiStyle.ElementToDialogPadding);
+        ElementStdBounds.SlotGrid(EnumDialogArea.LeftTop, 0, 0, 1, 1)
+            .FixedUnder(textBounds, GuiStyle.ElementToDialogPadding);
     if (_tab == 0) {
       ElementBounds buttonBounds =
           ElementStdBounds.MenuButton(0, EnumDialogArea.LeftTop)
               .WithFixedSize(150, buttonHeight)
-              .FixedUnder(textBounds, 2)
+              .WithFixedPosition(0, gridBounds.fixedY + 2)
               .FixedRightOf(gridBounds, GuiStyle.ElementToDialogPadding);
 
       ElementBounds progressBounds =
@@ -88,8 +83,7 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
                        buttonBounds.fixedWidth + 2 * buttonBounds.fixedPaddingX)
               .FixedUnder(buttonBounds,
                           GuiStyle.HalfPadding + buttonBounds.fixedPaddingY)
-              .FixedRightOf(gridBounds, GuiStyle.ElementToDialogPadding)
-              .WithFixedPadding(GuiStyle.ElementToDialogPadding / 2);
+              .FixedRightOf(gridBounds, GuiStyle.ElementToDialogPadding);
 
       SingleComposer
           .AddRichtext(Lang.Get(Description), CairoFont.WhiteSmallText(),
@@ -99,12 +93,7 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
           .AddStatbar(progressBounds, GuiStyle.SuccessTextColor, true,
                       "progress");
     } else {
-      textBounds =
-          ElementBounds
-              .Fixed(GuiStyle.ElementToDialogPadding,
-                     GuiStyle.TitleBarHeight + GuiStyle.ElementToDialogPadding,
-                     300, 200)
-              .WithFixedPadding(GuiStyle.ElementToDialogPadding / 2, 0);
+      textBounds = ElementBounds.Fixed(0, GuiStyle.TitleBarHeight, 300, 200);
       SingleComposer.AddRichtext(_errorMessage, CairoFont.WhiteSmallText(),
                                  textBounds, "errors");
       // The gridBounds represents the last vertical element on the other tab.

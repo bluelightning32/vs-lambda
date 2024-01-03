@@ -32,17 +32,14 @@ public class DialogTermInventory : GuiDialogBlockEntity {
 
     ElementBounds bgBounds = ElementBounds.Fill;
     bgBounds.BothSizing = ElementSizing.FitToChildren;
+    bgBounds.WithFixedPosition(0, 0);
+    bgBounds.WithFixedPadding(GuiStyle.ElementToDialogPadding);
 
     ElementBounds textBounds =
-        ElementBounds
-            .Fixed(GuiStyle.ElementToDialogPadding,
-                   GuiStyle.TitleBarHeight + GuiStyle.ElementToDialogPadding,
-                   300, 100)
-            .WithFixedPadding(GuiStyle.ElementToDialogPadding / 2, 0);
+        ElementBounds.Fixed(0, GuiStyle.TitleBarHeight, 300, 100);
     ElementBounds gridBounds =
         ElementStdBounds.SlotGrid(EnumDialogArea.CenterTop, 0, 0, 1, 1)
-            .FixedUnder(textBounds, -GuiStyle.ElementToDialogPadding)
-            .WithFixedPadding(0, GuiStyle.ElementToDialogPadding);
+            .FixedUnder(textBounds, GuiStyle.ElementToDialogPadding);
 
     ClearComposers();
     SingleComposer =
