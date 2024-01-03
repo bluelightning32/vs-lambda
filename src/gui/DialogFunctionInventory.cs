@@ -1,3 +1,6 @@
+using System;
+using System.Diagnostics;
+
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -13,10 +16,20 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
     get { return _description; }
     set {
       _description = value;
-      SingleComposer.GetRichtext("description")
-          .SetNewText(_description, CairoFont.WhiteSmallText());
+      if (_tab == 0) {
+        SingleComposer.GetRichtext("richtext")
+            .SetNewText(_description, CairoFont.WhiteSmallText());
+      }
     }
   }
+  private readonly float[] _scrollPos = new float[2] { 0, 0 };
+  // This is set to non-null when the scroll bar and rich text elements are
+  // fully created. When this is null, any events from the scroll bar should be
+  // ignored, because the scroll bar is still being initialized.
+  GuiElementRichtext _richText = null;
+
+  private static readonly int _insetDepth =
+      GuiElementScrollbar.DeafultScrollbarPadding;
 
   public DialogFunctionInventory(string title, string description,
                                  InventoryBase inventory, BlockPos blockPos,
@@ -49,6 +62,30 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
     bgBounds.WithFixedPosition(0, 0);
     bgBounds.WithFixedPadding(GuiStyle.ElementToDialogPadding);
 
+    // clip bounds and inset bounds for the first tab.
+    ElementBounds clipBounds =
+        ElementBounds.Fixed(0, GuiStyle.TitleBarHeight, 300, 130);
+    ElementBounds insetBounds = clipBounds.ForkBoundingParent(
+        _insetDepth, _insetDepth, _insetDepth, _insetDepth);
+
+    // Calculate the gridBounds using the inset bounds from the first tab.
+    ElementBounds gridBounds =
+        ElementStdBounds.SlotGrid(EnumDialogArea.LeftTop, 0, 0, 1, 1)
+            .FixedUnder(insetBounds, GuiStyle.ElementToDialogPadding);
+    if (_tab == 1) {
+      // Now update clipBounds and insetBounds for the current tab.
+      clipBounds = ElementBounds.Fixed(0, GuiStyle.TitleBarHeight, 300, 200);
+      insetBounds = clipBounds.ForkBoundingParent(_insetDepth, _insetDepth,
+                                                  _insetDepth, _insetDepth);
+    }
+
+    ElementBounds textBounds =
+        clipBounds.ForkContainingChild(0, -_scrollPos[_tab]);
+    ElementBounds scrollbarBounds =
+        ElementStdBounds.VerticalScrollbar(insetBounds);
+
+    string message = _tab == 0 ? Lang.Get(Description) : _errorMessage;
+    _richText = null;
     SingleComposer.Clear(dialogBounds);
     SingleComposer =
         capi.Gui
@@ -61,15 +98,16 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
                                "tabs")
             .AddShadedDialogBG(bgBounds)
             .AddDialogTitleBar(DialogTitle, () => TryClose(), "title")
-            .BeginChildElements(bgBounds);
+            .BeginChildElements(bgBounds)
+            .AddInset(insetBounds, _insetDepth)
+            .BeginClip(clipBounds)
+            .AddRichtext(message, CairoFont.WhiteSmallText(), textBounds,
+                         "richtext")
+            .EndClip()
+            .AddVerticalScrollbar(OnScrollText, scrollbarBounds, "scrollbar");
 
     SingleComposer.GetHorizontalTabs("tabs").SetValue(_tab, false);
 
-    ElementBounds textBounds =
-        ElementBounds.Fixed(0, GuiStyle.TitleBarHeight, 300, 100);
-    ElementBounds gridBounds =
-        ElementStdBounds.SlotGrid(EnumDialogArea.LeftTop, 0, 0, 1, 1)
-            .FixedUnder(textBounds, GuiStyle.ElementToDialogPadding);
     if (_tab == 0) {
       ElementBounds buttonBounds =
           ElementStdBounds.MenuButton(0, EnumDialogArea.LeftTop)
@@ -85,17 +123,11 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
                           GuiStyle.HalfPadding + buttonBounds.fixedPaddingY)
               .FixedRightOf(gridBounds, GuiStyle.ElementToDialogPadding);
 
-      SingleComposer
-          .AddRichtext(Lang.Get(Description), CairoFont.WhiteSmallText(),
-                       textBounds, "description")
-          .AddItemSlotGrid(Inventory, DoSendPacket, 1, gridBounds)
+      SingleComposer.AddItemSlotGrid(Inventory, DoSendPacket, 1, gridBounds)
           .AddSmallButton(Lang.Get("lambda:inscribe"), OnInscribe, buttonBounds)
           .AddStatbar(progressBounds, GuiStyle.SuccessTextColor, true,
                       "progress");
     } else {
-      textBounds = ElementBounds.Fixed(0, GuiStyle.TitleBarHeight, 300, 200);
-      SingleComposer.AddRichtext(_errorMessage, CairoFont.WhiteSmallText(),
-                                 textBounds, "errors");
       // The gridBounds represents the last vertical element on the other tab.
       // Even though the error tab does not include the grid, explicitly add its
       // bound here so that error tab is the same height as the container tab.
@@ -105,6 +137,27 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
     SingleComposer.EndChildElements();
     bgBounds.CalcWorldBounds();
     SingleComposer.Compose();
+    GuiElementScrollbar scroll = SingleComposer.GetScrollbar("scrollbar");
+    // `scroll.SetHeights` will fire some scroll events before the scroll bar is
+    // full initialized. `_richText` should be set to null at this point so that
+    // those bad events are ignored.
+    Debug.Assert(_richText == null);
+    GuiElementRichtext richText = SingleComposer.GetRichtext("richtext");
+    scroll.SetHeights((float)clipBounds.fixedHeight,
+                      (float)richText.Bounds.fixedHeight);
+    scroll.CurrentYPosition = _scrollPos[_tab];
+    // Now the scroll bar is fully initialized.
+    _richText = richText;
+  }
+
+  private void OnScrollText(float value) {
+    if (_richText == null) {
+      // Ignore this event, because the scroll bar is still getting initialized.
+      return;
+    }
+    _scrollPos[_tab] = value;
+    _richText.Bounds.fixedY = _insetDepth - value;
+    _richText.Bounds.CalcWorldBounds();
   }
 
   private bool OnInscribe() { return true; }
