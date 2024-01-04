@@ -10,15 +10,23 @@ namespace Lambda.Gui;
 
 public class DialogFunctionInventory : GuiDialogBlockEntity {
   private int _tab = 0;
-  private string _errorMessage = "error message not set";
+  private string _errorMessage;
   private string _description;
   public string Description {
     get { return _description; }
     set {
       _description = value;
       if (_tab == 0) {
-        SingleComposer.GetRichtext("richtext")
-            .SetNewText(_description, CairoFont.WhiteSmallText());
+        _richText?.SetNewText(_description, CairoFont.WhiteSmallText());
+      }
+    }
+  }
+  public string ErrorMessage {
+    get { return _errorMessage; }
+    set {
+      _errorMessage = value;
+      if (_tab == 1) {
+        _richText?.SetNewText(_errorMessage ?? "", CairoFont.WhiteSmallText());
       }
     }
   }
@@ -27,15 +35,30 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
   // fully created. When this is null, any events from the scroll bar should be
   // ignored, because the scroll bar is still being initialized.
   GuiElementRichtext _richText = null;
+  float _progress = 0;
+  readonly Action _onInscribe;
+
+  public float Progress {
+    get { return _progress; }
+    set {
+      _progress = value;
+      GuiElementStatbar bar = SingleComposer.GetStatbar("progress");
+      bar?.SetValue(_progress);
+    }
+  }
 
   private static readonly int _insetDepth =
       GuiElementScrollbar.DeafultScrollbarPadding;
 
   public DialogFunctionInventory(string title, string description,
+                                 float progress, string errorMessage,
                                  InventoryBase inventory, BlockPos blockPos,
-                                 ICoreClientAPI capi)
+                                 ICoreClientAPI capi, Action onInscribe)
       : base(Lang.Get(title), inventory, blockPos, capi) {
+    _onInscribe = onInscribe;
     _description = description;
+    _progress = progress;
+    _errorMessage = errorMessage;
     ClearComposers();
     SingleComposer = capi.Gui.CreateCompo("terminventory" + BlockEntityPosition,
                                           ElementBounds.Empty);
@@ -84,7 +107,7 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
     ElementBounds scrollbarBounds =
         ElementStdBounds.VerticalScrollbar(insetBounds);
 
-    string message = _tab == 0 ? Lang.Get(Description) : _errorMessage;
+    string message = _tab == 0 ? _description : (_errorMessage ?? "");
     _richText = null;
     SingleComposer.Clear(dialogBounds);
     SingleComposer =
@@ -127,6 +150,7 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
           .AddSmallButton(Lang.Get("lambda:inscribe"), OnInscribe, buttonBounds)
           .AddStatbar(progressBounds, GuiStyle.SuccessTextColor, true,
                       "progress");
+      Progress = _progress;
     } else {
       // The gridBounds represents the last vertical element on the other tab.
       // Even though the error tab does not include the grid, explicitly add its
@@ -160,7 +184,10 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
     _richText.Bounds.CalcWorldBounds();
   }
 
-  private bool OnInscribe() { return true; }
+  private bool OnInscribe() {
+    _onInscribe();
+    return true;
+  }
 
   private void OnTabClicked(int tab) {
     _tab = tab;
