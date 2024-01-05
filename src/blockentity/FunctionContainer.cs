@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
@@ -17,6 +19,7 @@ public class FunctionContainer : TermContainer {
   float _progress = 0;
   float _finishTime = 0;
   string _errorMessage;
+  long _processed_callback = -1;
 
   public FunctionContainer() {
     // This is just the default class name. `base.Initialize` may override it if
@@ -62,10 +65,11 @@ public class FunctionContainer : TermContainer {
                                               byte[] data) {
     if (packetid == (int)PacketId.Inscribe) {
       Api.Logger.Debug("Server got inscribe packet");
-      if (_finishTime == 0) {
+      if (_processed_callback == -1) {
         _progress = 0;
         _finishTime = 1;
-        RegisterDelayedCallback(OnComplete, (int)(_finishTime * 1000));
+        _processed_callback =
+            RegisterDelayedCallback(OnComplete, (int)(_finishTime * 1000));
         MarkDirty(true);
       }
       return;
@@ -73,17 +77,39 @@ public class FunctionContainer : TermContainer {
     base.OnReceivedClientPacket(player, packetid, data);
   }
 
-  private void OnComplete(float delay) {
-    Api.Logger.Debug("Inscribe done on the server side.");
-
-    if (++_completed % 2 == 0) {
+  protected override void OnSlotModified(int slotId) {
+    if (Api.Side == EnumAppSide.Server) {
+      _processed_callback = -1;
       _progress = 0;
       _finishTime = 0;
       _errorMessage = null;
-    } else {
-      _progress = 0;
-      _finishTime = 0;
-      _errorMessage = "placeholder error";
+      MarkDirty(true);
+    }
+    base.OnSlotModified(slotId);
+  }
+
+  private void OnComplete(float delay) {
+    Api.Logger.Debug("Inscribe done on the server side.");
+    _processed_callback = -1;
+    if (_finishTime != 0) {
+      if (++_completed % 2 == 0) {
+        _progress = 0;
+        _finishTime = 0;
+        _errorMessage = null;
+        AssetLocation stick = new AssetLocation("game", "stick");
+        CollectibleObject replacement;
+        if (Inventory[0].Itemstack.Collectible.Code == stick) {
+          replacement = Api.World.GetBlock(new AssetLocation("game", "barrel"));
+        } else {
+          replacement = Api.World.GetItem(stick);
+        }
+        Inventory[0].Itemstack = new ItemStack(replacement, 1);
+        Inventory[0].MarkDirty();
+      } else {
+        _progress = 0;
+        _finishTime = 0;
+        _errorMessage = "placeholder error";
+      }
     }
     MarkDirty(true);
   }

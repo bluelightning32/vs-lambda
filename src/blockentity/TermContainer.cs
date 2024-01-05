@@ -96,7 +96,7 @@ public class TermContainer : BlockEntityOpenableContainer {
     base.GetBlockInfo(forPlayer, dsc);
   }
 
-  protected void OnSlotModified(int slotId) {
+  protected virtual void OnSlotModified(int slotId) {
     GetInventoryControl()?.OnSlotModified();
   }
 
