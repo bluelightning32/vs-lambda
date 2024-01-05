@@ -15,6 +15,7 @@ public class FunctionContainer : TermContainer {
 
   int _completed = 0;
   float _progress = 0;
+  float _finishTime = 0;
   string _errorMessage;
 
   public FunctionContainer() {
@@ -26,18 +27,19 @@ public class FunctionContainer : TermContainer {
   protected override GuiDialogBlockEntity CreateDialog(string title) {
     string description = GetInventoryControl()?.GetDescription();
     return new Gui.DialogFunctionInventory(
-        title, description, _progress, _errorMessage, Inventory, Pos,
-        Api as ICoreClientAPI, SendInscribePacket);
+        title, description, _progress, _finishTime, _errorMessage, Inventory,
+        Pos, Api as ICoreClientAPI, SendInscribePacket);
   }
 
   public override void FromTreeAttributes(ITreeAttribute tree,
                                           IWorldAccessor worldForResolving) {
     base.FromTreeAttributes(tree, worldForResolving);
     _progress = (float)tree.GetDecimal("progress");
+    _finishTime = (float)tree.GetDecimal("finishtime");
     _errorMessage = tree.GetAsString("error");
     if (invDialog is Gui.DialogFunctionInventory dialog) {
       Api.Logger.Debug("FromTreeAttributes is updating the dialog");
-      dialog.Progress = _progress;
+      dialog.SetProgress(_progress, _finishTime);
       dialog.ErrorMessage = _errorMessage;
     }
   }
@@ -45,6 +47,7 @@ public class FunctionContainer : TermContainer {
   public override void ToTreeAttributes(ITreeAttribute tree) {
     base.ToTreeAttributes(tree);
     tree.SetFloat("progress", _progress);
+    tree.SetFloat("finishtime", _finishTime);
     if (_errorMessage != null) {
       tree.SetString("error", _errorMessage);
     }
@@ -59,7 +62,12 @@ public class FunctionContainer : TermContainer {
                                               byte[] data) {
     if (packetid == (int)PacketId.Inscribe) {
       Api.Logger.Debug("Server got inscribe packet");
-      RegisterDelayedCallback(OnComplete, 1000);
+      if (_finishTime == 0) {
+        _progress = 0;
+        _finishTime = 1;
+        RegisterDelayedCallback(OnComplete, (int)(_finishTime * 1000));
+        MarkDirty(true);
+      }
       return;
     }
     base.OnReceivedClientPacket(player, packetid, data);
@@ -69,10 +77,12 @@ public class FunctionContainer : TermContainer {
     Api.Logger.Debug("Inscribe done on the server side.");
 
     if (++_completed % 2 == 0) {
-      _progress = 90;
+      _progress = 0;
+      _finishTime = 0;
       _errorMessage = null;
     } else {
       _progress = 0;
+      _finishTime = 0;
       _errorMessage = "placeholder error";
     }
     MarkDirty(true);

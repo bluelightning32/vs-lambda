@@ -24,9 +24,16 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
   public string ErrorMessage {
     get { return _errorMessage; }
     set {
-      _errorMessage = value;
       if (_tab == 1) {
+        _errorMessage = value;
         _richText?.SetNewText(_errorMessage ?? "", CairoFont.WhiteSmallText());
+      } else if (_errorMessage != value) {
+        _errorMessage = value;
+        // Switch to tab 1 when the error message changes, and it is non-empty.
+        if ((_errorMessage?.Length ?? 0) > 0) {
+          _tab = 1;
+          Compose();
+        }
       }
     }
   }
@@ -36,28 +43,43 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
   // ignored, because the scroll bar is still being initialized.
   GuiElementRichtext _richText = null;
   float _progress = 0;
+  float _totalTime = 0;
   readonly Action _onInscribe;
 
-  public float Progress {
-    get { return _progress; }
-    set {
-      _progress = value;
-      GuiElementStatbar bar = SingleComposer.GetStatbar("progress");
-      bar?.SetValue(_progress);
-    }
+  public void SetProgress(float progress, float total) {
+    _progress = progress;
+    _totalTime = total;
+    GuiElementStatbar bar = SingleComposer.GetStatbar("progress");
+    bar?.SetValues(_progress, 0, _totalTime);
   }
 
   private static readonly int _insetDepth =
       GuiElementScrollbar.DeafultScrollbarPadding;
 
+  public override void OnRenderGUI(float deltaTime) {
+    if (_totalTime != 0) {
+      _progress += deltaTime;
+      GuiElementStatbar bar = SingleComposer.GetStatbar("progress");
+      if (bar != null) {
+        float oldValue = bar?.GetValue() ?? _progress;
+        if (Math.Abs(_progress - bar.GetValue()) / _totalTime > 0.05) {
+          bar.SetValue(_progress);
+        }
+      }
+    }
+    base.OnRenderGUI(deltaTime);
+  }
+
   public DialogFunctionInventory(string title, string description,
-                                 float progress, string errorMessage,
-                                 InventoryBase inventory, BlockPos blockPos,
-                                 ICoreClientAPI capi, Action onInscribe)
+                                 float progress, float totalTime,
+                                 string errorMessage, InventoryBase inventory,
+                                 BlockPos blockPos, ICoreClientAPI capi,
+                                 Action onInscribe)
       : base(Lang.Get(title), inventory, blockPos, capi) {
     _onInscribe = onInscribe;
     _description = description;
     _progress = progress;
+    _totalTime = totalTime;
     _errorMessage = errorMessage;
     ClearComposers();
     SingleComposer = capi.Gui.CreateCompo("terminventory" + BlockEntityPosition,
@@ -150,7 +172,7 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
           .AddSmallButton(Lang.Get("lambda:inscribe"), OnInscribe, buttonBounds)
           .AddStatbar(progressBounds, GuiStyle.SuccessTextColor, true,
                       "progress");
-      Progress = _progress;
+      SetProgress(_progress, _totalTime);
     } else {
       // The gridBounds represents the last vertical element on the other tab.
       // Even though the error tab does not include the grid, explicitly add its
