@@ -63,7 +63,7 @@
         ports: [
           {
             name: "parameter",
-            directions: ["in", "out"],
+            directions: ["direct-in", "direct-out"],
             faces: ["{rot}"]
           }
         ]

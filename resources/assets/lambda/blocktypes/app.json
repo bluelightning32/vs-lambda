@@ -27,7 +27,7 @@
         ports: [
           {
             name: "output",
-            directions: ["out"],
+            directions: ["direct-out"],
             facesByType: {
               "*-north": ["west"],
               "*-east": ["north"],
@@ -37,7 +37,7 @@
           },
           {
             name: "argument",
-            directions: ["in"],
+            directions: ["direct-in"],
             facesByType: {
               "*-north": ["north"],
               "*-east": ["east"],
@@ -62,7 +62,7 @@
           },
           {
             name: "applicand",
-            directions: ["in"],
+            directions: ["direct-in"],
             facesByType: {
               "*-north": ["east"],
               "*-east": ["south"],

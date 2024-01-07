@@ -34,7 +34,7 @@
         ports: [
           {
             name: "output",
-            directions: ["out"],
+            directions: ["direct-out"],
             facesByType: {
               "*-north": ["west"],
               "*-east": ["north"],
@@ -44,7 +44,7 @@
           },
           {
             name: "input",
-            directions: ["in"],
+            directions: ["direct-in"],
             facesByType: {
               "*-north": ["east"],
               "*-east": ["south"],

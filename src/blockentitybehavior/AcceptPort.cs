@@ -23,9 +23,10 @@ using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 [JsonConverter(typeof(StringEnumConverter))]
 public enum PortDirection {
   [EnumMember(Value = "none")] None = 0,
-  [EnumMember(Value = "in")] In = 1,
-  [EnumMember(Value = "out")] Out = 2,
-  [EnumMember(Value = "passthrough")] Passthrough = 3,
+  [EnumMember(Value = "direct-in")] DirectIn = 1,
+  [EnumMember(Value = "direct-out")] DirectOut = 2,
+  [EnumMember(Value = "passthrough-in")] PassthroughIn = 3,
+  [EnumMember(Value = "passthrough-out")] PassthroughOut = 4,
 }
 
 public class PortOption {
@@ -79,9 +80,10 @@ public class PortConfiguration {
 public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
   // Each face uses 1 bit to indicate whether a port is present.
   private int _portedSides = 0;
-  // Each face uses 2 bits to indicate which kind of port is present.
+  // Each face uses 3 bits to indicate which kind of port is present.
+  public const int OccupiedPortsBitsPerFace = 3;
   private int _occupiedPorts = 0;
-  PortConfiguration _configuration;
+  private PortConfiguration _configuration;
 
   public AcceptPort(VSBlockEntity blockentity) : base(blockentity) {}
 
@@ -135,7 +137,7 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
         Port port = decors[i]?.GetBehavior<Port>();
         if (port != null) {
           _portedSides |= 1 << i;
-          _occupiedPorts |= (int)port.Direction << (i << 1);
+          _occupiedPorts |= (int)port.Direction << (i * OccupiedPortsBitsPerFace);
         }
       }
     }
@@ -206,7 +208,7 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
     }
     BlockNodeTemplate newTemplate = ParseBlockNodeTemplate(
         Api.World, properties,
-        _occupiedPorts | ((int)direction << (face.Index << 1)));
+        _occupiedPorts | ((int)direction << (face.Index * OccupiedPortsBitsPerFace)));
     return newTemplate.CanPlace(Pos, out failureCode);
   }
 
@@ -223,7 +225,7 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
     if (Api.World.BlockAccessor.SetDecor(port, Pos, face)) {
       InventoryOptions oldInventory = GetInventoryOptions();
       _portedSides |= 1 << face.Index;
-      _occupiedPorts |= (int)direction << (face.Index << 1);
+      _occupiedPorts |= (int)direction << (face.Index * OccupiedPortsBitsPerFace);
       _template = ParseBlockNodeTemplate(Api.World, properties);
       _template.SetSourceScope(Pos, _nodes);
       int nodeId =

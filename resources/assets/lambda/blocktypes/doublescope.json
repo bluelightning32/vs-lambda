@@ -64,7 +64,7 @@
         ports: [
           {
             name: "port1",
-            directions: ["in", "out"],
+            directions: ["direct-in", "direct-out"],
             facesByType: {
               "*-ns": ["north"],
               "*-we": ["west"],
@@ -73,7 +73,7 @@
           },
           {
             name: "port2",
-            directions: ["in", "out"],
+            directions: ["direct-in", "direct-out"],
             facesByType: {
               "*-ns": ["south"],
               "*-we": ["east"],

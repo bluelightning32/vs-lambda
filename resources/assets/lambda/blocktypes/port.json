@@ -7,11 +7,7 @@
         notFullFace: true,
         removable: true,
         thickness: 0,
-        directionByType: {
-          "*-direct-in": "in",
-          "*-direct-out": "out",
-          "*-passthrough-out": "passthrough"
-        }
+        direction: "{type}-{dir}"
       }
     }
   ],

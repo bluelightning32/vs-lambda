@@ -46,7 +46,7 @@
         ports: [
           {
             name: "result",
-            directions: ["out"],
+            directions: ["direct-out"],
             facesByType: {
               "*-north": ["south"],
               "*-east": ["west"],
@@ -67,7 +67,7 @@
           },
           {
             name: "parameter",
-            directions: ["in", "out"],
+            directions: ["direct-in", "direct-out"],
             faces: ["{side}"]
           }
         ]

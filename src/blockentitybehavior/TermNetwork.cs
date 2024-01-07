@@ -43,13 +43,17 @@ public class TermNetwork : AbstractNetwork {
       foreach (var port in ports.Ports) {
         NodeTemplate node = new();
         foreach (var face in port.Faces) {
+          const int mask = (1 << AcceptPort.OccupiedPortsBitsPerFace) - 1;
           PortDirection dir =
-              (PortDirection)((occupiedPorts >> (face.Index << 1)) & 3);
-          if (dir == PortDirection.In) {
+              (PortDirection)((occupiedPorts >>
+                               (face.Index *
+                                AcceptPort.OccupiedPortsBitsPerFace)) &
+                              mask);
+          if (dir == PortDirection.DirectIn) {
             node.Edges = new Edge[] { EdgeExtension.GetFaceCenter(face) };
             break;
           }
-          if (dir == PortDirection.Out) {
+          if (dir == PortDirection.DirectOut) {
             node.Edges =
                 new Edge[] { EdgeExtension.GetFaceCenter(face), Edge.Source };
             break;
