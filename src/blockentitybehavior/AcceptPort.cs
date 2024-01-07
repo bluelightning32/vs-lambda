@@ -25,6 +25,7 @@ public enum PortDirection {
   [EnumMember(Value = "none")] None = 0,
   [EnumMember(Value = "in")] In = 1,
   [EnumMember(Value = "out")] Out = 2,
+  [EnumMember(Value = "passthrough")] Passthrough = 3,
 }
 
 public class PortOption {
@@ -182,8 +183,14 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
 
   public override object GetImmutableKey() { return GetKey(); }
 
-  public virtual bool CanAcceptPort(PortOption option, PortDirection direction,
-                                    BlockFacing face, out string failureCode) {
+  protected virtual bool CanAcceptPort(PortOption option,
+                                       PortDirection direction,
+                                       BlockFacing face,
+                                       out string failureCode) {
+    if (!option.Directions.Contains(direction)) {
+      failureCode = "wrongdirection";
+      return false;
+    }
     // Verify the port option isn't full from a different side.
     if (IsPortFull(option)) {
       failureCode = "portfull";
@@ -208,10 +215,6 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
     if (!_configuration.FaceIndex.TryGetValue(face,
                                               out PortOption portOption)) {
       failureCode = "noporthere";
-      return false;
-    }
-    if (!portOption.Directions.Contains(direction)) {
-      failureCode = "wrongdirection";
       return false;
     }
     if (!CanAcceptPort(portOption, direction, face, out failureCode)) {

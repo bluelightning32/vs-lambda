@@ -6,26 +6,29 @@
       properties: {
         notFullFace: true,
         removable: true,
-        thickness: 0.125,
+        thickness: 0,
         directionByType: {
           "*-direct-in": "in",
           "*-direct-out": "out",
-          "*": "none"
-        },
+          "*-passthrough-out": "passthrough"
+        }
       }
     }
   ],
   variantgroups: [
+    { code: "length", states: ["short", "long"]},
     { code: "type", states: ["direct", "passthrough"]},
     { code: "dir", states: ["in", "out"]}
   ],
-  creativeinventory: { general: ["*"] },
+  skipVariants: [ "*-long-*-out" ],
+  creativeinventory: { general: ["*-short-direct-*", "*-short-passthrough-out"] },
   blockmaterial: "Stone",
   drawtype: "json",
-  shape: { base: "block/port/{dir}" },
+  shape: { base: "block/port/{length}-{dir}" },
   texturesByType: {
     "*-passthrough-*": {
-      "port": { base: "port/passthrough" }
+      "port": { base: "port/passthrough" },
+      "sheath": { base: "port/passthrough-sheath" }
     },
     "*-direct-in": {
       "port": { base: "port/in" }
@@ -33,6 +36,23 @@
     "*-direct-out": {
       "port": { base: "port/out" }
     },
+  },
+  collisionSelectionBoxByType: {
+    "*-short-*": {
+      x1: 0.3125, y1: 0, z1: 0.3125, x2: 0.6875, y2: 0.125, z2: 0.6875
+    },
+    "*-long-*": {
+      x1: 0.3125, y1: -0.5, z1: 0.3125, x2: 0.6875, y2: 0.125, z2: 0.6875
+    }
+  },
+  dropsByType: {
+    "*-passthrough-in": [],
+    "*": [
+      {
+        type: "block",
+        code: "port-short-{type}-{dir}"
+      }
+    ]
   },
   resistance: 3.5,
   sounds: {
