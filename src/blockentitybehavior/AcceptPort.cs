@@ -137,7 +137,8 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
         Port port = decors[i]?.GetBehavior<Port>();
         if (port != null) {
           _portedSides |= 1 << i;
-          _occupiedPorts |= (int)port.Direction << (i * OccupiedPortsBitsPerFace);
+          _occupiedPorts |= (int)port.Direction
+                            << (i * OccupiedPortsBitsPerFace);
         }
       }
     }
@@ -208,7 +209,8 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
     }
     BlockNodeTemplate newTemplate = ParseBlockNodeTemplate(
         Api.World, properties,
-        _occupiedPorts | ((int)direction << (face.Index * OccupiedPortsBitsPerFace)));
+        _occupiedPorts |
+            ((int)direction << (face.Index * OccupiedPortsBitsPerFace)));
     return newTemplate.CanPlace(Pos, out failureCode);
   }
 
@@ -225,7 +227,8 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
     if (Api.World.BlockAccessor.SetDecor(port, Pos, face)) {
       InventoryOptions oldInventory = GetInventoryOptions();
       _portedSides |= 1 << face.Index;
-      _occupiedPorts |= (int)direction << (face.Index * OccupiedPortsBitsPerFace);
+      _occupiedPorts |= (int)direction
+                        << (face.Index * OccupiedPortsBitsPerFace);
       _template = ParseBlockNodeTemplate(Api.World, properties);
       _template.SetSourceScope(Pos, _nodes);
       int nodeId =

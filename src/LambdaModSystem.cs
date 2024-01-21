@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 
+using HarmonyLib;
+
 using Lambda.Network;
 
 using Vintagestory.API.Client;
@@ -11,6 +13,7 @@ namespace Lambda;
 
 public class LambdaModSystem : ModSystem {
   public static string Domain { get; private set; }
+  private Harmony _harmony;
 
   // Storing this field in the mod ensures that there is once instance per API
   // instance. These fields cannot be stored in the object cache, because the
@@ -22,8 +25,7 @@ public class LambdaModSystem : ModSystem {
   }
 
   // Indexed by behavior name
-  private readonly Dictionary<string, AutoStepManager> _networkManagers =
-      new Dictionary<string, AutoStepManager>();
+  private readonly Dictionary<string, AutoStepManager> _networkManagers = new();
   // Indexed by behavior name
   public IReadOnlyDictionary<string, AutoStepManager> NetworkManagers {
     get { return _networkManagers; }
@@ -36,6 +38,8 @@ public class LambdaModSystem : ModSystem {
 
   public override void Start(ICoreAPI api) {
     Domain = Mod.Info.ModID;
+    _harmony = new Harmony(Domain);
+    _harmony.PatchAll();
     api.RegisterCollectibleBehaviorClass("Term",
                                          typeof(CollectibleBehavior.Term));
     api.RegisterBlockBehaviorClass("BlockEntityForward",
@@ -124,5 +128,10 @@ public class LambdaModSystem : ModSystem {
       RegisterNetworkDebugCommands(
           api.ChatCommands, manager.Value.GetNetworkName(), manager.Value);
     }
+  }
+
+  public override void Dispose() {
+    _harmony.UnpatchAll(Domain);
+    base.Dispose();
   }
 }
