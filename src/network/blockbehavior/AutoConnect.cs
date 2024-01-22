@@ -1,10 +1,8 @@
-using Lambda.Network;
-
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 
-namespace Lambda.BlockBehavior;
+namespace Lambda.Network.BlockBehavior;
 
 using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
 

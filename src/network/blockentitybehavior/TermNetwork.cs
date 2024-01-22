@@ -2,14 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Lambda.Network;
-
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace Lambda.BlockEntityBehavior;
+namespace Lambda.Network.BlockEntityBehavior;
 using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 
 public class TermNetwork : AbstractNetwork {
@@ -120,6 +118,6 @@ public class TermNetwork : AbstractNetwork {
   public TermNetwork(VSBlockEntity blockentity) : base(blockentity) {}
 
   protected override Manager GetManager(ICoreAPI api) {
-    return LambdaModSystem.GetInstance(api).TermNetworkManager;
+    return NetworkSystem.GetInstance(api).TermNetworkManager;
   }
 }

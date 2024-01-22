@@ -5,7 +5,8 @@ using System.Runtime.Serialization;
 
 using Lambda.BlockBehavior;
 using Lambda.BlockEntity;
-using Lambda.Network;
+using Lambda.BlockEntityBehavior;
+using Lambda.Network.BlockBehavior;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -16,7 +17,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace Lambda.BlockEntityBehavior;
+namespace Lambda.Network.BlockEntityBehavior;
 
 using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 
@@ -98,7 +99,7 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
     }
     configuration = properties.AsObject<PortConfiguration>(
         new PortConfiguration(Array.Empty<PortOption>()),
-        LambdaModSystem.Domain);
+        CoreSystem.Domain);
     cache.Add(properties, configuration);
     return configuration;
   }

@@ -95,12 +95,12 @@ public class BlockNodeTemplate {
   private static TextureAtlasPosition BakeTexture(ICoreClientAPI capi,
                                                   CompositeTexture texture) {
     if (!texture.Base.HasDomain()) {
-      texture.Base.Domain = LambdaModSystem.Domain;
+      texture.Base.Domain = CoreSystem.Domain;
     }
     if (texture.BlendedOverlays != null) {
       foreach (var overlay in texture.BlendedOverlays) {
         if (!overlay.Base.HasDomain()) {
-          overlay.Base.Domain = LambdaModSystem.Domain;
+          overlay.Base.Domain = CoreSystem.Domain;
         }
       }
     }
@@ -140,7 +140,7 @@ public class BlockNodeTemplate {
       composite = composite.Clone();
       BlendedOverlayTexture scopeBlend = new BlendedOverlayTexture();
       scopeBlend.Base = new AssetLocation(
-          LambdaModSystem.Domain, $"scope/{ScopeExtension.GetCode(scope)}");
+          CoreSystem.Domain, $"scope/{ScopeExtension.GetCode(scope)}");
       scopeBlend.BlendMode = EnumColorBlendMode.ColorBurn;
       composite.BlendedOverlays =
           composite.BlendedOverlays?.Append(scopeBlend) ??

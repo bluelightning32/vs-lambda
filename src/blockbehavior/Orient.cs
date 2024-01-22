@@ -127,7 +127,7 @@ public class Orient : VSBlockBehavior {
             .ToList();
 
     IReadOnlyDictionary<string, AutoStepManager> networkManagers =
-        LambdaModSystem.GetInstance(world.Api).NetworkManagers;
+        NetworkSystem.GetInstance(world.Api).NetworkManagers;
     foreach (string network in _networks) {
       if (!networkManagers.TryGetValue(network, out AutoStepManager manager)) {
         world.Api.Logger.Error($"network {network} not registered.");

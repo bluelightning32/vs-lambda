@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-using Lambda.Network;
-
 using Vintagestory.API.Common;
 
-namespace Lambda.BlockBehavior;
+namespace Lambda.Network.BlockBehavior;
 
 using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
 
@@ -20,7 +18,7 @@ public class Network : VSBlockBehavior {
   public override void OnLoaded(ICoreAPI api) {
     base.OnLoaded(api);
     IReadOnlyDictionary<string, AutoStepManager> networkManagers =
-        LambdaModSystem.GetInstance(api).NetworkManagers;
+        NetworkSystem.GetInstance(api).NetworkManagers;
     foreach (var beb in block.BlockEntityBehaviors) {
       if (networkManagers.TryGetValue(beb.Name, out AutoStepManager manager)) {
         _blockTemplates.Add(manager.ParseBlockNodeTemplate(beb.properties));

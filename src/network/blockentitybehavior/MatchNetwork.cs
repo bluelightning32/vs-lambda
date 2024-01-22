@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 
-using Lambda.Network;
-
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
 
-namespace Lambda.BlockEntityBehavior;
+namespace Lambda.Network.BlockEntityBehavior;
 using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 
 public class MatchNetwork : AbstractNetwork {
@@ -44,6 +42,6 @@ public class MatchNetwork : AbstractNetwork {
   public MatchNetwork(VSBlockEntity blockentity) : base(blockentity) {}
 
   protected override AutoStepManager GetManager(ICoreAPI api) {
-    return LambdaModSystem.GetInstance(api).MatchNetworkManager;
+    return NetworkSystem.GetInstance(api).MatchNetworkManager;
   }
 }

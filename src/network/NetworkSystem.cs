@@ -1,20 +1,12 @@
 using System.Collections.Generic;
 
-using HarmonyLib;
-
-using Lambda.Network;
-
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;
-using Vintagestory.API.Util;
 
-namespace Lambda;
+namespace Lambda.Network;
 
-public class LambdaModSystem : ModSystem {
-  public static string Domain { get; private set; }
-  private Harmony _harmony;
-
+public class NetworkSystem : ModSystem {
   // Storing this field in the mod ensures that there is once instance per API
   // instance. These fields cannot be stored in the object cache, because the
   // object cache can be cleared with a command.
@@ -31,34 +23,15 @@ public class LambdaModSystem : ModSystem {
     get { return _networkManagers; }
   }
 
-  public static LambdaModSystem GetInstance(ICoreAPI api) {
-    return ObjectCacheUtil.GetOrCreate(
-        api, $"lambda", () => api.ModLoader.GetModSystem<LambdaModSystem>());
+  public static NetworkSystem GetInstance(ICoreAPI api) {
+    return api.GetCachedModSystem<NetworkSystem>();
   }
 
   public override void Start(ICoreAPI api) {
-    Domain = Mod.Info.ModID;
-    _harmony = new Harmony(Domain);
-    _harmony.PatchAll();
-    api.RegisterCollectibleBehaviorClass("Term",
-                                         typeof(CollectibleBehavior.Term));
-    api.RegisterBlockBehaviorClass("BlockEntityForward",
-                                   typeof(BlockBehavior.BlockEntityForward));
     api.RegisterBlockBehaviorClass("AutoConnect",
                                    typeof(BlockBehavior.AutoConnect));
-    api.RegisterBlockBehaviorClass("Inventory",
-                                   typeof(BlockBehavior.Inventory));
     api.RegisterBlockBehaviorClass("Network", typeof(BlockBehavior.Network));
-    api.RegisterBlockBehaviorClass("Orient", typeof(BlockBehavior.Orient));
     api.RegisterBlockBehaviorClass("Port", typeof(BlockBehavior.Port));
-    api.RegisterBlockEntityClass("FunctionContainer",
-                                 typeof(BlockEntity.FunctionContainer));
-    api.RegisterBlockEntityClass("TermContainer",
-                                 typeof(BlockEntity.TermContainer));
-    api.RegisterBlockEntityBehaviorClass(
-        "AcceptPort", typeof(BlockEntityBehavior.AcceptPort));
-    api.RegisterBlockEntityBehaviorClass("CacheMesh",
-                                         typeof(BlockEntityBehavior.CacheMesh));
     api.RegisterBlockEntityBehaviorClass(
         BlockEntityBehavior.ScopeNetwork.Name,
         typeof(BlockEntityBehavior.ScopeNetwork));
@@ -68,6 +41,8 @@ public class LambdaModSystem : ModSystem {
     api.RegisterBlockEntityBehaviorClass(
         BlockEntityBehavior.TermNetwork.Name,
         typeof(BlockEntityBehavior.TermNetwork));
+    api.RegisterBlockEntityBehaviorClass(
+        "AcceptPort", typeof(BlockEntityBehavior.AcceptPort));
     api.RegisterBlockEntityBehaviorClass("Wire",
                                          typeof(BlockEntityBehavior.Wire));
     _networkManagers[BlockEntityBehavior.ScopeNetwork.Name] =
@@ -81,8 +56,9 @@ public class LambdaModSystem : ModSystem {
             new BlockEntityBehavior.TermNetwork.Manager(api.World);
   }
 
-  public void RegisterNetworkDebugCommands(IChatCommandApi api, string name,
-                                           AutoStepManager manager) {
+  public static void RegisterNetworkDebugCommands(IChatCommandApi api,
+                                                  string name,
+                                                  AutoStepManager manager) {
     IChatCommand network =
         api.GetOrCreate("debug").BeginSubCommand(name).WithDescription(
             "Debug commands for network propagation in the Lambda mod.");
@@ -130,8 +106,5 @@ public class LambdaModSystem : ModSystem {
     }
   }
 
-  public override void Dispose() {
-    _harmony.UnpatchAll(Domain);
-    base.Dispose();
-  }
+  public override void Dispose() { base.Dispose(); }
 }

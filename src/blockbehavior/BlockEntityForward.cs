@@ -3,7 +3,6 @@ using Vintagestory.API.MathTools;
 
 namespace Lambda.BlockBehavior;
 
-using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
 using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 using VSBlockEntityBehavior = Vintagestory.API.Common.BlockEntityBehavior;
 

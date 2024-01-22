@@ -1,13 +1,13 @@
 using System.Text;
 
-using Lambda.Network;
+using Lambda.BlockEntityBehavior;
 
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 
-namespace Lambda.BlockEntityBehavior;
+namespace Lambda.Network.BlockEntityBehavior;
 
 using VSBlockEntityBehavior = Vintagestory.API.Common.BlockEntityBehavior;
 using VSBlockEntity = Vintagestory.API.Common.BlockEntity;

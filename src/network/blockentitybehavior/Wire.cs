@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 
 using Lambda.BlockBehavior;
-using Lambda.Network;
+using Lambda.BlockEntityBehavior;
+using Lambda.Network.BlockBehavior;
 
 using Newtonsoft.Json;
 
@@ -11,7 +12,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace Lambda.BlockEntityBehavior;
+namespace Lambda.Network.BlockEntityBehavior;
 using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 
 public class ShapeOverride {

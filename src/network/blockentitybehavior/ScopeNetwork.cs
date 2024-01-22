@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 
-using Lambda.Network;
-
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
 
-namespace Lambda.BlockEntityBehavior;
+namespace Lambda.Network.BlockEntityBehavior;
 using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 
 public class ScopeNetwork : AbstractNetwork {
@@ -44,6 +42,6 @@ public class ScopeNetwork : AbstractNetwork {
   public ScopeNetwork(VSBlockEntity blockentity) : base(blockentity) {}
 
   protected override AutoStepManager GetManager(ICoreAPI api) {
-    return LambdaModSystem.GetInstance(api).ScopeNetworkManager;
+    return NetworkSystem.GetInstance(api).ScopeNetworkManager;
   }
 }
