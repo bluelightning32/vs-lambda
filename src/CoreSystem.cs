@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 
-using HarmonyLib;
-
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;
@@ -29,7 +27,6 @@ public static class ICoreAPIExtension {
 
 public class CoreSystem : ModSystem {
   public static string Domain { get; private set; }
-  private Harmony _harmony;
 
   public static CoreSystem GetInstance(ICoreAPI api) {
     return api.GetCachedModSystem<CoreSystem>();
@@ -37,8 +34,6 @@ public class CoreSystem : ModSystem {
 
   public override void Start(ICoreAPI api) {
     Domain = Mod.Info.ModID;
-    _harmony = new Harmony(Domain);
-    _harmony.PatchAll();
     api.RegisterCollectibleBehaviorClass("Term",
                                          typeof(CollectibleBehavior.Term));
     api.RegisterBlockBehaviorClass("BlockEntityForward",
@@ -58,8 +53,5 @@ public class CoreSystem : ModSystem {
 
   public override void StartServerSide(ICoreServerAPI api) {}
 
-  public override void Dispose() {
-    _harmony.UnpatchAll(Domain);
-    base.Dispose();
-  }
+  public override void Dispose() { base.Dispose(); }
 }
