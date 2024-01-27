@@ -169,7 +169,8 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
               .FixedRightOf(gridBounds, GuiStyle.ElementToDialogPadding);
 
       SingleComposer.AddItemSlotGrid(Inventory, DoSendPacket, 1, gridBounds)
-          .AddSmallButton(Lang.Get("lambda:inscribe"), OnInscribe, buttonBounds)
+          .AddSmallButton(Lang.Get("lambda:inscribe"), OnInscribe, buttonBounds,
+                          EnumButtonStyle.Normal, "inscribe")
           .AddStatbar(progressBounds, GuiStyle.SuccessTextColor, true,
                       "progress");
       SetProgress(_progress, _totalTime);
@@ -194,6 +195,14 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
     scroll.CurrentYPosition = _scrollPos[_tab];
     // Now the scroll bar is fully initialized.
     _richText = richText;
+  }
+
+  public void SetInscribeEnabled(bool enabled) {
+    GuiElementTextButton inscribe = SingleComposer.GetButton("inscribe");
+    if (inscribe is null) {
+      return;
+    }
+    inscribe.Enabled = enabled;
   }
 
   private void OnScrollText(float value) {

@@ -58,6 +58,7 @@
               dialogDescLangCode: "unused",
               requireTerm: false,
               hidePerishRate: false,
+              requireInscriptionIngredient: true,
               fullTextures: {
                 "result": {
                   base: "scope/down"

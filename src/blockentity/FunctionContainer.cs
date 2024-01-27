@@ -27,9 +27,14 @@ public class FunctionContainer : TermContainer {
 
   protected override GuiDialogBlockEntity CreateDialog(string title) {
     string description = GetInventoryControl()?.GetDescription();
-    return new Gui.DialogFunctionInventory(
-        title, description, _progress, _finishTime, _errorMessage, Inventory,
-        Pos, Api as ICoreClientAPI, SendInscribePacket);
+    Gui.DialogFunctionInventory dialog =
+        new(title, description, _progress, _finishTime, _errorMessage,
+            Inventory, Pos, Api as ICoreClientAPI, SendInscribePacket);
+    InscriptionRecipe recipe =
+        InscriptionSystem.GetInstance(Api).GetRecipeForIngredient(
+            Inventory[0].Itemstack);
+    dialog.SetInscribeEnabled(recipe is not null);
+    return dialog;
   }
 
   public override void FromTreeAttributes(ITreeAttribute tree,
@@ -42,6 +47,10 @@ public class FunctionContainer : TermContainer {
       Api.Logger.Debug("FromTreeAttributes is updating the dialog");
       dialog.SetProgress(_progress, _finishTime);
       dialog.ErrorMessage = _errorMessage;
+      InscriptionRecipe recipe =
+          InscriptionSystem.GetInstance(Api).GetRecipeForIngredient(
+              Inventory[0].Itemstack);
+      dialog.SetInscribeEnabled(recipe is not null);
     }
   }
 

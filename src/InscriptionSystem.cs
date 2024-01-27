@@ -81,6 +81,7 @@ public class InscriptionSystem : ModSystem {
     return components;
   }
 
+  // Returns a list of GUI components that display `groupedRecipes`.
   private List<RichTextComponentBase> GetRecipeComponents(
       Dictionary<AssetLocation, List<InscriptionRecipe>> groupedRecipes,
       ActionConsumable<string> openDetailPageFor) {
@@ -159,9 +160,9 @@ public class InscriptionSystem : ModSystem {
     return haveText;
   }
 
-  // Returns all of the recipes that take the ingredient. The recipes are
-  // grouped by their name.
-  private Dictionary<AssetLocation, List<InscriptionRecipe>>
+  // Returns all of the recipes that take the ingredient, ignoring stack
+  // attributes. The recipes are grouped by their name.
+  public Dictionary<AssetLocation, List<InscriptionRecipe>>
   GetRecipesForIngredient(ItemStack input) {
     Dictionary<AssetLocation, List<InscriptionRecipe>> result = new();
     foreach (InscriptionRecipe recipe in _inscriptionRegistry.Recipes) {
@@ -176,6 +177,23 @@ public class InscriptionSystem : ModSystem {
       }
     }
     return result;
+  }
+
+  // Get the canonical recipe for the ingredient, or null if there is no recipe
+  public InscriptionRecipe GetRecipeForIngredient(ItemStack input) {
+    if (input == null) {
+      return null;
+    }
+    Dictionary<AssetLocation, List<InscriptionRecipe>> recipes =
+        GetRecipesForIngredient(input);
+    foreach (var group in recipes.Values) {
+      foreach (InscriptionRecipe recipe in group) {
+        if (recipe.Ingredient.ResolvedItemstack.StackSize == input.StackSize) {
+          return recipe;
+        }
+      }
+    }
+    return null;
   }
 
   public override void StartClientSide(ICoreClientAPI api) {}

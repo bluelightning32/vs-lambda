@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 using Lambda.BlockEntity;
@@ -14,6 +15,7 @@ public class InventoryOptions {
   public bool RequireTerm;
   public bool RequireConstructor;
   public bool RequireFunction;
+  public bool RequireInscriptionIngredient;
   public int MaxSlotStackSize = 999999;
   public string DialogTitleLangCode;
   public string DialogDescLangCode;
@@ -37,6 +39,18 @@ public class InventoryOptions {
       if (term?.GetConstructs(item) == null) {
         return 0;
       }
+    }
+    if (RequireInscriptionIngredient) {
+      int maxStack = 0;
+      Dictionary<AssetLocation, List<InscriptionRecipe>> recipes =
+          InscriptionSystem.GetInstance(api).GetRecipesForIngredient(item);
+      foreach (List<InscriptionRecipe> group in recipes.Values) {
+        foreach (InscriptionRecipe recipe in group) {
+          maxStack =
+              Math.Max(maxStack, recipe.Ingredient.ResolvedItemstack.StackSize);
+        }
+      }
+      return maxStack;
     }
     return MaxSlotStackSize;
   }
