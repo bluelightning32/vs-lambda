@@ -5,4 +5,4 @@ if [ $# -ne 0 ]; then
   echo "Formats the source code files using clang-format." >&2
   exit 1
 fi
-clang-format -i "$ROOT/src/"*.cs -i "$ROOT/src/"*/*.cs "$ROOT/test/"*.cs "$ROOT/test/util/"*.cs
+clang-format -i "$ROOT/src/"*.cs -i "$ROOT/src/"*/*.cs "$ROOT/src/"*/*/*.cs "$ROOT/test/"*.cs "$ROOT/test/util/"*.cs

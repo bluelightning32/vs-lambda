@@ -98,8 +98,7 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
       return configuration;
     }
     configuration = properties.AsObject<PortConfiguration>(
-        new PortConfiguration(Array.Empty<PortOption>()),
-        CoreSystem.Domain);
+        new PortConfiguration(Array.Empty<PortOption>()), CoreSystem.Domain);
     cache.Add(properties, configuration);
     return configuration;
   }
@@ -203,7 +202,8 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
     if (GetInventoryPort() == option) {
       ItemStack item = (Blockentity as TermContainer)?.Inventory[0].Itemstack;
       if (item != null &&
-          !(GetNextInventoryPort()?.Inventory.CanAccept(item) ?? false)) {
+          (GetNextInventoryPort()?.Inventory.GetMaxStackForItem(Api, item) ??
+           0) < item.StackSize) {
         failureCode = "portinventoryfull";
         return false;
       }
@@ -318,17 +318,13 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
     return GetInventoryOptions()?.DialogDescLangCode;
   }
 
-  private bool CanAccept(ItemSlot sourceSlot) {
-    return GetInventoryOptions()?.CanAccept(sourceSlot.Itemstack) ?? false;
-  }
-
-  ItemSlot IInventoryControl.GetSlot(InventoryGeneric inventory) {
+  ItemSlot IInventoryControl.GetSlot(ICoreAPI api, InventoryGeneric inventory) {
     InventoryOptions options = GetInventoryOptions();
     if (options == null) {
       return null;
     }
-    return new SelectiveItemSlot(inventory, CanAccept,
-                                 options.MaxSlotStackSize);
+    return new SelectiveItemSlot(
+        inventory, (item) => options.GetMaxStackForItem(api, item));
   }
 
   bool IInventoryControl.GetHidePerishRate() {

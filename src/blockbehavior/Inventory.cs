@@ -20,25 +20,25 @@ public class InventoryOptions {
   public bool HidePerishRate;
   public Dictionary<string, CompositeTexture> FullTextures;
 
-  public bool CanAccept(ItemStack item) {
+  public int GetMaxStackForItem(ICoreAPI api, ItemStack item) {
     CollectibleBehavior.Term term =
         item.Collectible.GetBehavior<CollectibleBehavior.Term>();
     if (RequireTerm) {
       if (term == null) {
-        return false;
+        return 0;
       }
     }
     if (RequireFunction) {
       if (!(term?.IsFunction(item) ?? false)) {
-        return false;
+        return 0;
       }
     }
     if (RequireConstructor) {
       if (term?.GetConstructs(item) == null) {
-        return false;
+        return 0;
       }
     }
-    return true;
+    return MaxSlotStackSize;
   }
 }
 
@@ -57,13 +57,9 @@ public class Inventory : VSBlockBehavior, IInventoryControl {
 
   bool IInventoryControl.GetHidePerishRate() { return _options.HidePerishRate; }
 
-  private bool CanAccept(ItemSlot sourceSlot) {
-    return _options.CanAccept(sourceSlot.Itemstack);
-  }
-
-  ItemSlot IInventoryControl.GetSlot(InventoryGeneric inventory) {
-    return new SelectiveItemSlot(inventory, CanAccept,
-                                 _options.MaxSlotStackSize);
+  ItemSlot IInventoryControl.GetSlot(ICoreAPI api, InventoryGeneric inventory) {
+    return new SelectiveItemSlot(
+        inventory, (item) => _options.GetMaxStackForItem(api, item));
   }
 
   string IInventoryControl.GetTitle() { return _options.DialogTitleLangCode; }

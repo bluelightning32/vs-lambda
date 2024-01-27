@@ -9,7 +9,7 @@ namespace Lambda.BlockEntity;
 public interface IInventoryControl {
   public string GetTitle();
   public string GetDescription() { return null; }
-  public ItemSlot GetSlot(InventoryGeneric inventory);
+  public ItemSlot GetSlot(ICoreAPI api, InventoryGeneric inventory);
   public bool GetHidePerishRate();
   public void OnSlotModified() {}
 }
@@ -49,7 +49,7 @@ public class TermContainer : BlockEntityOpenableContainer {
 
   private void SetSlot() {
     ItemStack item = _inventory[0].Itemstack;
-    _inventory[0] = GetInventoryControl()?.GetSlot(_inventory) ??
+    _inventory[0] = GetInventoryControl()?.GetSlot(Api, _inventory) ??
                     new ItemSlotOutput(_inventory);
     _inventory[0].Itemstack = item;
   }
