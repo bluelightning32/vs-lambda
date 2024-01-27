@@ -116,6 +116,48 @@ public class InscriptionSystem : ModSystem {
     return components;
   }
 
+  public RichTextComponentBase[] GetRecipeDescription(
+      InscriptionRecipe recipe) {
+    ICoreClientAPI capi = (ICoreClientAPI)_api;
+    List<RichTextComponentBase> components = new();
+
+    SlideshowItemstackTextComponent ingredient =
+        new(capi, new[] { recipe.Ingredient.ResolvedItemstack },
+            GuiStyle.LargeFontSize, EnumFloat.Inline,
+            OpenHandbookForItemStack) { ShowStackSize = true };
+    components.Add(ingredient);
+
+    RichTextComponent text = new(capi, " => ", CairoFont.WhiteSmallText()) {
+      VerticalAlign = EnumVerticalAlign.Middle
+    };
+    components.Add(text);
+
+    SlideshowItemstackTextComponent output = new(
+        capi, new[] { recipe.Output.ResolvedItemstack }, GuiStyle.LargeFontSize,
+        EnumFloat.Inline, OpenHandbookForItemStack) { ShowStackSize = true };
+    components.Add(output);
+
+    components.Add(Newline(10));
+
+    RichTextComponent typeText =
+        new(capi, "Required function type:\n  " + recipe.PuzzleType + "\n\n",
+            CairoFont.WhiteSmallText());
+    components.Add(typeText);
+
+    components.AddRange(VtmlUtil.Richtextify(capi, recipe.Description,
+                                             CairoFont.WhiteSmallText()));
+    return components.ToArray();
+  }
+
+  public void OpenHandbookForItemStack(ItemStack stack) {
+    LinkTextComponent temp =
+        new((ICoreClientAPI)_api, "unused", CairoFont.WhiteSmallText(), null);
+    temp.SetHref(
+        $"handbook://{GuiHandbookItemStackPage.PageCodeForStack(stack)}");
+    temp.HandleLink();
+    temp.Dispose();
+  }
+
   private ClearFloatTextComponent Newline(float height) {
     return new ClearFloatTextComponent((ICoreClientAPI)_api, height);
   }

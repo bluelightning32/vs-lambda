@@ -11,13 +11,15 @@ namespace Lambda.Gui;
 public class DialogFunctionInventory : GuiDialogBlockEntity {
   private int _tab = 0;
   private string _errorMessage;
-  private string _description;
-  public string Description {
+  private RichTextComponentBase[] _description;
+  public RichTextComponentBase[] Description {
     get { return _description; }
     set {
       _description = value;
-      if (_tab == 0) {
-        _richText?.SetNewText(_description, CairoFont.WhiteSmallText());
+      if (_tab == 0 && _richText != null) {
+        _richText.SetNewText(_description);
+        GuiElementScrollbar scroll = SingleComposer.GetScrollbar("scrollbar");
+        scroll?.SetNewTotalHeight((float)_richText.Bounds.fixedHeight);
       }
     }
   }
@@ -70,7 +72,8 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
     base.OnRenderGUI(deltaTime);
   }
 
-  public DialogFunctionInventory(string title, string description,
+  public DialogFunctionInventory(string title,
+                                 RichTextComponentBase[] description,
                                  float progress, float totalTime,
                                  string errorMessage, InventoryBase inventory,
                                  BlockPos blockPos, ICoreClientAPI capi,
@@ -94,8 +97,13 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
             .WithFixedAlignmentOffset(-GuiStyle.DialogToScreenPadding, 0);
 
     const int buttonHeight = 25;
-    ElementBounds tabBounds =
-        ElementBounds.Fixed(0, -buttonHeight, 300, buttonHeight);
+    // clip bounds and inset bounds for the first tab.
+    ElementBounds clipBounds =
+        ElementBounds.Fixed(0, GuiStyle.TitleBarHeight, 400, 300);
+    ElementBounds insetBounds = clipBounds.ForkBoundingParent(
+        _insetDepth, _insetDepth, _insetDepth, _insetDepth);
+    ElementBounds tabBounds = ElementBounds.Fixed(
+        0, -buttonHeight, clipBounds.fixedWidth, buttonHeight);
 
     GuiTab[] tabs = new GuiTab[] {
       new() { Name = Lang.Get("lambda:tab-container"), DataInt = 0 },
@@ -107,19 +115,15 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
     bgBounds.WithFixedPosition(0, 0);
     bgBounds.WithFixedPadding(GuiStyle.ElementToDialogPadding);
 
-    // clip bounds and inset bounds for the first tab.
-    ElementBounds clipBounds =
-        ElementBounds.Fixed(0, GuiStyle.TitleBarHeight, 300, 130);
-    ElementBounds insetBounds = clipBounds.ForkBoundingParent(
-        _insetDepth, _insetDepth, _insetDepth, _insetDepth);
-
     // Calculate the gridBounds using the inset bounds from the first tab.
     ElementBounds gridBounds =
         ElementStdBounds.SlotGrid(EnumDialogArea.LeftTop, 0, 0, 1, 1)
             .FixedUnder(insetBounds, GuiStyle.ElementToDialogPadding);
     if (_tab == 1) {
       // Now update clipBounds and insetBounds for the current tab.
-      clipBounds = ElementBounds.Fixed(0, GuiStyle.TitleBarHeight, 300, 200);
+      clipBounds =
+          ElementBounds.Fixed(0, GuiStyle.TitleBarHeight, clipBounds.fixedWidth,
+                              clipBounds.fixedHeight + 70);
       insetBounds = clipBounds.ForkBoundingParent(_insetDepth, _insetDepth,
                                                   _insetDepth, _insetDepth);
     }
@@ -129,7 +133,6 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
     ElementBounds scrollbarBounds =
         ElementStdBounds.VerticalScrollbar(insetBounds);
 
-    string message = _tab == 0 ? _description : (_errorMessage ?? "");
     _richText = null;
     SingleComposer.Clear(dialogBounds);
     SingleComposer =
@@ -145,11 +148,17 @@ public class DialogFunctionInventory : GuiDialogBlockEntity {
             .AddDialogTitleBar(DialogTitle, () => TryClose(), "title")
             .BeginChildElements(bgBounds)
             .AddInset(insetBounds, _insetDepth)
-            .BeginClip(clipBounds)
-            .AddRichtext(message, CairoFont.WhiteSmallText(), textBounds,
-                         "richtext")
-            .EndClip()
-            .AddVerticalScrollbar(OnScrollText, scrollbarBounds, "scrollbar");
+            .BeginClip(clipBounds);
+
+    if (_tab == 0) {
+      SingleComposer.AddRichtext(_description, textBounds, "richtext");
+    } else {
+      SingleComposer.AddRichtext(_errorMessage ?? "",
+                                 CairoFont.WhiteSmallText(), textBounds,
+                                 "richtext");
+    }
+    SingleComposer.EndClip().AddVerticalScrollbar(OnScrollText, scrollbarBounds,
+                                                  "scrollbar");
 
     SingleComposer.GetHorizontalTabs("tabs").SetValue(_tab, false);
 

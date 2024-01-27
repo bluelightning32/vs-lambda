@@ -55,7 +55,7 @@
             },
             inventory: {
               dialogTitleLangCode: "lambda:function-container-title",
-              dialogDescLangCode: "unused",
+              dialogDescLangCode: "lambda:function-container-empty",
               requireTerm: false,
               hidePerishRate: false,
               requireInscriptionIngredient: true,

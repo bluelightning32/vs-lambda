@@ -18,6 +18,7 @@ public class FunctionContainer : TermContainer {
   float _finishTime = 0;
   string _errorMessage;
   long _processed_callback = -1;
+  InscriptionRecipe _currentRecipe;
 
   public FunctionContainer() {
     // This is just the default class name. `base.Initialize` may override it if
@@ -25,15 +26,29 @@ public class FunctionContainer : TermContainer {
     _inventoryClassName = "function";
   }
 
+  private RichTextComponentBase[] GetDescription() {
+    if (Api is not ICoreClientAPI capi) {
+      return null;
+    }
+    if (_currentRecipe is null) {
+      return VtmlUtil.Richtextify(capi, GetInventoryControl()?.GetDescription(),
+                                  CairoFont.WhiteSmallText());
+    } else {
+      return InscriptionSystem.GetInstance(Api).GetRecipeDescription(
+          _currentRecipe);
+    }
+  }
+
   protected override GuiDialogBlockEntity CreateDialog(string title) {
-    string description = GetInventoryControl()?.GetDescription();
+    if (Api is not ICoreClientAPI capi) {
+      return null;
+    }
+    _currentRecipe = InscriptionSystem.GetInstance(Api).GetRecipeForIngredient(
+        Inventory[0].Itemstack);
     Gui.DialogFunctionInventory dialog =
-        new(title, description, _progress, _finishTime, _errorMessage,
-            Inventory, Pos, Api as ICoreClientAPI, SendInscribePacket);
-    InscriptionRecipe recipe =
-        InscriptionSystem.GetInstance(Api).GetRecipeForIngredient(
-            Inventory[0].Itemstack);
-    dialog.SetInscribeEnabled(recipe is not null);
+        new(title, GetDescription(), _progress, _finishTime, _errorMessage,
+            Inventory, Pos, capi, SendInscribePacket);
+    dialog.SetInscribeEnabled(_currentRecipe is not null);
     return dialog;
   }
 
@@ -50,7 +65,11 @@ public class FunctionContainer : TermContainer {
       InscriptionRecipe recipe =
           InscriptionSystem.GetInstance(Api).GetRecipeForIngredient(
               Inventory[0].Itemstack);
-      dialog.SetInscribeEnabled(recipe is not null);
+      if (recipe != _currentRecipe) {
+        _currentRecipe = recipe;
+        dialog.SetInscribeEnabled(_currentRecipe is not null);
+        dialog.Description = GetDescription();
+      }
     }
   }
 
