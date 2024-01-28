@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
@@ -149,5 +152,23 @@ public class FunctionContainer : TermContainer {
       }
     }
     MarkDirty(true);
+  }
+
+  public override int GetMaxStackForItem(ItemStack item) {
+    if (base.GetMaxStackForItem(item) == 0) {
+      // There are none of the attached behaviors accept the item. The block's
+      // inventory is likely disabled because a port was added instead.
+      return 0;
+    }
+    int maxStack = 0;
+    Dictionary<AssetLocation, List<InscriptionRecipe>> recipes =
+        InscriptionSystem.GetInstance(Api).GetRecipesForIngredient(item);
+    foreach (List<InscriptionRecipe> group in recipes.Values) {
+      foreach (InscriptionRecipe recipe in group) {
+        maxStack =
+            Math.Max(maxStack, recipe.Ingredient.ResolvedItemstack.StackSize);
+      }
+    }
+    return maxStack;
   }
 }

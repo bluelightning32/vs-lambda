@@ -58,7 +58,6 @@
               dialogDescLangCode: "lambda:function-container-empty",
               requireTerm: false,
               hidePerishRate: false,
-              requireInscriptionIngredient: true,
               fullTextures: {
                 "result": {
                   base: "scope/down"

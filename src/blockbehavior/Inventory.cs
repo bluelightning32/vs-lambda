@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 using Lambda.BlockEntity;
@@ -15,7 +14,6 @@ public class InventoryOptions {
   public bool RequireTerm;
   public bool RequireConstructor;
   public bool RequireFunction;
-  public bool RequireInscriptionIngredient;
   public int MaxSlotStackSize = 999999;
   public string DialogTitleLangCode;
   public string DialogDescLangCode;
@@ -40,18 +38,6 @@ public class InventoryOptions {
         return 0;
       }
     }
-    if (RequireInscriptionIngredient) {
-      int maxStack = 0;
-      Dictionary<AssetLocation, List<InscriptionRecipe>> recipes =
-          InscriptionSystem.GetInstance(api).GetRecipesForIngredient(item);
-      foreach (List<InscriptionRecipe> group in recipes.Values) {
-        foreach (InscriptionRecipe recipe in group) {
-          maxStack =
-              Math.Max(maxStack, recipe.Ingredient.ResolvedItemstack.StackSize);
-        }
-      }
-      return maxStack;
-    }
     return MaxSlotStackSize;
   }
 }
@@ -71,14 +57,13 @@ public class Inventory : VSBlockBehavior, IInventoryControl {
 
   bool IInventoryControl.GetHidePerishRate() { return _options.HidePerishRate; }
 
-  ItemSlot IInventoryControl.GetSlot(ICoreAPI api, InventoryGeneric inventory) {
-    return new SelectiveItemSlot(
-        inventory, (item) => _options.GetMaxStackForItem(api, item));
-  }
-
   string IInventoryControl.GetTitle() { return _options.DialogTitleLangCode; }
 
   string IInventoryControl.GetDescription() {
     return _options.DialogDescLangCode;
+  }
+
+  int IInventoryControl.GetMaxStackForItem(ICoreAPI api, ItemStack item) {
+    return _options.GetMaxStackForItem(api, item);
   }
 }

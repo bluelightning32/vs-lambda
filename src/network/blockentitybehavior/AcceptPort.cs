@@ -318,15 +318,6 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
     return GetInventoryOptions()?.DialogDescLangCode;
   }
 
-  ItemSlot IInventoryControl.GetSlot(ICoreAPI api, InventoryGeneric inventory) {
-    InventoryOptions options = GetInventoryOptions();
-    if (options == null) {
-      return null;
-    }
-    return new SelectiveItemSlot(
-        inventory, (item) => options.GetMaxStackForItem(api, item));
-  }
-
   bool IInventoryControl.GetHidePerishRate() {
     return GetInventoryOptions()?.HidePerishRate ?? false;
   }
@@ -338,5 +329,9 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
         Blockentity.MarkDirty(true);
       }
     }
+  }
+
+  int IInventoryControl.GetMaxStackForItem(ICoreAPI api, ItemStack item) {
+    return GetInventoryOptions()?.GetMaxStackForItem(api, item) ?? 0;
   }
 }
