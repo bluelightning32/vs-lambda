@@ -29,6 +29,7 @@ public class InscriptionRecipe : RecipeBase<InscriptionRecipe>,
   public string Description;
   public string PuzzleType;
   public PuzzleCheck[] PuzzleChecks;
+  public float ProcessTime = 1;
 
   public InscriptionRecipe() {}
 
@@ -37,9 +38,11 @@ public class InscriptionRecipe : RecipeBase<InscriptionRecipe>,
   // proceeds to modify the output.
   public override InscriptionRecipe Clone() {
     return new InscriptionRecipe {
-      RecipeId = RecipeId,     Ingredient = Ingredient.Clone(),
-      Output = Output.Clone(), Name = Name,
-      Enabled = Enabled,
+      RecipeId = RecipeId,       Ingredient = Ingredient.Clone(),
+      Output = Output.Clone(),   Name = Name,
+      Enabled = Enabled,         Description = Description,
+      PuzzleType = PuzzleType,   PuzzleChecks = PuzzleChecks,
+      ProcessTime = ProcessTime,
     };
   }
 

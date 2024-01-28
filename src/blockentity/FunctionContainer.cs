@@ -91,9 +91,9 @@ public class FunctionContainer : TermContainer {
                                               byte[] data) {
     if (packetid == (int)PacketId.Inscribe) {
       Api.Logger.Debug("Server got inscribe packet");
-      if (_processed_callback == -1) {
+      if (_processed_callback == -1 && _currentRecipe != null) {
         _progress = 0;
-        _finishTime = 1;
+        _finishTime = _currentRecipe.ProcessTime;
         _processed_callback =
             RegisterDelayedCallback(OnComplete, (int)(_finishTime * 1000));
         MarkDirty(true);
@@ -105,36 +105,47 @@ public class FunctionContainer : TermContainer {
 
   protected override void OnSlotModified(int slotId) {
     if (Api.Side == EnumAppSide.Server) {
+      if (_processed_callback != -1) {
+        UnregisterDelayedCallback(_processed_callback);
+      }
       _processed_callback = -1;
       _progress = 0;
       _finishTime = 0;
       _errorMessage = null;
+      _currentRecipe =
+          InscriptionSystem.GetInstance(Api).GetRecipeForIngredient(
+              Inventory[0].Itemstack);
       MarkDirty(true);
     }
     base.OnSlotModified(slotId);
+  }
+
+  private ItemStack GetOutputItemStack() {
+    if (++_completed % 2 == 1) {
+      _errorMessage = "placeholder error";
+      return null;
+    }
+    InscriptionRecipe recipe =
+        InscriptionSystem.GetInstance(Api).GetRecipeForIngredient(
+            Inventory[0].Itemstack);
+    if (recipe == null) {
+      _errorMessage = "no active recipe";
+      return null;
+    }
+    _errorMessage = null;
+    return recipe.Output.ResolvedItemstack.Clone();
   }
 
   private void OnComplete(float delay) {
     Api.Logger.Debug("Inscribe done on the server side.");
     _processed_callback = -1;
     if (_finishTime != 0) {
-      if (++_completed % 2 == 0) {
-        _progress = 0;
-        _finishTime = 0;
-        _errorMessage = null;
-        AssetLocation stick = new AssetLocation("game", "stick");
-        CollectibleObject replacement;
-        if (Inventory[0].Itemstack.Collectible.Code == stick) {
-          replacement = Api.World.GetBlock(new AssetLocation("game", "barrel"));
-        } else {
-          replacement = Api.World.GetItem(stick);
-        }
-        Inventory[0].Itemstack = new ItemStack(replacement, 1);
+      _progress = 0;
+      _finishTime = 0;
+      ItemStack replacement = GetOutputItemStack();
+      if (replacement is not null) {
+        Inventory[0].Itemstack = replacement;
         Inventory[0].MarkDirty();
-      } else {
-        _progress = 0;
-        _finishTime = 0;
-        _errorMessage = "placeholder error";
       }
     }
     MarkDirty(true);
