@@ -17,13 +17,14 @@ public abstract class NodeAccessor {
 
   // Returns the node in `pos` that contains `edge`. Returns
   // null if the block does not exist or does not contain the edge.
-  public virtual NodeTemplate GetNode(BlockPos pos, Edge edge, out Node node) {
+  public virtual NodeTemplate GetNode(BlockPos pos, NetworkType network,
+                                      Edge edge, out Node node) {
     BlockNodeTemplate block = GetBlock(pos, out Node[] nodes);
     if (block == null) {
       node = new Node();
       return null;
     }
-    NodeTemplate template = block.GetNodeTemplate(edge);
+    NodeTemplate template = block.GetNodeTemplate(network, edge);
     if (template == null) {
       node = new Node();
       return null;

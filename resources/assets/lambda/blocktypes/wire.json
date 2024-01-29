@@ -73,6 +73,7 @@
         ],
         nodes: [
           {
+            network: "term",
             replacementTextures: {
               "none": {
                 "center": { base: "wire/center-disconnected" },

@@ -8,9 +8,9 @@ using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
 
 public interface IConnectable {
   Manager GetManager(ICoreAPI api);
-  bool CanAddEdge(Edge edge, out NodePos source);
-  void AddEdge(Edge edge);
-  void RemoveEdge(Edge edge);
+  bool CanAddEdge(NetworkType network, Edge edge, out NodePos source);
+  void AddEdge(NetworkType network, Edge edge);
+  void RemoveEdge(NetworkType network, Edge edge);
 }
 
 // Asks the neighbor blocks to modify their BlockNodeTemplates to add edges to
@@ -27,6 +27,7 @@ public class AutoConnect : VSBlockBehavior {
   private bool _disconnectOnNeighborChange = false;
   // When this block is broken, disconnect any auto connectible neighbors.
   private bool _disconnectOnBreak;
+  private NetworkType[] _networks;
   public AutoConnect(Block block) : base(block) {}
 
   public override void Initialize(JsonObject properties) {
@@ -35,6 +36,8 @@ public class AutoConnect : VSBlockBehavior {
     _disconnectOnNeighborChange =
         properties["disconnectOnNeighborChange"].AsBool();
     _disconnectOnBreak = properties["disconnectOnBreak"].AsBool(true);
+    _networks =
+        properties["networks"].AsArray<NetworkType>(new[] { NetworkType.Term });
   }
 
   public override void OnNeighbourBlockChange(IWorldAccessor world,
@@ -45,10 +48,14 @@ public class AutoConnect : VSBlockBehavior {
       if (connectable != null) {
         foreach (BlockFacing face in BlockFacing.ALLFACES) {
           BlockPos neighborPos = pos.AddCopy(face);
-          if (!connectable.GetManager(world.Api).GetSource(
-                  neighborPos, EdgeExtension.GetFaceCenter(face.Opposite),
-                  out NodePos source)) {
-            connectable.RemoveEdge(EdgeExtension.GetFaceCenter(face));
+          foreach (NetworkType network in _networks) {
+            if (!connectable.GetManager(world.Api).GetSource(
+                    neighborPos, network,
+                    EdgeExtension.GetFaceCenter(face.Opposite),
+                    out NodePos source)) {
+              connectable.RemoveEdge(network,
+                                     EdgeExtension.GetFaceCenter(face));
+            }
           }
         }
       }
@@ -65,7 +72,13 @@ public class AutoConnect : VSBlockBehavior {
       BlockPos neighborPos = pos.AddCopy(face);
       IConnectable connectable =
           block.GetInterface<IConnectable>(world, neighborPos);
-      connectable?.RemoveEdge(EdgeExtension.GetFaceCenter(face.Opposite));
+      if (connectable == null) {
+        continue;
+      }
+      foreach (NetworkType network in _networks) {
+        connectable.RemoveEdge(network,
+                               EdgeExtension.GetFaceCenter(face.Opposite));
+      }
     }
   }
 
@@ -79,8 +92,16 @@ public class AutoConnect : VSBlockBehavior {
         block.GetInterface<IConnectable>(world, blockSel.Position);
     if (connectable != null) {
       BlockFacing preferredFace = blockSel.Face.Opposite;
-      if (!connectable.GetManager(world.Api).IsBlockInNetwork(
-              blockSel.Position.AddCopy(preferredFace))) {
+      bool found = false;
+      foreach (NetworkType network in _networks) {
+        if (connectable.GetManager(world.Api).IsBlockInNetwork(
+                blockSel.Position.AddCopy(preferredFace), network)) {
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
         preferredFace =
             BlockFacing.HorizontalFromAngle(byPlayer.Entity.Pos.Yaw);
       }
@@ -100,33 +121,40 @@ public class AutoConnect : VSBlockBehavior {
     return true;
   }
 
+  private void TryAddEdge(IWorldAccessor world, IConnectable connectable,
+                          BlockPos pos, Edge edge) {
+    foreach (NetworkType network in _networks) {
+      TryAddEdge(world, connectable, pos, network, edge);
+    }
+  }
+
   private static void TryAddEdge(IWorldAccessor world, IConnectable connectable,
-                                 BlockPos pos, Edge edge) {
-    if (!connectable.CanAddEdge(edge, out NodePos source1)) {
+                                 BlockPos pos, NetworkType network, Edge edge) {
+    if (!connectable.CanAddEdge(network, edge, out NodePos source1)) {
       return;
     }
     BlockPos neighborPos = pos.AddCopy(edge.GetFace());
     if (!connectable.GetManager(world.Api).GetSource(
-            neighborPos, edge.GetOpposite(), out NodePos source2)) {
+            neighborPos, network, edge.GetOpposite(), out NodePos source2)) {
       IConnectable neighbor =
           world.BlockAccessor.GetBlock(neighborPos)
               .GetInterface<IConnectable>(world, neighborPos);
       if (neighbor == null) {
         return;
       }
-      if (!neighbor.CanAddEdge(edge.GetOpposite(), out source2)) {
+      if (!neighbor.CanAddEdge(network, edge.GetOpposite(), out source2)) {
         return;
       }
       if (source1.IsSet() && source2.IsSet() && source1 != source2) {
         return;
       }
-      neighbor.AddEdge(edge.GetOpposite());
-      connectable.AddEdge(edge);
+      neighbor.AddEdge(network, edge.GetOpposite());
+      connectable.AddEdge(network, edge);
       return;
     }
     if (source1.IsSet() && source2.IsSet() && source1 != source2) {
       return;
     }
-    connectable.AddEdge(edge);
+    connectable.AddEdge(network, edge);
   }
 }

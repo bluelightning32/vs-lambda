@@ -39,7 +39,7 @@ public class TermNetwork : AbstractNetwork {
       PortConfiguration ports =
           AcceptPort.ParseConfiguration(_world.Api, properties);
       foreach (var port in ports.Ports) {
-        NodeTemplate node = new();
+        NodeTemplate node = new() { Network = port.Network };
         foreach (var face in port.Faces) {
           const int mask = (1 << AcceptPort.OccupiedPortsBitsPerFace) - 1;
           PortDirection dir =

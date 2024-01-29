@@ -2,7 +2,9 @@ using System.Collections.Generic;
 
 using Lambda.BlockBehavior;
 using Lambda.BlockEntityBehavior;
+using Lambda.Network;
 using Lambda.Network.BlockBehavior;
+using Lambda.Network.BlockEntityBehavior;
 
 using Newtonsoft.Json;
 
@@ -169,7 +171,12 @@ public class Wire : TermNetwork, IBlockEntityForward, IConnectable {
 
   public override object GetImmutableKey() { return GetKey(); }
 
-  public bool CanAddEdge(Edge edge, out NodePos source) {
+  bool IConnectable.CanAddEdge(NetworkType network, Edge edge,
+                               out NodePos source) {
+    if (network != NetworkType.Term) {
+      source = new();
+      return false;
+    }
     if (!edge.IsFaceCenter() || (_directions & edge.GetFace().Flag) != 0) {
       source = new();
       return false;
@@ -178,7 +185,10 @@ public class Wire : TermNetwork, IBlockEntityForward, IConnectable {
     return true;
   }
 
-  public void AddEdge(Edge edge) {
+  void IConnectable.AddEdge(NetworkType network, Edge edge) {
+    if (network != NetworkType.Term) {
+      return;
+    }
     _directions |= edge.GetFace().Flag;
     _selectionBoxes = GetSelectionBoxes(Api, _directions);
     _template = ParseBlockNodeTemplate(Api.World, properties);
@@ -190,7 +200,10 @@ public class Wire : TermNetwork, IBlockEntityForward, IConnectable {
     return GetManager(api);
   }
 
-  public void RemoveEdge(Edge edge) {
+  void IConnectable.RemoveEdge(NetworkType network, Edge edge) {
+    if (network != NetworkType.Term) {
+      return;
+    }
     if ((_directions & edge.GetFace().Flag) == 0) {
       // The block doesn't currently have that edge.
       return;

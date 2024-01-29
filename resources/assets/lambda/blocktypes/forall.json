@@ -23,6 +23,7 @@
       properties: {
         nodes: [
           {
+            network: "scope",
             edgesByType: {
               "*-north": ["east-right", "west-left", "down-up", "source"],
               "*-south": ["east-left", "west-right", "down-down", "source"],
@@ -41,6 +42,7 @@
         ports: [
           {
             name: "result",
+            network: "term",
             directions: ["direct-out"],
             facesByType: {
               "*-north": ["east", "south", "west"],

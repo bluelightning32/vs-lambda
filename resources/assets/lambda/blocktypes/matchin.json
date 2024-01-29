@@ -23,6 +23,7 @@
       properties: {
         nodes: [
           {
+            network: "scope",
             edgesByType: {
               "*-north": ["east-right", "west-left", "down-up", "source"],
               "*-south": ["east-left", "west-right", "down-down", "source"],
@@ -40,6 +41,7 @@
       properties: {
         nodes: [
           {
+            network: "match",
             edges: ["north-center", "east-center", "south-center", "west-center", "down-center"],
             replacementTextures: {
               "none": {

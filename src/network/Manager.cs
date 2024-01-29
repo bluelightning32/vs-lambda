@@ -377,8 +377,9 @@ public class Manager {
 
   // Returns whether the node exists. If it exists, then the source of the node
   // is stored in `source`.
-  public bool GetSource(BlockPos pos, Edge edge, out NodePos source) {
-    if (_accessor.GetNode(pos, edge, out Node node) == null) {
+  public bool GetSource(BlockPos pos, NetworkType network, Edge edge,
+                        out NodePos source) {
+    if (_accessor.GetNode(pos, network, edge, out Node node) == null) {
       source = new NodePos();
       return false;
     }
@@ -386,8 +387,10 @@ public class Manager {
     return true;
   }
 
-  public bool IsBlockInNetwork(BlockPos pos) {
-    return _accessor.GetBlock(pos, out Node[] nodes) != null;
+  public bool IsBlockInNetwork(BlockPos pos, NetworkType network) {
+    return _accessor.GetBlock(pos, out Node[] nodes)
+               ?.ContainsNetwork(network) ??
+           false;
   }
 
   // Set entries in `templates` to null if they have no edges that pair with the

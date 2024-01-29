@@ -68,7 +68,7 @@ public struct Node {
   }
 
   public override readonly string ToString() {
-    return $"source=&lt;{Source.Block?.ToString() ?? "null"}&gt;:{Source.NodeId}, parent={Parent}, dist={PropagationDistance}";
+    return $"source=<{Source.Block?.ToString() ?? "null"}>:{Source.NodeId}, parent={Parent}, dist={PropagationDistance}";
   }
 
   public void Connect(Manager networkManager, Node node, Edge parentEdge) {
@@ -95,6 +95,8 @@ public struct Node {
 
 [JsonObject(MemberSerialization.OptIn)]
 public class NodeTemplate {
+  [JsonProperty]
+  public NetworkType Network = NetworkType.Scope;
   public int Id = 0;
   public bool Source = false;
   [JsonProperty]
@@ -129,7 +131,8 @@ public class NodeTemplate {
         continue;
       }
       NodeTemplate neighborTemplate =
-          neighborTemplates[face.Index]?.GetNodeTemplate(edge.GetOpposite());
+          neighborTemplates[face.Index]?.GetNodeTemplate(Network,
+                                                         edge.GetOpposite());
       if (neighborTemplate == null) {
         continue;
       }
@@ -162,7 +165,8 @@ public class NodeTemplate {
         continue;
       }
       NodeTemplate neighborTemplate =
-          neighborTemplates[face.Index]?.GetNodeTemplate(edge.GetOpposite());
+          neighborTemplates[face.Index]?.GetNodeTemplate(Network,
+                                                         edge.GetOpposite());
       if (neighborTemplate == null) {
         continue;
       }
@@ -197,7 +201,8 @@ public class NodeTemplate {
         continue;
       }
       NodeTemplate neighborTemplate =
-          neighborTemplates[face.Index]?.GetNodeTemplate(edge.GetOpposite());
+          neighborTemplates[face.Index]?.GetNodeTemplate(Network,
+                                                         edge.GetOpposite());
       if (neighborTemplate == null) {
         continue;
       }
@@ -245,7 +250,7 @@ public class NodeTemplate {
       return false;
     }
     NodeTemplate parentTemplate =
-        accessor.GetNode(pos.AddCopy(node.Parent.GetFace()),
+        accessor.GetNode(pos.AddCopy(node.Parent.GetFace()), Network,
                          node.Parent.GetOpposite(), out Node parent);
     return node.Source == parent.Source &&
            networkManager.IsPropagationDistanceInRange(
@@ -268,8 +273,8 @@ public class NodeTemplate {
       }
       neighborPos.Set(pos);
       neighborPos.Offset(face);
-      NodeTemplate neighborTemplate =
-          accessor.GetNode(neighborPos, edge.GetOpposite(), out Node neighbor);
+      NodeTemplate neighborTemplate = accessor.GetNode(
+          neighborPos, Network, edge.GetOpposite(), out Node neighbor);
       if (neighborTemplate == null) {
         continue;
       }
@@ -313,8 +318,8 @@ public class NodeTemplate {
       Debug.Assert(face != null);
       neighborPos.Set(pos);
       neighborPos.Offset(face);
-      NodeTemplate neighborTemplate =
-          accessor.GetNode(neighborPos, edge.GetOpposite(), out Node neighbor);
+      NodeTemplate neighborTemplate = accessor.GetNode(
+          neighborPos, Network, edge.GetOpposite(), out Node neighbor);
       if (neighborTemplate == null) {
         continue;
       }
@@ -348,8 +353,8 @@ public class NodeTemplate {
       }
       neighborPos.Set(pos);
       neighborPos.Offset(face);
-      NodeTemplate neighborTemplate =
-          accessor.GetNode(neighborPos, edge.GetOpposite(), out Node neighbor);
+      NodeTemplate neighborTemplate = accessor.GetNode(
+          neighborPos, Network, edge.GetOpposite(), out Node neighbor);
       if (neighborTemplate == null) {
         continue;
       }

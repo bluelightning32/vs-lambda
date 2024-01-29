@@ -32,6 +32,7 @@ public enum PortDirection {
 
 public class PortOption {
   public string Name;
+  public NetworkType Network;
   public PortDirection[] Directions;
   public BlockFacing[] Faces = Array.Empty<BlockFacing>();
   public Dictionary<string, CompositeTexture> FullTextures;
@@ -232,8 +233,10 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
                         << (face.Index * OccupiedPortsBitsPerFace);
       _template = ParseBlockNodeTemplate(Api.World, properties);
       _template.SetSourceScope(Pos, _nodes);
-      int nodeId =
-          _template.GetNodeTemplate(EdgeExtension.GetFaceCenter(face)).Id;
+      int nodeId = _template
+                       .GetNodeTemplate(portOption.Network,
+                                        EdgeExtension.GetFaceCenter(face))
+                       .Id;
       _template.OnNodePlaced(Pos, nodeId, ref _nodes[nodeId]);
       Blockentity.GetBehavior<CacheMesh>()?.UpdateMesh();
       if (GetInventoryOptions() != oldInventory) {

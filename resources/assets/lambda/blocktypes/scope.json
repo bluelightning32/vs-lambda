@@ -27,6 +27,7 @@
       properties: {
           nodes: [
           {
+            network: "scope",
             edgesByType: {
               "*-north": ["east-right", "up-up", "west-left", "down-up"],
               "*-south": ["east-left", "up-down", "west-right", "down-down"],
@@ -45,6 +46,7 @@
       properties: {
         nodes: [
           {
+            network: "match",
             edgesByType: {
               "*-north": ["east-center", "up-center", "west-center", "down-center"],
               "*-south": ["east-center", "up-center", "west-center", "down-center"],
@@ -63,6 +65,7 @@
         ports: [
           {
             name: "parameter",
+            network: "term",
             directions: ["direct-in", "direct-out"],
             faces: ["{rot}"]
           }

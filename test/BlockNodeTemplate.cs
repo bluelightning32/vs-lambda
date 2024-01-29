@@ -46,8 +46,8 @@ public class BlockNodeTemplateTest {
   public void ParseSource() {
     BlockNodeTemplate template = _templates.FourWaySource;
     Assert.AreEqual(1, template.Count);
-    NodeTemplate nodeTemplate =
-        _templates.FourWaySource.GetNodeTemplate(Edge.NorthCenter);
+    NodeTemplate nodeTemplate = _templates.FourWaySource.GetNodeTemplate(
+        NetworkType.Scope, Edge.NorthCenter);
     Assert.IsNotNull(nodeTemplate);
     Assert.IsTrue(nodeTemplate.Source);
   }

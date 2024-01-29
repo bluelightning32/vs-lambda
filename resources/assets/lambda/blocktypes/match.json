@@ -23,6 +23,7 @@
       properties: {
         nodes: [
           {
+            network: "match",
             edges: ["north-center", "east-center", "south-center", "west-center", "source"]
           }
         ]
@@ -34,6 +35,7 @@
         ports: [
           {
             name: "output",
+            network: "term",
             directions: ["direct-out"],
             facesByType: {
               "*-north": ["west"],
@@ -44,6 +46,7 @@
           },
           {
             name: "input",
+            network: "term",
             directions: ["direct-in"],
             facesByType: {
               "*-north": ["east"],

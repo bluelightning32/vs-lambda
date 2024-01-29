@@ -1,6 +1,7 @@
 using System.Text;
 
 using Lambda.BlockEntityBehavior;
+using Lambda.CollectibleBehavior;
 
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -133,7 +134,7 @@ public abstract class AbstractNetwork : VSBlockEntityBehavior, IMeshGenerator {
           break;
         }
         dsc.AppendLine(
-            $"{_template.GetNetworkName()}[{i}] = {{ {_nodes[i].ToString()} }}");
+            $"[{i}] = {{network={_template.GetNodeTemplate(i).Network.GetCode()}, {Term.Escape(_nodes[i].ToString())} }}");
       }
     }
   }

@@ -12,8 +12,7 @@ namespace Lambda.Network;
 
 public class BlockNodeTemplate {
   private readonly NodeTemplate[] _nodeTemplates;
-  private readonly Dictionary<Edge, NodeTemplate> _index =
-      new Dictionary<Edge, NodeTemplate>();
+  private readonly Dictionary<(NetworkType, Edge), NodeTemplate> _index = new();
 
   private readonly Dictionary<string, NodeTemplate> _textures = new();
 
@@ -33,7 +32,7 @@ public class BlockNodeTemplate {
           nodeTemplate.Source = true;
         }
         if (edge != Edge.Unknown && edge != Edge.Source) {
-          _index.Add(edge, nodeTemplate);
+          _index.Add((nodeTemplate.Network, edge), nodeTemplate);
         }
       }
       AddTexturesToIndex(nodeTemplate);
@@ -173,8 +172,8 @@ public class BlockNodeTemplate {
     return nodes;
   }
 
-  public NodeTemplate GetNodeTemplate(Edge edge) {
-    return !_index.TryGetValue(edge, out NodeTemplate n) ? null : n;
+  public NodeTemplate GetNodeTemplate(NetworkType network, Edge edge) {
+    return !_index.TryGetValue((network, edge), out NodeTemplate n) ? null : n;
   }
 
   private BlockNodeTemplate[] GetNeighbors(BlockPos pos,
@@ -278,10 +277,20 @@ public class BlockNodeTemplate {
   // neighbor's template on `face`.
   public bool CanAnyPair(BlockFacing face, BlockNodeTemplate neighbor) {
     foreach (var edge in _index) {
-      if (edge.Key.GetFace() != face) {
+      if (edge.Key.Item2.GetFace() != face) {
         continue;
       }
-      if (neighbor._index.ContainsKey(edge.Key.GetOpposite())) {
+      if (neighbor._index.ContainsKey(
+              (edge.Key.Item1, edge.Key.Item2.GetOpposite()))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public bool ContainsNetwork(NetworkType network) {
+    foreach (NodeTemplate template in _nodeTemplates) {
+      if (template.Network == network) {
         return true;
       }
     }

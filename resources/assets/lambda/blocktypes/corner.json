@@ -12,50 +12,62 @@
       properties: {
         nodes: [
           {
+            network: "scope",
             edges: ["north-left", "east-right"],
             textures: ["northeast"]
           },
           {
+            network: "scope",
             edges: ["east-left", "south-right"],
             textures: ["southeast"]
           },
           {
+            network: "scope",
             edges: ["south-left", "west-right"],
             textures: ["southwest"]
           },
           {
+            network: "scope",
             edges: ["west-left", "north-right"],
             textures: ["northwest"]
           },
           {
+            network: "scope",
             edges: ["up-up", "north-up"],
             textures: ["upnorth"]
           },
           {
+            network: "scope",
             edges: ["up-right", "east-up"],
             textures: ["upeast"]
           },
           {
+            network: "scope",
             edges: ["up-down", "south-up"],
             textures: ["upsouth"]
           },
           {
+            network: "scope",
             edges: ["up-left", "west-up"],
             textures: ["upwest"]
           },
           {
+            network: "scope",
             edges: ["down-up", "north-down"],
             textures: ["downnorth"]
           },
           {
+            network: "scope",
             edges: ["down-left", "east-down"],
             textures: ["downeast"]
           },
           {
+            network: "scope",
             edges: ["down-down", "south-down"],
             textures: ["downsouth"]
           },
           {
+            network: "scope",
             edges: ["down-right", "west-down"],
             textures: ["downwest"]
           }
@@ -67,6 +79,7 @@
       properties: {
           nodes: [
           {
+            network: "match",
             edges: ["north-center", "east-center", "south-center", "west-center", "up-center", "down-center"],
           }
         ]
