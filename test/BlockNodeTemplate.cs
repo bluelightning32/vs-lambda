@@ -17,7 +17,7 @@ public class BlockNodeTemplateTest {
   void AssertEjected(BlockPos[] blocks) {
     foreach (BlockPos pos in blocks) {
       BlockNodeTemplate template = _accessor.GetBlock(pos, out Node[] nodes);
-      Assert.AreEqual(_templates.ScopeCenterConnector, template);
+      Assert.AreEqual(_templates.FourWay, template);
       Assert.IsTrue(nodes[0].IsEjected());
       Assert.IsTrue(!nodes[0].Source.IsSet());
       Assert.IsTrue(nodes[0].HasInfDistance);
@@ -28,7 +28,7 @@ public class BlockNodeTemplateTest {
   void AssertConnected(BlockPos[] blocks, BlockPos source) {
     foreach (BlockPos pos in blocks) {
       BlockNodeTemplate template = _accessor.GetBlock(pos, out Node[] nodes);
-      Assert.AreEqual(_templates.ScopeCenterConnector, template);
+      Assert.AreEqual(_templates.FourWay, template);
       Assert.AreEqual(new NodePos(source, 0), nodes[0].Source,
                       $"Block {pos} does not connect to the source.");
       Assert.AreEqual(Scope.Function, nodes[0].Scope);
@@ -44,49 +44,49 @@ public class BlockNodeTemplateTest {
 
   [TestMethod]
   public void ParseSource() {
-    BlockNodeTemplate template = _templates.ScopeCenterSource;
+    BlockNodeTemplate template = _templates.FourWaySource;
     Assert.AreEqual(1, template.Count);
     NodeTemplate nodeTemplate =
-        _templates.ScopeCenterSource.GetNodeTemplate(Edge.NorthCenter);
+        _templates.FourWaySource.GetNodeTemplate(Edge.NorthCenter);
     Assert.IsNotNull(nodeTemplate);
     Assert.IsTrue(nodeTemplate.Source);
   }
 
   [TestMethod]
   public void CanPlaceNextToSource() {
-    _accessor.SetBlock(0, 0, 0, 0, _templates.ScopeCenterSource);
+    _accessor.SetBlock(0, 0, 0, 0, _templates.FourWaySource);
     string failureCode = null;
-    Assert.IsTrue(_templates.ScopeCenterConnector.CanPlace(
-        new BlockPos(1, 0, 0, 0), out failureCode));
+    Assert.IsTrue(
+        _templates.FourWay.CanPlace(new BlockPos(1, 0, 0, 0), out failureCode));
   }
 
   [TestMethod]
   public void CantPlaceSourceBySource() {
-    _accessor.SetBlock(0, 0, 0, 0, _templates.ScopeCenterSource);
+    _accessor.SetBlock(0, 0, 0, 0, _templates.FourWaySource);
 
     string failureCode = null;
-    Assert.IsFalse(_templates.ScopeCenterSource.CanPlace(
-        new BlockPos(1, 0, 0, 0), out failureCode));
+    Assert.IsFalse(_templates.FourWaySource.CanPlace(new BlockPos(1, 0, 0, 0),
+                                                     out failureCode));
     Assert.AreEqual("conflictingsources", failureCode);
   }
 
   [TestMethod]
   public void CanPlaceSourceByEjectedBlock() {
-    _accessor.SetBlock(0, 0, 0, 0, _templates.ScopeCenterConnector);
+    _accessor.SetBlock(0, 0, 0, 0, _templates.FourWay);
 
     string failureCode = null;
-    Assert.IsTrue(_templates.ScopeCenterSource.CanPlace(
-        new BlockPos(1, 0, 0, 0), out failureCode));
+    Assert.IsTrue(_templates.FourWaySource.CanPlace(new BlockPos(1, 0, 0, 0),
+                                                    out failureCode));
   }
 
   [TestMethod]
   public void CantPlaceNextToTwoSources() {
-    _accessor.SetBlock(0, 0, 0, 0, _templates.ScopeCenterSource);
-    _accessor.SetBlock(2, 0, 0, 0, _templates.ScopeCenterSource);
+    _accessor.SetBlock(0, 0, 0, 0, _templates.FourWaySource);
+    _accessor.SetBlock(2, 0, 0, 0, _templates.FourWaySource);
 
     string failureCode = null;
-    Assert.IsFalse(_templates.ScopeCenterConnector.CanPlace(
-        new BlockPos(1, 0, 0, 0), out failureCode));
+    Assert.IsFalse(
+        _templates.FourWay.CanPlace(new BlockPos(1, 0, 0, 0), out failureCode));
     Assert.AreEqual("conflictingsources", failureCode);
   }
 
@@ -94,17 +94,17 @@ public class BlockNodeTemplateTest {
   public void PlaceNextToSource() {
     // Place a source block first.
     BlockPos sourceBlock = new(0, 0, 0, 0);
-    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+    _accessor.SetBlock(sourceBlock, _templates.FourWaySource);
 
     // Place a connector block next to the source.
     BlockPos connectorPos = new(1, 0, 0, 0);
-    _accessor.SetBlock(connectorPos, _templates.ScopeCenterConnector);
+    _accessor.SetBlock(connectorPos, _templates.FourWay);
 
     // Verify that the connector block is now connected to the source.
     Assert.IsFalse(_manager.HasPendingWork);
     BlockNodeTemplate template =
         _accessor.GetBlock(connectorPos, out Node[] nodes);
-    Assert.AreEqual(_templates.ScopeCenterConnector, template);
+    Assert.AreEqual(_templates.FourWay, template);
     Assert.AreEqual(new NodePos(sourceBlock, 0), nodes[0].Source);
     Assert.AreEqual(Scope.Function, nodes[0].Scope);
     Assert.AreEqual(0 + _manager.DefaultDistanceIncrement,
@@ -116,12 +116,12 @@ public class BlockNodeTemplateTest {
   public void PlacedSourcePropagates1Node() {
     // Place a connector block first.
     BlockPos connectorPos = new(0, 0, 0, 0);
-    _accessor.SetBlock(connectorPos, _templates.ScopeCenterConnector);
+    _accessor.SetBlock(connectorPos, _templates.FourWay);
     Assert.AreEqual(Node.InfDistance, _accessor.GetDistance(connectorPos, 0));
 
     // Place a source block next to the connector.
     BlockPos sourceBlock = new(1, 0, 0, 0);
-    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+    _accessor.SetBlock(sourceBlock, _templates.FourWaySource);
 
     Assert.IsTrue(_manager.HasPendingWork);
     _manager.FinishPendingWork();
@@ -129,7 +129,7 @@ public class BlockNodeTemplateTest {
     // Verify that the connector block is now connected to the source.
     BlockNodeTemplate template =
         _accessor.GetBlock(connectorPos, out Node[] nodes);
-    Assert.AreEqual(_templates.ScopeCenterConnector, template);
+    Assert.AreEqual(_templates.FourWay, template);
     Assert.AreEqual(new NodePos(sourceBlock, 0), nodes[0].Source);
     Assert.AreEqual(Scope.Function, nodes[0].Scope);
     Assert.AreEqual(0 + _manager.DefaultDistanceIncrement,
@@ -142,12 +142,12 @@ public class BlockNodeTemplateTest {
     // Place a connector block first.
     BlockPos[] connectors = { new(0, 0, 0, 0), new(1, 0, 0, 0) };
     foreach (BlockPos pos in connectors) {
-      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _accessor.SetBlock(pos, _templates.FourWay);
     }
 
     // Place a source block next to the connector.
     BlockPos sourceBlock = new(2, 0, 0, 0);
-    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+    _accessor.SetBlock(sourceBlock, _templates.FourWaySource);
     Assert.AreEqual(0 * _manager.DefaultDistanceIncrement,
                     _accessor.GetDistance(sourceBlock, 0));
 
@@ -157,7 +157,7 @@ public class BlockNodeTemplateTest {
     // Verify that the connector blocks are now connected to the source.
     foreach (BlockPos pos in connectors) {
       BlockNodeTemplate template = _accessor.GetBlock(pos, out Node[] nodes);
-      Assert.AreEqual(_templates.ScopeCenterConnector, template);
+      Assert.AreEqual(_templates.FourWay, template);
       Assert.AreEqual(new NodePos(sourceBlock, 0), nodes[0].Source);
       Assert.AreEqual(Scope.Function, nodes[0].Scope);
       Assert.AreEqual(Edge.EastCenter, nodes[0].Parent);
@@ -172,11 +172,11 @@ public class BlockNodeTemplateTest {
   public void PlacedConnectorPropagates() {
     // Place a source block first.
     BlockPos sourceBlock = new(0, 0, 0, 0);
-    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+    _accessor.SetBlock(sourceBlock, _templates.FourWaySource);
 
     // Place connector2 with a gap between it and the source.
     BlockPos connector2Pos = new(2, 0, 0, 0);
-    _accessor.SetBlock(connector2Pos, _templates.ScopeCenterConnector);
+    _accessor.SetBlock(connector2Pos, _templates.FourWay);
 
     // Verify that connector2 is not connected yet.
     Assert.IsFalse(_manager.HasPendingWork);
@@ -186,7 +186,7 @@ public class BlockNodeTemplateTest {
 
     // Place connector1 between the source and connector2.
     BlockPos connector1Pos = new(1, 0, 0, 0);
-    _accessor.SetBlock(connector1Pos, _templates.ScopeCenterConnector);
+    _accessor.SetBlock(connector1Pos, _templates.FourWay);
 
     Assert.IsTrue(_manager.HasPendingWork);
     _manager.FinishPendingWork();
@@ -215,15 +215,15 @@ public class BlockNodeTemplateTest {
     //  |     |
     //
     BlockPos sourceBlock = new(0, 0, 0, 0);
-    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+    _accessor.SetBlock(sourceBlock, _templates.FourWaySource);
 
     // Place connector2 with a gap between it and the source.
     BlockPos connector2Pos = new(2, 0, 0, 0);
-    _accessor.SetBlock(connector2Pos, _templates.ScopeNSCenterConnector);
+    _accessor.SetBlock(connector2Pos, _templates.NS);
 
     // Place connector1 between the source and connector2.
     BlockPos connector1Pos = new(1, 0, 0, 0);
-    _accessor.SetBlock(connector1Pos, _templates.ScopeCenterConnector);
+    _accessor.SetBlock(connector1Pos, _templates.FourWay);
 
     _manager.FinishPendingWork();
 
@@ -252,17 +252,17 @@ public class BlockNodeTemplateTest {
     //  |  |  |  |
     //
     BlockPos sourceBlock = new(0, 0, 0, 0);
-    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+    _accessor.SetBlock(sourceBlock, _templates.FourWaySource);
 
     BlockPos connector2Pos = new(2, 0, 0, 0);
-    _accessor.SetBlock(connector2Pos, _templates.ScopeCenterConnector);
+    _accessor.SetBlock(connector2Pos, _templates.FourWay);
 
     BlockPos connector3Pos = new(3, 0, 0, 0);
-    _accessor.SetBlock(connector3Pos, _templates.ScopeNSCenterConnector);
+    _accessor.SetBlock(connector3Pos, _templates.NS);
 
     // Place connector1 between the source and connector2.
     BlockPos connector1Pos = new(1, 0, 0, 0);
-    _accessor.SetBlock(connector1Pos, _templates.ScopeCenterConnector);
+    _accessor.SetBlock(connector1Pos, _templates.FourWay);
 
     Assert.IsTrue(_manager.HasPendingWork);
     _manager.FinishPendingWork();
@@ -308,7 +308,7 @@ public class BlockNodeTemplateTest {
 
     // Place a source block.
     BlockPos sourceBlock = new(0, 0, 1, 0);
-    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+    _accessor.SetBlock(sourceBlock, _templates.FourWaySource);
     Assert.AreEqual(0 * _manager.DefaultDistanceIncrement,
                     _accessor.GetDistance(sourceBlock, 0));
 
@@ -317,7 +317,7 @@ public class BlockNodeTemplateTest {
       new(1, 0, 0, 0), new(1, 0, 1, 0),
     };
     foreach (BlockPos pos in connectors) {
-      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _accessor.SetBlock(pos, _templates.FourWay);
       _manager.FinishPendingWork();
     }
 
@@ -327,7 +327,7 @@ public class BlockNodeTemplateTest {
 
   [TestMethod]
   public void RemoveOnlySource() {
-    _accessor.SetBlock(0, 0, 0, 0, _templates.ScopeCenterSource);
+    _accessor.SetBlock(0, 0, 0, 0, _templates.FourWaySource);
     _accessor.RemoveBlock(0, 0, 0, 0);
   }
 
@@ -348,11 +348,11 @@ public class BlockNodeTemplateTest {
 
     // Place a source block.
     BlockPos sourceBlock = new(0, 0, 0, 0);
-    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+    _accessor.SetBlock(sourceBlock, _templates.FourWaySource);
 
     BlockPos[] connectors = { new(1, 0, 0, 0) };
     foreach (BlockPos pos in connectors) {
-      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _accessor.SetBlock(pos, _templates.FourWay);
       _manager.FinishPendingWork();
     }
 
@@ -380,12 +380,12 @@ public class BlockNodeTemplateTest {
 
     // Place a source block.
     BlockPos sourceBlock = new(0, 0, 0, 0);
-    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+    _accessor.SetBlock(sourceBlock, _templates.FourWaySource);
 
     BlockPos[] connectors = { new(1, 0, 0, 0), new(2, 0, 0, 0),
                               new(3, 0, 0, 0) };
     foreach (BlockPos pos in connectors) {
-      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _accessor.SetBlock(pos, _templates.FourWay);
       _manager.FinishPendingWork();
     }
 
@@ -425,12 +425,12 @@ public class BlockNodeTemplateTest {
 
     // Place a source block.
     BlockPos sourceBlock = new(0, 0, 1, 0);
-    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+    _accessor.SetBlock(sourceBlock, _templates.FourWaySource);
 
     BlockPos[] connectors = { new(1, 0, 1, 0), new(2, 0, 2, 0),
                               new(3, 0, 0, 0) };
     foreach (BlockPos pos in connectors) {
-      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _accessor.SetBlock(pos, _templates.FourWay);
       _manager.FinishPendingWork();
     }
 
@@ -467,12 +467,12 @@ public class BlockNodeTemplateTest {
 
     // Place a source block.
     BlockPos sourceBlock = new(0, 0, 0, 0);
-    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+    _accessor.SetBlock(sourceBlock, _templates.FourWaySource);
 
     BlockPos[] connectors = { new(1, 0, 0, 0), new(1, 0, 1, 0),
                               new(0, 0, 1, 0) };
     foreach (BlockPos pos in connectors) {
-      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _accessor.SetBlock(pos, _templates.FourWay);
       _manager.FinishPendingWork();
     }
 
@@ -509,7 +509,7 @@ public class BlockNodeTemplateTest {
 
     // Place a source block.
     BlockPos sourceBlock = new(0, 0, 0, 0);
-    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+    _accessor.SetBlock(sourceBlock, _templates.FourWaySource);
 
     BlockPos[] connectors = {
       new(1, 0, 0, 0),
@@ -518,7 +518,7 @@ public class BlockNodeTemplateTest {
       new(1, 0, 1, 0),
     };
     foreach (BlockPos pos in connectors) {
-      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _accessor.SetBlock(pos, _templates.FourWay);
       _manager.FinishPendingWork();
     }
 
@@ -555,7 +555,7 @@ public class BlockNodeTemplateTest {
 
     // Place a source block.
     BlockPos sourceBlock = new(0, 0, 0, 0);
-    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+    _accessor.SetBlock(sourceBlock, _templates.FourWaySource);
 
     BlockPos[] connectors = {
       new(1, 0, 0, 0),
@@ -564,7 +564,7 @@ public class BlockNodeTemplateTest {
       new(1, 0, 1, 0),
     };
     foreach (BlockPos pos in connectors) {
-      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _accessor.SetBlock(pos, _templates.FourWay);
       _manager.FinishPendingWork();
     }
 
@@ -609,14 +609,14 @@ public class BlockNodeTemplateTest {
 
     // Place a source block.
     BlockPos sourceBlock = new(0, 0, 1, 0);
-    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+    _accessor.SetBlock(sourceBlock, _templates.FourWaySource);
 
     BlockPos[] connectors = {
       new(0, 0, 0, 0), new(1, 0, 0, 0), new(0, 0, 2, 0), new(1, 0, 2, 0),
       new(2, 0, 2, 0), new(2, 0, 1, 0), new(2, 0, 0, 0),
     };
     foreach (BlockPos pos in connectors) {
-      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _accessor.SetBlock(pos, _templates.FourWay);
       _manager.FinishPendingWork();
     }
 
@@ -665,7 +665,7 @@ public class BlockNodeTemplateTest {
 
     // Place a source block.
     BlockPos sourceBlock = new(0, 0, 0, 0);
-    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+    _accessor.SetBlock(sourceBlock, _templates.FourWaySource);
 
     BlockPos[] connectors = {
       new(1, 0, 0, 0),
@@ -674,13 +674,13 @@ public class BlockNodeTemplateTest {
       new(1, 0, 1, 0),
     };
     foreach (BlockPos pos in connectors) {
-      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _accessor.SetBlock(pos, _templates.FourWay);
       _manager.FinishPendingWork();
     }
 
     _accessor.RemoveBlock(sourceBlock);
     _accessor.RemoveBlock(connectors[0]);
-    _accessor.SetBlock(connectors[0], _templates.ScopeCenterConnector);
+    _accessor.SetBlock(connectors[0], _templates.FourWay);
     _manager.FinishPendingWork();
 
     // Verify that the remaining connector blocks are still connected.
@@ -723,7 +723,7 @@ public class BlockNodeTemplateTest {
 
     // Place a source block.
     BlockPos sourceBlock = new(0, 0, 0, 0);
-    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+    _accessor.SetBlock(sourceBlock, _templates.FourWaySource);
 
     BlockPos[] connectors = {
       new(1, 0, 0, 0),
@@ -732,13 +732,13 @@ public class BlockNodeTemplateTest {
       new(2, 0, 0, 0),
     };
     foreach (BlockPos pos in connectors) {
-      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _accessor.SetBlock(pos, _templates.FourWay);
       _manager.FinishPendingWork();
     }
 
     _accessor.RemoveBlock(sourceBlock);
     _accessor.RemoveBlock(connectors[0]);
-    _accessor.SetBlock(connectors[0], _templates.ScopeCenterConnector);
+    _accessor.SetBlock(connectors[0], _templates.FourWay);
     _manager.FinishPendingWork();
 
     // Verify that the remaining connector blocks are still connected.
@@ -799,7 +799,7 @@ public class BlockNodeTemplateTest {
 
     // Place a source block.
     BlockPos sourceBlock = new(0, 0, 0, 0);
-    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+    _accessor.SetBlock(sourceBlock, _templates.FourWaySource);
 
     BlockPos[] connectors = {
       /*connectors[0]=*/new(1, 0, 0, 0),
@@ -812,7 +812,7 @@ public class BlockNodeTemplateTest {
       /*connectors[7]=*/new(0, 0, 1, 0),
     };
     foreach (BlockPos pos in connectors) {
-      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _accessor.SetBlock(pos, _templates.FourWay);
       _manager.FinishPendingWork();
     }
     // Verify that connector 7 has a lower distance than connector 5, meaning
@@ -830,7 +830,7 @@ public class BlockNodeTemplateTest {
 
     _accessor.RemoveBlock(connectors[4]);
     _accessor.RemoveBlock(connectors[5]);
-    _accessor.SetBlock(connectors[5], _templates.ScopeCenterConnector);
+    _accessor.SetBlock(connectors[5], _templates.FourWay);
     _manager.FinishPendingWork();
 
     // Verify that now connector 6 goes through connector 5 and connector 7 with
@@ -884,7 +884,7 @@ public class BlockNodeTemplateTest {
 
     // Place a source block.
     BlockPos sourceBlock = new(0, 0, 0, 0);
-    _accessor.SetBlock(sourceBlock, _templates.ScopeCenterSource);
+    _accessor.SetBlock(sourceBlock, _templates.FourWaySource);
 
     BlockPos[] connectors = {
       /*connectors[0]=*/new(1, 0, 0, 0),
@@ -897,7 +897,7 @@ public class BlockNodeTemplateTest {
       /*connectors[7]=*/new(0, 0, 1, 0),
     };
     foreach (BlockPos pos in connectors) {
-      _accessor.SetBlock(pos, _templates.ScopeCenterConnector);
+      _accessor.SetBlock(pos, _templates.FourWay);
       _manager.FinishPendingWork();
     }
     // Verify that connector 7 has a lower distance than connector 5, meaning

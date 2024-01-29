@@ -5,31 +5,31 @@ using Vintagestory.API.Common;
 namespace Lambda.Tests;
 
 public class TestBlockNodeTemplates {
-  public BlockNodeTemplate ScopeCenterConnector;
+  public BlockNodeTemplate FourWay;
 
-  public BlockNodeTemplate ScopeNSCenterConnector;
+  public BlockNodeTemplate NS;
 
-  public BlockNodeTemplate ScopeCenterSource;
+  public BlockNodeTemplate FourWaySource;
 
   public TestBlockNodeTemplates(NodeAccessor accessor, Manager manager) {
-    ScopeCenterConnector = new BlockNodeTemplate(
-        accessor, manager, JsonUtil.FromString<NodeTemplate[]>(@"
+    FourWay = new BlockNodeTemplate(accessor, manager,
+                                    JsonUtil.FromString<NodeTemplate[]>(@"
         [
           {
             edges: ['north-center', 'east-center', 'south-center', 'west-center']
           }
         ]"));
 
-    ScopeNSCenterConnector = new BlockNodeTemplate(
-        accessor, manager, JsonUtil.FromString<NodeTemplate[]>(@"
+    NS = new BlockNodeTemplate(accessor, manager,
+                               JsonUtil.FromString<NodeTemplate[]>(@"
         [
           {
             edges: ['north-center', 'south-center']
           }
         ]"));
 
-    ScopeCenterSource = new BlockNodeTemplate(
-        accessor, manager, JsonUtil.FromString<NodeTemplate[]>(@"
+    FourWaySource = new BlockNodeTemplate(accessor, manager,
+                                          JsonUtil.FromString<NodeTemplate[]>(@"
         [
           {
             edges: ['north-center', 'east-center', 'south-center', 'west-center', 'source'],
