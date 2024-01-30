@@ -116,4 +116,13 @@ public class TermContainer : BlockEntityOpenableContainer {
     // Recreate the inventory slot.
     SetSlot();
   }
+
+  public override void OnBlockPlaced(ItemStack byItemStack) {
+    base.OnBlockPlaced(byItemStack);
+    // `BlockEntityContainer.OnBlockPlaced` has a bug where it doesn't call the
+    // block entity behaviors. So call them here to work around the bug.
+    foreach (var behavior in Behaviors) {
+      behavior.OnBlockPlaced(byItemStack);
+    }
+  }
 }
