@@ -100,9 +100,7 @@ public class Orient : VSBlockBehavior {
     return oriented.DoPlaceBlock(world, byPlayer, blockSel, itemstack);
   }
 
-  private List<Block> GetConnectedOrientations(IWorldAccessor world,
-                                               BlockPos pos,
-                                               BlockFacing preferredNeighbor) {
+  private List<Block> GetOrientations(IWorldAccessor world) {
     string[] orientations;
     if (_mode == OrientationMode.Horizontals) {
       if (_pillar) {
@@ -118,12 +116,16 @@ public class Orient : VSBlockBehavior {
         orientations = BlockFacing.ALLFACES.Select(face => face.Code).ToArray();
       }
     }
-    List<Block> filtered =
-        orientations
-            .Select(orientation => world.BlockAccessor.GetBlock(
-                        block.CodeWithVariant(_facingCode, orientation)))
-            .ToList();
+    return orientations
+        .Select(orientation => world.BlockAccessor.GetBlock(
+                    block.CodeWithVariant(_facingCode, orientation)))
+        .ToList();
+  }
 
+  private List<Block> GetConnectedOrientations(IWorldAccessor world,
+                                               BlockPos pos,
+                                               BlockFacing preferredNeighbor) {
+    List<Block> filtered = GetOrientations(world);
     NetworkSystem networkSystem = NetworkSystem.GetInstance(world.Api);
     AutoStepManager manager = networkSystem.TokenEmitterManager;
     List<BlockNodeTemplate> blockTemplates = new();
@@ -175,5 +177,23 @@ public class Orient : VSBlockBehavior {
       }
     }
     return filtered;
+  }
+
+  public override ItemStack OnPickBlock(IWorldAccessor world, BlockPos pos,
+                                        ref EnumHandling handling) {
+    // Search through the block's item drops. If any of the drops is an oriented
+    // version of this block, then return it.
+    ItemStack[] drops =
+        block.GetDrops(world, pos, null) ?? Array.Empty<ItemStack>();
+    HashSet<Block> orientations = new(GetOrientations(world));
+    foreach (ItemStack drop in drops) {
+      if (orientations.Contains(drop.Block)) {
+        handling = EnumHandling.PreventDefault;
+        return drop;
+      }
+    }
+    // Couldn't find any drop that is an oriented version of this block. So
+    // fallback to the default behavior.
+    return base.OnPickBlock(world, pos, ref handling);
   }
 }

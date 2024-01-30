@@ -80,6 +80,7 @@
       "*-ud"
     ]
   },
+  drops: [{ code: "doublescope-ud" }],
   blockmaterial: "Ceramic",
   drawtype: "json",
   shapeByType: {

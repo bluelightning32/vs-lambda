@@ -55,6 +55,7 @@
     }
   ],
   creativeinventory: { general: ["*-north"] },
+  drops: [{ code: "forall-north" }],
   blockmaterial: "Stone",
   drawtype: "json",
   shapeByType: {
