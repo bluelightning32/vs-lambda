@@ -30,8 +30,16 @@ public class NetworkSystem : ModSystem {
     _networkBlockEntityBehaviors.Add(name, blockEntityBehaviorType);
     api.RegisterBlockEntityBehaviorClass(name, blockEntityBehaviorType);
   }
+  // Change the value of the setting with ".clientconfig lambdaShowMaxNodes
+  // value".
+  public static readonly string ShowMaxNodesName = "lambdaShowMaxNodes";
 
   public override void Start(ICoreAPI api) {
+    if (api is ICoreClientAPI capi) {
+      if (!capi.Settings.Int.Exists(ShowMaxNodesName)) {
+        capi.Settings.Int[ShowMaxNodesName] = 10;
+      }
+    }
     api.RegisterBlockBehaviorClass("AutoConnect",
                                    typeof(BlockBehavior.AutoConnect));
     api.RegisterBlockBehaviorClass("Network", typeof(BlockBehavior.Network));

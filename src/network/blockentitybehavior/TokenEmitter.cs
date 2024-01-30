@@ -127,14 +127,17 @@ public class TokenEmitter : VSBlockEntityBehavior, IMeshGenerator {
 
   public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc) {
     base.GetBlockInfo(forPlayer, dsc);
-    if ((Api as ICoreClientAPI)?.Settings.Bool["extendedDebugInfo"] ?? false) {
-      for (int i = 0; i < _nodes.Length; ++i) {
-        if (i == 13) {
-          dsc.AppendLine($"...");
-          break;
+    if (Api is ICoreClientAPI capi) {
+      if (capi.Settings.Bool["extendedDebugInfo"]) {
+        int max = capi.Settings.Int[NetworkSystem.ShowMaxNodesName];
+        for (int i = 0; i < _nodes.Length; ++i) {
+          if (i == max) {
+            dsc.AppendLine($"...");
+            break;
+          }
+          dsc.AppendLine(
+              $"[{i}] = {{network={_template.GetNodeTemplate(i).Network.GetCode()}, {Term.Escape(_nodes[i].ToString())} }}");
         }
-        dsc.AppendLine(
-            $"[{i}] = {{network={_template.GetNodeTemplate(i).Network.GetCode()}, {Term.Escape(_nodes[i].ToString())} }}");
       }
     }
   }
