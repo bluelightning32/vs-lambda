@@ -21,41 +21,6 @@ namespace Lambda.Network.BlockEntityBehavior;
 
 using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 
-[JsonConverter(typeof(StringEnumConverter))]
-public enum PortDirection {
-  [EnumMember(Value = "none")] None = 0,
-  [EnumMember(Value = "direct-in")] DirectIn = 1,
-  [EnumMember(Value = "direct-out")] DirectOut = 2,
-  [EnumMember(Value = "passthrough-in")] PassthroughIn = 3,
-  [EnumMember(Value = "passthrough-out")] PassthroughOut = 4,
-}
-
-public class PortOption {
-  public string Name;
-  public NetworkType Network;
-  public PortDirection[] Directions;
-  public BlockFacing[] Faces = Array.Empty<BlockFacing>();
-  public Dictionary<string, CompositeTexture> FullTextures;
-
-  public InventoryOptions Inventory;
-
-  public PortOption(string name, PortDirection[] directions, string[] faces,
-                    Dictionary<string, CompositeTexture> fullTextures,
-                    InventoryOptions inventory) {
-    Name = name;
-    Directions = directions;
-    Faces = new BlockFacing[faces.Length];
-    for (int i = 0; i < faces.Length; ++i) {
-      Faces[i] = BlockFacing.FromCode(faces[i]);
-      if (Faces[i] == null) {
-        throw new ArgumentException($"Bad facing code: {faces[i]}");
-      }
-    }
-    FullTextures = fullTextures;
-    Inventory = inventory;
-  }
-}
-
 [JsonObject(MemberSerialization.OptIn)]
 public class PortConfiguration {
   [JsonProperty]
@@ -83,14 +48,13 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
   // Each face uses 1 bit to indicate whether a port is present.
   private int _portedSides = 0;
   // Each face uses 3 bits to indicate which kind of port is present.
-  public const int OccupiedPortsBitsPerFace = 3;
   private int _occupiedPorts = 0;
   private PortConfiguration _configuration;
 
   public AcceptPort(VSBlockEntity blockentity) : base(blockentity) {}
 
-  public static PortConfiguration ParseConfiguration(ICoreAPI api,
-                                                     JsonObject properties) {
+  private static PortConfiguration ParseConfiguration(ICoreAPI api,
+                                                      JsonObject properties) {
     Dictionary<JsonObject, PortConfiguration> cache =
         ObjectCacheUtil.GetOrCreate(
             api, $"lambda-accept-ports",
@@ -107,8 +71,8 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
   private BlockNodeTemplate ParseBlockNodeTemplate(IWorldAccessor world,
                                                    JsonObject properties,
                                                    int occupiedPorts) {
-    return GetManager(world.Api).ParseAcceptPortsTemplate(properties,
-                                                          occupiedPorts);
+    return GetManager(world.Api).ParseBlockNodeTemplate(properties,
+                                                        occupiedPorts, 0);
   }
 
   protected override BlockNodeTemplate
@@ -139,7 +103,7 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
         if (port != null) {
           _portedSides |= 1 << i;
           _occupiedPorts |= (int)port.Direction
-                            << (i * OccupiedPortsBitsPerFace);
+                            << (i * AutoStepManager.OccupiedPortsBitsPerFace);
         }
       }
     }
@@ -203,8 +167,8 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
     if (GetInventoryPort() == option) {
       ItemStack item = (Blockentity as TermContainer)?.Inventory[0].Itemstack;
       if (item != null &&
-          (GetNextInventoryPort()?.Inventory.GetMaxStackForItem(Api, item) ??
-           0) < item.StackSize) {
+          (GetNextInventoryPort()?.Inventory.GetMaxStackForItem(item) ?? 0) <
+              item.StackSize) {
         failureCode = "portinventoryfull";
         return false;
       }
@@ -212,7 +176,8 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
     BlockNodeTemplate newTemplate = ParseBlockNodeTemplate(
         Api.World, properties,
         _occupiedPorts |
-            ((int)direction << (face.Index * OccupiedPortsBitsPerFace)));
+            ((int)direction
+             << (face.Index * AutoStepManager.OccupiedPortsBitsPerFace)));
     return newTemplate.CanPlace(Pos, out failureCode);
   }
 
@@ -230,7 +195,8 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
       InventoryOptions oldInventory = GetInventoryOptions();
       _portedSides |= 1 << face.Index;
       _occupiedPorts |= (int)direction
-                        << (face.Index * OccupiedPortsBitsPerFace);
+                        << (face.Index *
+                            AutoStepManager.OccupiedPortsBitsPerFace);
       _template = ParseBlockNodeTemplate(Api.World, properties);
       _template.SetSourceScope(Pos, _nodes);
       int nodeId = _template
@@ -334,7 +300,7 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
     }
   }
 
-  int IInventoryControl.GetMaxStackForItem(ICoreAPI api, ItemStack item) {
-    return GetInventoryOptions()?.GetMaxStackForItem(api, item) ?? 0;
+  int IInventoryControl.GetMaxStackForItem(ItemStack item) {
+    return GetInventoryOptions()?.GetMaxStackForItem(item) ?? 0;
   }
 }

@@ -6,8 +6,6 @@ namespace Lambda.Network.BlockBehavior;
 
 using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 
-using PortDirection = BlockEntityBehavior.PortDirection;
-
 public interface IAcceptPort {
   bool SetPort(Block port, PortDirection direction, BlockFacing face,
                out string failureCode);

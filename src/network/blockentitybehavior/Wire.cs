@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 using Lambda.BlockBehavior;
@@ -104,7 +105,8 @@ public class Wire : TermNetwork, IBlockEntityForward, IConnectable {
 
   protected override BlockNodeTemplate
   ParseBlockNodeTemplate(IWorldAccessor world, JsonObject properties) {
-    return GetManager(world.Api).ParseWireTemplate(properties, _directions);
+    return GetManager(world.Api).ParseBlockNodeTemplate(properties, 0,
+                                                        _directions);
   }
 
   private static Cuboidf[] GetSelectionBoxes(ICoreAPI api, int directions) {

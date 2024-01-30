@@ -9,7 +9,7 @@ namespace Lambda.BlockEntity;
 public interface IInventoryControl {
   public string GetTitle();
   public string GetDescription() { return null; }
-  public int GetMaxStackForItem(ICoreAPI api, ItemStack item);
+  public int GetMaxStackForItem(ItemStack item);
   public bool GetHidePerishRate();
   public void OnSlotModified() {}
 }
@@ -48,7 +48,7 @@ public class TermContainer : BlockEntityOpenableContainer {
   }
 
   public virtual int GetMaxStackForItem(ItemStack item) {
-    return GetInventoryControl()?.GetMaxStackForItem(Api, item) ?? 0;
+    return GetInventoryControl()?.GetMaxStackForItem(item) ?? 0;
   }
 
   private void SetSlot() {

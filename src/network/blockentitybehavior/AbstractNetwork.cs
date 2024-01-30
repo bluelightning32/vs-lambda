@@ -59,7 +59,7 @@ public abstract class AbstractNetwork : VSBlockEntityBehavior, IMeshGenerator {
 
   protected virtual BlockNodeTemplate
   ParseBlockNodeTemplate(IWorldAccessor world, JsonObject properties) {
-    return GetManager(world.Api).ParseBlockNodeTemplate(properties);
+    return GetManager(world.Api).ParseBlockNodeTemplate(properties, 0, 0);
   }
 
   public override void

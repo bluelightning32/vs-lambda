@@ -21,7 +21,8 @@ public class Network : VSBlockBehavior {
         NetworkSystem.GetInstance(api).NetworkManagers;
     foreach (var beb in block.BlockEntityBehaviors) {
       if (networkManagers.TryGetValue(beb.Name, out AutoStepManager manager)) {
-        _blockTemplates.Add(manager.ParseBlockNodeTemplate(beb.properties));
+        _blockTemplates.Add(
+            manager.ParseBlockNodeTemplate(beb.properties, 0, 0));
         break;
       }
     }

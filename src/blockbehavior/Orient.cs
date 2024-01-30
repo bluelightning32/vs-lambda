@@ -150,7 +150,8 @@ public class Orient : VSBlockBehavior {
                 $"Block entity behavior {network} not found.");
             blockTemplates.Add(null);
           }
-          blockTemplates.Add(manager.ParseBlockNodeTemplate(found.properties));
+          blockTemplates.Add(
+              manager.ParseBlockNodeTemplate(found.properties, 0, 0));
         }
       }
       List<BlockNodeTemplate> matched = new(blockTemplates);

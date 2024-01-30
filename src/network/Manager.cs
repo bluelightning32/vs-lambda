@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 using ProtoBuf;
@@ -74,50 +75,8 @@ public class SourcePendingUpdates {
   }
 }
 
-public abstract class AutoStepManager : Manager {
-  public bool SingleStep = false;
-
-  protected readonly IWorldAccessor _world;
-  private bool _stepEnqueued = false;
-
-  public AutoStepManager(IWorldAccessor world, NodeAccessor accessor)
-      : base(world.Api.Side, world.Logger, accessor) {
-    _world = world;
-  }
-
-  private void MaybeEnqueueStep() {
-    if (!_stepEnqueued && !SingleStep) {
-      _world.Api.Event.EnqueueMainThreadTask(() => {
-        _stepEnqueued = false;
-        if (!SingleStep) {
-          Step();
-          if (HasPendingWork) {
-            MaybeEnqueueStep();
-          }
-        }
-      }, "lambdanetwork");
-      _stepEnqueued = true;
-    }
-  }
-
-  public void ToggleSingleStep() {
-    SingleStep = !SingleStep;
-    // `MaybeEnqueueStep` checks that SingleStep is false.
-    if (HasPendingWork) {
-      MaybeEnqueueStep();
-    }
-  }
-
-  public override void EnqueueNode(Node node, BlockPos pos, int nodeId) {
-    base.EnqueueNode(node, pos, nodeId);
-    MaybeEnqueueStep();
-  }
-
-  public abstract
-      BlockNodeTemplate ParseBlockNodeTemplate(JsonObject properties);
-}
-
 public class Manager {
+  public const int OccupiedPortsBitsPerFace = 3;
   Dictionary<NodePos, SourcePendingUpdates> _pendingUpdates =
       new Dictionary<NodePos, SourcePendingUpdates>();
 
@@ -421,5 +380,52 @@ public class Manager {
         }
       }
     }
+  }
+
+  // Parse the block template. `connectFaces` describes center edges to add to
+  // node[0]. node[0] is not changed if `connectFaces` is 0.
+  public virtual BlockNodeTemplate ParseBlockNodeTemplate(JsonObject properties,
+                                                          int occupiedPorts,
+                                                          int connectFaces) {
+    List<NodeTemplate> nodeTemplates =
+        new(properties["nodes"]?.AsObject<NodeTemplate[]>() ??
+            Array.Empty<NodeTemplate>());
+    PortOption[] ports = properties["ports"]?.AsObject<PortOption[]>() ??
+                         Array.Empty<PortOption>();
+    foreach (var port in ports) {
+      NodeTemplate node = new() { Network = port.Network };
+      foreach (var face in port.Faces) {
+        const int mask = (1 << OccupiedPortsBitsPerFace) - 1;
+        PortDirection dir =
+            (PortDirection)((occupiedPorts >>
+                             (face.Index * OccupiedPortsBitsPerFace)) &
+                            mask);
+        if (dir == PortDirection.DirectIn) {
+          node.Edges = new Edge[] { EdgeExtension.GetFaceCenter(face) };
+          break;
+        }
+        if (dir == PortDirection.DirectOut) {
+          node.Edges =
+              new Edge[] { EdgeExtension.GetFaceCenter(face), Edge.Source };
+          break;
+        }
+      }
+      nodeTemplates.Add(node);
+    }
+    if (connectFaces != 0) {
+      if (nodeTemplates.Count < 1) {
+        nodeTemplates.Add(new());
+      }
+      HashSet<Edge> connectedEdges = new(nodeTemplates[0].Edges);
+      for (int i = 0; i < 6; ++i) {
+        BlockFacing face = BlockFacing.ALLFACES[i];
+        if ((connectFaces & (1 << i)) != 0) {
+          connectedEdges.Add(EdgeExtension.GetFaceCenter(face));
+        }
+      }
+      nodeTemplates[0].Edges = connectedEdges.ToArray();
+    }
+    return new BlockNodeTemplate(_accessor, this, nodeTemplates.ToArray());
+    ;
   }
 }
