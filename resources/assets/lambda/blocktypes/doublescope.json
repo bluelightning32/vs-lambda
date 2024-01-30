@@ -18,7 +18,7 @@
         mode: "slab",
         pillar: true,
         facingCode: "orientation",
-        networks: ["ScopeNetwork", "MatchNetwork"]
+        networks: ["TokenEmitter"]
       }
     },
     { name: "Network" },
@@ -26,7 +26,7 @@
   entityBehaviors: [
     { name: "CacheMesh" },
     {
-      name: "ScopeNetwork",
+      name: "TokenEmitter",
       properties: {
         nodes: [
           {
@@ -46,14 +46,7 @@
               "*-ud": ["north-down", "east-down", "south-down", "west-down"]
             },
             textures: ["active2up", "active2ew", "active2ns"]
-          }
-        ]
-      }
-    },
-    {
-      name: "MatchNetwork",
-      properties: {
-        nodes: [
+          },
           {
             network: "match",
             edges: ["north-center", "east-center", "south-center", "west-center", "up-center", "down-center"]

@@ -15,7 +15,7 @@
       name: "Orient",
       properties: {
         mode: "slab",
-        networks: ["ScopeNetwork", "MatchNetwork"]
+        networks: ["TokenEmitter"]
       }
     },
     { name: "Network" },
@@ -23,7 +23,7 @@
   entityBehaviors: [
     { name: "CacheMesh" },
     {
-      name: "ScopeNetwork",
+      name: "TokenEmitter",
       properties: {
           nodes: [
           {
@@ -37,14 +37,7 @@
               "*-down": ["north-down", "east-down", "south-down", "west-down"]
             },
             textures: ["eastwest", "northsouth", "up"]
-          }
-        ]
-      }
-    },
-    {
-      name: "MatchNetwork",
-      properties: {
-        nodes: [
+          },
           {
             network: "match",
             edgesByType: {

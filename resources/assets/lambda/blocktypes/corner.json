@@ -8,7 +8,7 @@
   entityBehaviors: [
     { name: "CacheMesh" },
     {
-      name: "ScopeNetwork",
+      name: "TokenEmitter",
       properties: {
         nodes: [
           {
@@ -70,14 +70,7 @@
             network: "scope",
             edges: ["down-right", "west-down"],
             textures: ["downwest"]
-          }
-        ]
-      }
-    },
-    {
-      name: "MatchNetwork",
-      properties: {
-          nodes: [
+          },
           {
             network: "match",
             edges: ["north-center", "east-center", "south-center", "west-center", "up-center", "down-center"],

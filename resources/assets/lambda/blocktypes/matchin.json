@@ -10,7 +10,7 @@
         mode: "horizontals",
         flip: true,
         facingCode: "side",
-        networks: ["ScopeNetwork", "MatchNetwork"]
+        networks: ["TokenEmitter"]
       }
     },
     { name: "BlockEntityForward" },
@@ -19,7 +19,7 @@
   entityBehaviors: [
     { name: "CacheMesh" },
     {
-      name: "ScopeNetwork",
+      name: "TokenEmitter",
       properties: {
         nodes: [
           {
@@ -32,14 +32,7 @@
             },
             textures: ["eastwest", "northsouth", "up"],
             sourceScope: "matchin"
-          }
-        ]
-      }
-    },
-    {
-      name: "MatchNetwork",
-      properties: {
-        nodes: [
+          },
           {
             network: "match",
             edges: ["north-center", "east-center", "south-center", "west-center", "down-center"],

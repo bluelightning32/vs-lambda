@@ -7,23 +7,23 @@ using Vintagestory.API.Util;
 namespace Lambda.Network.BlockEntityBehavior;
 using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 
-public class ScopeNetwork : AbstractNetwork {
+public class TokenEmitter : AbstractNetwork {
 
   public static string Name {
-    get { return "ScopeNetwork"; }
+    get { return "TokenEmitter"; }
   }
 
   public class Manager : AutoStepManager {
     public Manager(IWorldAccessor world)
         : base(world, new NetworkNodeAccessor(
                           (pos) => world.BlockAccessor.GetBlockEntity(pos)
-                                       ?.GetBehavior<ScopeNetwork>())) {}
+                                       ?.GetBehavior<TokenEmitter>())) {}
 
     public override
         BlockNodeTemplate ParseBlockNodeTemplate(JsonObject properties) {
       Dictionary<JsonObject, BlockNodeTemplate> cache =
           ObjectCacheUtil.GetOrCreate(
-              _world.Api, $"lambda-scope-network-properties",
+              _world.Api, $"lambda-match-network-properties",
               () => new Dictionary<JsonObject, BlockNodeTemplate>());
       if (cache.TryGetValue(properties, out BlockNodeTemplate block)) {
         return block;
@@ -36,12 +36,12 @@ public class ScopeNetwork : AbstractNetwork {
       return block;
     }
 
-    public override string GetNetworkName() { return "scope"; }
+    public override string GetNetworkName() { return "token"; }
   }
 
-  public ScopeNetwork(VSBlockEntity blockentity) : base(blockentity) {}
+  public TokenEmitter(VSBlockEntity blockentity) : base(blockentity) {}
 
   protected override AutoStepManager GetManager(ICoreAPI api) {
-    return NetworkSystem.GetInstance(api).ScopeNetworkManager;
+    return NetworkSystem.GetInstance(api).TokenEmitterManager;
   }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 using Vintagestory.API.Client;
@@ -273,19 +274,27 @@ public class BlockNodeTemplate {
 
   public string GetNetworkName() => _manager.GetNetworkName();
 
-  // Returns true if any of the edges in this template match edges on the
-  // neighbor's template on `face`.
-  public bool CanAnyPair(BlockFacing face, BlockNodeTemplate neighbor) {
+  // Returns the number of networks that this template can match edges with the
+  // neighbor on `face`. Each network is only counted once, even if it matches
+  // multiple edges.
+  public int GetPairableNetworkCount(BlockFacing face,
+                                     BlockNodeTemplate neighbor) {
+    Debug.Assert((int)NetworkType.Max < sizeof(int) * 8 - 1);
+    int usedCount = 0;
+    int used = 0;
     foreach (var edge in _index) {
       if (edge.Key.Item2.GetFace() != face) {
         continue;
       }
       if (neighbor._index.ContainsKey(
               (edge.Key.Item1, edge.Key.Item2.GetOpposite()))) {
-        return true;
+        if ((used & (1 << (int)edge.Key.Item1)) == 0) {
+          used |= 1 << (int)edge.Key.Item1;
+          ++usedCount;
+        }
       }
     }
-    return false;
+    return usedCount;
   }
 
   public bool ContainsNetwork(NetworkType network) {

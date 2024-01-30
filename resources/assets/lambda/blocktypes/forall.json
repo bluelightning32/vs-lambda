@@ -10,7 +10,7 @@
         mode: "horizontals",
         flip: true,
         facingCode: "side",
-        networks: ["ScopeNetwork"]
+        networks: ["TokenEmitter"]
       }
     },
     { name: "BlockEntityForward" },
@@ -19,7 +19,7 @@
   entityBehaviors: [
     { name: "CacheMesh" },
     {
-      name: "ScopeNetwork",
+      name: "TokenEmitter",
       properties: {
         nodes: [
           {

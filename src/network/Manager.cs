@@ -394,15 +394,31 @@ public class Manager {
   }
 
   // Set entries in `templates` to null if they have no edges that pair with the
-  // edges at `pos`. Nulls in `templates` are ignored.
+  // edges at `pos`, or if they pair less than the max networks with the
+  // neighbor. Nulls in `templates` are ignored.
   public void RemoveUnpaired(List<BlockNodeTemplate> templates, BlockPos pos,
                              BlockFacing face) {
     BlockNodeTemplate neighbor =
         _accessor.GetBlock(pos.AddCopy(face), out Node[] nodes);
+    int max = 1;
     for (int i = 0; i < templates.Count; ++i) {
-      if (templates[i] != null &&
-          (neighbor == null || !templates[i].CanAnyPair(face, neighbor))) {
+      if (templates[i] == null) {
+        continue;
+      }
+      if (neighbor == null) {
         templates[i] = null;
+        continue;
+      }
+      int pairable = templates[i].GetPairableNetworkCount(face, neighbor);
+      if (pairable < max) {
+        templates[i] = null;
+      } else if (pairable > max) {
+        max = pairable;
+        // Null out all previous, non-null entries, because they paired using
+        // less than the max pairable networks.
+        for (int j = 0; j < i; ++j) {
+          templates[j] = null;
+        }
       }
     }
   }

@@ -10,8 +10,7 @@ public class NetworkSystem : ModSystem {
   // Storing this field in the mod ensures that there is once instance per API
   // instance. These fields cannot be stored in the object cache, because the
   // object cache can be cleared with a command.
-  public AutoStepManager ScopeNetworkManager { get; private set; }
-  public AutoStepManager MatchNetworkManager { get; private set; }
+  public AutoStepManager TokenEmitterManager { get; private set; }
   public BlockEntityBehavior.TermNetwork.Manager TermNetworkManager {
     get; private set;
   }
@@ -33,11 +32,8 @@ public class NetworkSystem : ModSystem {
     api.RegisterBlockBehaviorClass("Network", typeof(BlockBehavior.Network));
     api.RegisterBlockBehaviorClass("Port", typeof(BlockBehavior.Port));
     api.RegisterBlockEntityBehaviorClass(
-        BlockEntityBehavior.ScopeNetwork.Name,
-        typeof(BlockEntityBehavior.ScopeNetwork));
-    api.RegisterBlockEntityBehaviorClass(
-        BlockEntityBehavior.MatchNetwork.Name,
-        typeof(BlockEntityBehavior.MatchNetwork));
+        BlockEntityBehavior.TokenEmitter.Name,
+        typeof(BlockEntityBehavior.TokenEmitter));
     api.RegisterBlockEntityBehaviorClass(
         BlockEntityBehavior.TermNetwork.Name,
         typeof(BlockEntityBehavior.TermNetwork));
@@ -45,12 +41,9 @@ public class NetworkSystem : ModSystem {
         "AcceptPort", typeof(BlockEntityBehavior.AcceptPort));
     api.RegisterBlockEntityBehaviorClass("Wire",
                                          typeof(BlockEntityBehavior.Wire));
-    _networkManagers[BlockEntityBehavior.ScopeNetwork.Name] =
-        ScopeNetworkManager =
-            new BlockEntityBehavior.ScopeNetwork.Manager(api.World);
-    _networkManagers[BlockEntityBehavior.MatchNetwork.Name] =
-        MatchNetworkManager =
-            new BlockEntityBehavior.MatchNetwork.Manager(api.World);
+    _networkManagers[BlockEntityBehavior.TokenEmitter.Name] =
+        TokenEmitterManager =
+            new BlockEntityBehavior.TokenEmitter.Manager(api.World);
     _networkManagers[BlockEntityBehavior.TermNetwork.Name] =
         TermNetworkManager =
             new BlockEntityBehavior.TermNetwork.Manager(api.World);
