@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 using Vintagestory.API.Client;
@@ -11,19 +12,23 @@ public class NetworkSystem : ModSystem {
   // instance. These fields cannot be stored in the object cache, because the
   // object cache can be cleared with a command.
   public AutoStepManager TokenEmitterManager { get; private set; }
-  public BlockEntityBehavior.TermNetwork.Manager TermNetworkManager {
-    get; private set;
-  }
 
   // Indexed by behavior name
-  private readonly Dictionary<string, AutoStepManager> _networkManagers = new();
+  private readonly Dictionary<string, Type> _networkBlockEntityBehaviors =
+      new();
   // Indexed by behavior name
-  public IReadOnlyDictionary<string, AutoStepManager> NetworkManagers {
-    get { return _networkManagers; }
+  public IReadOnlyDictionary<string, Type> NetworkBlockEntityBehaviors {
+    get { return _networkBlockEntityBehaviors; }
   }
 
   public static NetworkSystem GetInstance(ICoreAPI api) {
     return api.GetCachedModSystem<NetworkSystem>();
+  }
+
+  public void RegisterNetworkBlockEntityBehavior(ICoreAPI api, string name,
+                                                 Type blockEntityBehaviorType) {
+    _networkBlockEntityBehaviors.Add(name, blockEntityBehaviorType);
+    api.RegisterBlockEntityBehaviorClass(name, blockEntityBehaviorType);
   }
 
   public override void Start(ICoreAPI api) {
@@ -31,22 +36,14 @@ public class NetworkSystem : ModSystem {
                                    typeof(BlockBehavior.AutoConnect));
     api.RegisterBlockBehaviorClass("Network", typeof(BlockBehavior.Network));
     api.RegisterBlockBehaviorClass("Port", typeof(BlockBehavior.Port));
-    api.RegisterBlockEntityBehaviorClass(
-        BlockEntityBehavior.TokenEmitter.Name,
-        typeof(BlockEntityBehavior.TokenEmitter));
-    api.RegisterBlockEntityBehaviorClass(
-        BlockEntityBehavior.TermNetwork.Name,
-        typeof(BlockEntityBehavior.TermNetwork));
-    api.RegisterBlockEntityBehaviorClass(
-        "AcceptPort", typeof(BlockEntityBehavior.AcceptPort));
-    api.RegisterBlockEntityBehaviorClass("Wire",
-                                         typeof(BlockEntityBehavior.Wire));
-    _networkManagers[BlockEntityBehavior.TokenEmitter.Name] =
-        TokenEmitterManager =
-            new BlockEntityBehavior.TokenEmitter.Manager(api.World);
-    _networkManagers[BlockEntityBehavior.TermNetwork.Name] =
-        TermNetworkManager =
-            new BlockEntityBehavior.TermNetwork.Manager(api.World);
+    RegisterNetworkBlockEntityBehavior(
+        api, "TokenEmitter", typeof(BlockEntityBehavior.TokenEmitter));
+    RegisterNetworkBlockEntityBehavior(api, "AcceptPort",
+                                       typeof(BlockEntityBehavior.AcceptPort));
+    RegisterNetworkBlockEntityBehavior(api, "Wire",
+                                       typeof(BlockEntityBehavior.Wire));
+    TokenEmitterManager =
+        new BlockEntityBehavior.TokenEmitter.Manager(api.World);
   }
 
   public static void RegisterNetworkDebugCommands(IChatCommandApi api,
@@ -93,10 +90,9 @@ public class NetworkSystem : ModSystem {
   public override void StartClientSide(ICoreClientAPI api) {}
 
   public override void StartServerSide(ICoreServerAPI api) {
-    foreach (var manager in _networkManagers) {
-      RegisterNetworkDebugCommands(
-          api.ChatCommands, manager.Value.GetNetworkName(), manager.Value);
-    }
+    RegisterNetworkDebugCommands(api.ChatCommands,
+                                 TokenEmitterManager.GetNetworkName(),
+                                 TokenEmitterManager);
   }
 
   public override void Dispose() { base.Dispose(); }

@@ -14,8 +14,7 @@
     {
       name: "Orient",
       properties: {
-        mode: "slab",
-        networks: ["TokenEmitter"]
+        mode: "slab"
       }
     },
     { name: "Network" },
@@ -23,9 +22,9 @@
   entityBehaviors: [
     { name: "CacheMesh" },
     {
-      name: "TokenEmitter",
+      name: "AcceptPort",
       properties: {
-          nodes: [
+        nodes: [
           {
             network: "scope",
             edgesByType: {
@@ -49,12 +48,7 @@
               "*-down": ["north-center", "east-center", "south-center", "west-center"]
             }
           }
-        ]
-      }
-    },
-    {
-      name: "AcceptPort",
-      properties: {
+        ],
         ports: [
           {
             name: "parameter",

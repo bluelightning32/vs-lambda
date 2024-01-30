@@ -9,8 +9,7 @@
       properties: {
         mode: "horizontals",
         flip: true,
-        facingCode: "side",
-        networks: ["TokenEmitter"]
+        facingCode: "side"
       }
     },
     { name: "BlockEntityForward" },
@@ -19,19 +18,14 @@
   entityBehaviors: [
     { name: "CacheMesh" },
     {
-      name: "TokenEmitter",
+      name: "AcceptPort",
       properties: {
         nodes: [
           {
             network: "match",
             edges: ["north-center", "east-center", "south-center", "west-center", "source"]
           }
-        ]
-      }
-    },
-    {
-      name: "AcceptPort",
-      properties: {
+        ],
         ports: [
           {
             name: "output",

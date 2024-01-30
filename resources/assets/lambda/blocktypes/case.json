@@ -9,8 +9,7 @@
       properties: {
         mode: "horizontals",
         flip: true,
-        facingCode: "side",
-        networks: ["TokenEmitter"]
+        facingCode: "side"
       }
     },
     { name: "BlockEntityForward" },

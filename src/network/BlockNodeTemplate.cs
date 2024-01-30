@@ -212,13 +212,14 @@ public class BlockNodeTemplate {
   public bool OnPlaced(BlockPos pos, Node[] nodes) {
     BlockNodeTemplate[] neighborTemplates =
         GetNeighbors(pos, out Node[][] neighbors);
-    bool hasSource = false;
+    bool sourceModified = false;
     foreach (var template in _nodeTemplates) {
+      bool hadSource = nodes[template.Id].Source.IsSet();
       template.OnPlaced(_manager, pos, neighborTemplates, neighbors,
                         ref nodes[template.Id]);
-      hasSource |= nodes[template.Id].Source.IsSet();
+      sourceModified |= hadSource != nodes[template.Id].Source.IsSet();
     }
-    return hasSource;
+    return sourceModified;
   }
 
   public void OnNodePlaced(BlockPos pos, int id, ref Node node) {
@@ -249,22 +250,22 @@ public class BlockNodeTemplate {
     }
   }
 
-  public ulong GetTextureKey(Node[] nodes) {
+  public ulong GetTextureKey(Node[] nodes, out int bits) {
     if (Scope.Min < 0 || (int)Scope.Max > 7) {
       throw new Exception("Scope range is too large for 3 bits.");
     }
     ulong key = 0;
-    int texturedNodes = 0;
+    bits = 0;
     foreach (NodeTemplate template in _nodeTemplates) {
       if (template.Textures.Count == 0 &&
           template.ReplacementTextures.Count == 0) {
         continue;
       }
-      ++texturedNodes;
+      bits += 3;
       key <<= 3;
       key |= (ulong)nodes[template.Id].Scope;
     }
-    if (texturedNodes > 64 / 3) {
+    if (bits > 64) {
       throw new Exception(
           $"Block has more than the max supported networks with texture overrides.");
     }

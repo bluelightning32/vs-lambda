@@ -49,7 +49,7 @@ public class WireTemplate {
   }
 }
 
-public class Wire : TermNetwork, IBlockEntityForward, IConnectable {
+public class Wire : TokenEmitter, IBlockEntityForward, IConnectable {
   private WireTemplate _WireTemplate = null;
   private int _directions = 0;
   private Cuboidf[] _selectionBoxes = null;
@@ -168,7 +168,15 @@ public class Wire : TermNetwork, IBlockEntityForward, IConnectable {
   }
 
   public override object GetKey() {
-    return _directions + ((_nodes[0].Source.IsSet() ? 1 : 0) << 6);
+    ulong key = _template.GetTextureKey(_nodes, out int bits);
+    key |= (ulong)_directions << bits;
+    bits += 6;
+    ++bits;
+    if (bits > 64) {
+      throw new Exception(
+          $"Block has more than the max supported networks with texture overrides.");
+    }
+    return key;
   }
 
   public override object GetImmutableKey() { return GetKey(); }

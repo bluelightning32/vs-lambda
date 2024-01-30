@@ -24,7 +24,6 @@ public class Orient : VSBlockBehavior {
   private bool _flip;
   private int _rotateY;
   private bool _pillar;
-  private string[] _networks;
 
   // If true, rotate the block so that it connects to any of the neighbors.
   private bool _pairToAny;
@@ -42,7 +41,6 @@ public class Orient : VSBlockBehavior {
     _rotateY = properties["rotateY"].AsInt(0);
     _pillar = properties["pillar"].AsBool(false);
     _pairToAny = properties["pairToAny"].AsBool(true);
-    _networks = properties["networks"].AsArray<string>(Array.Empty<string>());
   }
 
   public override bool TryPlaceBlock(IWorldAccessor world, IPlayer byPlayer,
@@ -87,11 +85,11 @@ public class Orient : VSBlockBehavior {
     }
     Block oriented = world.BlockAccessor.GetBlock(
         block.CodeWithVariant(_facingCode, orientation));
-    if (!byPlayer.Entity.Controls.ShiftKey && _networks.Length != 0) {
+    if (!byPlayer.Entity.Controls.ShiftKey) {
       List<Block> matching = GetConnectedOrientations(world, blockSel.Position,
                                                       blockSel.Face.Opposite);
       if (!matching.Contains(oriented)) {
-        oriented = matching.First(block => block != null);
+        oriented = matching.FirstOrDefault(block => block != null, oriented);
       }
     }
     if (!oriented.CanPlaceBlock(world, byPlayer, blockSel, ref failureCode)) {
@@ -126,64 +124,54 @@ public class Orient : VSBlockBehavior {
                         block.CodeWithVariant(_facingCode, orientation)))
             .ToList();
 
-    IReadOnlyDictionary<string, AutoStepManager> networkManagers =
-        NetworkSystem.GetInstance(world.Api).NetworkManagers;
-    foreach (string network in _networks) {
-      if (!networkManagers.TryGetValue(network, out AutoStepManager manager)) {
-        world.Api.Logger.Error($"network {network} not registered.");
-        continue;
-      }
-      List<BlockNodeTemplate> blockTemplates = new();
-      foreach (Block block in filtered) {
-        if (block == null) {
+    NetworkSystem networkSystem = NetworkSystem.GetInstance(world.Api);
+    AutoStepManager manager = networkSystem.TokenEmitterManager;
+    List<BlockNodeTemplate> blockTemplates = new();
+    foreach (Block block in filtered) {
+      if (block == null) {
+        blockTemplates.Add(null);
+      } else {
+        BlockEntityBehaviorType found = null;
+        foreach (var beb in block.BlockEntityBehaviors) {
+          if (networkSystem.NetworkBlockEntityBehaviors.ContainsKey(beb.Name)) {
+            found = beb;
+            break;
+          }
+        }
+        if (found == null) {
+          world.Api.Logger.Error(
+              "Could not find network block entity behavior in block " +
+              $"{block.Code}.");
           blockTemplates.Add(null);
-        } else {
-          BlockEntityBehaviorType found = null;
-          foreach (var beb in block.BlockEntityBehaviors) {
-            if (beb.Name == network) {
-              found = beb;
-              break;
+        }
+        blockTemplates.Add(
+            manager.ParseBlockNodeTemplate(found.properties, 0, 0));
+      }
+    }
+    List<BlockNodeTemplate> matched = new(blockTemplates);
+    manager.RemoveUnpaired(matched, pos, preferredNeighbor);
+    if (!matched.Any(template => template != null)) {
+      if (_pairToAny) {
+        // No matches were found on the preferred neighbor. See if any of the
+        // neighbors match.
+        foreach (BlockFacing facing in BlockFacing.ALLFACES) {
+          if (facing == preferredNeighbor) {
+            continue;
+          }
+          List<BlockNodeTemplate> addMatched = new(blockTemplates);
+          manager.RemoveUnpaired(addMatched, pos, facing);
+          for (int i = 0; i < addMatched.Count; ++i) {
+            if (addMatched[i] != null) {
+              matched[i] = addMatched[i];
             }
           }
-          if (found == null) {
-            world.Api.Logger.Error(
-                $"Block entity behavior {network} not found.");
-            blockTemplates.Add(null);
-          }
-          blockTemplates.Add(
-              manager.ParseBlockNodeTemplate(found.properties, 0, 0));
         }
       }
-      List<BlockNodeTemplate> matched = new(blockTemplates);
-      manager.RemoveUnpaired(matched, pos, preferredNeighbor);
-      if (!matched.Any(template => template != null)) {
-        if (_pairToAny) {
-          // No matches were found on the preferred neighbor. See if any of the
-          // neighbors match.
-          foreach (BlockFacing facing in BlockFacing.ALLFACES) {
-            if (facing == preferredNeighbor) {
-              continue;
-            }
-            List<BlockNodeTemplate> addMatched = new(blockTemplates);
-            manager.RemoveUnpaired(addMatched, pos, facing);
-            for (int i = 0; i < addMatched.Count; ++i) {
-              if (addMatched[i] != null) {
-                matched[i] = addMatched[i];
-              }
-            }
-          }
-        }
-        if (!matched.Any(template => template != null)) {
-          // None of the neighbors are connectable. Skip filtering on this
-          // network.
-          continue;
-        }
-      }
-      // Filter `filtered` based on which templates could connect.
-      for (int i = 0; i < matched.Count; ++i) {
-        if (matched[i] == null) {
-          filtered[i] = null;
-        }
+    }
+    // Filter `filtered` based on which templates could connect.
+    for (int i = 0; i < matched.Count; ++i) {
+      if (matched[i] == null) {
+        filtered[i] = null;
       }
     }
     return filtered;

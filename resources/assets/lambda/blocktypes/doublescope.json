@@ -17,8 +17,7 @@
       properties: {
         mode: "slab",
         pillar: true,
-        facingCode: "orientation",
-        networks: ["TokenEmitter"]
+        facingCode: "orientation"
       }
     },
     { name: "Network" },
@@ -26,7 +25,7 @@
   entityBehaviors: [
     { name: "CacheMesh" },
     {
-      name: "TokenEmitter",
+      name: "AcceptPort",
       properties: {
         nodes: [
           {
@@ -51,12 +50,7 @@
             network: "match",
             edges: ["north-center", "east-center", "south-center", "west-center", "up-center", "down-center"]
           }
-        ]
-      }
-    },
-    {
-      name: "AcceptPort",
-      properties: {
+        ],
         ports: [
           {
             name: "port1",

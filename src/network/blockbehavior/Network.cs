@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 
 using Vintagestory.API.Common;
+using Vintagestory.API.Datastructures;
 
 namespace Lambda.Network.BlockBehavior;
 
@@ -10,26 +11,28 @@ using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
 // Prevents the block from being placed if it would cause a network conflict by
 // connecting two sources in the same network.
 public class Network : VSBlockBehavior {
-  private readonly List<BlockNodeTemplate> _blockTemplates =
-      new List<BlockNodeTemplate>();
+  private BlockNodeTemplate _blockTemplate;
 
   public Network(Block block) : base(block) {}
 
+  public override void Initialize(JsonObject properties) {
+    base.Initialize(properties);
+  }
+
   public override void OnLoaded(ICoreAPI api) {
     base.OnLoaded(api);
-    IReadOnlyDictionary<string, AutoStepManager> networkManagers =
-        NetworkSystem.GetInstance(api).NetworkManagers;
+    NetworkSystem networkSystem = NetworkSystem.GetInstance(api);
+    AutoStepManager manager = networkSystem.TokenEmitterManager;
     foreach (var beb in block.BlockEntityBehaviors) {
-      if (networkManagers.TryGetValue(beb.Name, out AutoStepManager manager)) {
-        _blockTemplates.Add(
-            manager.ParseBlockNodeTemplate(beb.properties, 0, 0));
+      if (networkSystem.NetworkBlockEntityBehaviors.ContainsKey(beb.Name)) {
+        _blockTemplate = manager.ParseBlockNodeTemplate(beb.properties, 0, 0);
         break;
       }
     }
-    if (_blockTemplates.Count == 0) {
+    if (_blockTemplate == null) {
       throw new ArgumentException(
-          "The network block behavior may only be used on a block if the " +
-          "block also has one or more network block entity behaviors.");
+          "Could not find network block entity behavior in block " +
+          $"block {block.Code}.");
     }
   }
 
@@ -37,11 +40,9 @@ public class Network : VSBlockBehavior {
                                      BlockSelection blockSel,
                                      ref EnumHandling handling,
                                      ref string failureCode) {
-    foreach (BlockNodeTemplate template in _blockTemplates) {
-      if (!template.CanPlace(blockSel.Position, out failureCode)) {
-        handling = EnumHandling.PreventSubsequent;
-        return false;
-      }
+    if (!_blockTemplate.CanPlace(blockSel.Position, out failureCode)) {
+      handling = EnumHandling.PreventSubsequent;
+      return false;
     }
     return true;
   }

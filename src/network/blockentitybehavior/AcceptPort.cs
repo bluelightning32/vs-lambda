@@ -44,7 +44,7 @@ public class PortConfiguration {
   }
 }
 
-public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
+public class AcceptPort : TokenEmitter, IAcceptPort, IInventoryControl {
   // Each face uses 1 bit to indicate whether a port is present.
   private int _portedSides = 0;
   // Each face uses 3 bits to indicate which kind of port is present.
@@ -144,9 +144,18 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
   }
 
   public override object GetKey() {
+    ulong key = _template.GetTextureKey(_nodes, out int bits);
+    key |= (ulong)_portedSides << bits;
+    bits += 6;
     bool inventoryFull =
         (Blockentity as TermContainer)?.Inventory[0].Itemstack != null;
-    return _portedSides | ((inventoryFull ? 1 : 0) << 6);
+    key |= (inventoryFull ? 1ul : 0) << bits;
+    ++bits;
+    if (bits > 64) {
+      throw new Exception(
+          $"Block has more than the max supported networks with texture overrides.");
+    }
+    return key;
   }
 
   public override object GetImmutableKey() { return GetKey(); }
@@ -243,7 +252,7 @@ public class AcceptPort : TermNetwork, IAcceptPort, IInventoryControl {
         return tex;
       }
     }
-    return null;
+    return base.GetTexture(textureCode);
   }
 
   bool IsPortInventoryFull(PortOption option) {
