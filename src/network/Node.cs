@@ -96,6 +96,8 @@ public struct Node {
 [JsonObject(MemberSerialization.OptIn)]
 public class NodeTemplate {
   [JsonProperty]
+  public string Name = "";
+  [JsonProperty]
   public NetworkType Network = NetworkType.Scope;
   public int Id = 0;
   public bool Source = false;

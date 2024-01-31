@@ -76,6 +76,7 @@ public class SourcePendingUpdates {
 }
 
 public class Manager {
+  Dictionary<string, Type> _blockNodeTemplateClasses = new();
   public const int OccupiedPortsBitsPerFace = 3;
   Dictionary<NodePos, SourcePendingUpdates> _pendingUpdates =
       new Dictionary<NodePos, SourcePendingUpdates>();
@@ -104,6 +105,8 @@ public class Manager {
     Side = side;
     _logger = logger;
     _accessor = accessor;
+    _blockNodeTemplateClasses.Add("BlockNodeTemplate",
+                                  typeof(BlockNodeTemplate));
   }
 
   public void Load(byte[] serialized) {
@@ -393,7 +396,7 @@ public class Manager {
     PortOption[] ports = properties["ports"]?.AsObject<PortOption[]>() ??
                          Array.Empty<PortOption>();
     foreach (var port in ports) {
-      NodeTemplate node = new() { Network = port.Network };
+      NodeTemplate node = new() { Network = port.Network, Name = port.Name };
       foreach (var face in port.Faces) {
         const int mask = (1 << OccupiedPortsBitsPerFace) - 1;
         PortDirection dir =
@@ -414,7 +417,7 @@ public class Manager {
     }
     if (connectFaces != 0) {
       if (nodeTemplates.Count < 1) {
-        nodeTemplates.Add(new());
+        nodeTemplates.Add(new() { Name = "default" });
       }
       HashSet<Edge> connectedEdges = new(nodeTemplates[0].Edges);
       for (int i = 0; i < 6; ++i) {
@@ -425,7 +428,9 @@ public class Manager {
       }
       nodeTemplates[0].Edges = connectedEdges.ToArray();
     }
-    return new BlockNodeTemplate(_accessor, this, nodeTemplates.ToArray());
-    ;
+    Type blockNodeType = _blockNodeTemplateClasses[properties["class"].AsString(
+        "BlockNodeTemplate")];
+    return (BlockNodeTemplate)Activator.CreateInstance(
+        blockNodeType, _accessor, this, nodeTemplates.ToArray());
   }
 }
