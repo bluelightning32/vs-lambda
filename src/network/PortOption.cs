@@ -65,6 +65,7 @@ public class PortOption {
   public PortOption(string name, PortDirection[] directions, string[] faces,
                     Dictionary<string, CompositeTexture> fullTextures,
                     InventoryOptions inventory) {
+    faces ??= Array.Empty<string>();
     Name = name;
     Directions = directions;
     Faces = new BlockFacing[faces.Length];

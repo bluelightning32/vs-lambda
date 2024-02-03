@@ -33,7 +33,7 @@
   entityBehaviors: [
     { name: "CacheMesh" },
     {
-      name: "TokenEmitter",
+      name: "AcceptPort",
       properties: {
         nodes: [
           {
@@ -55,6 +55,22 @@
                 "center": { base: "case/center-disconnected" },
                 "diag": { base: "case/diag-disconnected" }
               }
+            }
+          }
+        ],
+        ports: [
+          {
+            name: "constructor",
+            network: "term",
+            directions: ["direct-in"],
+            faces: [],
+            inventory: {
+              dialogTitleLangCode: "lambda:case-container-title",
+              dialogDescLangCode: "lambda:case-container-description",
+              requireTerm: true,
+              requireConstructor: true,
+              maxSlotStackSize: 1,
+              hidePerishRate: true
             }
           }
         ]
