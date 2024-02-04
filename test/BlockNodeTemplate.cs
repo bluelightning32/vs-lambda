@@ -1,3 +1,5 @@
+using System.Reflection.Metadata;
+
 using Lambda.Network;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -921,28 +923,31 @@ public class BlockNodeTemplateTest {
     legend.AddCase('a', "pair");
     legend.AddConstant('b', "pair");
     // clang-format off
-    _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend,
-                           """
-                           #@#i#i#i###########
-                           #      +          #
-                           #      +M+++++++++o
-                           #       a#i#i#### #
-                           #       # + +   # #
-                           #       # ++*++ # #
-                           #       #   + + # #
-                           #       #   + + # #
-                           #       #   + + # #
-                           #       # b+A+A+o #
-                           #       ######### #
-                           #                 #
-                           ###################
-                           """
-    );
+    const string schematic = (
+"""
+#@#i#i#i###########
+#      +          #
+#      +M+++++++++o
+#       a#i#i#### #
+#       # + +   # #
+#       # ++*++ # #
+#       #   + + # #
+#       #   + + # #
+#       #   + + # #
+#       # b+A+A+o #
+#       ######### #
+#                 #
+###################
+""");
     // clang-format on
+
+    _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
     Assert.AreEqual(_templates.InPort,
                     _accessor.GetBlock(3, 0, 0, 0, out Node[] nodes));
     Assert.AreEqual(_templates.ScopeMatchConnector,
                     _accessor.GetBlock(0, 0, 1, 0, out nodes));
+
+    Assert.AreEqual("pair", _accessor.GetTermInventory(8, 0, 3, 0));
   }
 }

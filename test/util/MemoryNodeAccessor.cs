@@ -25,13 +25,16 @@ public class MemoryNodeAccessor : NodeAccessor {
   private readonly Dictionary<BlockPos, BlockNodeInfo> _nodes =
       new Dictionary<BlockPos, BlockNodeInfo>();
 
-  public override BlockNodeTemplate GetBlock(BlockPos pos, out Node[] nodes) {
+  public override BlockNodeTemplate GetBlock(BlockPos pos, out Node[] nodes,
+                                             out string inventoryTerm) {
     BlockNodeInfo value;
     if (!_nodes.TryGetValue(pos, out value)) {
       nodes = null;
+      inventoryTerm = null;
       return null;
     }
     nodes = value.Nodes;
+    inventoryTerm = value.InventoryTerm;
     return value.Template;
   }
 
@@ -78,6 +81,12 @@ public class MemoryNodeAccessor : NodeAccessor {
                                     out Node[] nodes) {
     BlockPos pos = new(x, y, z, dimension);
     return GetBlock(pos, out nodes);
+  }
+
+  public string GetTermInventory(int x, int y, int z, int dimension) {
+    BlockPos pos = new(x, y, z, dimension);
+    GetBlock(pos, out Node[] nodes, out string termInventory);
+    return termInventory;
   }
 
   // Sets blocks based on the schematic. Blocks outside of the schematic range

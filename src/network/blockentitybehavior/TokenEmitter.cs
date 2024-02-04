@@ -35,6 +35,19 @@ public class TokenEmitter : VSBlockEntityBehavior, IMeshGenerator {
       return behavior._template;
     }
 
+    public override BlockNodeTemplate GetBlock(BlockPos pos, out Node[] nodes,
+                                               out string inventoryTerm) {
+      TokenEmitter behavior = _getBehavior(pos);
+      if (behavior == null) {
+        nodes = null;
+        inventoryTerm = null;
+        return null;
+      }
+      nodes = behavior._nodes;
+      inventoryTerm = behavior.GetInventoryTerm();
+      return behavior._template;
+    }
+
     public override void SetNode(BlockPos pos, int nodeId, in Node node) {
       TokenEmitter behavior = _getBehavior(pos);
       bool redraw = behavior._nodes[nodeId].Scope != node.Scope;
@@ -156,4 +169,6 @@ public class TokenEmitter : VSBlockEntityBehavior, IMeshGenerator {
   protected AutoStepManager GetManager(ICoreAPI api) {
     return NetworkSystem.GetInstance(api).TokenEmitterManager;
   }
+
+  public virtual string GetInventoryTerm() { return null; }
 }
