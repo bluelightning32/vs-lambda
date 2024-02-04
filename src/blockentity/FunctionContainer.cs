@@ -171,4 +171,8 @@ public class FunctionContainer : TermContainer {
     }
     return maxStack;
   }
+
+  public override string GetInventoryTerm() {
+    return _currentRecipe?.PuzzleType;
+  }
 }

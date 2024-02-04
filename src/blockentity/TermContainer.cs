@@ -57,6 +57,13 @@ public class TermContainer : BlockEntityOpenableContainer {
     _inventory[0].Itemstack = item;
   }
 
+  public virtual string GetInventoryTerm() {
+    ItemStack item = _inventory[0].Itemstack;
+    CollectibleBehavior.Term term =
+        item?.Collectible.GetBehavior<CollectibleBehavior.Term>();
+    return term?.GetTerm(item);
+  }
+
   public override void Initialize(ICoreAPI api) {
     // `base.Initialize` will access `InventoryClassName`, so
     // `_inventoryClassName` must be set first.

@@ -39,7 +39,7 @@ public class BlockNodeTemplateTest {
   public void Initialize() {
     _accessor = new MemoryNodeAccessor();
     _manager = new Manager(EnumAppSide.Server, null, _accessor);
-    _templates = new TestBlockNodeTemplates(_accessor, _manager);
+    _templates = new TestBlockNodeTemplates(_manager);
   }
 
   [TestMethod]
@@ -912,5 +912,37 @@ public class BlockNodeTemplateTest {
     // Verify that all connectors (except 0 which was removed) are still
     // connected.
     AssertConnected(connectors.RemoveEntry(0), sourceBlock);
+  }
+
+  [TestMethod]
+  public void ParseSchematic() {
+    Legend legend = _templates.CreateLegend();
+    legend.AddPuzzle('@', "forall A B, A * B -> B * A");
+    legend.AddCase('a', "pair");
+    legend.AddConstant('b', "pair");
+    // clang-format off
+    _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend,
+                           """
+                           #@#i#i#i###########
+                           #      +          #
+                           #      +M+++++++++o
+                           #       a#i#i#### #
+                           #       # + +   # #
+                           #       # ++*++ # #
+                           #       #   + + # #
+                           #       #   + + # #
+                           #       #   + + # #
+                           #       # b+A+A+o #
+                           #       ######### #
+                           #                 #
+                           ###################
+                           """
+    );
+    // clang-format on
+
+    Assert.AreEqual(_templates.InPort,
+                    _accessor.GetBlock(3, 0, 0, 0, out Node[] nodes));
+    Assert.AreEqual(_templates.ScopeMatchConnector,
+                    _accessor.GetBlock(0, 0, 1, 0, out nodes));
   }
 }
