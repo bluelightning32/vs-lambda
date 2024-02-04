@@ -1,5 +1,3 @@
-using System.Reflection.Metadata;
-
 using Lambda.Network;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
