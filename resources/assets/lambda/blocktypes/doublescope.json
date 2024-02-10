@@ -30,6 +30,7 @@
         nodes: [
           {
             network: "scope",
+            name: "scope1",
             edgesByType: {
               "*-ns": ["east-right", "up-up", "west-left", "down-up"],
               "*-we": ["north-right", "up-left", "south-left", "down-right"],
@@ -39,6 +40,7 @@
           },
           {
             network: "scope",
+            name: "scope2",
             edgesByType: {
               "*-ns": ["east-left", "up-down", "west-right", "down-down"],
               "*-we": ["north-left", "up-right", "south-right", "down-left"],
@@ -54,6 +56,7 @@
         ports: [
           {
             name: "port1",
+            parent: "scope1",
             network: "term",
             directions: ["direct-in", "direct-out"],
             facesByType: {
@@ -64,6 +67,7 @@
           },
           {
             name: "port2",
+            parent: "scope2",
             network: "term",
             directions: ["direct-in", "direct-out"],
             facesByType: {

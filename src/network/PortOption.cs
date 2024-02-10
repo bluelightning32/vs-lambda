@@ -55,6 +55,7 @@ public enum PortDirection {
 
 public class PortOption {
   public string Name;
+  public string Parent;
   public NetworkType Network;
   public PortDirection[] Directions;
   public BlockFacing[] Faces = Array.Empty<BlockFacing>();

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
 
@@ -25,9 +26,13 @@ public class BlockNodeTemplate {
     _accessor = accessor;
     _manager = manager;
     _nodeTemplates = nodeTemplates;
+    Dictionary<string, int> nodesByname = new();
     for (int i = 0; i < nodeTemplates.Length; ++i) {
       var nodeTemplate = nodeTemplates[i];
       nodeTemplate.Id = i;
+      if (nodeTemplate.Name != null && nodeTemplate.Name.Length != 0) {
+        nodesByname.Add(nodeTemplate.Name, i);
+      }
       foreach (var edge in nodeTemplate.Edges) {
         if (edge == Edge.Source) {
           nodeTemplate.Source = true;
@@ -37,6 +42,16 @@ public class BlockNodeTemplate {
         }
       }
       AddTexturesToIndex(nodeTemplate);
+    }
+    for (int i = 0; i < nodeTemplates.Length; ++i) {
+      var nodeTemplate = nodeTemplates[i];
+      if (nodeTemplate.Parent != null) {
+        nodeTemplate.ParentId = nodesByname[nodeTemplate.Parent];
+        nodeTemplates[nodeTemplate.ParentId].ChildIds =
+            nodeTemplates[nodeTemplate.ParentId].ChildIds.Append(i);
+      } else {
+        nodeTemplate.ParentId = -1;
+      }
     }
   }
 

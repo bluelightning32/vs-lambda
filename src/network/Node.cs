@@ -110,6 +110,14 @@ public class NodeTemplate {
   [JsonProperty]
   public Dictionary<Scope, Dictionary<string, CompositeTexture>>
       ReplacementTextures = new();
+  [JsonProperty]
+  public string Parent;
+  // Set to -1 if the node did not declare a parent. This is set by the
+  // `BlockNodeTemplate` constructor.
+  public int ParentId;
+  // Ids of all nodes that declared this one as a parent. This is set by the
+  // `BlockNodeTemplate` constructor.
+  public int[] ChildIds = Array.Empty<int>();
 
   public NodeTemplate() {}
 

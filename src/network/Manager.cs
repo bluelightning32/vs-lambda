@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Text;
 
 using ProtoBuf;
@@ -396,8 +398,8 @@ public class Manager {
     PortOption[] ports = properties["ports"]?.AsObject<PortOption[]>() ??
                          Array.Empty<PortOption>();
     foreach (var port in ports) {
-      NodeTemplate node =
-          new() { Network = NetworkType.Placeholder, Name = port.Name };
+      NodeTemplate node = new() { Network = NetworkType.Placeholder,
+                                  Name = port.Name, Parent = port.Parent };
       foreach (var face in port.Faces) {
         const int mask = (1 << OccupiedPortsBitsPerFace) - 1;
         PortDirection dir =
@@ -433,7 +435,14 @@ public class Manager {
     }
     Type blockNodeType = _blockNodeTemplateClasses[properties["class"].AsString(
         "BlockNodeTemplate")];
-    return (BlockNodeTemplate)Activator.CreateInstance(
-        blockNodeType, _accessor, this, nodeTemplates.ToArray());
+    try {
+      return (BlockNodeTemplate)Activator.CreateInstance(
+          blockNodeType, _accessor, this, nodeTemplates.ToArray());
+    } catch (TargetInvocationException ex) {
+      ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
+      // Without this rethrow, the compiler complains that the function returns
+      // without returning a value.
+      throw;
+    }
   }
 }

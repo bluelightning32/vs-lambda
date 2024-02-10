@@ -1,9 +1,7 @@
 using Lambda.Network;
 
-using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
-using Vintagestory.API.Util;
 
 namespace Lambda.Tests;
 

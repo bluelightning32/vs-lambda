@@ -3,6 +3,7 @@ using Lambda.Network;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Vintagestory.API.Common;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
@@ -947,5 +948,100 @@ public class BlockNodeTemplateTest {
                     _accessor.GetBlock(0, 0, 1, 0, out nodes));
 
     Assert.AreEqual("pair", _accessor.GetTermInventory(8, 0, 3, 0));
+  }
+
+  [TestMethod]
+  [ExpectedException(typeof(KeyNotFoundException))]
+  public void InvalidParent() {
+    BlockNodeTemplate invalid =
+        _manager.ParseBlockNodeTemplate(JsonObject.FromJson(@"
+        {
+          nodes: [
+            {
+              network: 'scope',
+              parent: 'invalid',
+              edges: ['west-center']
+            }
+          ]
+        }"),
+                                        0, 0);
+  }
+
+  [TestMethod]
+  public void SetParentAndChildren() {
+    BlockNodeTemplate block =
+        _manager.ParseBlockNodeTemplate(JsonObject.FromJson(@"
+        {
+          nodes: [
+            {
+              name: 'child1',
+              network: 'scope',
+              parent: 'parent',
+              edges: ['north-center']
+            },
+            {
+              name: 'parent',
+              network: 'match',
+              edges: ['east-center']
+            },
+            {
+              name: 'child2',
+              network: 'scope',
+              parent: 'parent',
+              edges: ['west-center']
+            }
+          ]
+        }"),
+                                        0, 0);
+    Assert.AreEqual("child1", block.GetNodeTemplate(0).Name);
+    Assert.AreEqual(1, block.GetNodeTemplate(0).ParentId);
+    CollectionAssert.AreEqual(Array.Empty<int>(),
+                              block.GetNodeTemplate(0).ChildIds);
+
+    Assert.AreEqual("parent", block.GetNodeTemplate(1).Name);
+    Assert.AreEqual(-1, block.GetNodeTemplate(1).ParentId);
+    CollectionAssert.AreEqual(new int[] { 0, 2 },
+                              block.GetNodeTemplate(1).ChildIds);
+
+    Assert.AreEqual("child2", block.GetNodeTemplate(2).Name);
+    Assert.AreEqual(1, block.GetNodeTemplate(2).ParentId);
+    CollectionAssert.AreEqual(Array.Empty<int>(),
+                              block.GetNodeTemplate(2).ChildIds);
+  }
+
+  [TestMethod]
+  public void PortParent() {
+    BlockNodeTemplate block = _manager.ParseBlockNodeTemplate(
+        JsonObject.FromJson(@"
+        {
+          nodes: [
+            {
+              name: 'parent',
+              network: 'match',
+              edges: ['east-center']
+            },
+          ],
+          ports: [
+            {
+              name: 'child',
+              network: 'scope',
+              parent: 'parent',
+              edges: ['west-center'],
+              directions: ['direct-in'],
+              faces: ['west']
+            }
+          ]
+        }"),
+        (int)PortDirection.DirectIn
+            << (BlockFacing.WEST.Index * Manager.OccupiedPortsBitsPerFace),
+        0);
+    Assert.AreEqual("parent", block.GetNodeTemplate(0).Name);
+    CollectionAssert.AreEqual(new int[] { 1 },
+                              block.GetNodeTemplate(0).ChildIds);
+
+    Assert.AreEqual("child", block.GetNodeTemplate(1).Name);
+    Assert.AreEqual(0, block.GetNodeTemplate(1).ParentId);
+    CollectionAssert.AreEqual(Array.Empty<int>(),
+                              block.GetNodeTemplate(1).ChildIds);
   }
 }

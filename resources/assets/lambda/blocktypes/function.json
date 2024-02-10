@@ -28,6 +28,7 @@
         nodes: [
           {
             network: "scope",
+            name: "scope",
             edgesByType: {
               "*-north": ["east-right", "west-left", "down-up", "source"],
               "*-south": ["east-left", "west-right", "down-down", "source"],
@@ -63,6 +64,7 @@
           },
           {
             name: "parameter",
+            parent: "scope",
             network: "term",
             directions: ["direct-in", "direct-out"],
             faces: ["{side}"]
