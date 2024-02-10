@@ -2,7 +2,13 @@ using System;
 
 namespace Lambda.Network;
 
-public enum NetworkType { Match = 0, Scope = 1, Term = 2, Max = Term }
+public enum NetworkType {
+  Placeholder = 0,
+  Match = 1,
+  Scope = 2,
+  Term = 3,
+  Max = Term
+}
 
 public static class NetworkTypeExtension {
   public static string GetCode(this NetworkType network) {

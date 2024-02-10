@@ -396,7 +396,8 @@ public class Manager {
     PortOption[] ports = properties["ports"]?.AsObject<PortOption[]>() ??
                          Array.Empty<PortOption>();
     foreach (var port in ports) {
-      NodeTemplate node = new() { Network = port.Network, Name = port.Name };
+      NodeTemplate node =
+          new() { Network = NetworkType.Placeholder, Name = port.Name };
       foreach (var face in port.Faces) {
         const int mask = (1 << OccupiedPortsBitsPerFace) - 1;
         PortDirection dir =
@@ -405,11 +406,13 @@ public class Manager {
                             mask);
         if (dir == PortDirection.DirectIn) {
           node.Edges = new Edge[] { EdgeExtension.GetFaceCenter(face) };
+          node.Network = port.Network;
           break;
         }
         if (dir == PortDirection.DirectOut) {
           node.Edges =
               new Edge[] { EdgeExtension.GetFaceCenter(face), Edge.Source };
+          node.Network = port.Network;
           break;
         }
       }
