@@ -1044,4 +1044,28 @@ public class BlockNodeTemplateTest {
     CollectionAssert.AreEqual(Array.Empty<int>(),
                               block.GetNodeTemplate(1).ChildIds);
   }
+
+  [TestMethod]
+  public void SetSchematicPropagate() {
+    Legend legend = _templates.CreateLegend();
+    legend.AddPuzzle('@', "nat -> nat");
+    // clang-format off
+    const string schematic = (
+"""
+#@#
+###
+""");
+    // clang-format on
+
+    _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
+
+    foreach (BlockPos pos in _accessor.GetNonemptyBlocks()) {
+      BlockNodeTemplate template = _accessor.GetBlock(pos, out Node[] nodes);
+      for (int i = 0; i < template.Count; ++i) {
+        if (template.GetNodeTemplate(i).Network == NetworkType.Scope) {
+          Assert.AreEqual(new NodePos(1, 0, 0, 0, 0), nodes[i].Source);
+        }
+      }
+    }
+  }
 }

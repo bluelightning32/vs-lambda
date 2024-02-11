@@ -25,6 +25,10 @@ public class MemoryNodeAccessor : NodeAccessor {
   private readonly Dictionary<BlockPos, BlockNodeInfo> _nodes =
       new Dictionary<BlockPos, BlockNodeInfo>();
 
+  public IReadOnlyCollection<BlockPos> GetNonemptyBlocks() {
+    return _nodes.Keys;
+  }
+
   public override BlockNodeTemplate GetBlock(BlockPos pos, out Node[] nodes,
                                              out string inventoryTerm) {
     BlockNodeInfo value;
@@ -118,6 +122,7 @@ public class MemoryNodeAccessor : NodeAccessor {
         RemoveBlock(pos);
       } else {
         SetBlock(pos.Copy(), block.Item1, block.Item2);
+        block.Item1.FinishPendingWork();
       }
       ++pos.X;
     }

@@ -13,7 +13,10 @@ public struct NodePos : IEquatable<NodePos> {
     NodeId = nodeId;
   }
 
-  public bool IsSet() { return Block != null; }
+  public NodePos(int x, int y, int z, int dim, int nodeId)
+      : this(new BlockPos(x, y, z, dim), nodeId) {}
+
+  public readonly bool IsSet() { return Block != null; }
 
   public readonly bool Equals(NodePos other) {
     if (Block == null) {

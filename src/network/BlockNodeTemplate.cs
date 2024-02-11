@@ -55,6 +55,8 @@ public class BlockNodeTemplate {
     }
   }
 
+  public void FinishPendingWork() { _manager.FinishPendingWork(); }
+
   private void AddTexturesToIndex(NodeTemplate template) {
     // HashSet is tolerant of adding the same key more than once, but _textures
     // is not. So add the new textures to a hashset first, then add the hashset
