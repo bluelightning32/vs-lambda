@@ -27,8 +27,8 @@ public class Function : ConstructRoot, IAcceptPort {
     _parameters = new ParameterList(face);
   }
 
-  public override void AddConnector(TokenEmission state, NetworkType network,
-                                    NodePos pos) {
+  public override void AddConnector(TokenEmissionState state,
+                                    NetworkType network, NodePos pos) {
     if (network == NetworkType.Scope) {
       _scopeConnectors.Add(pos);
       ReleaseRef(state, pos);
@@ -37,8 +37,8 @@ public class Function : ConstructRoot, IAcceptPort {
     }
   }
 
-  public override void AddPendingChild(TokenEmission state, NetworkType network,
-                                       NodePos pos) {
+  public override void AddPendingChild(TokenEmissionState state,
+                                       NetworkType network, NodePos pos) {
     if (network == NetworkType.Scope) {
       AddRef(state, pos);
       state.AddPending(pos);
@@ -47,7 +47,7 @@ public class Function : ConstructRoot, IAcceptPort {
     }
   }
 
-  public Token AddPort(TokenEmission state, NodePos pos, string name,
+  public Token AddPort(TokenEmissionState state, NodePos pos, string name,
                        bool isSource) {
     Token added = null;
     if (name == "resulttype") {

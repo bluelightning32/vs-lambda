@@ -40,7 +40,7 @@ public class FunctionTemplateTest {
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
     for (int i = 0; i < 5; ++i) {
-      using (TokenEmission state = new(_accessor)) {
+      using (TokenEmissionState state = new(_accessor)) {
         Random r = new(i);
         BlockPos puzzleBlock = new(1, 0, 0, 0);
         Token puzzle = state.Process(new NodePos(

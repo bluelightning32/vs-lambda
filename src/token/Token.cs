@@ -33,39 +33,39 @@ public abstract class Token : IDisposable {
     Name = name;
   }
 
-  public void AddRef(TokenEmission state, NodePos pos) {
+  public void AddRef(TokenEmissionState state, NodePos pos) {
     ++PendingRef;
     Debug.Assert(_pendingRefLocations.Add(pos));
     Debug.Assert(state.PreparedContains(this));
   }
 
-  public void ReleaseRef(TokenEmission state, NodePos child) {
+  public void ReleaseRef(TokenEmissionState state, NodePos child) {
     Debug.Assert(_pendingRefLocations.Remove(child));
     if (--PendingRef == 0) {
       state.FinishPrepared(this);
     }
   }
 
-  public virtual void AddConnector(TokenEmission state, NetworkType network,
-                                   NodePos pos) {
+  public virtual void AddConnector(TokenEmissionState state,
+                                   NetworkType network, NodePos pos) {
     throw new InvalidOperationException(
         "Token does not accept connectors in ${network}.");
   }
 
-  public virtual void AddPendingChild(TokenEmission state, NetworkType network,
-                                      NodePos pos) {
+  public virtual void AddPendingChild(TokenEmissionState state,
+                                      NetworkType network, NodePos pos) {
     throw new InvalidOperationException(
         "Token does not accept children in ${network}.");
   }
 
-  public void AddPendingChildren(TokenEmission state, NetworkType network,
+  public void AddPendingChildren(TokenEmissionState state, NetworkType network,
                                  IEnumerable<NodePos> children) {
     foreach (NodePos child in children) {
       AddPendingChild(state, network, child);
     }
   }
 
-  public virtual void AddSink(TokenEmission state, Token sink) {
+  public virtual void AddSink(TokenEmissionState state, Token sink) {
     throw new InvalidOperationException("Token does not accept children.");
   }
 
@@ -83,8 +83,8 @@ public abstract class TermSource : Token {
 
   public TermSource(string name) : base(name) {}
 
-  public override void AddConnector(TokenEmission state, NetworkType network,
-                                    NodePos pos) {
+  public override void AddConnector(TokenEmissionState state,
+                                    NetworkType network, NodePos pos) {
     if (network == NetworkType.Term) {
       _termConnectors.Add(pos);
       ReleaseRef(state, pos);
@@ -93,7 +93,7 @@ public abstract class TermSource : Token {
     }
   }
 
-  public override void AddSink(TokenEmission state, Token sink) {
+  public override void AddSink(TokenEmissionState state, Token sink) {
     if (sink is TermInput input) {
       input.SetSource(this);
     } else {
@@ -101,8 +101,8 @@ public abstract class TermSource : Token {
     }
   }
 
-  public override void AddPendingChild(TokenEmission state, NetworkType network,
-                                       NodePos pos) {
+  public override void AddPendingChild(TokenEmissionState state,
+                                       NetworkType network, NodePos pos) {
     if (network == NetworkType.Term) {
       AddRef(state, pos);
       state.AddPending(pos);
@@ -113,7 +113,7 @@ public abstract class TermSource : Token {
 }
 
 public interface IAcceptPort {
-  public Token AddPort(TokenEmission state, NodePos pos, string name,
+  public Token AddPort(TokenEmissionState state, NodePos pos, string name,
                        bool isSource);
 }
 

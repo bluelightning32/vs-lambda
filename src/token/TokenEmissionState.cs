@@ -7,7 +7,7 @@ using Lambda.Network;
 
 namespace Lambda.Token;
 
-public class TokenEmission : IDisposable {
+public class TokenEmissionState : IDisposable {
   private readonly NodeAccessor _accessor;
   // Nodes that have already been created but whose references have not been
   // fully visited yet.
@@ -19,7 +19,7 @@ public class TokenEmission : IDisposable {
     get => _unreferencedRoots;
   }
 
-  public TokenEmission(NodeAccessor accessor) { _accessor = accessor; }
+  public TokenEmissionState(NodeAccessor accessor) { _accessor = accessor; }
 
   private Token EmitPos(NodePos pos) {
     BlockNodeTemplate template = _accessor.GetBlock(pos.Block, out Node[] nodes,

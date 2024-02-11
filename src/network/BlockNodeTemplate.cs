@@ -354,7 +354,7 @@ public class BlockNodeTemplate {
     return result;
   }
 
-  public virtual Token Emit(TokenEmission state, NodePos pos, Node[] nodes,
+  public virtual Token Emit(TokenEmissionState state, NodePos pos, Node[] nodes,
                             string inventoryTerm) {
     return null;
   }

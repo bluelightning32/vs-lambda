@@ -19,7 +19,7 @@ public class ScopeTemplate : BlockNodeTemplate {
   // node and all other ports, minus the parent node if it matches `forPos`. If
   // `forPos` matches one of the port tokens, then that token is returned.
   // Otherwise, null is returned.
-  private Token CreatePorts(TokenEmission state, NodePos parentPos,
+  private Token CreatePorts(TokenEmissionState state, NodePos parentPos,
                             Node[] nodes, NodePos forPos) {
     Node parentNode = nodes[parentPos.NodeId];
     NodeTemplate parentTemplate = _nodeTemplates[parentPos.NodeId];
@@ -84,8 +84,8 @@ public class ScopeTemplate : BlockNodeTemplate {
     return ret;
   }
 
-  public override Token Emit(TokenEmission state, NodePos pos, Node[] nodes,
-                             string inventoryTerm) {
+  public override Token Emit(TokenEmissionState state, NodePos pos,
+                             Node[] nodes, string inventoryTerm) {
     NodeTemplate nodeTemplate = _nodeTemplates[pos.NodeId];
     if (nodeTemplate.ParentId != -1 &&
         nodeTemplate.Network != NetworkType.Placeholder) {

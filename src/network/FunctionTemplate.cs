@@ -61,8 +61,8 @@ public class FunctionTemplate : BlockNodeTemplate {
     }
   }
 
-  private Function EmitScope(TokenEmission state, BlockPos pos, Node[] nodes,
-                             string inventoryTerm) {
+  private Function EmitScope(TokenEmissionState state, BlockPos pos,
+                             Node[] nodes, string inventoryTerm) {
     NodePos scopePos = new(pos, _scopeId);
     Function scope = new("function", scopePos, _face);
     state.AddPrepared(scope, scopePos);
@@ -81,8 +81,8 @@ public class FunctionTemplate : BlockNodeTemplate {
     return scope;
   }
 
-  public override Token Emit(TokenEmission state, NodePos pos, Node[] nodes,
-                             string inventoryTerm) {
+  public override Token Emit(TokenEmissionState state, NodePos pos,
+                             Node[] nodes, string inventoryTerm) {
     if (pos.NodeId == _scopeId) {
       return EmitScope(state, pos.Block, nodes, inventoryTerm);
     }
