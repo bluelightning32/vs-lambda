@@ -12,8 +12,10 @@ using Vintagestory.API.Util;
 
 namespace Lambda.Network;
 
+using Lambda.Token;
+
 public class BlockNodeTemplate {
-  private readonly NodeTemplate[] _nodeTemplates;
+  protected readonly NodeTemplate[] _nodeTemplates;
   private readonly Dictionary<(NetworkType, Edge), NodeTemplate> _index = new();
 
   private readonly Dictionary<string, NodeTemplate> _textures = new();
@@ -21,7 +23,7 @@ public class BlockNodeTemplate {
   private readonly NodeAccessor _accessor;
   private readonly Manager _manager;
 
-  public BlockNodeTemplate(NodeAccessor accessor, Manager manager,
+  public BlockNodeTemplate(NodeAccessor accessor, Manager manager, string face,
                            NodeTemplate[] nodeTemplates) {
     _accessor = accessor;
     _manager = manager;
@@ -35,7 +37,7 @@ public class BlockNodeTemplate {
       }
       foreach (var edge in nodeTemplate.Edges) {
         if (edge == Edge.Source) {
-          nodeTemplate.Source = true;
+          nodeTemplate.IsSource = true;
         }
         if (edge != Edge.Unknown && edge != Edge.Source) {
           _index.Add((nodeTemplate.Network, edge), nodeTemplate);
@@ -168,7 +170,7 @@ public class BlockNodeTemplate {
 
   private static void SetSourceScope(BlockPos pos, NodeTemplate nodeTemplate,
                                      ref Node node) {
-    if (nodeTemplate.Source) {
+    if (nodeTemplate.IsSource) {
       node.Scope = nodeTemplate.SourceScope;
       node.Source.Block = pos;
       node.Source.NodeId = nodeTemplate.Id;
@@ -322,5 +324,38 @@ public class BlockNodeTemplate {
       }
     }
     return false;
+  }
+
+  public int FindNodeTemplate(string name) {
+    for (int i = 0; i < _nodeTemplates.Length; ++i) {
+      if (_nodeTemplates[i].Name == name) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  public List<NodePos> GetDownstream(NodePos pos) {
+    List<NodePos> result = new();
+    NodeTemplate nodeTemplate = _nodeTemplates[pos.NodeId];
+    foreach (Edge edge in nodeTemplate.Edges) {
+      if (edge == Edge.Source) {
+        continue;
+      }
+      BlockPos neighborPos = pos.Block.AddCopy(edge.GetFace());
+      NodeTemplate neighborTemplate =
+          _accessor.GetNode(neighborPos, nodeTemplate.Network,
+                            edge.GetOpposite(), out Node neighborNode);
+      if (neighborTemplate != null &&
+          neighborNode.Parent == edge.GetOpposite()) {
+        result.Add(new NodePos(neighborPos, neighborTemplate.Id));
+      }
+    }
+    return result;
+  }
+
+  public virtual Token Emit(TokenEmission state, NodePos pos, Node[] nodes,
+                            string inventoryTerm) {
+    return null;
   }
 }

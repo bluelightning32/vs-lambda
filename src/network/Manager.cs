@@ -78,7 +78,7 @@ public class SourcePendingUpdates {
 }
 
 public class Manager {
-  Dictionary<string, Type> _blockNodeTemplateClasses = new();
+  readonly Dictionary<string, Type> _blockNodeTemplateClasses = new();
   public const int OccupiedPortsBitsPerFace = 3;
   Dictionary<NodePos, SourcePendingUpdates> _pendingUpdates =
       new Dictionary<NodePos, SourcePendingUpdates>();
@@ -109,6 +109,8 @@ public class Manager {
     _accessor = accessor;
     _blockNodeTemplateClasses.Add("BlockNodeTemplate",
                                   typeof(BlockNodeTemplate));
+    _blockNodeTemplateClasses.Add("ScopeTemplate", typeof(ScopeTemplate));
+    _blockNodeTemplateClasses.Add("FunctionTemplate", typeof(FunctionTemplate));
   }
 
   public void Load(byte[] serialized) {
@@ -400,20 +402,20 @@ public class Manager {
     foreach (var port in ports) {
       NodeTemplate node = new() { Network = NetworkType.Placeholder,
                                   Name = port.Name, Parent = port.Parent };
-      foreach (var face in port.Faces) {
+      foreach (var portFace in port.Faces) {
         const int mask = (1 << OccupiedPortsBitsPerFace) - 1;
         PortDirection dir =
             (PortDirection)((occupiedPorts >>
-                             (face.Index * OccupiedPortsBitsPerFace)) &
+                             (portFace.Index * OccupiedPortsBitsPerFace)) &
                             mask);
         if (dir == PortDirection.DirectIn) {
-          node.Edges = new Edge[] { EdgeExtension.GetFaceCenter(face) };
+          node.Edges = new Edge[] { EdgeExtension.GetFaceCenter(portFace) };
           node.Network = port.Network;
           break;
         }
         if (dir == PortDirection.DirectOut) {
           node.Edges =
-              new Edge[] { EdgeExtension.GetFaceCenter(face), Edge.Source };
+              new Edge[] { EdgeExtension.GetFaceCenter(portFace), Edge.Source };
           node.Network = port.Network;
           break;
         }
@@ -426,18 +428,19 @@ public class Manager {
       }
       HashSet<Edge> connectedEdges = new(nodeTemplates[0].Edges);
       for (int i = 0; i < 6; ++i) {
-        BlockFacing face = BlockFacing.ALLFACES[i];
+        BlockFacing connectedFace = BlockFacing.ALLFACES[i];
         if ((connectFaces & (1 << i)) != 0) {
-          connectedEdges.Add(EdgeExtension.GetFaceCenter(face));
+          connectedEdges.Add(EdgeExtension.GetFaceCenter(connectedFace));
         }
       }
       nodeTemplates[0].Edges = connectedEdges.ToArray();
     }
     Type blockNodeType = _blockNodeTemplateClasses[properties["class"].AsString(
         "BlockNodeTemplate")];
+    string face = properties["face"].AsString();
     try {
       return (BlockNodeTemplate)Activator.CreateInstance(
-          blockNodeType, _accessor, this, nodeTemplates.ToArray());
+          blockNodeType, _accessor, this, face, nodeTemplates.ToArray());
     } catch (TargetInvocationException ex) {
       ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
       // Without this rethrow, the compiler complains that the function returns

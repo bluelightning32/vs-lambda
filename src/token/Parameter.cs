@@ -16,15 +16,14 @@ public class Parameter : TermSource {
   public override ConstructRoot Construct => _construct;
 
   readonly ParameterList _parameters;
-#pragma warning disable 0649
-  public Input Type;
-#pragma warning restore 0649
+  public TermInput Type;
   public override IReadOnlyList<Token> Children {
     get { return _parameters.GetChildrenAtLevel(_parameters.GetNext(this)); }
   }
 
-  public Parameter(NodePos pos, ConstructRoot construct,
-                   ParameterList parameters) {
+  public Parameter(string name, NodePos pos, ConstructRoot construct,
+                   ParameterList parameters)
+      : base(name) {
     Pos = pos;
     _construct = construct;
     _parameters = parameters;

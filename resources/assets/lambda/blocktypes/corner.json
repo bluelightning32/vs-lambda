@@ -10,6 +10,7 @@
     {
       name: "TokenEmitter",
       properties: {
+        class: "ScopeTemplate",
         nodes: [
           {
             network: "scope",

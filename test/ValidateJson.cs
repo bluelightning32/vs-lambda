@@ -25,7 +25,7 @@ public class ValidateJson {
   public void Validate() {
     string resources = ResourcesPath();
     Assert.IsNotNull(resources);
-    TestContext.WriteLine(resources);
+    TestContext.WriteLine($"Json path: resources");
     int validated = 0;
     foreach (string file in Directory.EnumerateFiles(
                  resources, "*.json", SearchOption.AllDirectories)) {

@@ -98,9 +98,17 @@ public class NodeTemplate {
   [JsonProperty]
   public string Name = "";
   [JsonProperty]
+  public string Parent = null;
+  [JsonProperty]
   public NetworkType Network = NetworkType.Scope;
   public int Id = 0;
-  public bool Source = false;
+  // Set to -1 if the node did not declare a parent. This is set by the
+  // `BlockNodeTemplate` constructor.
+  public int ParentId;
+  // Ids of all nodes that declared this one as a parent. This is set by the
+  // `BlockNodeTemplate` constructor.
+  public int[] ChildIds = Array.Empty<int>();
+  public bool IsSource = false;
   [JsonProperty]
   public Scope SourceScope = Scope.Function;
   [JsonProperty]
@@ -110,19 +118,11 @@ public class NodeTemplate {
   [JsonProperty]
   public Dictionary<Scope, Dictionary<string, CompositeTexture>>
       ReplacementTextures = new();
-  [JsonProperty]
-  public string Parent;
-  // Set to -1 if the node did not declare a parent. This is set by the
-  // `BlockNodeTemplate` constructor.
-  public int ParentId;
-  // Ids of all nodes that declared this one as a parent. This is set by the
-  // `BlockNodeTemplate` constructor.
-  public int[] ChildIds = Array.Empty<int>();
 
   public NodeTemplate() {}
 
   public Scope GetScope(Node[] nodes) {
-    if (Source) {
+    if (IsSource) {
       return SourceScope;
     } else {
       return nodes[Id].Scope;
@@ -132,7 +132,7 @@ public class NodeTemplate {
   public void OnPlaced(Manager manager, BlockPos pos,
                        BlockNodeTemplate[] neighborTemplates,
                        Node[][] neighbors, ref Node node) {
-    Debug.Assert(Source || !node.Source.IsSet());
+    Debug.Assert(IsSource || !node.Source.IsSet());
     bool anyInfDistNeighbors = false;
     foreach (Edge edge in Edges) {
       BlockFacing face = edge.GetFace();
@@ -200,7 +200,7 @@ public class NodeTemplate {
                        BlockNodeTemplate[] neighborTemplates,
                        Node[][] neighbors, out string failureCode) {
     NodePos source = new NodePos();
-    if (Source) {
+    if (IsSource) {
       source.Block = pos;
       source.NodeId = Id;
     }
@@ -251,7 +251,7 @@ public class NodeTemplate {
   private bool ShouldPropagateConnection(NodeAccessor accessor,
                                          Manager networkManager, BlockPos pos,
                                          Node node) {
-    if (Source) {
+    if (IsSource) {
       return true;
     }
     Debug.Assert(node.PropagationDistance != 0);

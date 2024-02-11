@@ -17,15 +17,18 @@ public class Legend {
     BlockNodeTemplate template =
         _manager.ParseBlockNodeTemplate(JsonObject.FromJson(@"
         {
+          class: 'FunctionTemplate',
+          face: 'south',
           nodes: [
             {
               network: 'scope',
+              name: 'scope',
               edges: ['north-center', 'east-center', 'south-center', 'west-center', 'source']
             }
           ],
           ports: [
             {
-              name: 'result',
+              name: 'output',
               network: 'term',
               directions: ['direct-out'],
               inventory: {

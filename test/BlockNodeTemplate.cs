@@ -50,7 +50,7 @@ public class BlockNodeTemplateTest {
     NodeTemplate nodeTemplate = _templates.FourWaySource.GetNodeTemplate(
         NetworkType.Scope, Edge.NorthCenter);
     Assert.IsNotNull(nodeTemplate);
-    Assert.IsTrue(nodeTemplate.Source);
+    Assert.IsTrue(nodeTemplate.IsSource);
   }
 
   [TestMethod]

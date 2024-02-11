@@ -24,6 +24,7 @@
     {
       name: "AcceptPort",
       properties: {
+        class: "ScopeTemplate",
         nodes: [
           {
             network: "scope",

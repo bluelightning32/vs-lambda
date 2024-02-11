@@ -25,6 +25,8 @@
     {
       name: "AcceptPort",
       properties: {
+        class: "FunctionTemplate",
+        face: "{side}",
         nodes: [
           {
             network: "scope",
@@ -41,7 +43,7 @@
         ],
         ports: [
           {
-            name: "result",
+            name: "output",
             network: "term",
             directions: ["direct-out"],
             facesByType: {

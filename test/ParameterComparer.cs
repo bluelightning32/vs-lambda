@@ -12,8 +12,8 @@ namespace Lambda.Tests;
 public class ParameterComparerTest {
 
   public static Parameter MakeParameter(int x, int y, int z, int node) {
-    return new Parameter(new NodePos(new BlockPos(x, y, z, 0), node), null,
-                         null);
+    return new Parameter(
+        "parameter", new NodePos(new BlockPos(x, y, z, 0), node), null, null);
   }
 
   public static void AssertSorted(Parameter[] parameters,

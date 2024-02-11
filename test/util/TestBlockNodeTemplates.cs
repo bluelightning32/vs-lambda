@@ -40,6 +40,7 @@ public class TestBlockNodeTemplates {
     _manager = manager;
     FourWay = manager.ParseBlockNodeTemplate(JsonObject.FromJson(@"
         {
+          class: 'ScopeTemplate',
           nodes: [
             {
               network: 'scope',
@@ -51,6 +52,7 @@ public class TestBlockNodeTemplates {
 
     NS = manager.ParseBlockNodeTemplate(JsonObject.FromJson(@"
         {
+          class: 'ScopeTemplate',
           nodes: [
             {
               network: 'scope',
@@ -62,6 +64,7 @@ public class TestBlockNodeTemplates {
 
     FourWaySource = manager.ParseBlockNodeTemplate(JsonObject.FromJson(@"
       {
+        class: 'ScopeTemplate',
         nodes: [
           {
             network: 'scope',
@@ -85,6 +88,7 @@ public class TestBlockNodeTemplates {
 
     ScopeMatchConnector = manager.ParseBlockNodeTemplate(JsonObject.FromJson(@"
         {
+          class: 'ScopeTemplate',
           nodes: [
             {
               network: 'scope',
@@ -101,7 +105,11 @@ public class TestBlockNodeTemplates {
     Wire = manager.ParseBlockNodeTemplate(
         JsonObject.FromJson(@"
         {
+          class: 'ScopeTemplate',
           nodes: [
+            {
+              network: 'term'
+            }
           ]
         }"),
         0,
@@ -110,6 +118,7 @@ public class TestBlockNodeTemplates {
 
     WireCross = manager.ParseBlockNodeTemplate(JsonObject.FromJson(@"
         {
+          class: 'ScopeTemplate',
           nodes: [
             {
               network: 'term',
@@ -123,11 +132,15 @@ public class TestBlockNodeTemplates {
         }"),
                                                0, 0);
 
+    // An in port brings data into the construct. Within the construct, it is an
+    // output port.
     InPort = manager.ParseBlockNodeTemplate(
         JsonObject.FromJson(@"
         {
+          class: 'ScopeTemplate',
           nodes: [
             {
+              name: 'scope',
               network: 'scope',
               edges: ['north-center', 'east-center', 'south-center', 'west-center']
             },
@@ -140,20 +153,25 @@ public class TestBlockNodeTemplates {
             {
               name: 'parameter',
               network: 'term',
+              parent: 'scope',
               directions: ['direct-in', 'direct-out'],
               faces: ['south']
             }
           ]
         }"),
-        (int)PortDirection.DirectIn
+        (int)PortDirection.DirectOut
             << (BlockFacing.SOUTH.Index * Manager.OccupiedPortsBitsPerFace),
         0);
 
+    // An out port brings data out of the construct. Within the construct, it is
+    // an input port.
     OutPort = manager.ParseBlockNodeTemplate(
         JsonObject.FromJson(@"
         {
+          class: 'ScopeTemplate',
           nodes: [
             {
+              name: 'scope',
               network: 'scope',
               edges: ['north-center', 'east-center', 'south-center', 'west-center']
             },
@@ -166,12 +184,13 @@ public class TestBlockNodeTemplates {
             {
               name: 'parameter',
               network: 'term',
+              parent: 'scope',
               directions: ['direct-in', 'direct-out'],
               faces: ['west']
             }
           ]
         }"),
-        (int)PortDirection.DirectOut
+        (int)PortDirection.DirectIn
             << (BlockFacing.WEST.Index * Manager.OccupiedPortsBitsPerFace),
         0);
 

@@ -71,6 +71,7 @@
             }
           }
         ],
+        class: "ScopeTemplate",
         nodes: [
           {
             network: "term",

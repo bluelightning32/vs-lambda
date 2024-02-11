@@ -5,7 +5,7 @@ using Lambda.Network;
 
 namespace Lambda.Token;
 
-public class Input : Token {
+public class TermInput : Token {
   NodePos _pos;
   public override IReadOnlyList<NodePos> Blocks => new NodePos[] { _pos };
 
@@ -21,8 +21,11 @@ public class Input : Token {
   public override IReadOnlyList<Token> Children =>
       Value == null ? Array.Empty<Token>() : new Token[] { Value };
 
-  public Input(NodePos pos, ConstructRoot construct) {
+  public TermInput(string name, NodePos pos, ConstructRoot construct)
+      : base(name) {
     _pos = pos;
     _construct = construct;
   }
+
+  public virtual void SetSource(Token source) { Value = source; }
 }

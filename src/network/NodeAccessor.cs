@@ -54,4 +54,12 @@ public abstract class NodeAccessor {
     NodeTemplate template = GetNode(pos, nodeId, out Node node);
     return node.Source;
   }
+
+  public int FindNodeId(BlockPos pos, string name) {
+    BlockNodeTemplate block = GetBlock(pos, out Node[] nodes);
+    if (block == null) {
+      return -1;
+    }
+    return block.FindNodeTemplate(name);
+  }
 }

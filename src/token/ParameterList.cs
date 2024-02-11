@@ -7,7 +7,8 @@ namespace Lambda.Token;
 
 public class ParameterList {
   public readonly SortedSet<Parameter> Parameters;
-  public Token Result = null;
+  public TermInput ResultType = null;
+  public TermInput Result = null;
 
   public ParameterList(BlockFacing constructFace) {
     Parameters = new SortedSet<Parameter>(new ParameterComparer(constructFace));
@@ -24,12 +25,22 @@ public class ParameterList {
     return null;
   }
 
-  public IReadOnlyList<Token> GetChildrenAtLevel(Parameter p) {
-    if (p == null) {
-      if (Result == null) {
+  public static Token[] NonnullTokens(Token a, Token b) {
+    if (a == null) {
+      if (b == null) {
         return Array.Empty<Token>();
       }
-      return new Token[] { Result };
+      return new Token[] { b };
+    }
+    if (b == null) {
+      return new Token[] { a };
+    }
+    return new Token[] { a, b };
+  }
+
+  public IReadOnlyList<Token> GetChildrenAtLevel(Parameter p) {
+    if (p == null) {
+      return NonnullTokens(ResultType, Result);
     }
     if (p.Type != null) {
       return new Token[] { p.Type, p };
