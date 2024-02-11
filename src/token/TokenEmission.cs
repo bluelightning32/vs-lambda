@@ -16,6 +16,9 @@ public class TokenEmission {
   public IReadOnlyDictionary<NodePos, Token> Prepared { get => _prepared; }
   private readonly List<NodePos> _pending = new();
   private readonly List<ConstructRoot> _unreferencedRoots = new();
+  public IReadOnlyList<ConstructRoot> UnreferencedRoots {
+    get => _unreferencedRoots;
+  }
 
   public TokenEmission(NodeAccessor accessor) { _accessor = accessor; }
 

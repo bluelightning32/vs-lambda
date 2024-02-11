@@ -46,6 +46,9 @@ public class FunctionTemplateTest {
       Token puzzle = state.Process(
           new NodePos(puzzleBlock, _accessor.FindNodeId(puzzleBlock, "scope")));
       if (puzzle is Function f) {
+        CollectionAssert.AreEqual(new Token[] { puzzle },
+                                  state.UnreferencedRoots.ToList());
+
         Assert.IsTrue(
             f.ScopeMatchConnectors.Contains(new NodePos(0, 0, 3, 0, 0)));
         Assert.AreEqual(new NodePos(puzzleBlock,
