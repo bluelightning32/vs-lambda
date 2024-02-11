@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 
@@ -8,7 +7,7 @@ using Lambda.Network;
 
 namespace Lambda.Token;
 
-public class TokenEmission {
+public class TokenEmission : IDisposable {
   private readonly NodeAccessor _accessor;
   // Nodes that have already been created but whose references have not been
   // fully visited yet.
@@ -112,5 +111,16 @@ public class TokenEmission {
       return sourceToken;
     }
     return EmitPos(source);
+  }
+
+  public void Dispose() {
+    foreach (KeyValuePair<NodePos, Token> p in _prepared) {
+      p.Value.Dispose();
+    }
+    _prepared.Clear();
+    foreach (ConstructRoot r in _unreferencedRoots) {
+      r.Dispose();
+    }
+    _unreferencedRoots.Clear();
   }
 }

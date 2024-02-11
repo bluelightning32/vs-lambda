@@ -1,16 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
 
-using Lambda.CollectibleBehavior;
 using Lambda.Network;
-
-using Vintagestory.API.MathTools;
 
 namespace Lambda.Token;
 
-public abstract class Token {
+public abstract class Token : IDisposable {
   public abstract IReadOnlyList<NodePos> Blocks { get; }
 
   // The location of all scope and match connector nodes that point to this
@@ -30,7 +26,7 @@ public abstract class Token {
 
   public string Name { get; private set; }
 
-  private HashSet<NodePos> _pendingRefLocations = new();
+  private readonly HashSet<NodePos> _pendingRefLocations = new();
 
   public Token(string name) {
     PendingRef = 0;
@@ -72,6 +68,13 @@ public abstract class Token {
   public virtual void AddSink(TokenEmission state, Token sink) {
     throw new InvalidOperationException("Token does not accept children.");
   }
+
+  // Breaks reference cycles that this Token is part of.
+  //
+  // Disposing the token is not strictly necessary. It only breaks reference
+  // cycles, which makes it easier for the garbage collector to see that the
+  // tokens are no longer externally referenced.
+  public virtual void Dispose() { GC.SuppressFinalize(this); }
 }
 
 public abstract class TermSource : Token {

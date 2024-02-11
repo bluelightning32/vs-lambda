@@ -40,30 +40,32 @@ public class FunctionTemplateTest {
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
     for (int i = 0; i < 5; ++i) {
-      TokenEmission state = new(_accessor);
-      Random r = new(i);
-      BlockPos puzzleBlock = new(1, 0, 0, 0);
-      Token puzzle = state.Process(
-          new NodePos(puzzleBlock, _accessor.FindNodeId(puzzleBlock, "scope")));
-      if (puzzle is Function f) {
-        CollectionAssert.AreEqual(new Token[] { puzzle },
-                                  state.UnreferencedRoots.ToList());
+      using (TokenEmission state = new(_accessor)) {
+        Random r = new(i);
+        BlockPos puzzleBlock = new(1, 0, 0, 0);
+        Token puzzle = state.Process(new NodePos(
+            puzzleBlock, _accessor.FindNodeId(puzzleBlock, "scope")));
+        if (puzzle is Function f) {
+          CollectionAssert.AreEqual(new Token[] { puzzle },
+                                    state.UnreferencedRoots.ToList());
 
-        Assert.IsTrue(
-            f.ScopeMatchConnectors.Contains(new NodePos(0, 0, 3, 0, 0)));
-        Assert.AreEqual(new NodePos(puzzleBlock,
-                                    _accessor.FindNodeId(puzzleBlock, "scope")),
-                        f.Pos);
-        Assert.AreEqual("parameter", f.Children[0].Name);
-        Assert.IsTrue(
-            f.Children[0].TermConnectors.Contains(new NodePos(3, 0, 1, 0, 0)));
-        Assert.AreEqual("resultType", f.Children[0].Children[0].Name);
-        Assert.AreEqual("nat -> nat",
-                        ((Constant)f.Children[0].Children[0].Children[0]).Term);
-        Assert.AreEqual("result", f.Children[0].Children[1].Name);
-        Assert.AreEqual(f.Children[0], f.Children[0].Children[1].Children[0]);
-      } else {
-        Assert.Fail();
+          Assert.IsTrue(
+              f.ScopeMatchConnectors.Contains(new NodePos(0, 0, 3, 0, 0)));
+          Assert.AreEqual(new NodePos(puzzleBlock, _accessor.FindNodeId(
+                                                       puzzleBlock, "scope")),
+                          f.Pos);
+          Assert.AreEqual("parameter", f.Children[0].Name);
+          Assert.IsTrue(f.Children[0].TermConnectors.Contains(
+              new NodePos(3, 0, 1, 0, 0)));
+          Assert.AreEqual("resultType", f.Children[0].Children[0].Name);
+          Assert.AreEqual(
+              "nat -> nat",
+              ((Constant)f.Children[0].Children[0].Children[0]).Term);
+          Assert.AreEqual("result", f.Children[0].Children[1].Name);
+          Assert.AreEqual(f.Children[0], f.Children[0].Children[1].Children[0]);
+        } else {
+          Assert.Fail();
+        }
       }
     }
   }

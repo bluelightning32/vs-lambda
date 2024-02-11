@@ -34,7 +34,7 @@ public class TestBlockNodeTemplates {
   // directions.
   public BlockNodeTemplate Match;
 
-  private Manager _manager;
+  private readonly Manager _manager;
 
   public TestBlockNodeTemplates(Manager manager) {
     _manager = manager;

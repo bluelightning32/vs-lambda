@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -73,5 +72,10 @@ public class Function : ConstructRoot, IAcceptPort {
       added = _parameters.Result;
     }
     return added;
+  }
+
+  public override void Dispose() {
+    _parameters.Dispose();
+    base.Dispose();
   }
 }

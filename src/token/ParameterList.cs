@@ -5,8 +5,8 @@ using Vintagestory.API.MathTools;
 
 namespace Lambda.Token;
 
-public class ParameterList {
-  public readonly SortedSet<Parameter> Parameters;
+public class ParameterList : IDisposable {
+  public SortedSet<Parameter> Parameters;
   public TermInput ResultType = null;
   public TermInput Result = null;
 
@@ -46,5 +46,20 @@ public class ParameterList {
       return new Token[] { p.Type, p };
     }
     return new Token[] { p };
+  }
+
+  public void Dispose() {
+    if (Parameters == null) {
+      return;
+    }
+    SortedSet<Parameter> parameters = Parameters;
+    Parameters = null;
+    foreach (Parameter p in parameters) {
+      p.Dispose();
+    }
+    ResultType = null;
+    Result = null;
+    parameters.Clear();
+    GC.SuppressFinalize(this);
   }
 }

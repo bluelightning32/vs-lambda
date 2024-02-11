@@ -12,7 +12,7 @@ public class Parameter : TermSource {
   public override IReadOnlyList<NodePos> ScopeMatchConnectors =>
       Array.Empty<NodePos>();
 
-  private readonly ConstructRoot _construct;
+  private ConstructRoot _construct;
   public override ConstructRoot Construct => _construct;
 
   readonly ParameterList _parameters;
@@ -27,5 +27,14 @@ public class Parameter : TermSource {
     Pos = pos;
     _construct = construct;
     _parameters = parameters;
+  }
+
+  public override void Dispose() {
+    _construct?.Dispose();
+    _construct = null;
+    _parameters.Dispose();
+    Type?.Dispose();
+    Type = null;
+    base.Dispose();
   }
 }

@@ -14,7 +14,7 @@ public class TermInput : Token {
   public override IReadOnlyList<NodePos> TermConnectors =>
       Array.Empty<NodePos>();
 
-  private readonly ConstructRoot _construct;
+  private ConstructRoot _construct;
   public override ConstructRoot Construct => _construct;
 
   public Token Value { get; protected set; }
@@ -28,4 +28,10 @@ public class TermInput : Token {
   }
 
   public virtual void SetSource(Token source) { Value = source; }
+
+  public override void Dispose() {
+    _construct?.Dispose();
+    _construct = null;
+    base.Dispose();
+  }
 }
