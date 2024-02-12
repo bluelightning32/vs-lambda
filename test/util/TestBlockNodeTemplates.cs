@@ -29,6 +29,8 @@ public class TestBlockNodeTemplates {
   // Application with the applicand (function) port on the west face, argument
   // port on the north face, and output port on the east face.
   public BlockNodeTemplate App;
+  // Function with the output port on the east face.
+  public BlockNodeTemplate Function;
   // Match block with the input port the west face and the output port on the
   // east face. It is a source for the match network in the 4 cardinal
   // directions.
@@ -234,6 +236,31 @@ public class TestBlockNodeTemplates {
              << (BlockFacing.EAST.Index * Manager.OccupiedPortsBitsPerFace)),
         0);
 
+    Function =
+        _manager.ParseBlockNodeTemplate(JsonObject.FromJson(@"
+        {
+          class: 'FunctionTemplate',
+          face: 'south',
+          nodes: [
+            {
+              network: 'scope',
+              name: 'scope',
+              edges: ['north-center', 'east-center', 'south-center', 'west-center', 'source']
+            }
+          ],
+          ports: [
+            {
+              name: 'output',
+              network: 'term',
+              directions: ['direct-out'],
+              faces: ['east']
+            }
+          ]
+        }"),
+        (int)PortDirection.DirectOut
+             << (BlockFacing.EAST.Index * Manager.OccupiedPortsBitsPerFace),
+        0);
+
     Match = manager.ParseBlockNodeTemplate(
         JsonObject.FromJson(@"
         {
@@ -276,6 +303,7 @@ public class TestBlockNodeTemplates {
     legend.Dict.Add('i', new(InPort, null));
     legend.Dict.Add('o', new(OutPort, null));
     legend.Dict.Add('A', new(App, null));
+    legend.Dict.Add('F', new(Function, null));
     legend.Dict.Add('M', new(Match, null));
     return legend;
   }

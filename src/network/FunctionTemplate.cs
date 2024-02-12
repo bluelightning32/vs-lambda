@@ -64,7 +64,7 @@ public class FunctionTemplate : BlockNodeTemplate {
   private Function EmitScope(TokenEmissionState state, BlockPos pos,
                              Node[] nodes, string inventoryTerm) {
     NodePos scopePos = new(pos, _scopeId);
-    Function scope = new("function", scopePos, _face);
+    Function scope = new("function", scopePos, _outputId, _face);
     state.AddPrepared(scope, scopePos);
     scope.AddPendingChildren(state, _nodeTemplates[_scopeId].Network,
                              GetDownstream(scopePos));
@@ -73,9 +73,11 @@ public class FunctionTemplate : BlockNodeTemplate {
         scope.AddRef(state, new NodePos(pos, child));
       }
     }
-    Token resultType = scope.AddPort(state, scopePos, "resulttype", false);
-    Token constant = new Constant(scopePos, inventoryTerm);
-    constant.AddSink(state, resultType);
+    if (inventoryTerm != null) {
+      Token resultType = scope.AddPort(state, scopePos, "resulttype", false);
+      Token constant = new Constant(scopePos, inventoryTerm);
+      constant.AddSink(state, resultType);
+    }
 
     scope.ReleaseRef(state, scopePos);
     return scope;

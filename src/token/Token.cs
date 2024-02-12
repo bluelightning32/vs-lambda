@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 using Lambda.Network;
 
@@ -35,7 +36,7 @@ public abstract class Token : IDisposable {
 
   public void AddRef(TokenEmissionState state, NodePos pos) {
     ++PendingRef;
-    Debug.Assert(_pendingRefLocations.Add(pos));
+    Debug.Assert(_pendingRefLocations.Add(pos), $"Position {pos} already referenced the block.");
     Debug.Assert(state.PreparedContains(this));
   }
 
@@ -91,7 +92,7 @@ public abstract class TermSource : Token {
   private readonly List<NodePos> _termConnectors = new();
   public override IReadOnlyList<NodePos> TermConnectors => _termConnectors;
 
-  public TermSource(string name) : base(name) {}
+  public TermSource(string name) : base(name) { }
 
   public override void AddConnector(TokenEmissionState state,
                                     NetworkType network, NodePos pos) {
@@ -131,7 +132,16 @@ public abstract class ConstructRoot : TermSource {
   // Number of edges that point to this element.
   public int IncomingEdgeCount { get; private set; }
 
-  public ConstructRoot(string name) : base(name) {}
+  public ConstructRoot(string name) : base(name) { }
 
   public abstract void WriteConstruct(GraphvizState state);
+
+  public override void AddSink(TokenEmissionState state, Token sink) {
+    if (sink is TermInput input) {
+      input.SetSource(this);
+      ++IncomingEdgeCount;
+    } else {
+      base.AddSink(state, sink);
+    }
+  }
 }

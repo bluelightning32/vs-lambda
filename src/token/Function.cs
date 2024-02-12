@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,8 +9,17 @@ using Vintagestory.API.MathTools;
 namespace Lambda.Token;
 
 public class Function : ConstructRoot, IAcceptPort {
-  public readonly NodePos Pos;
-  public override IReadOnlyList<NodePos> Blocks => new NodePos[] { Pos };
+  public readonly NodePos ScopePos;
+  public readonly int OutputNodeId;
+  public override IReadOnlyList<NodePos> Blocks {
+    get {
+      if (OutputNodeId == -1) {
+        return new NodePos[] { ScopePos };
+      } else {
+        return new NodePos[] { ScopePos, new NodePos(ScopePos.Block, OutputNodeId) };
+      }
+    }
+  }
 
   public override ConstructRoot Construct => this;
 
@@ -24,8 +32,9 @@ public class Function : ConstructRoot, IAcceptPort {
 
   private readonly ParameterList _parameters;
 
-  public Function(string name, NodePos pos, BlockFacing face) : base(name) {
-    Pos = pos;
+  public Function(string name, NodePos pos, int outputNodeId, BlockFacing face) : base(name) {
+    ScopePos = pos;
+    OutputNodeId = outputNodeId;
     _parameters = new ParameterList(face);
   }
 
