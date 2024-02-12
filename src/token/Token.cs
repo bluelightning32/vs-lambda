@@ -75,6 +75,16 @@ public abstract class Token : IDisposable {
   // cycles, which makes it easier for the garbage collector to see that the
   // tokens are no longer externally referenced.
   public virtual void Dispose() { GC.SuppressFinalize(this); }
+
+  // Write all of the edges that point outside of the construct. This does not
+  // recurse with the construct or outside the construct.
+  public virtual void WriteOutsideEdges(GraphvizState state) {
+    foreach (Token t in Children) {
+      if (t.Construct != Construct) {
+        state.WriteEdge(this, t);
+      }
+    }
+  }
 }
 
 public abstract class TermSource : Token {
@@ -122,4 +132,6 @@ public abstract class ConstructRoot : TermSource {
   public int IncomingEdgeCount { get; private set; }
 
   public ConstructRoot(string name) : base(name) {}
+
+  public abstract void WriteConstruct(GraphvizState state);
 }

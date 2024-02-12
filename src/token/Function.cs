@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 using Lambda.Network;
 
@@ -77,5 +79,50 @@ public class Function : ConstructRoot, IAcceptPort {
   public override void Dispose() {
     _parameters.Dispose();
     base.Dispose();
+  }
+
+  public override void WriteConstruct(GraphvizState state) {
+    string name = state.GetName(this);
+    StringBuilder label = new();
+    label.Append(Name);
+    bool first = true;
+    foreach (NodePos pos in Blocks) {
+      if (first) {
+        label.Append($"\\n{pos}");
+        first = false;
+      } else {
+        label.Append($",\\n{pos}");
+      }
+    }
+    state.WriteSubgraphHeader(name, label.ToString());
+
+    state.WriteSubgraphNode(name, Name);
+
+    Token parent = this;
+    Parameter p = _parameters.Parameters.FirstOrDefault();
+    while (true) {
+      foreach (Token t in _parameters.GetChildrenAtLevel(p)) {
+        state.WriteSubgraphNode(t);
+        state.WriteSubgraphEdge(parent, t);
+      }
+      if (p == null) {
+        break;
+      }
+      parent = p;
+      p = _parameters.GetNext(p);
+    }
+
+    state.WriteSubgraphFooter();
+
+    p = _parameters.Parameters.FirstOrDefault();
+    while (true) {
+      foreach (Token t in _parameters.GetChildrenAtLevel(p)) {
+        t.WriteOutsideEdges(state);
+      }
+      if (p == null) {
+        break;
+      }
+      p = _parameters.GetNext(p);
+    }
   }
 }

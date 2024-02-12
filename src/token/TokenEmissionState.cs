@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 using Lambda.Network;
@@ -122,5 +123,14 @@ public class TokenEmissionState : IDisposable {
       r.Dispose();
     }
     _unreferencedRoots.Clear();
+  }
+
+  public void SaveGraphviz(string name, TextWriter writer) {
+    GraphvizState graphviz = new(writer);
+    graphviz.WriteHeader(name);
+    foreach (ConstructRoot root in _unreferencedRoots) {
+      graphviz.Add(root);
+    }
+    graphviz.WriteFooter();
   }
 }

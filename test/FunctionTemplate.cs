@@ -16,11 +16,23 @@ public class FunctionTemplateTest {
   private MemoryNodeAccessor _accessor;
   private TestBlockNodeTemplates _templates;
 
+  public TestContext TestContext { get; set; }
+
   [TestInitialize]
   public void Initialize() {
     _accessor = new MemoryNodeAccessor();
     _manager = new Manager(EnumAppSide.Server, null, _accessor);
     _templates = new TestBlockNodeTemplates(_manager);
+  }
+
+  private void MaybeWriteGraphviz(TokenEmissionState state) {
+    // To save graphviz files, run the tests with:
+    // dotnet test -c Debug --logger:"console;verbosity=detailed" -e GRAPHVIZ=1 
+    if (Environment.GetEnvironmentVariable("GRAPHVIZ") == null) {
+      return;
+    }
+    using StreamWriter writer = new(TestContext.TestName + ".gv.txt");
+    state.SaveGraphviz(TestContext.TestName, writer);
   }
 
   [TestMethod]
@@ -45,6 +57,9 @@ public class FunctionTemplateTest {
         BlockPos puzzleBlock = new(1, 0, 0, 0);
         Token puzzle = state.Process(new NodePos(
             puzzleBlock, _accessor.FindNodeId(puzzleBlock, "scope")));
+        if (i == 0) {
+          MaybeWriteGraphviz(state);
+        }
         if (puzzle is Function f) {
           CollectionAssert.AreEqual(new Token[] { puzzle },
                                     state.UnreferencedRoots.ToList());
