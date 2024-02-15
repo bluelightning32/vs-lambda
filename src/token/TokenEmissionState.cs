@@ -67,7 +67,10 @@ public class TokenEmissionState : IDisposable {
   public void FinishPrepared(Token token) {
     bool removed = false;
     foreach (NodePos pos in token.Blocks) {
-      removed |= _prepared.Remove(pos);
+      if (_prepared.Remove(pos, out Token removedToken)) {
+        Debug.Assert(removedToken == token);
+        removed = true;
+      }
     }
     if (!removed) {
       throw new KeyNotFoundException("Token not found in prepared list.");
@@ -83,6 +86,10 @@ public class TokenEmissionState : IDisposable {
     _unreferencedRoots.Add(root);
   }
 
+  public bool PreparedContains(NodePos pos, Token token) {
+    return _prepared.TryGetValue(pos, out Token contained) &&
+           token == contained;
+  }
   public bool PreparedContains(Token token) {
     foreach (NodePos pos in token.Blocks) {
       if (_prepared.ContainsKey(pos)) {
@@ -97,11 +104,12 @@ public class TokenEmissionState : IDisposable {
     _pending.Add(pos);
   }
 
-  public void AddPrepared(Token token, NodePos refFor) {
-    Debug.Assert(token.PendingRef == 0);
-    foreach (NodePos pos in token.Blocks) {
-      _prepared.Add(pos, token);
-    }
+  public void AddPrepared(NodePos tokenPos, Token token) {
+    _prepared.Add(tokenPos, token);
+  }
+
+  public void AddPrepared(NodePos tokenPos, Token token, NodePos refFor) {
+    AddPrepared(tokenPos, token);
     token.AddRef(this, refFor);
   }
 

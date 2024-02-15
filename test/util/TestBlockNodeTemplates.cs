@@ -236,8 +236,8 @@ public class TestBlockNodeTemplates {
              << (BlockFacing.EAST.Index * Manager.OccupiedPortsBitsPerFace)),
         0);
 
-    Function =
-        _manager.ParseBlockNodeTemplate(JsonObject.FromJson(@"
+    Function = _manager.ParseBlockNodeTemplate(
+        JsonObject.FromJson(@"
         {
           class: 'FunctionTemplate',
           face: 'south',
@@ -258,7 +258,7 @@ public class TestBlockNodeTemplates {
           ]
         }"),
         (int)PortDirection.DirectOut
-             << (BlockFacing.EAST.Index * Manager.OccupiedPortsBitsPerFace),
+            << (BlockFacing.EAST.Index * Manager.OccupiedPortsBitsPerFace),
         0);
 
     Match = manager.ParseBlockNodeTemplate(

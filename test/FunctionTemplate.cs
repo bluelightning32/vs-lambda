@@ -27,7 +27,7 @@ public class FunctionTemplateTest {
 
   private void MaybeWriteGraphviz(TokenEmissionState state) {
     // To save graphviz files, run the tests with:
-    // dotnet test -c Debug --logger:"console;verbosity=detailed" -e GRAPHVIZ=1 
+    // dotnet test -c Debug --logger:"console;verbosity=detailed" -e GRAPHVIZ=1
     if (Environment.GetEnvironmentVariable("GRAPHVIZ") == null) {
       return;
     }
@@ -55,8 +55,10 @@ public class FunctionTemplateTest {
       using (TokenEmissionState state = new(_accessor)) {
         Random r = new(i);
         BlockPos puzzleBlock = new(1, 0, 0, 0);
-        Token puzzle = state.Process(new NodePos(
-            puzzleBlock, _accessor.FindNodeId(puzzleBlock, "scope")), new Random(i));
+        Token puzzle = state.Process(
+            new NodePos(puzzleBlock,
+                        _accessor.FindNodeId(puzzleBlock, "scope")),
+            new Random(i));
         if (i == 0) {
           MaybeWriteGraphviz(state);
         }
@@ -109,8 +111,10 @@ public class FunctionTemplateTest {
       using (TokenEmissionState state = new(_accessor)) {
         Random r = new(i);
         BlockPos puzzleBlock = new(1, 0, 0, 0);
-        Token puzzle = state.Process(new NodePos(
-            puzzleBlock, _accessor.FindNodeId(puzzleBlock, "scope")), new Random(i));
+        Token puzzle = state.Process(
+            new NodePos(puzzleBlock,
+                        _accessor.FindNodeId(puzzleBlock, "scope")),
+            new Random(i));
         if (i == 0) {
           MaybeWriteGraphviz(state);
         }
@@ -132,7 +136,8 @@ public class FunctionTemplateTest {
           Assert.AreEqual("result", f.Children[0].Children[1].Name);
           if (f.Children[0].Children[1].Children[0] is Function f2) {
             Assert.AreEqual("result", f2.Children[0].Children[0].Name);
-            Assert.AreEqual(f2.Children[0], f2.Children[0].Children[0].Children[0]);
+            Assert.AreEqual(f2.Children[0],
+                            f2.Children[0].Children[0].Children[0]);
           } else {
             Assert.Fail();
           }

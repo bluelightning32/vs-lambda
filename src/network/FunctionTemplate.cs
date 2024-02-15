@@ -65,7 +65,7 @@ public class FunctionTemplate : BlockNodeTemplate {
                              Node[] nodes, string inventoryTerm) {
     NodePos scopePos = new(pos, _scopeId);
     Function scope = new("function", scopePos, _outputId, _face);
-    state.AddPrepared(scope, scopePos);
+    state.AddPrepared(scopePos, scope, scopePos);
     scope.AddPendingChildren(state, _nodeTemplates[_scopeId].Network,
                              GetDownstream(scopePos));
     foreach (int child in new int[] { _outputId, _parameterId, _resultId }) {
@@ -93,13 +93,14 @@ public class FunctionTemplate : BlockNodeTemplate {
         (Function)state.GetOrCreateSource(new NodePos(pos.Block, _scopeId));
     Token result;
     if (pos.NodeId == _outputId) {
+      state.AddPrepared(pos, scope);
       scope.AddPendingChildren(state, nodeTemplate.Network, GetDownstream(pos));
       result = scope;
     } else if (pos.NodeId == _parameterId) {
       Debug.Assert(nodeTemplate.IsSource);
       result = scope.AddPort(state, pos, nodeTemplate.Name, true);
       if (result.PendingRef == 0) {
-        state.AddPrepared(result, pos);
+        state.AddPrepared(pos, result, pos);
       } else {
         result.AddRef(state, pos);
       }

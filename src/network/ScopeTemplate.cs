@@ -61,8 +61,8 @@ public class ScopeTemplate : BlockNodeTemplate {
 
       if (forPos != parentPos) {
         // AddRef the port for the parent node.
-        if (port.PendingRef == 0) {
-          state.AddPrepared(port, parentPos);
+        if (port.PendingRef == 0 || !state.PreparedContains(portPos, port)) {
+          state.AddPrepared(portPos, port, parentPos);
         } else {
           port.AddRef(state, parentPos);
         }
@@ -74,8 +74,8 @@ public class ScopeTemplate : BlockNodeTemplate {
           continue;
         }
         NodePos childPos2 = new(parentPos.Block, childId2);
-        if (port.PendingRef == 0) {
-          state.AddPrepared(port, childPos2);
+        if (port.PendingRef == 0 || !state.PreparedContains(portPos, port)) {
+          state.AddPrepared(portPos, port, childPos2);
         } else {
           port.AddRef(state, childPos2);
         }
