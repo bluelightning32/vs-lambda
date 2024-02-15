@@ -53,7 +53,9 @@ public class TokenEmissionState : IDisposable {
       EmitPos(popped);
     }
     Debug.Assert(_pending.Count == 0);
-    Debug.Assert(_prepared.Count == 0);
+    Debug.Assert(
+        _prepared.Count == 0,
+        $"Prepared nodes were not cleared, remaining={_prepared.Count} first={_prepared.First()}");
     return result;
   }
 

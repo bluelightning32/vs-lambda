@@ -358,4 +358,24 @@ public class BlockNodeTemplate {
                             string inventoryTerm) {
     return null;
   }
+
+  // Add's the node's source to the pending list, unless it is already there.
+  // The node may be its own source.
+  protected void AddPendingNodeSource(TokenEmissionState state, NodePos pos,
+                                      Node[] nodes) {
+    // The port should be properly emitted by a connector from its source.
+    // If the port is disconnected, then treat the port itself as the
+    // source.
+    NodePos sourcePos = pos;
+    if (nodes[pos.NodeId].IsConnected()) {
+      sourcePos = nodes[pos.NodeId].Source;
+    }
+    if (state.Prepared.TryGetValue(sourcePos, out Token portSource)) {
+      // If the port source is already in the prepared dict, then the source
+      // or its connectors should already be pending.
+      Debug.Assert(portSource.PendingRef > 0);
+    } else {
+      state.AddPending(sourcePos);
+    }
+  }
 }

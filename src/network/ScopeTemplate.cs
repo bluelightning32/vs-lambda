@@ -19,6 +19,9 @@ public class ScopeTemplate : BlockNodeTemplate {
   // node and all other ports, minus the parent node if it matches `forPos`. If
   // `forPos` matches one of the port tokens, then that token is returned.
   // Otherwise, null is returned.
+  //
+  // All ports and the parent scope are queued up to be emitted (or the port's
+  // source is queued) if they are not already pending.
   private Token CreatePorts(TokenEmissionState state, NodePos parentPos,
                             Node[] nodes, NodePos forPos) {
     Node parentNode = nodes[parentPos.NodeId];
@@ -41,20 +44,7 @@ public class ScopeTemplate : BlockNodeTemplate {
 
       // Possibly enqueue the port to be emitted by its source.
       if (forPos != portPos) {
-        // The port should be properly emitted by a connector from its source.
-        // If the port is disconnected, then treat the port itself as the
-        // source.
-        NodePos portSourcePos = portPos;
-        if (nodes[childId].IsConnected()) {
-          portSourcePos = nodes[childId].Source;
-        }
-        if (state.Prepared.TryGetValue(portSourcePos, out Token portSource)) {
-          // If the port source is already in the prepared dict, then the source
-          // or its connectors should already be pending.
-          Debug.Assert(portSource.PendingRef > 0);
-        } else {
-          state.AddPending(portSourcePos);
-        }
+        AddPendingNodeSource(state, portPos, nodes);
       } else {
         ret = port;
       }
