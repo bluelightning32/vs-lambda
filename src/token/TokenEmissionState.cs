@@ -6,6 +6,8 @@ using System.Linq;
 
 using Lambda.Network;
 
+using Vintagestory.API.MathTools;
+
 namespace Lambda.Token;
 
 public class TokenEmissionState : IDisposable {
@@ -15,6 +17,7 @@ public class TokenEmissionState : IDisposable {
   private readonly Dictionary<NodePos, Token> _prepared = new();
   public IReadOnlyDictionary<NodePos, Token> Prepared { get => _prepared; }
   private readonly List<NodePos> _pending = new();
+  private readonly HashSet<NodePos> _pendingSources = new();
   private readonly List<ConstructRoot> _unreferencedRoots = new();
   public IReadOnlyList<ConstructRoot> UnreferencedRoots {
     get => _unreferencedRoots;
@@ -48,9 +51,12 @@ public class TokenEmissionState : IDisposable {
     Token result = EmitPos(start);
     while (_pending.Count != 0) {
       ShufflePending(random);
+      VerifyInvariants();
       NodePos popped = _pending[_pending.Count - 1];
       _pending.RemoveAt(_pending.Count - 1);
+      _pendingSources.Remove(popped);
       EmitPos(popped);
+      VerifyInvariants();
     }
     Debug.Assert(_pending.Count == 0);
     Debug.Assert(
@@ -102,7 +108,9 @@ public class TokenEmissionState : IDisposable {
   }
 
   public void AddPending(NodePos pos) {
-    Debug.Assert(!_pending.Contains(pos));
+    if (_pending.Contains(pos)) {
+      Debug.Assert(false);
+    }
     _pending.Add(pos);
   }
 
@@ -115,13 +123,13 @@ public class TokenEmissionState : IDisposable {
     token.AddRef(this, refFor);
   }
 
-  public Token GetOrCreateSource(NodePos source) {
+  public Token TryGetSource(NodePos source) {
     Debug.Assert(
         _accessor.GetNode(source.Block, source.NodeId, out Node node).IsSource);
     if (Prepared.TryGetValue(source, out Token sourceToken)) {
       return sourceToken;
     }
-    return EmitPos(source);
+    return null;
   }
 
   public void Dispose() {
@@ -142,5 +150,65 @@ public class TokenEmissionState : IDisposable {
       graphviz.Add(root);
     }
     graphviz.WriteFooter();
+  }
+
+  public Token AddPort(NodePos source, BlockPos childPos, NodeTemplate child) {
+    BlockNodeTemplate template = _accessor.GetBlock(
+        source.Block, out Node[] nodes, out string inventoryTerm);
+    return ((IAcceptScopePort) template)
+        .AddPort(this, source, nodes, childPos, child);
+  }
+
+  public void VerifyInvariants() {
+    HashSet<NodePos> sourceHasPending = new();
+    HashSet<NodePos> pendingSet = new();
+    foreach (NodePos pos in _pending) {
+      if (!pendingSet.Add(pos)) {
+        throw new Exception(
+            $"The pending list contains multiple copies of {pos}.");
+      }
+      BlockNodeTemplate template = _accessor.GetBlock(
+          pos.Block, out Node[] nodes, out string inventoryTerm);
+      NodePos source = nodes[pos.NodeId].Source;
+      if (!nodes[pos.NodeId].IsConnected()) {
+        source = pos;
+      }
+      if (!_prepared.ContainsKey(source) && !_pendingSources.Contains(source)) {
+        throw new Exception(
+            $"Pending node {pos} does not have a prepared source at {source}.");
+      }
+      sourceHasPending.Add(source);
+    }
+    foreach (NodePos pos in _pendingSources) {
+      if (!pendingSet.Contains(pos)) {
+        throw new Exception($"{pos} is in _pendingSources but not _pending.");
+      }
+    }
+    foreach (KeyValuePair<NodePos, Token> entry in _prepared) {
+      foreach (NodePos refHolder in entry.Value.PendingRefLocations) {
+        BlockNodeTemplate template = _accessor.GetBlock(
+            refHolder.Block, out Node[] nodes, out string inventoryTerm);
+        NodePos source = nodes[refHolder.NodeId].Source;
+        if (!nodes[refHolder.NodeId].IsConnected()) {
+          source = refHolder;
+        }
+        if (!sourceHasPending.Contains(source)) {
+          throw new Exception(
+              $"Prepared node {entry.Key} is referenced by {refHolder}, which has source {source}, but the source has no pending children.");
+        }
+      }
+    }
+  }
+
+  public void MaybeAddPendingSource(NodePos sourcePos) {
+    if (Prepared.TryGetValue(sourcePos, out Token portSource)) {
+      // If the port source is already in the prepared dict, then the source
+      // or its connectors should already be pending.
+      Debug.Assert(portSource.PendingRef > 0);
+      return;
+    }
+    if (_pendingSources.Add(sourcePos)) {
+      AddPending(sourcePos);
+    }
   }
 }

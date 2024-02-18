@@ -8,7 +8,7 @@ using Vintagestory.API.MathTools;
 
 namespace Lambda.Token;
 
-public class Function : ConstructRoot, IAcceptPort {
+public class Function : ConstructRoot {
   public readonly NodePos ScopePos;
   public readonly int OutputNodeId;
   public override IReadOnlyList<NodePos> Blocks {

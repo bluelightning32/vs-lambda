@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 using Lambda.Network;
+
+using Vintagestory.API.MathTools;
 
 namespace Lambda.Token;
 
@@ -29,6 +30,10 @@ public abstract class Token : IDisposable {
 
   private readonly HashSet<NodePos> _pendingRefLocations = new();
 
+  public IReadOnlySet<NodePos> PendingRefLocations {
+    get => _pendingRefLocations;
+  }
+
   public Token(string name) {
     PendingRef = 0;
     Name = name;
@@ -43,7 +48,9 @@ public abstract class Token : IDisposable {
   }
 
   public void ReleaseRef(TokenEmissionState state, NodePos child) {
-    Debug.Assert(_pendingRefLocations.Remove(child));
+    if (!_pendingRefLocations.Remove(child)) {
+      Debug.Assert(false);
+    }
     if (--PendingRef == 0) {
       state.FinishPrepared(this);
     }
@@ -125,9 +132,9 @@ public abstract class TermSource : Token {
   }
 }
 
-public interface IAcceptPort {
-  public Token AddPort(TokenEmissionState state, NodePos pos, string name,
-                       bool isSource);
+public interface IAcceptScopePort {
+  public Token AddPort(TokenEmissionState state, NodePos source, Node[] nodes,
+                       BlockPos childPos, NodeTemplate child);
 }
 
 public abstract class ConstructRoot : TermSource {

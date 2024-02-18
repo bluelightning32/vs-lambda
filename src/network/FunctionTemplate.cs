@@ -7,7 +7,7 @@ using Lambda.Token;
 
 using Vintagestory.API.MathTools;
 
-public class FunctionTemplate : BlockNodeTemplate {
+public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
   // The output node outputs the entire function. Set to -1 if there is no
   // output port.
   private readonly int _outputId = -1;
@@ -61,18 +61,52 @@ public class FunctionTemplate : BlockNodeTemplate {
     }
   }
 
+  private Function GetFunction(TokenEmissionState state, NodePos sourcePos,
+                               Node[] nodes, int forNode) {
+    Function source = (Function)state.TryGetSource(sourcePos);
+    if (source == null) {
+      source = new("function", sourcePos, _outputId, _face);
+      state.AddPrepared(sourcePos, source, sourcePos);
+      state.AddPending(sourcePos);
+      foreach (int child in new int[] { _outputId, _parameterId, _resultId }) {
+        if (child != -1) {
+          NodePos childPos = new(sourcePos.Block, child);
+          source.AddRef(state, childPos);
+          if (child != forNode) {
+            NodePos childSource = nodes[child].Source;
+            if (!nodes[child].IsConnected()) {
+              childSource = childPos;
+            }
+            state.MaybeAddPendingSource(childSource);
+          }
+        }
+      }
+    }
+    return source;
+  }
+
+  public Token AddPort(TokenEmissionState state, NodePos sourcePos,
+                       Node[] nodes, BlockPos childPos, NodeTemplate child) {
+    return GetFunction(state, sourcePos, nodes, -1)
+        .AddPort(state, new NodePos(childPos, child.Id), child.Name,
+                 child.IsSource);
+  }
+
   private Function EmitScope(TokenEmissionState state, BlockPos pos,
                              Node[] nodes, string inventoryTerm) {
     NodePos scopePos = new(pos, _scopeId);
-    Function scope = new("function", scopePos, _outputId, _face);
-    state.AddPrepared(scopePos, scope, scopePos);
-    scope.AddPendingChildren(state, _nodeTemplates[_scopeId].Network,
-                             GetDownstream(scopePos));
-    foreach (int child in new int[] { _outputId, _parameterId, _resultId }) {
-      if (child != -1) {
-        scope.AddRef(state, new NodePos(pos, child));
+    Function scope = (Function)state.TryGetSource(scopePos);
+    if (scope == null) {
+      scope = new("function", scopePos, _outputId, _face);
+      state.AddPrepared(scopePos, scope, scopePos);
+      foreach (int child in new int[] { _outputId, _parameterId, _resultId }) {
+        if (child != -1) {
+          scope.AddRef(state, new NodePos(pos, child));
+        }
       }
     }
+    scope.AddPendingChildren(state, _nodeTemplates[_scopeId].Network,
+                             GetDownstream(scopePos));
     if (inventoryTerm != null) {
       Token resultType = scope.AddPort(state, scopePos, "resulttype", false);
       Token constant = new Constant(scopePos, inventoryTerm);
@@ -86,11 +120,13 @@ public class FunctionTemplate : BlockNodeTemplate {
   public override Token Emit(TokenEmissionState state, NodePos pos,
                              Node[] nodes, string inventoryTerm) {
     if (pos.NodeId == _scopeId) {
-      return EmitScope(state, pos.Block, nodes, inventoryTerm);
+      Token scopeResult = EmitScope(state, pos.Block, nodes, inventoryTerm);
+      state.VerifyInvariants();
+      return scopeResult;
     }
     NodeTemplate nodeTemplate = _nodeTemplates[pos.NodeId];
     Function scope =
-        (Function)state.GetOrCreateSource(new NodePos(pos.Block, _scopeId));
+        GetFunction(state, new NodePos(pos.Block, _scopeId), nodes, pos.NodeId);
     Token result;
     if (pos.NodeId == _outputId) {
       state.AddPrepared(pos, scope);
@@ -113,6 +149,7 @@ public class FunctionTemplate : BlockNodeTemplate {
       result = scope.AddPort(state, pos, nodeTemplate.Name, false);
     }
     scope.ReleaseRef(state, pos);
+    state.VerifyInvariants();
     return result;
   }
 }

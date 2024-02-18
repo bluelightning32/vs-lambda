@@ -31,16 +31,13 @@ public class ScopeTemplate : BlockNodeTemplate {
                                        "parent-disconnected");
     }
     Token ret = null;
-    // This handles enqueuing the parent node if necessary.
-    Token source = state.GetOrCreateSource(parentNode.Source);
     foreach (int childId in parentTemplate.ChildIds) {
       NodePos portPos = new(parentPos.Block, childId);
       NodeTemplate child = _nodeTemplates[childId];
       if (child.Network == NetworkType.Placeholder) {
         continue;
       }
-      Token port = ((IAcceptPort)source)
-                       .AddPort(state, portPos, child.Name, child.IsSource);
+      Token port = state.AddPort(parentNode.Source, parentPos.Block, child);
 
       // Possibly enqueue the port to be emitted by its source.
       if (forPos != portPos) {
@@ -99,6 +96,7 @@ public class ScopeTemplate : BlockNodeTemplate {
         }
       }
       port.ReleaseRef(state, pos);
+      state.VerifyInvariants();
       return port;
     }
 
@@ -117,11 +115,12 @@ public class ScopeTemplate : BlockNodeTemplate {
       }
     }
     {
-      Token source = state.GetOrCreateSource(nodes[pos.NodeId].Source);
+      Token source = state.TryGetSource(nodes[pos.NodeId].Source);
       source.AddPendingChildren(state, nodeTemplate.Network,
                                 GetDownstream(pos));
       source.AddConnector(state, nodeTemplate.Network, pos);
     }
+    state.VerifyInvariants();
     return null;
   }
 }

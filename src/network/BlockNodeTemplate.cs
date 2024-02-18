@@ -370,12 +370,6 @@ public class BlockNodeTemplate {
     if (nodes[pos.NodeId].IsConnected()) {
       sourcePos = nodes[pos.NodeId].Source;
     }
-    if (state.Prepared.TryGetValue(sourcePos, out Token portSource)) {
-      // If the port source is already in the prepared dict, then the source
-      // or its connectors should already be pending.
-      Debug.Assert(portSource.PendingRef > 0);
-    } else {
-      state.AddPending(sourcePos);
-    }
+    state.MaybeAddPendingSource(sourcePos);
   }
 }
