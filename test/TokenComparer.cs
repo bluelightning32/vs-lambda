@@ -9,7 +9,7 @@ using Vintagestory.API.Util;
 namespace Lambda.Tests;
 
 [TestClass]
-public class ParameterComparerTest {
+public class TokenComparerTest {
 
   public static Parameter MakeParameter(int x, int y, int z, int node) {
     return new Parameter(
@@ -17,7 +17,7 @@ public class ParameterComparerTest {
   }
 
   public static void AssertSorted(Parameter[] parameters,
-                                  ParameterComparer comparer) {
+                                  TokenComparer comparer) {
     for (int i = 0; i < parameters.Length; ++i) {
       Assert.IsTrue(comparer.Compare(parameters[i], parameters[i]) == 0);
       for (int j = i + 1; j < parameters.Length; ++j) {
@@ -44,7 +44,7 @@ public class ParameterComparerTest {
       MakeParameter(6, 1, 1, 0), MakeParameter(6, 0, 1, 0),
       MakeParameter(0, 1, 1, 0), MakeParameter(0, 0, 1, 0),
     };
-    ParameterComparer comparer = new ParameterComparer(BlockFacing.NORTH);
+    TokenComparer comparer = new TokenComparer(BlockFacing.NORTH);
     AssertSorted(parameters, comparer);
   }
 
@@ -64,7 +64,7 @@ public class ParameterComparerTest {
       MakeParameter(1, 1, 4, 0), MakeParameter(1, 0, 4, 0),
       MakeParameter(1, 1, 0, 0), MakeParameter(1, 0, 0, 0),
     };
-    ParameterComparer comparer = new ParameterComparer(BlockFacing.EAST);
+    TokenComparer comparer = new TokenComparer(BlockFacing.EAST);
     AssertSorted(parameters, comparer);
   }
 
@@ -82,7 +82,7 @@ public class ParameterComparerTest {
       MakeParameter(0, 1, 1, 0), MakeParameter(0, 0, 1, 0),
       MakeParameter(6, 1, 1, 0), MakeParameter(6, 0, 1, 0),
     };
-    ParameterComparer comparer = new ParameterComparer(BlockFacing.SOUTH);
+    TokenComparer comparer = new TokenComparer(BlockFacing.SOUTH);
     AssertSorted(parameters, comparer);
   }
 
@@ -101,7 +101,7 @@ public class ParameterComparerTest {
       MakeParameter(3, 1, 0, 0), MakeParameter(3, 0, 0, 0),
       MakeParameter(3, 1, 4, 0), MakeParameter(3, 0, 4, 0),
     };
-    ParameterComparer comparer = new ParameterComparer(BlockFacing.WEST);
+    TokenComparer comparer = new TokenComparer(BlockFacing.WEST);
     AssertSorted(parameters, comparer);
   }
 }

@@ -11,7 +11,7 @@ public class ParameterList : IDisposable {
   public TermInput Result = null;
 
   public ParameterList(BlockFacing constructFace) {
-    Parameters = new SortedSet<Parameter>(new ParameterComparer(constructFace));
+    Parameters = new SortedSet<Parameter>(new TokenComparer(constructFace));
   }
 
   public Parameter GetNext(Parameter after) {

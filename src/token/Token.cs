@@ -11,6 +11,8 @@ namespace Lambda.Token;
 public abstract class Token : IDisposable {
   public abstract IReadOnlyList<NodePos> Blocks { get; }
 
+  public virtual NodePos FirstBlock { get => Blocks[0]; }
+
   // The location of all scope and match connector nodes that point to this
   // block as a source.
   public abstract IReadOnlyList<NodePos> ScopeMatchConnectors { get; }

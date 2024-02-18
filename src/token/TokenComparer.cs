@@ -4,11 +4,11 @@ using Vintagestory.API.MathTools;
 
 namespace Lambda.Token;
 
-public class ParameterComparer : IComparer<Parameter> {
+public class TokenComparer : IComparer<Token> {
   private readonly int _axis1;
   private readonly int _axis2;
   private readonly int _axis3;
-  public ParameterComparer(BlockFacing constructFace) {
+  public TokenComparer(BlockFacing constructFace) {
     if (constructFace.IsHorizontal) {
       _axis3 = 1 | 4;
     } else {
@@ -26,7 +26,7 @@ public class ParameterComparer : IComparer<Parameter> {
     }
   }
 
-  public int Compare(Parameter x, Parameter y) {
+  public int Compare(Token x, Token y) {
     /*
 
     +-> x
@@ -55,19 +55,22 @@ public class ParameterComparer : IComparer<Parameter> {
     if (y == null) {
       return 1;
     }
-    if (x.Pos.Block.dimension != y.Pos.Block.dimension) {
-      return x.Pos.Block.dimension - y.Pos.Block.dimension;
+    if (x.FirstBlock.Block.dimension != y.FirstBlock.Block.dimension) {
+      return x.FirstBlock.Block.dimension - y.FirstBlock.Block.dimension;
     }
-    if (IsAxisDifferent(_axis1, x.Pos.Block, y.Pos.Block, out int result)) {
+    if (IsAxisDifferent(_axis1, x.FirstBlock.Block, y.FirstBlock.Block,
+                        out int result)) {
       return result;
     }
-    if (IsAxisDifferent(_axis2, x.Pos.Block, y.Pos.Block, out result)) {
+    if (IsAxisDifferent(_axis2, x.FirstBlock.Block, y.FirstBlock.Block,
+                        out result)) {
       return result;
     }
-    if (IsAxisDifferent(_axis3, x.Pos.Block, y.Pos.Block, out result)) {
+    if (IsAxisDifferent(_axis3, x.FirstBlock.Block, y.FirstBlock.Block,
+                        out result)) {
       return result;
     }
-    return x.Pos.NodeId - y.Pos.NodeId;
+    return x.FirstBlock.NodeId - y.FirstBlock.NodeId;
   }
 
   static public bool IsAxisDifferent(int axis, BlockPos x, BlockPos y,

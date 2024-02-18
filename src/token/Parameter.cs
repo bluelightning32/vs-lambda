@@ -7,6 +7,8 @@ namespace Lambda.Token;
 
 public class Parameter : TermSource {
   public readonly NodePos Pos;
+  public override NodePos FirstBlock => Pos;
+
   public override IReadOnlyList<NodePos> Blocks => new NodePos[] { Pos };
 
   public override IReadOnlyList<NodePos> ScopeMatchConnectors =>
