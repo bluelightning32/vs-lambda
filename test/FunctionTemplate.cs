@@ -262,4 +262,40 @@ public class FunctionTemplateTest {
       }
     }
   }
+
+  [TestMethod]
+  public void DoubleAnd() {
+    Legend legend = _templates.CreateLegend();
+    legend.AddPuzzle('@', "forall A B, A -> B -> ((A*B) * (A*B))");
+    legend.AddConstant('a', "pair");
+    // clang-format off
+    const string schematic = (
+"""
+/* A B a b */
+#@#i#i#i#i#####
+#      + +    #
+#    a+A+A+++ #
+#         + + #
+#       a+A+A+o
+###############
+""");
+    // clang-format on
+
+    _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
+
+    using (TokenEmissionState state = new(_accessor)) {
+      Random r = new(0);
+      BlockPos puzzleBlock = new(1, 0, 1, 0);
+      Token puzzle = state.Process(
+          new NodePos(puzzleBlock, _accessor.FindNodeId(puzzleBlock, "scope")),
+          r);
+      SaveGraphviz(state);
+      if (puzzle is Function f) {
+        CollectionAssert.AreEqual(new Token[] { puzzle },
+                                  state.UnreferencedRoots.ToList());
+      } else {
+        Assert.Fail();
+      }
+    }
+  }
 }

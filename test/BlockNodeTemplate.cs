@@ -971,6 +971,7 @@ public class BlockNodeTemplateTest {
   [TestMethod]
   public void SchematicCommentEnd() {
     Legend legend = _templates.CreateLegend();
+    // /*/ starts a comment but does not end it. So the first # is ignored.
     // clang-format off
     const string schematic = (
 """

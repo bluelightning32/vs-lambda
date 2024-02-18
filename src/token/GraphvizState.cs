@@ -100,11 +100,19 @@ public class GraphvizState {
     WriteSubgraphEdge(GetName(source), GetName(target));
   }
 
-  public void WriteEdge(string source, string target) {
-    _writer.WriteLine($"  \"{source}\" -> \"{target}\";");
+  public void WriteEdge(string source, string target, bool reverse) {
+    if (reverse) {
+      _writer.WriteLine($"  \"{source}\" -> \"{target}\" [dir=back];");
+    } else {
+      _writer.WriteLine($"  \"{source}\" -> \"{target}\";");
+    }
   }
 
   public void WriteEdge(Token source, Token target) {
-    WriteEdge(GetName(source), GetName(target));
+    if (target is Parameter) {
+      WriteEdge(GetName(target), GetName(source), true);
+    } else {
+      WriteEdge(GetName(source), GetName(target), false);
+    }
   }
 }
