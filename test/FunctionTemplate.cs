@@ -1,5 +1,4 @@
 using Lambda.Network;
-using Lambda.Token;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -202,6 +201,66 @@ public class FunctionTemplateTest {
           } else {
             Assert.Fail();
           }
+        } else {
+          Assert.Fail();
+        }
+      }
+    }
+  }
+
+  [TestMethod]
+  public void DanglingOutput() {
+    Legend legend = _templates.CreateLegend();
+    legend.AddPuzzle('@', "nat -> nat -> nat");
+    // clang-format off
+    const string schematic = (
+"""
+#@###i###
+#    +++o
+# #i#+# #
+# #  +o #
+# #   F+#
+# ##### #
+#       #
+#########
+""");
+    // clang-format on
+
+    _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
+
+    for (int i = 0; i < 5; ++i) {
+      using (TokenEmissionState state = new(_accessor)) {
+        Random r = new(i);
+        BlockPos puzzleBlock = new(1, 0, 0, 0);
+        Token puzzle = state.Process(
+            new NodePos(puzzleBlock,
+                        _accessor.FindNodeId(puzzleBlock, "scope")),
+            new Random(i));
+        if (i == 0) {
+          MaybeWriteGraphviz(state);
+        }
+        if (puzzle is Function f) {
+          foreach (Token root in state.UnreferencedRoots) {
+            if (root == puzzle) {
+              continue;
+            }
+            // This is the location of the dangling function
+            Assert.IsTrue(root.Blocks.Contains(new NodePos(6, 0, 4, 0, 0)));
+          }
+          Assert.IsTrue(state.UnreferencedRoots.Count == 2);
+          Assert.IsTrue(
+              f.ScopeMatchConnectors.Contains(new NodePos(0, 0, 3, 0, 0)));
+          Assert.AreEqual(new NodePos(puzzleBlock, _accessor.FindNodeId(
+                                                       puzzleBlock, "scope")),
+                          f.ScopePos);
+          Assert.AreEqual("parameter", f.Children[0].Name);
+          Assert.AreEqual(5, f.Children[0].TermConnectors.Count);
+          Assert.AreEqual("resultType", f.Children[0].Children[0].Name);
+          Assert.AreEqual(
+              "nat -> nat -> nat",
+              ((Constant)f.Children[0].Children[0].Children[0]).Term);
+          Assert.AreEqual("result", f.Children[0].Children[1].Name);
+          Assert.AreEqual(f.Children[0], f.Children[0].Children[1].Children[0]);
         } else {
           Assert.Fail();
         }
