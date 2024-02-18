@@ -951,6 +951,42 @@ public class BlockNodeTemplateTest {
   }
 
   [TestMethod]
+  public void ParseSchematicComment() {
+    Legend legend = _templates.CreateLegend();
+    // clang-format off
+    const string schematic = (
+"""
+# /* # ignored in comment */
+""");
+    // clang-format on
+
+    _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
+
+    Assert.AreEqual(_templates.ScopeMatchConnector,
+                    _accessor.GetBlock(0, 0, 0, 0, out Node[] nodes));
+    Assert.AreEqual(null,
+                    _accessor.GetBlock(5, 0, 0, 0, out nodes));
+  }
+
+  [TestMethod]
+  public void SchematicCommentEnd() {
+    Legend legend = _templates.CreateLegend();
+    // clang-format off
+    const string schematic = (
+"""
+/*/ # */#
+""");
+    // clang-format on
+
+    _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
+
+    Assert.AreEqual(null,
+                    _accessor.GetBlock(4, 0, 0, 0, out Node[] nodes));
+    Assert.AreEqual(_templates.ScopeMatchConnector,
+                    _accessor.GetBlock(8, 0, 0, 0, out nodes));
+  }
+
+  [TestMethod]
   [ExpectedException(typeof(KeyNotFoundException))]
   public void InvalidParent() {
     BlockNodeTemplate invalid =

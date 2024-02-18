@@ -101,14 +101,23 @@ public class MemoryNodeAccessor : NodeAccessor {
   // schematic corresponds to moving east (bigger x) in the world. Moving down
   // in the schematic corresponds to moving south (bigger z) in the world.
   //
-  // Characters are mapped to blocks according to `legend`, except newline which
-  // is used to advance the z direction. The values of the legend are tuples for
+  // Characters are mapped to blocks according to `legend`, with 3 exceptions:
+  // 1. '\n' is used to advance the z direction.
+  // 2. '\r' is ignored.
+  // 3. The sequence '/*' starts a comment. The commend ends with '*/'. All
+  // characters within the comment (including the starting '/*' and ending '*/)
+  // are treated as spaces, except for newlines.
+  //
+  // The values of the legend are tuples for
   // the block template and its inventory term. If the character maps to null in
   // the legend, then the block is removed from the world. If the character is
   // missing from the legend, then an KeyNotFoundException is thrown.
   public void SetSchematic(BlockPos topleft, Legend legend, string schematic) {
     BlockPos pos = topleft.Copy();
-    foreach (char c in schematic) {
+    bool comment = false;
+    int commentStart = 0;
+    for (int i = 0; i < schematic.Length; ++i) {
+      char c = schematic[i];
       if (c == '\r') {
         continue;
       }
@@ -116,6 +125,19 @@ public class MemoryNodeAccessor : NodeAccessor {
         ++pos.Z;
         pos.X = topleft.X;
         continue;
+      }
+      if (comment) {
+        if (c == '/' && i > 0 && schematic[i - 1] == '*' &&
+            i - commentStart >= 3) {
+          comment = false;
+        }
+        c = ' ';
+      } else {
+        if (c == '/' && i + 1 < schematic.Length && schematic[i + 1] == '*') {
+          comment = true;
+          commentStart = i;
+          c = ' ';
+        }
       }
       Tuple<BlockNodeTemplate, string> block = legend.Dict[c];
       if (block == null) {
