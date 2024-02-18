@@ -53,7 +53,7 @@ public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
           _resultId = i;
         }
       } else {
-        throw new ArgumentException($"Unknown scope {name}.");
+        throw new ArgumentException($"Unknown node {name}.");
       }
     }
     if (_scopeId == -1) {

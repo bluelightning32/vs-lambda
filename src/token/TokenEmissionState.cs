@@ -143,6 +143,23 @@ public class TokenEmissionState : IDisposable {
     _unreferencedRoots.Clear();
   }
 
+  public void SaveGraphviz(string testClass, string testName) {
+    // To save graphviz files, run the tests with:
+    // dotnet test -c Debug --logger:"console;verbosity=detailed" -e GRAPHVIZ=1
+    //
+    // clang-format off
+    //
+    // To render the file, use a command like the following:
+    // dot -Tsvg test/bin/Debug/net7.0/Lambda.Tests.FunctionTemplateTest.NestedPassthrough.dot -o NestedPassthrough.svg
+    //
+    // clang-format on
+    if (Environment.GetEnvironmentVariable("GRAPHVIZ") == null) {
+      return;
+    }
+    using StreamWriter writer = new($"{testClass}.{testName}.dot");
+    SaveGraphviz(testName, writer);
+  }
+
   public void SaveGraphviz(string name, TextWriter writer) {
     GraphvizState graphviz = new(writer);
     graphviz.WriteHeader(name);

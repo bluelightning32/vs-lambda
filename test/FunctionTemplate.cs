@@ -24,14 +24,9 @@ public class FunctionTemplateTest {
     _templates = new TestBlockNodeTemplates(_manager);
   }
 
-  private void MaybeWriteGraphviz(TokenEmissionState state) {
-    // To save graphviz files, run the tests with:
-    // dotnet test -c Debug --logger:"console;verbosity=detailed" -e GRAPHVIZ=1
-    if (Environment.GetEnvironmentVariable("GRAPHVIZ") == null) {
-      return;
-    }
-    using StreamWriter writer = new(TestContext.TestName + ".gv.txt");
-    state.SaveGraphviz(TestContext.TestName, writer);
+  private void SaveGraphviz(TokenEmissionState state) {
+    state.SaveGraphviz(TestContext.FullyQualifiedTestClassName,
+                       TestContext.TestName);
   }
 
   [TestMethod]
@@ -59,7 +54,7 @@ public class FunctionTemplateTest {
                         _accessor.FindNodeId(puzzleBlock, "scope")),
             new Random(i));
         if (i == 0) {
-          MaybeWriteGraphviz(state);
+          SaveGraphviz(state);
         }
         if (puzzle is Function f) {
           CollectionAssert.AreEqual(new Token[] { puzzle },
@@ -115,7 +110,7 @@ public class FunctionTemplateTest {
                         _accessor.FindNodeId(puzzleBlock, "scope")),
             new Random(i));
         if (i == 0) {
-          MaybeWriteGraphviz(state);
+          SaveGraphviz(state);
         }
         if (puzzle is Function f) {
           CollectionAssert.AreEqual(new Token[] { puzzle },
@@ -176,7 +171,7 @@ public class FunctionTemplateTest {
                         _accessor.FindNodeId(puzzleBlock, "scope")),
             new Random(i));
         if (i == 0) {
-          MaybeWriteGraphviz(state);
+          SaveGraphviz(state);
         }
         if (puzzle is Function f) {
           CollectionAssert.AreEqual(new Token[] { puzzle },
@@ -237,7 +232,7 @@ public class FunctionTemplateTest {
                         _accessor.FindNodeId(puzzleBlock, "scope")),
             new Random(i));
         if (i == 0) {
-          MaybeWriteGraphviz(state);
+          SaveGraphviz(state);
         }
         if (puzzle is Function f) {
           foreach (Token root in state.UnreferencedRoots) {
