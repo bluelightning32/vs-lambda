@@ -111,6 +111,7 @@ public class Manager {
                                   typeof(BlockNodeTemplate));
     _blockNodeTemplateClasses.Add("ScopeTemplate", typeof(ScopeTemplate));
     _blockNodeTemplateClasses.Add("FunctionTemplate", typeof(FunctionTemplate));
+    _blockNodeTemplateClasses.Add("AppTemplate", typeof(AppTemplate));
   }
 
   public void Load(byte[] serialized) {

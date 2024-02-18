@@ -199,6 +199,7 @@ public class TestBlockNodeTemplates {
     App = manager.ParseBlockNodeTemplate(
         JsonObject.FromJson(@"
         {
+          class: 'AppTemplate',
           ports: [
             {
               name: 'applicand',

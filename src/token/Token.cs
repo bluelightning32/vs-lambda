@@ -40,6 +40,10 @@ public abstract class Token : IDisposable {
   }
 
   public void AddRef(TokenEmissionState state, NodePos pos) {
+    if (Blocks[0] == new NodePos(0, 0, 2, 0, 2) &&
+        pos == new NodePos(2, 0, 2, 0, 0)) {
+      PendingRef = PendingRef;
+    }
     ++PendingRef;
     if (!_pendingRefLocations.Add(pos)) {
       Debug.Assert(false, $"Position {pos} already referenced the block.");

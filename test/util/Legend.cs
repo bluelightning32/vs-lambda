@@ -78,39 +78,19 @@ public class Legend {
     BlockNodeTemplate template = _manager.ParseBlockNodeTemplate(
         JsonObject.FromJson(@"
         {
-          nodes: [],
-          ports: [
-            {
-              name: 'applicand',
-              network: 'term',
-              directions: ['direct-in'],
-              faces: ['west'],
-              inventory: {
-                requireTerm: true,
-                maxSlotStackSize: 1,
-              }
-            },
-            {
-              name: 'argument',
-              network: 'term',
-              directions: ['direct-in'],
-              faces: ['north'],
-              inventory: {
-                requireTerm: true,
-                maxSlotStackSize: 1,
-              }
-            },
+          class: 'AppTemplate',
+          nodes: [
             {
               name: 'output',
               network: 'term',
-              directions: ['direct-out'],
-              faces: ['east']
+              edges: ['north-center', 'east-center', 'south-center', 'west-center', 'source']
             }
-          ]
+          ],
         }"),
-        0,
-        ((int)PortDirection.DirectOut
-         << (BlockFacing.EAST.Index * Manager.OccupiedPortsBitsPerFace)));
+        (int)PortDirection.DirectOut
+            << (BlockFacing.EAST.Index * Manager.OccupiedPortsBitsPerFace),
+        0);
+
     Dict.Add(key, new(template, term));
   }
 }
