@@ -96,20 +96,18 @@ public class AppTemplate : BlockNodeTemplate {
       }
     }
     foreach (Token a in added) {
-      state.AddPrepared(a.Blocks[0], a, a.Blocks[0]);
       int nodeId = a.Blocks[0].NodeId;
-      if (nodeId == forNode) {
-        continue;
-      }
-      NodePos source = nodes[a.Blocks[0].NodeId].Source;
-      if (!nodes[nodeId].IsConnected()) {
-        source = a.Blocks[0];
-      }
-      if (source == a.Blocks[0]) {
-        state.AddPending(source);
-      } else {
+      if (nodeId != forNode) {
+        NodePos source = nodes[a.Blocks[0].NodeId].Source;
+        if (!nodes[nodeId].IsConnected()) {
+          source = a.Blocks[0];
+        }
+        // If `MaybeAddPendingSource` is going to be called, it must be called
+        // before `AddPrepared`, because `MaybeAddPendingSource` assumes the
+        // source is already pending if it is prepared.
         state.MaybeAddPendingSource(source);
       }
+      state.AddPrepared(a.Blocks[0], a, a.Blocks[0]);
     }
   }
 

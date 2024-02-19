@@ -103,4 +103,55 @@ S+A+
       }
     }
   }
+
+  [TestMethod]
+  public void DoublePending() {
+    // This attempts to cause the app block to be pending on its output, then
+    // creates the app block by following the input port. The app block has to
+    // prevent the output port from getting enqueued a second time.
+    Legend legend = _templates.CreateLegend();
+    legend.AddPuzzle('@', "bool -> bool");
+    legend.AddConstant('a', "negb");
+    // clang-format off
+    const string schematic = (
+"""
+/* b */
+#@#i##
+#  + #
+#a+A+o
+######
+""");
+    // clang-format on
+
+    _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
+
+    bool first = true;
+    // In the past the test failed with seed 24. So start there.
+    for (int i = 24; i <= 50; ++i) {
+      using TokenEmissionState state = new(_accessor);
+      Random r = new(i);
+      BlockPos puzzleBlock = new(1, 0, 1, 0);
+      Token puzzle = state.Process(
+          new NodePos(puzzleBlock, _accessor.FindNodeId(puzzleBlock, "scope")),
+          r);
+      if (first) {
+        SaveGraphviz(state);
+        first = false;
+      }
+      if (puzzle is Function f) {
+        CollectionAssert.AreEqual(new Token[] { puzzle },
+                                  state.UnreferencedRoots.ToList());
+
+        Assert.AreEqual("result", f.Children[1].Children[0].Name);
+        Assert.AreEqual("app", f.Children[1].Children[0].Children[0].Name);
+        Assert.AreEqual("argument",
+                        f.Children[1].Children[0].Children[0].Children[1].Name);
+        Assert.AreEqual(
+            f.Children[1],
+            f.Children[1].Children[0].Children[0].Children[1].Children[0]);
+      } else {
+        Assert.Fail();
+      }
+    }
+  }
 }
