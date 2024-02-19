@@ -115,4 +115,123 @@ b+M+
       Assert.Fail();
     }
   }
+
+  [TestMethod]
+  public void MatchPairWithConnector() {
+    Legend legend = _templates.CreateLegend();
+    legend.AddCase('a', "pair");
+    legend.AddConstant('b', "pair_const");
+    // clang-format off
+    const string schematic = (
+"""
+b+M+
+  .
+  a#i#i#
+  # +  #
+  # +++o
+  ######
+""");
+    // clang-format on
+
+    _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
+
+    using TokenEmissionState state = new(_accessor);
+    Random r = new();
+    BlockPos startBlock = new(2, 0, 0, 0);
+    Token result = state.Process(
+        new NodePos(startBlock, _accessor.FindNodeId(startBlock, "output")),
+        r);
+    SaveGraphviz(state);
+    if (result is Match m) {
+      CollectionAssert.AreEqual(new Token[] { m },
+                                state.UnreferencedRoots.ToList());
+
+      Assert.IsTrue(m.TermConnectors.Contains(new NodePos(3, 0, 0, 0, 0)));
+      Assert.AreEqual(2, m.Children.Count);
+      Assert.AreEqual("input", m.Children[0].Name);
+      Assert.AreEqual("pair_const", m.Children[0].Children[0].Name);
+
+      Assert.AreEqual("pair", m.Children[1].Name);
+      Assert.IsTrue(m.Children[1].ScopeMatchConnectors.Contains(
+          new NodePos(3, 0, 2, 0, 0)));
+      Assert.AreEqual(1, m.Children[1].Children.Count);
+      Assert.AreEqual("parameter", m.Children[1].Children[0].Name);
+      Assert.AreEqual(1, m.Children[1].Children[0].Children.Count);
+      Assert.AreEqual("parameter", m.Children[1].Children[0].Children[0].Name);
+      Assert.AreEqual(1, m.Children[1].Children[0].Children[0].Children.Count);
+      Assert.AreEqual("result",
+                      m.Children[1].Children[0].Children[0].Children[0].Name);
+      Assert.AreEqual(
+          1, m.Children[1].Children[0].Children[0].Children[0].Children.Count);
+      Assert.AreEqual(
+          m.Children[1].Children[0],
+          m.Children[1].Children[0].Children[0].Children[0].Children[0]);
+    } else {
+      Assert.Fail();
+    }
+  }
+
+  [TestMethod]
+  public void DestructSum() {
+    Legend legend = _templates.CreateLegend();
+    legend.AddCase('a', "inl");
+    legend.AddCase('b', "inr");
+    legend.AddConstant('c', "sum_const");
+    // clang-format off
+    const string schematic = (
+"""
+c+M+
+  a#i##
+  # ++o
+  #####
+  .....
+  b#i##
+  # ++o
+  #####
+""");
+    // clang-format on
+
+    _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
+
+    using TokenEmissionState state = new(_accessor);
+    Random r = new();
+    BlockPos startBlock = new(2, 0, 0, 0);
+    Token result = state.Process(
+        new NodePos(startBlock, _accessor.FindNodeId(startBlock, "output")),
+        r);
+    SaveGraphviz(state);
+    if (result is Match m) {
+      CollectionAssert.AreEqual(new Token[] { m },
+                                state.UnreferencedRoots.ToList());
+
+      Assert.IsTrue(m.TermConnectors.Contains(new NodePos(3, 0, 0, 0, 0)));
+      Assert.AreEqual(3, m.Children.Count);
+      Assert.AreEqual("input", m.Children[0].Name);
+      Assert.AreEqual("sum_const", m.Children[0].Children[0].Name);
+
+      Assert.AreEqual("inl", m.Children[1].Name);
+      Assert.IsTrue(m.Children[1].ScopeMatchConnectors.Contains(
+          new NodePos(3, 0, 1, 0, 0)));
+      Assert.AreEqual(1, m.Children[1].Children.Count);
+      Assert.AreEqual("parameter", m.Children[1].Children[0].Name);
+      Assert.AreEqual(1, m.Children[1].Children[0].Children.Count);
+      Assert.AreEqual("result", m.Children[1].Children[0].Children[0].Name);
+      Assert.AreEqual(1, m.Children[1].Children[0].Children[0].Children.Count);
+      Assert.AreEqual(m.Children[1].Children[0],
+                      m.Children[1].Children[0].Children[0].Children[0]);
+
+      Assert.AreEqual("inr", m.Children[2].Name);
+      Assert.IsTrue(m.Children[2].ScopeMatchConnectors.Contains(
+          new NodePos(3, 0, 5, 0, 0)));
+      Assert.AreEqual(1, m.Children[2].Children.Count);
+      Assert.AreEqual("parameter", m.Children[2].Children[0].Name);
+      Assert.AreEqual(1, m.Children[2].Children[0].Children.Count);
+      Assert.AreEqual("result", m.Children[2].Children[0].Children[0].Name);
+      Assert.AreEqual(1, m.Children[2].Children[0].Children[0].Children.Count);
+      Assert.AreEqual(m.Children[2].Children[0],
+                      m.Children[2].Children[0].Children[0].Children[0]);
+    } else {
+      Assert.Fail();
+    }
+  }
 }

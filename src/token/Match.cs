@@ -39,7 +39,7 @@ public class Match : ConstructRoot {
       : base(name) {
     MatchPos = pos;
     OutputNodeId = outputNodeId;
-    _cases = new(new TokenComparer(BlockFacing.NORTH));
+    _cases = new(new TokenComparer(BlockFacing.SOUTH));
     Input = new(
         "input",
         new NodePos(pos.Block, inputNodeId == -1 ? pos.NodeId : inputNodeId),

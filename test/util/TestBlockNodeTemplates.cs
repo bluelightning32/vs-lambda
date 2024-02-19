@@ -79,6 +79,7 @@ public class TestBlockNodeTemplates {
 
     MatchConnector = manager.ParseBlockNodeTemplate(JsonObject.FromJson(@"
         {
+          class: 'ScopeTemplate',
           nodes: [
             {
               network: 'match',
