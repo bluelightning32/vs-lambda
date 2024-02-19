@@ -72,11 +72,7 @@ public class CaseTemplate : BlockNodeTemplate, IAcceptScopePort {
           NodePos childPos = new(matchPos.Block, child);
           c.AddRef(state, childPos);
           if (child != forNode) {
-            NodePos childSource = nodes[child].Source;
-            if (!nodes[child].IsConnected()) {
-              childSource = childPos;
-            }
-            state.MaybeAddPendingSource(childSource);
+            state.MaybeAddPendingSource(childPos, nodes);
           }
         }
       }
@@ -107,11 +103,7 @@ public class CaseTemplate : BlockNodeTemplate, IAcceptScopePort {
         if (child != -1) {
           NodePos childPos = new(matchPos.Block, child);
           c.AddRef(state, childPos);
-          NodePos childSource = nodes[child].Source;
-          if (!nodes[child].IsConnected()) {
-            childSource = childPos;
-          }
-          state.MaybeAddPendingSource(childSource);
+          state.MaybeAddPendingSource(childPos, nodes);
         }
       }
     }

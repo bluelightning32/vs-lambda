@@ -240,4 +240,12 @@ public class TokenEmissionState : IDisposable {
       AddPending(sourcePos);
     }
   }
+
+  public void MaybeAddPendingSource(NodePos child, Node[] nodes) {
+    NodePos childSource = nodes[child.NodeId].Source;
+    if (!nodes[child.NodeId].IsConnected()) {
+      childSource = child;
+    }
+    MaybeAddPendingSource(childSource);
+  }
 }

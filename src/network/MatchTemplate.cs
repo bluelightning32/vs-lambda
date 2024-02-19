@@ -57,11 +57,7 @@ public class MatchTemplate : BlockNodeTemplate {
           NodePos childPos = new(sourcePos.Block, child);
           source.AddRef(state, childPos);
           if (child != forNode) {
-            NodePos childSource = nodes[child].Source;
-            if (!nodes[child].IsConnected()) {
-              childSource = childPos;
-            }
-            state.MaybeAddPendingSource(childSource);
+            state.MaybeAddPendingSource(childPos, nodes);
           }
         }
       }
