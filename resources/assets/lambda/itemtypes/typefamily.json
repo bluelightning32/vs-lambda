@@ -1,0 +1,33 @@
+{
+  code: "typefamily",
+  variantgroups: [
+    {
+      code: "name", states: ["unit", "nat", "sum", "prod"]
+    },
+  ],
+  creativeinventory: { "general": ["*"], "terms": ["*"]},
+  maxStackSize: 64,
+  shape: { base: "game:item/gem/rough/normal/malachite" },
+  behaviors: [
+    {
+      name: "Term",
+      properties: {
+        "constructs": "",
+        "term": "{name}",
+        "typeByType": {
+          "*-unit": "Set",
+          "*-nat": "Set",
+          "*-sum": "Type -> Type -> Type",
+          "*-prod": "Type -> Type -> Type",
+        },
+        "isTypeByType": {
+          "*-unit": true,
+          "*-nat": true,
+          "*-sum": false,
+          "*-prod": false,
+        },
+        "isTypeFamily": true
+      }
+    }
+  ]
+}

@@ -15,14 +15,20 @@
     },
     { name: "BlockEntityForward" },
     { name: "Network" },
+    { name: "Container" }
   ],
+  entityClass: "TermContainer",
+  attributes: {
+    inventoryClassName: "matchin"
+  },
   entityBehaviors: [
     { name: "CacheMesh" },
     {
-      name: "TokenEmitter",
+      name: "AcceptPort",
       properties: {
         nodes: [
           {
+            name: "scope",
             network: "scope",
             edgesByType: {
               "*-north": ["east-right", "west-left", "down-up", "source"],
@@ -40,6 +46,29 @@
               "none": {
                 "crystal": { base: "matchin/crystal-disconnected" }
               }
+            }
+          }
+        ],
+        ports: [
+          {
+            name: "parameter",
+            parent: "scope",
+            network: "term",
+            directions: ["direct-in", "direct-out"],
+            faces: ["{side}"]
+          },
+          {
+            name: "type",
+            network: "term",
+            directions: ["direct-in"],
+            faces: [],
+            inventory: {
+              dialogTitleLangCode: "lambda:matchin-container-title",
+              dialogDescLangCode: "lambda:matchin-container-description",
+              requireTerm: true,
+              requireTypeFamily: true,
+              maxSlotStackSize: 1,
+              hidePerishRate: true
             }
           }
         ]

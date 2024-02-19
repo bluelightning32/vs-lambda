@@ -45,7 +45,8 @@
           "*-sum-inr": "forall A B : Type, B -> A + B",
           "*-prod-pair": "forall A B : Type, A -> B -> prod A B",
         },
-        "isType": false
+        "isType": false,
+        "isTypeFamily": false
       }
     }
   ]

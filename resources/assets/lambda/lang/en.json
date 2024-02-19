@@ -4,8 +4,10 @@
   "app-applicand-container-title": "Applicand",
   "app-applicand-container-description": "Function item to apply to the argument.",
   "case-container-title": "Case constructor",
-  "case-container-description": "Constructor item to identify the case to handle.",
+  "case-container-description": "Constructor item to identify the case to handle. The item's hover text must say that it is a constructor.",
   "inscribe": "Inscribe",
+  "matchin-container-title": "Match input type family",
+  "matchin-container-description": "Item to identify the input type of the match. The item's hover text must say 'is type' or 'is type family'.",
   "tab-container": "container",
   "tab-errors": "errors"
 }

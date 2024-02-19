@@ -13,6 +13,7 @@ public class Term : VSCollectibleBehavior {
   private string _type;
   private string _constructs;
   private bool? _isType;
+  private bool? _isTypeFamily;
 
   public Term(CollectibleObject collObj) : base(collObj) {}
 
@@ -26,6 +27,9 @@ public class Term : VSCollectibleBehavior {
     _constructs = properties["constructs"].AsString();
     _isType =
         properties["isType"].Exists ? properties["isType"].AsBool() : null;
+    _isTypeFamily = properties["isTypeFamily"].Exists
+                        ? properties["isTypeFamily"].AsBool()
+                        : null;
   }
 
   public string GetTerm(ItemStack stack) {
@@ -40,6 +44,10 @@ public class Term : VSCollectibleBehavior {
     return _constructs ?? stack.Attributes.GetAsString("constructs");
   }
 
+  public bool IsConstructor(ItemStack stack) {
+    return (GetConstructs(stack) ?? "") != "";
+  }
+
   public bool IsFunction(ItemStack stack) {
     string type = GetType(stack);
     // For now do a very primitive test that the term is a function. Check
@@ -49,6 +57,10 @@ public class Term : VSCollectibleBehavior {
 
   public bool GetIsType(ItemStack stack) {
     return _isType ?? stack.Attributes.GetAsBool("isType");
+  }
+
+  public bool GetIsTypeFamily(ItemStack stack) {
+    return _isTypeFamily ?? stack.Attributes.GetAsBool("isTypeFamily");
   }
 
   public static string Escape(string s) {
@@ -67,12 +79,14 @@ public class Term : VSCollectibleBehavior {
                                        bool withDebugInfo) {
     base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
     dsc.AppendLine($"Type: {Escape(GetType(inSlot.Itemstack))}");
-    string constructs = GetConstructs(inSlot.Itemstack);
-    if (constructs != null) {
-      dsc.AppendLine($"Constructor for type family: {Escape(constructs)}");
+    if (IsConstructor(inSlot.Itemstack)) {
+      dsc.AppendLine(
+          $"Constructor for type family: {Escape(GetConstructs(inSlot.Itemstack))}");
     }
     if (GetIsType(inSlot.Itemstack)) {
-      dsc.AppendLine("Type");
+      dsc.AppendLine("Is type");
+    } else if (GetIsTypeFamily(inSlot.Itemstack)) {
+      dsc.AppendLine("Is type family");
     }
   }
 }

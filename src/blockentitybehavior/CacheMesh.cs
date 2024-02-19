@@ -104,9 +104,13 @@ public class CacheMesh : VSBlockEntityBehavior {
     if (cache.TryGetValue(key, out _mesh)) {
       return;
     }
+    // The message is commented out, because it is too verbose when not
+    // debugging graphics.
+    /*
     Api.Logger.Notification(
         "lambda: Cache miss for {0} {1}. Dict has {2} entries.", Block.Code,
         ListEqualityComparer<object>.GetString(key), cache.Count);
+        */
 
     _mesh = TessellateShape(Block.Shape);
     EditMesh(_mesh);

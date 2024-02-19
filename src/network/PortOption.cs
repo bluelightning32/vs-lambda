@@ -14,6 +14,7 @@ namespace Lambda.Network;
 public class InventoryOptions {
   public bool RequireTerm;
   public bool RequireConstructor;
+  public bool RequireTypeFamily;
   public bool RequireFunction;
   public int MaxSlotStackSize = 999999;
   public string DialogTitleLangCode;
@@ -35,7 +36,12 @@ public class InventoryOptions {
       }
     }
     if (RequireConstructor) {
-      if (term?.GetConstructs(item) == null) {
+      if (!(term?.IsConstructor(item) ?? false)) {
+        return 0;
+      }
+    }
+    if (RequireTypeFamily) {
+      if (!(term?.GetIsTypeFamily(item) ?? false)) {
         return 0;
       }
     }

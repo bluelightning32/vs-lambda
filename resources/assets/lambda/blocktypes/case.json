@@ -14,16 +14,6 @@
     },
     { name: "BlockEntityForward" },
     { name: "Network" },
-    {
-      name: "Inventory",
-      properties: {
-        dialogTitleLangCode: "lambda:case-container-title",
-        dialogDescLangCode: "lambda:case-container-description",
-        requireConstructor: true,
-        maxSlotStackSize: 1,
-        hidePerishRate: true
-      }
-    },
     { name: "Container" }
   ],
   entityClass: "TermContainer",
@@ -36,6 +26,7 @@
       name: "AcceptPort",
       properties: {
         class: "CaseTemplate",
+        face: "{side}",
         nodes: [
           {
             name: "scope",
@@ -62,6 +53,13 @@
           }
         ],
         ports: [
+          {
+            name: "parameter",
+            parent: "scope",
+            network: "term",
+            directions: ["direct-in", "direct-out"],
+            faces: ["{side}"]
+          },
           {
             name: "constructor",
             network: "term",
