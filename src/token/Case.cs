@@ -40,6 +40,10 @@ public class Case : Token {
       : base(name) {
     MatchPos = matchPos;
     ScopeNodeId = scopeNodeId;
+    if (MatchPos.NodeId == scopeNodeId) {
+      throw new ArgumentException(
+          $"The match node id {MatchPos.NodeId} matches the scope node id {scopeNodeId}.");
+    }
     _parameters = new ParameterList(face);
     _match = match;
   }
@@ -105,6 +109,19 @@ public class Case : Token {
         break;
       }
       parent = p;
+      p = _parameters.GetNext(p);
+    }
+  }
+
+  public override void WriteOutsideEdges(GraphvizState state) {
+    Parameter p = _parameters.Parameters.FirstOrDefault();
+    while (true) {
+      foreach (Token t in _parameters.GetChildrenAtLevel(p)) {
+        t.WriteOutsideEdges(state);
+      }
+      if (p == null) {
+        break;
+      }
       p = _parameters.GetNext(p);
     }
   }

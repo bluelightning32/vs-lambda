@@ -35,8 +35,10 @@
     {
       name: "AcceptPort",
       properties: {
+        class: "CaseTemplate",
         nodes: [
           {
+            name: "scope",
             network: "scope",
             edgesByType: {
               "*-north": ["east-right", "west-left", "down-up", "source"],
@@ -48,6 +50,7 @@
             sourceScope: "case"
           },
           {
+            name: "match",
             network: "match",
             edges: ["north-center", "east-center", "south-center", "west-center", "down-center"],
             replacementTextures: {

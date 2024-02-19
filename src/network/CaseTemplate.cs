@@ -58,8 +58,10 @@ public class CaseTemplate : BlockNodeTemplate, IAcceptScopePort {
 
   private Case GetCase(TokenEmissionState state, NodePos matchPos, Node[] nodes,
                        string inventoryTerm, int forNode) {
-    Case c = (Case)state.TryGetSource(matchPos);
-    if (c == null) {
+    Case c;
+    if (state.Prepared.TryGetValue(matchPos, out Token caseToken)) {
+      c = (Case)caseToken;
+    } else {
       Node matchNode = nodes[matchPos.NodeId];
       c = state.AddCase(matchNode.Source, matchPos, _scopeId, _face,
                         inventoryTerm);
@@ -93,21 +95,31 @@ public class CaseTemplate : BlockNodeTemplate, IAcceptScopePort {
   private Case EmitCase(TokenEmissionState state, BlockPos pos, Node[] nodes,
                         string inventoryTerm) {
     NodePos matchPos = new(pos, _matchId);
-    Case c = (Case)state.TryGetSource(matchPos);
-    if (c == null) {
+    Case c;
+    if (state.Prepared.TryGetValue(matchPos, out Token caseToken)) {
+      c = (Case)caseToken;
+    } else {
       Node matchNode = nodes[matchPos.NodeId];
-      c = state.AddCase(matchNode.Source, matchPos, _matchId, _face,
+      c = state.AddCase(matchNode.Source, matchPos, _scopeId, _face,
                         inventoryTerm);
       state.AddPrepared(matchPos, c, matchPos);
       foreach (int child in new int[] { _scopeId, _parameterId, _resultId }) {
         if (child != -1) {
-          c.AddRef(state, new NodePos(pos, child));
+          NodePos childPos = new(matchPos.Block, child);
+          c.AddRef(state, childPos);
+          NodePos childSource = nodes[child].Source;
+          if (!nodes[child].IsConnected()) {
+            childSource = childPos;
+          }
+          state.MaybeAddPendingSource(childSource);
         }
       }
     }
-    c.AddPendingChildren(state, _nodeTemplates[_matchId].Network,
-                         GetDownstream(matchPos));
-
+    NodePos matchSourcePos = nodes[_matchId].Source;
+    Token matchSource = state.Prepared[matchSourcePos];
+    matchSource.AddPendingChildren(state, _nodeTemplates[_matchId].Network,
+                                   GetDownstream(matchPos));
+    matchSource.ReleaseRef(state, matchPos);
     c.ReleaseRef(state, matchPos);
     return c;
   }
@@ -115,9 +127,9 @@ public class CaseTemplate : BlockNodeTemplate, IAcceptScopePort {
   public override Token Emit(TokenEmissionState state, NodePos pos,
                              Node[] nodes, string inventoryTerm) {
     if (pos.NodeId == _matchId) {
-      Token scopeResult = EmitCase(state, pos.Block, nodes, inventoryTerm);
+      Token matchResult = EmitCase(state, pos.Block, nodes, inventoryTerm);
       state.VerifyInvariants();
-      return scopeResult;
+      return matchResult;
     }
     NodeTemplate nodeTemplate = _nodeTemplates[pos.NodeId];
     Case c = GetCase(state, new NodePos(pos.Block, _matchId), nodes,

@@ -46,14 +46,18 @@ public class Legend {
     BlockNodeTemplate template =
         _manager.ParseBlockNodeTemplate(JsonObject.FromJson(@"
         {
+          class: 'CaseTemplate',
+          face: 'south',
           nodes: [
             {
-              network: 'scope',
+              name: 'match',
+              network: 'match',
               edges: ['north-center', 'east-center', 'south-center', 'west-center']
             },
             {
-              network: 'match',
-              edges: ['north-center', 'east-center', 'south-center', 'west-center']
+              name: 'scope',
+              network: 'scope',
+              edges: ['north-center', 'east-center', 'south-center', 'west-center', 'source']
             }
           ],
           ports: [

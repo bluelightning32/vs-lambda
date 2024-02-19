@@ -211,6 +211,9 @@ public class TokenEmissionState : IDisposable {
       }
     }
     foreach (KeyValuePair<NodePos, Token> entry in _prepared) {
+      if (entry.Value.PendingRef == 0) {
+        throw new Exception($"Prepared node {entry.Key} has 0 references.");
+      }
       foreach (NodePos refHolder in entry.Value.PendingRefLocations) {
         BlockNodeTemplate template = _accessor.GetBlock(
             refHolder.Block, out Node[] nodes, out string inventoryTerm);
