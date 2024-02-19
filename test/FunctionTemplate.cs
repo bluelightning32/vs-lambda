@@ -264,6 +264,43 @@ public class FunctionTemplateTest {
   }
 
   [TestMethod]
+  public void RawFunctionDanglingOutput() {
+    Legend legend = _templates.CreateLegend();
+    // clang-format off
+    const string schematic = (
+"""
+#i#F+
+#+ #
+#++o
+####
+""");
+    // clang-format on
+
+    _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
+
+    using TokenEmissionState state = new(_accessor);
+    Random r = new(0);
+    BlockPos startBlock = new(3, 0, 0, 0);
+    Token start = state.Process(
+        new NodePos(startBlock,
+                    _accessor.FindNodeId(startBlock, "scope")),
+        r);
+    SaveGraphviz(state);
+    if (start is Function f) {
+      CollectionAssert.AreEqual(new Token[] { start },
+                                state.UnreferencedRoots.ToList());
+      Assert.IsTrue(
+          f.ScopeMatchConnectors.Contains(new NodePos(0, 0, 0, 0, 0)));
+      Assert.AreEqual("parameter", f.Children[0].Name);
+      Assert.AreEqual(3, f.Children[0].TermConnectors.Count);
+      Assert.AreEqual("result", f.Children[0].Children[0].Name);
+      Assert.AreEqual(f.Children[0], f.Children[0].Children[0].Children[0]);
+    } else {
+      Assert.Fail();
+    }
+  }
+
+  [TestMethod]
   public void DoubleAnd() {
     Legend legend = _templates.CreateLegend();
     legend.AddPuzzle('@', "forall A B, A -> B -> ((A*B) * (A*B))");

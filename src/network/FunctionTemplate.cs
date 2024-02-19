@@ -102,7 +102,13 @@ public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
       state.AddPrepared(scopePos, scope, scopePos);
       foreach (int child in new int[] { _outputId, _parameterId, _resultId }) {
         if (child != -1) {
-          scope.AddRef(state, new NodePos(pos, child));
+          NodePos childPos = new(scopePos.Block, child);
+          scope.AddRef(state, childPos);
+          NodePos childSource = nodes[child].Source;
+          if (!nodes[child].IsConnected()) {
+            childSource = childPos;
+          }
+          state.MaybeAddPendingSource(childSource);
         }
       }
     }
