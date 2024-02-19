@@ -65,6 +65,7 @@ public class GraphvizState {
     for (int i = 0; i < _pending.Count; ++i) {
       _pending[i].WriteConstruct(this);
     }
+    _pending.Clear();
   }
 
   public void WriteHeader(string name) {
