@@ -78,6 +78,42 @@ public class Legend {
     Dict.Add(key, new(template, term));
   }
 
+  public void AddMatchIn(char key, string term) {
+    BlockNodeTemplate template =
+        _manager.ParseBlockNodeTemplate(JsonObject.FromJson(@"
+        {
+          class: 'MatchInTemplate',
+          face: 'south',
+          nodes: [
+            {
+              name: 'match',
+              network: 'match',
+              edges: ['north-center', 'east-center', 'south-center', 'west-center']
+            },
+            {
+              name: 'scope',
+              network: 'scope',
+              edges: ['north-center', 'east-center', 'south-center', 'west-center', 'source']
+            }
+          ],
+          ports: [
+            {
+              name: 'type',
+              network: 'term',
+              directions: ['direct-in'],
+              faces: [],
+              inventory: {
+                requireTerm: true,
+                requireTypeFamily: true,
+                maxSlotStackSize: 1,
+              }
+            }
+          ]
+        }"),
+                                        0, 0);
+    Dict.Add(key, new(template, term));
+  }
+
   public void AddConstant(char key, string term) {
     BlockNodeTemplate template = _manager.ParseBlockNodeTemplate(
         JsonObject.FromJson(@"

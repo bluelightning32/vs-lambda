@@ -26,7 +26,19 @@
     {
       name: "AcceptPort",
       properties: {
+        class: "MatchInTemplate",
+        face: "{side}",
         nodes: [
+          {
+            name: "match",
+            network: "match",
+            edges: ["north-center", "east-center", "south-center", "west-center", "down-center"],
+            replacementTextures: {
+              "none": {
+                "crystal": { base: "matchin/crystal-disconnected" }
+              }
+            }
+          },
           {
             name: "scope",
             network: "scope",
@@ -38,15 +50,6 @@
             },
             textures: ["eastwest", "northsouth", "up"],
             sourceScope: "matchin"
-          },
-          {
-            network: "match",
-            edges: ["north-center", "east-center", "south-center", "west-center", "down-center"],
-            replacementTextures: {
-              "none": {
-                "crystal": { base: "matchin/crystal-disconnected" }
-              }
-            }
           }
         ],
         ports: [

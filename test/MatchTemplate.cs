@@ -234,4 +234,81 @@ c+M+
       Assert.Fail();
     }
   }
+
+  [TestMethod]
+  public void MatchIn() {
+    /*
+    Builds the following definition without the surrounding function definition.
+    // clang-format off
+    Definition MatchIn (P Q: Prop) (b: bool) (d: BoolSpec P Q b)
+      : BoolSpec Q P (negb b) :=
+    match d in BoolSpec _ _ b return BoolSpec _ _ (negb b) with
+    | BoolSpecT _ p => BoolSpecF _ p
+    | BoolSpecF _ q => BoolSpecT _ q
+    end.
+    // clang-format on
+    */
+    Legend legend = _templates.CreateLegend();
+    legend.AddMatchIn('a', "BoolSpec");
+    legend.AddCase('b', "BoolSpecT");
+    legend.AddCase('c', "BoolSpecF");
+    legend.AddConstant('d', "negb");
+    legend.AddConstant('e', "BoolSpec");
+    legend.AddConstant('f', "BoolSpecT");
+    legend.AddConstant('g', "BoolSpecF");
+    legend.AddConstant('h', "boolspec_const");
+    // clang-format off
+    const string schematic = (
+"""
+h+M+
+  a##i#i#i###
+  #      +  #
+  #    d+A+ #
+  #       + #
+  # e+A+A+A+o
+  ###########
+  ...........
+  b###i#i####
+  #     +   #
+  # g+A+A+++o
+  ###########
+  ...........
+  c###i#i####
+  #     +   #
+  # f+A+A+++o
+  ###########
+""");
+    // clang-format on
+
+    _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
+
+    using TokenEmissionState state = new(_accessor);
+    Random r = new(0);
+    BlockPos startBlock = new(2, 0, 0, 0);
+    Token result = state.Process(
+        new NodePos(startBlock, _accessor.FindNodeId(startBlock, "output")),
+        r);
+    SaveGraphviz(state);
+    if (result is Match m) {
+      CollectionAssert.AreEqual(new Token[] { m },
+                                state.UnreferencedRoots.ToList());
+
+      Assert.AreEqual(4, m.Children.Count);
+      Assert.AreEqual("input", m.Children[0].Name);
+      Assert.AreEqual("boolspec_const", m.Children[0].Children[0].Name);
+
+      Assert.AreEqual("BoolSpec", m.Children[1].Name);
+      Assert.IsTrue(m.Children[1] is MatchIn);
+
+      Assert.AreEqual(1, m.Children[1].Children.Count);
+
+      Assert.AreEqual("BoolSpecT", m.Children[2].Name);
+      Assert.IsTrue(m.Children[2] is Case);
+
+      Assert.AreEqual("BoolSpecF", m.Children[3].Name);
+      Assert.IsTrue(m.Children[3] is Case);
+    } else {
+      Assert.Fail();
+    }
+  }
 }

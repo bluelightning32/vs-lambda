@@ -74,6 +74,16 @@ public class MatchTemplate : BlockNodeTemplate {
     return c;
   }
 
+  public MatchIn AddMatchIn(TokenEmissionState state, NodePos sourcePos,
+                            Node[] nodes, NodePos childMatchPos,
+                            int childScopeId, BlockFacing face,
+                            string inventoryTerm) {
+    Match m = GetMatch(state, sourcePos, nodes, -1);
+    MatchIn c = new(inventoryTerm, childMatchPos, m, childScopeId, face);
+    m.AddMatchIn(c);
+    return c;
+  }
+
   private Match EmitMatch(TokenEmissionState state, BlockPos pos,
                           Node[] nodes) {
     NodePos matchPos = new(pos, _matchId);

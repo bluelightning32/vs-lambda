@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,10 +27,19 @@ public class Match : ConstructRoot {
   public override ConstructRoot Construct => this;
 
   public readonly TermInput Input;
+  private MatchIn _matchIn = null;
   private SortedSet<Case> _cases;
 
-  public override IReadOnlyList<Token> Children =>
-      _cases.Cast<Token>().Prepend(Input).ToList();
+  public override IReadOnlyList<Token> Children {
+    get {
+      IEnumerable<Token> e = _cases.Cast<Token>();
+      if (_matchIn != null) {
+        e = e.Prepend(_matchIn);
+      }
+      e = e.Prepend(Input);
+      return e.ToList();
+    }
+  }
 
   private readonly List<NodePos> _matchConnectors = new();
   public override IReadOnlyList<NodePos> ScopeMatchConnectors =>
@@ -68,6 +78,14 @@ public class Match : ConstructRoot {
 
   public void AddCase(Case caseBlock) { _cases.Add(caseBlock); }
 
+  public void AddMatchIn(MatchIn m) {
+    if (_matchIn != null) {
+      throw new InvalidOperationException(
+          "The match already has a matchin token.");
+    }
+    _matchIn = m;
+  }
+
   public override void Dispose() {
     SortedSet<Case> cases = _cases;
     _cases = null;
@@ -76,6 +94,9 @@ public class Match : ConstructRoot {
         c.Dispose();
       }
     }
+    MatchIn matchIn = _matchIn;
+    _matchIn = null;
+    matchIn?.Dispose();
     base.Dispose();
   }
 
@@ -99,6 +120,11 @@ public class Match : ConstructRoot {
     state.WriteSubgraphNode(Input);
     state.WriteSubgraphEdge(this, Input);
 
+    if (_matchIn != null) {
+      _matchIn.WriteSubgraphNode(state);
+      state.WriteSubgraphEdge(this, _matchIn);
+    }
+
     foreach (Case c in _cases) {
       c.WriteSubgraphNode(state);
       state.WriteSubgraphEdge(this, c);
@@ -107,6 +133,7 @@ public class Match : ConstructRoot {
     state.WriteSubgraphFooter();
 
     Input.WriteOutsideEdges(state);
+    _matchIn?.WriteOutsideEdges(state);
     foreach (Case c in _cases) {
       c.WriteOutsideEdges(state);
     }

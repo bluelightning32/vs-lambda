@@ -185,6 +185,16 @@ public class TokenEmissionState : IDisposable {
                  inventoryTerm);
   }
 
+  public MatchIn AddMatchIn(NodePos source, NodePos childMatchPos,
+                            int childScopeId, BlockFacing face,
+                            string inventoryTerm) {
+    BlockNodeTemplate template = _accessor.GetBlock(
+        source.Block, out Node[] nodes, out string matchInventory);
+    return ((MatchTemplate) template)
+        .AddMatchIn(this, source, nodes, childMatchPos, childScopeId, face,
+                    inventoryTerm);
+  }
+
   public void VerifyInvariants() {
     HashSet<NodePos> sourceHasPending = new();
     HashSet<NodePos> pendingSet = new();
