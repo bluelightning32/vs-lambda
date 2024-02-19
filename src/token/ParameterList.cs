@@ -7,7 +7,6 @@ namespace Lambda.Token;
 
 public class ParameterList : IDisposable {
   public SortedSet<Parameter> Parameters;
-  public TermInput ResultType = null;
   public TermInput Result = null;
 
   public ParameterList(BlockFacing constructFace) {
@@ -25,22 +24,12 @@ public class ParameterList : IDisposable {
     return null;
   }
 
-  public static Token[] NonnullTokens(Token a, Token b) {
-    if (a == null) {
-      if (b == null) {
+  public Token[] GetChildrenAtLevel(Parameter p) {
+    if (p == null) {
+      if (Result == null) {
         return Array.Empty<Token>();
       }
-      return new Token[] { b };
-    }
-    if (b == null) {
-      return new Token[] { a };
-    }
-    return new Token[] { a, b };
-  }
-
-  public IReadOnlyList<Token> GetChildrenAtLevel(Parameter p) {
-    if (p == null) {
-      return NonnullTokens(ResultType, Result);
+      return new Token[] { Result };
     }
     if (p.Type != null) {
       return new Token[] { p.Type, p };
@@ -57,7 +46,6 @@ public class ParameterList : IDisposable {
     foreach (Parameter p in parameters) {
       p.Dispose();
     }
-    ResultType = null;
     Result = null;
     parameters.Clear();
     GC.SuppressFinalize(this);

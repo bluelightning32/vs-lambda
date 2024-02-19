@@ -5,6 +5,7 @@ using System.Text;
 using Lambda.Network;
 
 using Vintagestory.API.MathTools;
+using Vintagestory.API.Util;
 
 namespace Lambda.Token;
 
@@ -24,14 +25,24 @@ public class Function : ConstructRoot {
 
   public override ConstructRoot Construct => this;
 
-  public override IReadOnlyList<Token> Children =>
-      _parameters.GetChildrenAtLevel(_parameters.Parameters.FirstOrDefault());
+  public override IReadOnlyList<Token> Children {
+    get {
+      Token[] parameterChildren = _parameters.GetChildrenAtLevel(
+          _parameters.Parameters.FirstOrDefault());
+      if (_resultType != null) {
+        return parameterChildren.InsertAt(_resultType, 0);
+      } else {
+        return parameterChildren;
+      }
+    }
+  }
 
   private readonly List<NodePos> _scopeConnectors = new();
   public override IReadOnlyList<NodePos> ScopeMatchConnectors =>
       _scopeConnectors;
 
   private readonly ParameterList _parameters;
+  private TermInput _resultType = null;
 
   public Function(string name, NodePos pos, int outputNodeId, BlockFacing face)
       : base(name) {
@@ -64,13 +75,13 @@ public class Function : ConstructRoot {
                        bool isSource) {
     Token added = null;
     if (name == "resulttype") {
-      if (_parameters.ResultType != null) {
-        List<NodePos> blocks = new(_parameters.ResultType.Blocks) { pos };
+      if (_resultType != null) {
+        List<NodePos> blocks = new(_resultType.Blocks) { pos };
         throw new InvalidFormatException(blocks.ToArray(),
                                          "already-has-result");
       }
-      _parameters.ResultType = new TermInput("resultType", pos, this);
-      added = _parameters.ResultType;
+      _resultType = new TermInput("resultType", pos, this);
+      added = _resultType;
     } else if (isSource) {
       Parameter newParam = new("parameter", pos, this, _parameters);
       _parameters.Parameters.Add(newParam);
@@ -89,6 +100,9 @@ public class Function : ConstructRoot {
 
   public override void Dispose() {
     _parameters.Dispose();
+    TermInput resultType = _resultType;
+    _resultType = null;
+    resultType?.Dispose();
     base.Dispose();
   }
 
@@ -109,6 +123,11 @@ public class Function : ConstructRoot {
 
     state.WriteSubgraphNode(name, Name);
 
+    if (_resultType != null) {
+      state.WriteSubgraphNode(_resultType);
+      state.WriteSubgraphEdge(this, _resultType);
+    }
+
     Token parent = this;
     Parameter p = _parameters.Parameters.FirstOrDefault();
     while (true) {
@@ -125,6 +144,7 @@ public class Function : ConstructRoot {
 
     state.WriteSubgraphFooter();
 
+    _resultType?.WriteOutsideEdges(state);
     p = _parameters.Parameters.FirstOrDefault();
     while (true) {
       foreach (Token t in _parameters.GetChildrenAtLevel(p)) {

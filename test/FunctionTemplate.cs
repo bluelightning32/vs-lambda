@@ -65,15 +65,14 @@ public class FunctionTemplateTest {
           Assert.AreEqual(new NodePos(puzzleBlock, _accessor.FindNodeId(
                                                        puzzleBlock, "scope")),
                           f.ScopePos);
-          Assert.AreEqual("parameter", f.Children[0].Name);
-          Assert.IsTrue(f.Children[0].TermConnectors.Contains(
+          Assert.AreEqual("resultType", f.Children[0].Name);
+          Assert.AreEqual("nat -> nat",
+                          ((Constant)f.Children[0].Children[0]).Term);
+          Assert.AreEqual("parameter", f.Children[1].Name);
+          Assert.IsTrue(f.Children[1].TermConnectors.Contains(
               new NodePos(3, 0, 1, 0, 0)));
-          Assert.AreEqual("resultType", f.Children[0].Children[0].Name);
-          Assert.AreEqual(
-              "nat -> nat",
-              ((Constant)f.Children[0].Children[0].Children[0]).Term);
-          Assert.AreEqual("result", f.Children[0].Children[1].Name);
-          Assert.AreEqual(f.Children[0], f.Children[0].Children[1].Children[0]);
+          Assert.AreEqual("result", f.Children[1].Children[0].Name);
+          Assert.AreEqual(f.Children[1], f.Children[1].Children[0].Children[0]);
         } else {
           Assert.Fail();
         }
@@ -121,14 +120,14 @@ public class FunctionTemplateTest {
           Assert.AreEqual(new NodePos(puzzleBlock, _accessor.FindNodeId(
                                                        puzzleBlock, "scope")),
                           f.ScopePos);
-          Assert.AreEqual("parameter", f.Children[0].Name);
-          Assert.AreEqual(0, f.Children[0].TermConnectors.Count);
-          Assert.AreEqual("resultType", f.Children[0].Children[0].Name);
-          Assert.AreEqual(
-              "nat -> nat -> nat",
-              ((Constant)f.Children[0].Children[0].Children[0]).Term);
-          Assert.AreEqual("result", f.Children[0].Children[1].Name);
-          if (f.Children[0].Children[1].Children[0] is Function f2) {
+          Assert.AreEqual("resultType", f.Children[0].Name);
+          Assert.AreEqual("nat -> nat -> nat",
+                          ((Constant)f.Children[0].Children[0]).Term);
+
+          Assert.AreEqual("parameter", f.Children[1].Name);
+          Assert.AreEqual(0, f.Children[1].TermConnectors.Count);
+          Assert.AreEqual("result", f.Children[1].Children[0].Name);
+          if (f.Children[1].Children[0].Children[0] is Function f2) {
             Assert.AreEqual("result", f2.Children[0].Children[0].Name);
             Assert.AreEqual(f2.Children[0],
                             f2.Children[0].Children[0].Children[0]);
@@ -182,16 +181,16 @@ public class FunctionTemplateTest {
           Assert.AreEqual(new NodePos(puzzleBlock, _accessor.FindNodeId(
                                                        puzzleBlock, "scope")),
                           f.ScopePos);
-          Assert.AreEqual("parameter", f.Children[0].Name);
-          Assert.AreEqual(3, f.Children[0].TermConnectors.Count);
-          Assert.AreEqual("resultType", f.Children[0].Children[0].Name);
-          Assert.AreEqual(
-              "nat -> nat -> nat",
-              ((Constant)f.Children[0].Children[0].Children[0]).Term);
-          Assert.AreEqual("result", f.Children[0].Children[1].Name);
-          if (f.Children[0].Children[1].Children[0] is Function f2) {
+          Assert.AreEqual("resultType", f.Children[0].Name);
+          Assert.AreEqual("nat -> nat -> nat",
+                          ((Constant)f.Children[0].Children[0]).Term);
+
+          Assert.AreEqual("parameter", f.Children[1].Name);
+          Assert.AreEqual(3, f.Children[1].TermConnectors.Count);
+          Assert.AreEqual("result", f.Children[1].Children[0].Name);
+          if (f.Children[1].Children[0].Children[0] is Function f2) {
             Assert.AreEqual("result", f2.Children[0].Children[0].Name);
-            Assert.AreEqual(f.Children[0],
+            Assert.AreEqual(f.Children[1],
                             f2.Children[0].Children[0].Children[0]);
           } else {
             Assert.Fail();
@@ -248,14 +247,14 @@ public class FunctionTemplateTest {
           Assert.AreEqual(new NodePos(puzzleBlock, _accessor.FindNodeId(
                                                        puzzleBlock, "scope")),
                           f.ScopePos);
-          Assert.AreEqual("parameter", f.Children[0].Name);
-          Assert.AreEqual(5, f.Children[0].TermConnectors.Count);
-          Assert.AreEqual("resultType", f.Children[0].Children[0].Name);
-          Assert.AreEqual(
-              "nat -> nat -> nat",
-              ((Constant)f.Children[0].Children[0].Children[0]).Term);
-          Assert.AreEqual("result", f.Children[0].Children[1].Name);
-          Assert.AreEqual(f.Children[0], f.Children[0].Children[1].Children[0]);
+          Assert.AreEqual("resultType", f.Children[0].Name);
+          Assert.AreEqual("nat -> nat -> nat",
+                          ((Constant)f.Children[0].Children[0]).Term);
+
+          Assert.AreEqual("parameter", f.Children[1].Name);
+          Assert.AreEqual(5, f.Children[1].TermConnectors.Count);
+          Assert.AreEqual("result", f.Children[1].Children[0].Name);
+          Assert.AreEqual(f.Children[1], f.Children[1].Children[0].Children[0]);
         } else {
           Assert.Fail();
         }
