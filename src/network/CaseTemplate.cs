@@ -7,17 +7,15 @@ using Lambda.Token;
 
 using Vintagestory.API.MathTools;
 
-public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
-  // The output node outputs the entire function. Set to -1 if there is no
-  // output port.
-  private readonly int _outputId = -1;
+public class CaseTemplate : BlockNodeTemplate, IAcceptScopePort {
   private readonly int _parameterId = -1;
   // The result node is the function body.
   private readonly int _resultId = -1;
   private readonly int _scopeId = -1;
+  private readonly int _matchId = -1;
   private readonly BlockFacing _face;
-  public FunctionTemplate(NodeAccessor accessor, Manager manager, string face,
-                          NodeTemplate[] nodeTemplates)
+  public CaseTemplate(NodeAccessor accessor, Manager manager, string face,
+                      NodeTemplate[] nodeTemplates)
       : base(accessor, manager, face, nodeTemplates) {
     _face = BlockFacing.FromCode(face);
     if (_face == null) {
@@ -29,15 +27,12 @@ public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
         continue;
       }
       string name = nodeTemplate.Name;
-      if (name == "scope") {
+      if (name == "match") {
+        Debug.Assert(_matchId == -1);
+        _matchId = i;
+      } else if (name == "scope") {
         Debug.Assert(_scopeId == -1);
         _scopeId = i;
-      } else if (name == "output") {
-        if (nodeTemplate.IsSource) {
-          _outputId = i;
-        } else {
-          throw new ArgumentException("Output port direction must be Out.");
-        }
       } else if (name == "parameter" || name == "result") {
         if (nodeTemplate.IsSource) {
           if (_parameterId != -1) {
@@ -56,22 +51,24 @@ public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
         throw new ArgumentException($"Unknown node {name}.");
       }
     }
-    if (_scopeId == -1) {
-      throw new ArgumentException("Missing scope node.");
+    if (_matchId == -1) {
+      throw new ArgumentException("Missing match node.");
     }
   }
 
-  private Function GetFunction(TokenEmissionState state, NodePos sourcePos,
-                               Node[] nodes, int forNode) {
-    Function source = (Function)state.TryGetSource(sourcePos);
-    if (source == null) {
-      source = new("function", sourcePos, _outputId, _face);
-      state.AddPrepared(sourcePos, source, sourcePos);
-      state.AddPending(sourcePos);
-      foreach (int child in new int[] { _outputId, _parameterId, _resultId }) {
+  private Case GetCase(TokenEmissionState state, NodePos matchPos, Node[] nodes,
+                       string inventoryTerm, int forNode) {
+    Case c = (Case)state.TryGetSource(matchPos);
+    if (c == null) {
+      Node matchNode = nodes[matchPos.NodeId];
+      c = state.AddCase(matchNode.Source, matchPos, _scopeId, _face,
+                        inventoryTerm);
+      state.AddPrepared(matchPos, c, matchPos);
+      state.AddPending(matchPos);
+      foreach (int child in new int[] { _scopeId, _parameterId, _resultId }) {
         if (child != -1) {
-          NodePos childPos = new(sourcePos.Block, child);
-          source.AddRef(state, childPos);
+          NodePos childPos = new(matchPos.Block, child);
+          c.AddRef(state, childPos);
           if (child != forNode) {
             NodePos childSource = nodes[child].Source;
             if (!nodes[child].IsConnected()) {
@@ -82,60 +79,57 @@ public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
         }
       }
     }
-    return source;
+    return c;
   }
 
   public Token AddPort(TokenEmissionState state, NodePos sourcePos,
                        Node[] nodes, string inventoryTerm, BlockPos childPos,
                        NodeTemplate child) {
-    return GetFunction(state, sourcePos, nodes, -1)
+    return GetCase(state, sourcePos, nodes, inventoryTerm, -1)
         .AddPort(state, new NodePos(childPos, child.Id), child.Name,
                  child.IsSource);
   }
 
-  private Function EmitScope(TokenEmissionState state, BlockPos pos,
-                             Node[] nodes, string inventoryTerm) {
-    NodePos scopePos = new(pos, _scopeId);
-    Function scope = (Function)state.TryGetSource(scopePos);
-    if (scope == null) {
-      scope = new("function", scopePos, _outputId, _face);
-      state.AddPrepared(scopePos, scope, scopePos);
-      foreach (int child in new int[] { _outputId, _parameterId, _resultId }) {
+  private Case EmitCase(TokenEmissionState state, BlockPos pos, Node[] nodes,
+                        string inventoryTerm) {
+    NodePos matchPos = new(pos, _matchId);
+    Case c = (Case)state.TryGetSource(matchPos);
+    if (c == null) {
+      Node matchNode = nodes[matchPos.NodeId];
+      c = state.AddCase(matchNode.Source, matchPos, _matchId, _face,
+                        inventoryTerm);
+      state.AddPrepared(matchPos, c, matchPos);
+      foreach (int child in new int[] { _scopeId, _parameterId, _resultId }) {
         if (child != -1) {
-          scope.AddRef(state, new NodePos(pos, child));
+          c.AddRef(state, new NodePos(pos, child));
         }
       }
     }
-    scope.AddPendingChildren(state, _nodeTemplates[_scopeId].Network,
-                             GetDownstream(scopePos));
-    if (inventoryTerm != null) {
-      Token resultType = scope.AddPort(state, scopePos, "resulttype", false);
-      Token constant = new Constant(scopePos, inventoryTerm);
-      constant.AddSink(state, resultType);
-    }
+    c.AddPendingChildren(state, _nodeTemplates[_matchId].Network,
+                         GetDownstream(matchPos));
 
-    scope.ReleaseRef(state, scopePos);
-    return scope;
+    c.ReleaseRef(state, matchPos);
+    return c;
   }
 
   public override Token Emit(TokenEmissionState state, NodePos pos,
                              Node[] nodes, string inventoryTerm) {
-    if (pos.NodeId == _scopeId) {
-      Token scopeResult = EmitScope(state, pos.Block, nodes, inventoryTerm);
+    if (pos.NodeId == _matchId) {
+      Token scopeResult = EmitCase(state, pos.Block, nodes, inventoryTerm);
       state.VerifyInvariants();
       return scopeResult;
     }
     NodeTemplate nodeTemplate = _nodeTemplates[pos.NodeId];
-    Function scope =
-        GetFunction(state, new NodePos(pos.Block, _scopeId), nodes, pos.NodeId);
+    Case c = GetCase(state, new NodePos(pos.Block, _matchId), nodes,
+                     inventoryTerm, pos.NodeId);
     Token result;
-    if (pos.NodeId == _outputId) {
-      state.AddPrepared(pos, scope);
-      scope.AddPendingChildren(state, nodeTemplate.Network, GetDownstream(pos));
-      result = scope;
+    if (pos.NodeId == _scopeId) {
+      state.AddPrepared(pos, c);
+      c.AddPendingChildren(state, nodeTemplate.Network, GetDownstream(pos));
+      result = c;
     } else if (pos.NodeId == _parameterId) {
       Debug.Assert(nodeTemplate.IsSource);
-      result = scope.AddPort(state, pos, nodeTemplate.Name, true);
+      result = c.AddPort(state, pos, nodeTemplate.Name, true);
       if (result.PendingRef == 0) {
         state.AddPrepared(pos, result, pos);
       } else {
@@ -147,9 +141,9 @@ public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
     } else {
       Debug.Assert(pos.NodeId == _resultId);
       Debug.Assert(!nodeTemplate.IsSource);
-      result = scope.AddPort(state, pos, nodeTemplate.Name, false);
+      result = c.AddPort(state, pos, nodeTemplate.Name, false);
     }
-    scope.ReleaseRef(state, pos);
+    c.ReleaseRef(state, pos);
     state.VerifyInvariants();
     return result;
   }

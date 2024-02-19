@@ -173,7 +173,16 @@ public class TokenEmissionState : IDisposable {
     BlockNodeTemplate template = _accessor.GetBlock(
         source.Block, out Node[] nodes, out string inventoryTerm);
     return ((IAcceptScopePort) template)
-        .AddPort(this, source, nodes, childPos, child);
+        .AddPort(this, source, nodes, inventoryTerm, childPos, child);
+  }
+
+  public Case AddCase(NodePos source, NodePos childMatchPos, int childScopeId,
+                      BlockFacing face, string inventoryTerm) {
+    BlockNodeTemplate template = _accessor.GetBlock(
+        source.Block, out Node[] nodes, out string matchInventory);
+    return ((MatchTemplate) template)
+        .AddCase(this, source, nodes, childMatchPos, childScopeId, face,
+                 inventoryTerm);
   }
 
   public void VerifyInvariants() {

@@ -140,7 +140,8 @@ public abstract class TermSource : Token {
 
 public interface IAcceptScopePort {
   public Token AddPort(TokenEmissionState state, NodePos source, Node[] nodes,
-                       BlockPos childPos, NodeTemplate child);
+                       string inventoryTerm, BlockPos childPos,
+                       NodeTemplate child);
 }
 
 public abstract class ConstructRoot : TermSource {

@@ -265,8 +265,10 @@ public class TestBlockNodeTemplates {
     Match = manager.ParseBlockNodeTemplate(
         JsonObject.FromJson(@"
         {
+          class: 'MatchTemplate',
           nodes: [
             {
+              name: 'match',
               network: 'match',
               edges: ['north-center', 'east-center', 'south-center', 'west-center', 'source']
             },
