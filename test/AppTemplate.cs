@@ -24,11 +24,6 @@ public class AppTemplateTest {
     _templates = new TestBlockNodeTemplates(_manager);
   }
 
-  private void SaveGraphviz(TokenEmissionState state) {
-    state.SaveGraphviz(TestContext.FullyQualifiedTestClassName,
-                       TestContext.TestName);
-  }
-
   [TestMethod]
   public void EmitConstant() {
     Legend legend = _templates.CreateLegend();
@@ -42,23 +37,22 @@ O++
 
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
-    using (TokenEmissionState state = new(_accessor)) {
-      Random r = new();
-      BlockPos startBlock = new(0, 0, 0, 0);
-      Token result = state.Process(
-          new NodePos(startBlock, _accessor.FindNodeId(startBlock, "output")),
-          r);
-      SaveGraphviz(state);
-      if (result is Constant c) {
-        CollectionAssert.AreEqual(new Token[] { c },
-                                  state.UnreferencedRoots.ToList());
+    using TokenEmissionState state = new(_accessor);
+    Random r = new();
+    BlockPos startBlock = new(0, 0, 0, 0);
+    Token result = state.Process(
+        new NodePos(startBlock, _accessor.FindNodeId(startBlock, "output")),
+        r, TestContext.FullyQualifiedTestClassName,
+                   TestContext.TestName);
+    if (result is Constant c) {
+      CollectionAssert.AreEqual(new Token[] { c },
+                                state.UnreferencedRoots.ToList());
 
-        Assert.AreEqual("O", c.Term);
-        Assert.IsTrue(c.TermConnectors.Contains(new NodePos(1, 0, 0, 0, 0)));
-        Assert.AreEqual(0, c.Children.Count);
-      } else {
-        Assert.Fail();
-      }
+      Assert.AreEqual("O", c.Term);
+      Assert.IsTrue(c.TermConnectors.Contains(new NodePos(1, 0, 0, 0, 0)));
+      Assert.AreEqual(0, c.Children.Count);
+    } else {
+      Assert.Fail();
     }
   }
 
@@ -78,29 +72,28 @@ S+A+
 
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
-    using (TokenEmissionState state = new(_accessor)) {
-      Random r = new();
-      BlockPos startBlock = new(2, 0, 2, 0);
-      Token result = state.Process(
-          new NodePos(startBlock, _accessor.FindNodeId(startBlock, "output")),
-          r);
-      SaveGraphviz(state);
-      if (result is App a) {
-        CollectionAssert.AreEqual(new Token[] { a },
-                                  state.UnreferencedRoots.ToList());
+    using TokenEmissionState state = new(_accessor);
+    Random r = new();
+    BlockPos startBlock = new(2, 0, 2, 0);
+    Token result = state.Process(
+        new NodePos(startBlock, _accessor.FindNodeId(startBlock, "output")),
+        r, TestContext.FullyQualifiedTestClassName,
+                   TestContext.TestName);
+    if (result is App a) {
+      CollectionAssert.AreEqual(new Token[] { a },
+                                state.UnreferencedRoots.ToList());
 
-        Assert.AreEqual(2, a.Children.Count);
+      Assert.AreEqual(2, a.Children.Count);
 
-        Assert.AreEqual("applicand", a.Children[0].Name);
-        Assert.AreEqual(1, a.Children[0].Children.Count);
-        Assert.IsTrue(a.Children[0].Children[0] is Constant);
+      Assert.AreEqual("applicand", a.Children[0].Name);
+      Assert.AreEqual(1, a.Children[0].Children.Count);
+      Assert.IsTrue(a.Children[0].Children[0] is Constant);
 
-        Assert.AreEqual("argument", a.Children[1].Name);
-        Assert.AreEqual(1, a.Children[1].Children.Count);
-        Assert.IsTrue(a.Children[1].Children[0] is Constant);
-      } else {
-        Assert.Fail();
-      }
+      Assert.AreEqual("argument", a.Children[1].Name);
+      Assert.AreEqual(1, a.Children[1].Children.Count);
+      Assert.IsTrue(a.Children[1].Children[0] is Constant);
+    } else {
+      Assert.Fail();
     }
   }
 
@@ -133,11 +126,9 @@ S+A+
       BlockPos puzzleBlock = new(1, 0, 1, 0);
       Token puzzle = state.Process(
           new NodePos(puzzleBlock, _accessor.FindNodeId(puzzleBlock, "scope")),
-          r);
-      if (first) {
-        SaveGraphviz(state);
-        first = false;
-      }
+          r, first ? TestContext.FullyQualifiedTestClassName : null,
+          TestContext.TestName);
+      first = false;
       if (puzzle is Function f) {
         CollectionAssert.AreEqual(new Token[] { puzzle },
                                   state.UnreferencedRoots.ToList());

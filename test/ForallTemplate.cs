@@ -24,11 +24,6 @@ public class ForallTemplateTest {
     _templates = new TestBlockNodeTemplates(_manager);
   }
 
-  private void SaveGraphviz(TokenEmissionState state) {
-    state.SaveGraphviz(TestContext.FullyQualifiedTestClassName,
-                       TestContext.TestName);
-  }
-
   [TestMethod]
   public void Passthrough() {
     Legend legend = _templates.CreateLegend();
@@ -50,8 +45,8 @@ public class ForallTemplateTest {
     Token start = state.Process(
         new NodePos(startBlock,
                     _accessor.FindNodeId(startBlock, "scope")),
-        r);
-    SaveGraphviz(state);
+        r, TestContext.FullyQualifiedTestClassName,
+                     TestContext.TestName);
     if (start is Forall f) {
       CollectionAssert.AreEqual(new Token[] { start },
                                 state.UnreferencedRoots.ToList());
@@ -93,8 +88,8 @@ public class ForallTemplateTest {
     Token start = state.Process(
         new NodePos(startBlock,
                     _accessor.FindNodeId(startBlock, "scope")),
-        r);
-    SaveGraphviz(state);
+        r, TestContext.FullyQualifiedTestClassName,
+                     TestContext.TestName);
     if (start is Forall f) {
       CollectionAssert.AreEqual(new Token[] { start },
                                 state.UnreferencedRoots.ToList());

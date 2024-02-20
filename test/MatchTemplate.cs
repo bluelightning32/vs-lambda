@@ -24,11 +24,6 @@ public class MatchTemplateTest {
     _templates = new TestBlockNodeTemplates(_manager);
   }
 
-  private void SaveGraphviz(TokenEmissionState state) {
-    state.SaveGraphviz(TestContext.FullyQualifiedTestClassName,
-                       TestContext.TestName);
-  }
-
   [TestMethod]
   public void NoCases() {
     Legend legend = _templates.CreateLegend();
@@ -47,8 +42,8 @@ public class MatchTemplateTest {
     BlockPos startBlock = new(2, 0, 0, 0);
     Token result = state.Process(
         new NodePos(startBlock, _accessor.FindNodeId(startBlock, "output")),
-        r);
-    SaveGraphviz(state);
+        r, TestContext.FullyQualifiedTestClassName,
+                       TestContext.TestName);
     if (result is Match m) {
       CollectionAssert.AreEqual(new Token[] { m },
                                 state.UnreferencedRoots.ToList());
@@ -85,8 +80,8 @@ b+M+
     BlockPos startBlock = new(2, 0, 0, 0);
     Token result = state.Process(
         new NodePos(startBlock, _accessor.FindNodeId(startBlock, "output")),
-        r);
-    SaveGraphviz(state);
+        r, TestContext.FullyQualifiedTestClassName,
+                       TestContext.TestName);
     if (result is Match m) {
       CollectionAssert.AreEqual(new Token[] { m },
                                 state.UnreferencedRoots.ToList());
@@ -140,8 +135,8 @@ b+M+
     BlockPos startBlock = new(2, 0, 0, 0);
     Token result = state.Process(
         new NodePos(startBlock, _accessor.FindNodeId(startBlock, "output")),
-        r);
-    SaveGraphviz(state);
+        r, TestContext.FullyQualifiedTestClassName,
+                       TestContext.TestName);
     if (result is Match m) {
       CollectionAssert.AreEqual(new Token[] { m },
                                 state.UnreferencedRoots.ToList());
@@ -198,8 +193,8 @@ c+M+
     BlockPos startBlock = new(2, 0, 0, 0);
     Token result = state.Process(
         new NodePos(startBlock, _accessor.FindNodeId(startBlock, "output")),
-        r);
-    SaveGraphviz(state);
+        r, TestContext.FullyQualifiedTestClassName,
+                       TestContext.TestName);
     if (result is Match m) {
       CollectionAssert.AreEqual(new Token[] { m },
                                 state.UnreferencedRoots.ToList());
@@ -287,8 +282,8 @@ h+M+
     BlockPos startBlock = new(2, 0, 0, 0);
     Token result = state.Process(
         new NodePos(startBlock, _accessor.FindNodeId(startBlock, "output")),
-        r);
-    SaveGraphviz(state);
+        r, TestContext.FullyQualifiedTestClassName,
+                       TestContext.TestName);
     if (result is Match m) {
       CollectionAssert.AreEqual(new Token[] { m },
                                 state.UnreferencedRoots.ToList());

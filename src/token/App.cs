@@ -56,7 +56,7 @@ public class App : ConstructRoot {
     }
     state.WriteSubgraphHeader(name, label.ToString());
 
-    state.WriteSubgraphNode(name, Name);
+    state.WriteSubgraphNode(this);
 
     state.WriteSubgraphNode(Applicand);
     state.WriteSubgraphEdge(this, Applicand);

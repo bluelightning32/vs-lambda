@@ -47,7 +47,11 @@ public class TokenEmissionState : IDisposable {
 
   // Emit all of the nodes starting at `start`, while processing the pending
   // queue in a randomized order.
-  public Token Process(NodePos start, Random random) {
+  //
+  // Graphviz files are written along the way if the GRAPHVIZ environmental
+  // variable is set and `testClass` is non-null.
+  public Token Process(NodePos start, Random random, string testClass,
+                       string testName) {
     Token result = EmitPos(start);
     while (_pending.Count != 0) {
       ShufflePending(random);
@@ -58,10 +62,14 @@ public class TokenEmissionState : IDisposable {
       EmitPos(popped);
       VerifyInvariants();
     }
+    SaveGraphviz(testClass, testName, "");
     Debug.Assert(_pending.Count == 0);
     Debug.Assert(
         _prepared.Count == 0,
         $"Prepared nodes were not cleared, remaining={_prepared.Count} first={_prepared.First()}");
+    SetDepths();
+    SaveGraphviz(testClass, testName, ".depth");
+    ValidateDepths();
     return result;
   }
 
@@ -143,7 +151,10 @@ public class TokenEmissionState : IDisposable {
     _unreferencedRoots.Clear();
   }
 
-  public void SaveGraphviz(string testClass, string testName) {
+  public void SaveGraphviz(string testClass, string testName, string stage) {
+    if (testClass == null) {
+      return;
+    }
     // To save graphviz files, run the tests with:
     // dotnet test -c Debug --logger:"console;verbosity=detailed" -e GRAPHVIZ=1
     //
@@ -156,7 +167,7 @@ public class TokenEmissionState : IDisposable {
     if (Environment.GetEnvironmentVariable("GRAPHVIZ") == null) {
       return;
     }
-    using StreamWriter writer = new($"{testClass}.{testName}.dot");
+    using StreamWriter writer = new($"{testClass}.{testName}{stage}.dot");
     SaveGraphviz(testName, writer);
   }
 
@@ -257,5 +268,62 @@ public class TokenEmissionState : IDisposable {
       childSource = child;
     }
     MaybeAddPendingSource(childSource);
+  }
+
+  // Returns all of the tokens in the graph in a reverse topological order. For
+  // example, the last element in the result has no ancestors. Throws
+  // `InvalidOperationException` if there is a cycle.
+  public List<Token> ReverseTopologicalSort() {
+    List<Token> result = new();
+    Dictionary<Token, bool> visited = new();
+    foreach (ConstructRoot c in _unreferencedRoots) {
+      TopologicalVisit(c, result, visited);
+    }
+    return result;
+  }
+
+  private void TopologicalVisit(Token t, List<Token> result,
+                                Dictionary<Token, bool> visited) {
+    // Mark t with a temporary mark
+    if (!visited.TryAdd(t, false)) {
+      if (!visited[t]) {
+        throw new InvalidOperationException("The graph has a cycle.");
+      }
+      return;
+    }
+    if (t is TermInput) {
+      foreach (Token c in t.Children) {
+        // Ignore TermInput to Parameter edges to prevent cycles.
+        if (c is not Parameter) {
+          TopologicalVisit(c, result, visited);
+        }
+      }
+    } else {
+      foreach (Token c in t.Children) {
+        TopologicalVisit(c, result, visited);
+      }
+    }
+    visited[t] = true;
+    result.Add(t);
+  }
+
+  public void SetDepths() {
+    List<Token> revSorted = ReverseTopologicalSort();
+    SetDepths(revSorted);
+  }
+
+  public void ValidateDepths() {
+    foreach (ConstructRoot c in _unreferencedRoots) {
+      c.ValidateDepth();
+    }
+  }
+
+  private static void SetDepths(List<Token> revSorted) {
+    for (int i = revSorted.Count - 1; i >= 0; --i) {
+      Token p = revSorted[i];
+      foreach (Token c in p.Children) {
+        c.SetDepth(p);
+      }
+    }
   }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Lambda.Network;
 
@@ -38,6 +39,27 @@ public class TermInput : Token {
   public override void WriteOutsideEdges(GraphvizState state) {
     if (Value != null) {
       state.WriteEdge(this, Value);
+    }
+  }
+
+  public override void ValidateDepth() {
+    if (Value is not Parameter) {
+      base.ValidateDepth();
+    }
+  }
+
+  protected override void ValidateParameters(HashSet<Token> ancestors) {
+    if (Value is Parameter) {
+      if (!ancestors.Contains(Value)) {
+        throw new InvalidFormatException(Blocks.ToArray(),
+                                         "parameter-wrong-subtree");
+      }
+      if (Value.Depth >= Depth) {
+        throw new InvalidOperationException(
+            "TermInput puts to a Parameter with equal or greater depth.");
+      }
+    } else {
+      base.ValidateParameters(ancestors);
     }
   }
 }

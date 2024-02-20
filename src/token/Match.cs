@@ -115,7 +115,7 @@ public class Match : ConstructRoot {
     }
     state.WriteSubgraphHeader(name, label.ToString());
 
-    state.WriteSubgraphNode(name, Name);
+    state.WriteSubgraphNode(this);
 
     state.WriteSubgraphNode(Input);
     state.WriteSubgraphEdge(this, Input);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 using Lambda.Network;
 
@@ -38,5 +39,12 @@ public class Parameter : TermSource {
     Type?.Dispose();
     Type = null;
     base.Dispose();
+  }
+
+  internal override void SetDepth(Token parent) {
+    if (parent is TermInput) {
+      return;
+    }
+    base.SetDepth(parent);
   }
 }

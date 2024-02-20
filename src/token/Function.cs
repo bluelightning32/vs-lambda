@@ -133,7 +133,7 @@ public class Function : ConstructRoot {
     }
     state.WriteSubgraphHeader(name, label.ToString());
 
-    state.WriteSubgraphNode(name, Name);
+    state.WriteSubgraphNode(this);
 
     WriteSubgraphNodes(state);
 

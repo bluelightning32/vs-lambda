@@ -38,7 +38,7 @@ public class Constant : ConstructRoot {
     }
     state.WriteSubgraphHeader(name, label.ToString());
 
-    state.WriteSubgraphNode(name, Name);
+    state.WriteSubgraphNode(this);
 
     state.WriteSubgraphFooter();
   }
