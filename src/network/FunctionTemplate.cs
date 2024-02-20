@@ -10,12 +10,12 @@ using Vintagestory.API.MathTools;
 public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
   // The output node outputs the entire function. Set to -1 if there is no
   // output port.
-  private readonly int _outputId = -1;
+  protected readonly int _outputId = -1;
   private readonly int _parameterId = -1;
   // The result node is the function body.
   private readonly int _resultId = -1;
   private readonly int _scopeId = -1;
-  private readonly BlockFacing _face;
+  protected readonly BlockFacing _face;
   public FunctionTemplate(NodeAccessor accessor, Manager manager, string face,
                           NodeTemplate[] nodeTemplates)
       : base(accessor, manager, face, nodeTemplates) {
@@ -42,13 +42,13 @@ public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
         if (nodeTemplate.IsSource) {
           if (_parameterId != -1) {
             throw new ArgumentException(
-                "Only one parameter port is allowed on the function block. Use scope blocks to add more parameters.");
+                "Only one parameter port is allowed on the block. Use scope blocks to add more parameters.");
           }
           _parameterId = i;
         } else {
           if (_resultId != -1) {
             throw new ArgumentException(
-                "Only one result port is allowed on the function block.");
+                "Only one result port is allowed on the block.");
           }
           _resultId = i;
         }
@@ -61,16 +61,21 @@ public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
     }
   }
 
+  protected virtual Function CreateFunction(NodePos sourcePos,
+                                            string inventoryTerm) {
+    if ((inventoryTerm ?? "").Length > 0) {
+      return new Puzzle("puzzle", sourcePos, _outputId, _face);
+    } else {
+      return new Function("function", sourcePos, _outputId, _face);
+    }
+  }
+
   private Function GetFunction(TokenEmissionState state, NodePos sourcePos,
                                Node[] nodes, string inventoryTerm,
                                int forNode) {
     Function source = (Function)state.TryGetSource(sourcePos);
     if (source == null) {
-      if ((inventoryTerm ?? "").Length > 0) {
-        source = new Puzzle("puzzle", sourcePos, _outputId, _face);
-      } else {
-        source = new Function("function", sourcePos, _outputId, _face);
-      }
+      source = CreateFunction(sourcePos, inventoryTerm);
       state.AddPrepared(sourcePos, source, sourcePos);
       state.AddPending(sourcePos);
       foreach (int child in new int[] { _outputId, _parameterId, _resultId }) {
@@ -99,11 +104,7 @@ public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
     NodePos scopePos = new(pos, _scopeId);
     Function scope = (Function)state.TryGetSource(scopePos);
     if (scope == null) {
-      if ((inventoryTerm ?? "").Length > 0) {
-        scope = new Puzzle("puzzle", scopePos, _outputId, _face);
-      } else {
-        scope = new Function("function", scopePos, _outputId, _face);
-      }
+      scope = CreateFunction(scopePos, inventoryTerm);
       state.AddPrepared(scopePos, scope, scopePos);
       foreach (int child in new int[] { _outputId, _parameterId, _resultId }) {
         if (child != -1) {

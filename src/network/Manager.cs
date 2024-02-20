@@ -115,6 +115,7 @@ public class Manager {
     _blockNodeTemplateClasses.Add("MatchTemplate", typeof(MatchTemplate));
     _blockNodeTemplateClasses.Add("CaseTemplate", typeof(CaseTemplate));
     _blockNodeTemplateClasses.Add("MatchInTemplate", typeof(MatchInTemplate));
+    _blockNodeTemplateClasses.Add("ForallTemplate", typeof(ForallTemplate));
   }
 
   public void Load(byte[] serialized) {

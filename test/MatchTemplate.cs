@@ -32,11 +32,11 @@ public class MatchTemplateTest {
   [TestMethod]
   public void NoCases() {
     Legend legend = _templates.CreateLegend();
-    legend.AddConstant('f', "false_axiom");
+    legend.AddConstant('0', "false_axiom");
     // clang-format off
     const string schematic = (
 """
-f+M+
+0+M+
 """);
     // clang-format on
 
@@ -254,8 +254,8 @@ c+M+
     legend.AddCase('c', "BoolSpecF");
     legend.AddConstant('d', "negb");
     legend.AddConstant('e', "BoolSpec");
-    legend.AddConstant('f', "BoolSpecT");
-    legend.AddConstant('g', "BoolSpecF");
+    legend.AddConstant('1', "BoolSpecT");
+    legend.AddConstant('0', "BoolSpecF");
     legend.AddConstant('h', "boolspec_const");
     // clang-format off
     const string schematic = (
@@ -270,12 +270,12 @@ h+M+
   ...........
   b###i#i####
   #     +   #
-  # g+A+A+++o
+  # 0+A+A+++o
   ###########
   ...........
   c###i#i####
   #     +   #
-  # f+A+A+++o
+  # 1+A+A+++o
   ###########
 """);
     // clang-format on
