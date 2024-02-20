@@ -27,13 +27,8 @@ public class Function : ConstructRoot {
 
   public override IReadOnlyList<Token> Children {
     get {
-      Token[] parameterChildren = _parameters.GetChildrenAtLevel(
+      return _parameters.GetChildrenAtLevel(
           _parameters.Parameters.FirstOrDefault());
-      if (_resultType != null) {
-        return parameterChildren.InsertAt(_resultType, 0);
-      } else {
-        return parameterChildren;
-      }
     }
   }
 
@@ -41,8 +36,7 @@ public class Function : ConstructRoot {
   public override IReadOnlyList<NodePos> ScopeMatchConnectors =>
       _scopeConnectors;
 
-  private readonly ParameterList _parameters;
-  private TermInput _resultType = null;
+  protected readonly ParameterList _parameters;
 
   public Function(string name, NodePos pos, int outputNodeId, BlockFacing face)
       : base(name) {
@@ -71,18 +65,10 @@ public class Function : ConstructRoot {
     }
   }
 
-  public Token AddPort(TokenEmissionState state, NodePos pos, string name,
-                       bool isSource) {
+  public virtual Token AddPort(TokenEmissionState state, NodePos pos,
+                               string name, bool isSource) {
     Token added = null;
-    if (name == "resulttype") {
-      if (_resultType != null) {
-        List<NodePos> blocks = new(_resultType.Blocks) { pos };
-        throw new InvalidFormatException(blocks.ToArray(),
-                                         "already-has-result");
-      }
-      _resultType = new TermInput("resultType", pos, this);
-      added = _resultType;
-    } else if (isSource) {
+    if (isSource) {
       Parameter newParam = new("parameter", pos, this, _parameters);
       _parameters.Parameters.Add(newParam);
       added = newParam;
@@ -100,10 +86,36 @@ public class Function : ConstructRoot {
 
   public override void Dispose() {
     _parameters.Dispose();
-    TermInput resultType = _resultType;
-    _resultType = null;
-    resultType?.Dispose();
     base.Dispose();
+  }
+
+  protected virtual void WriteSubgraphNodes(GraphvizState state) {
+    Token parent = this;
+    Parameter p = _parameters.Parameters.FirstOrDefault();
+    while (true) {
+      foreach (Token t in _parameters.GetChildrenAtLevel(p)) {
+        state.WriteSubgraphNode(t);
+        state.WriteSubgraphEdge(parent, t);
+      }
+      if (p == null) {
+        break;
+      }
+      parent = p;
+      p = _parameters.GetNext(p);
+    }
+  }
+
+  public override void WriteOutsideEdges(GraphvizState state) {
+    Parameter p = _parameters.Parameters.FirstOrDefault();
+    while (true) {
+      foreach (Token t in _parameters.GetChildrenAtLevel(p)) {
+        t.WriteOutsideEdges(state);
+      }
+      if (p == null) {
+        break;
+      }
+      p = _parameters.GetNext(p);
+    }
   }
 
   public override void WriteConstruct(GraphvizState state) {
@@ -123,37 +135,10 @@ public class Function : ConstructRoot {
 
     state.WriteSubgraphNode(name, Name);
 
-    if (_resultType != null) {
-      state.WriteSubgraphNode(_resultType);
-      state.WriteSubgraphEdge(this, _resultType);
-    }
-
-    Token parent = this;
-    Parameter p = _parameters.Parameters.FirstOrDefault();
-    while (true) {
-      foreach (Token t in _parameters.GetChildrenAtLevel(p)) {
-        state.WriteSubgraphNode(t);
-        state.WriteSubgraphEdge(parent, t);
-      }
-      if (p == null) {
-        break;
-      }
-      parent = p;
-      p = _parameters.GetNext(p);
-    }
+    WriteSubgraphNodes(state);
 
     state.WriteSubgraphFooter();
 
-    _resultType?.WriteOutsideEdges(state);
-    p = _parameters.Parameters.FirstOrDefault();
-    while (true) {
-      foreach (Token t in _parameters.GetChildrenAtLevel(p)) {
-        t.WriteOutsideEdges(state);
-      }
-      if (p == null) {
-        break;
-      }
-      p = _parameters.GetNext(p);
-    }
+    WriteOutsideEdges(state);
   }
 }

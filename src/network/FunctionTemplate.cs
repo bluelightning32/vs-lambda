@@ -62,10 +62,15 @@ public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
   }
 
   private Function GetFunction(TokenEmissionState state, NodePos sourcePos,
-                               Node[] nodes, int forNode) {
+                               Node[] nodes, string inventoryTerm,
+                               int forNode) {
     Function source = (Function)state.TryGetSource(sourcePos);
     if (source == null) {
-      source = new("function", sourcePos, _outputId, _face);
+      if ((inventoryTerm ?? "").Length > 0) {
+        source = new Puzzle("puzzle", sourcePos, _outputId, _face);
+      } else {
+        source = new Function("function", sourcePos, _outputId, _face);
+      }
       state.AddPrepared(sourcePos, source, sourcePos);
       state.AddPending(sourcePos);
       foreach (int child in new int[] { _outputId, _parameterId, _resultId }) {
@@ -84,7 +89,7 @@ public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
   public Token AddPort(TokenEmissionState state, NodePos sourcePos,
                        Node[] nodes, string inventoryTerm, BlockPos childPos,
                        NodeTemplate child) {
-    return GetFunction(state, sourcePos, nodes, -1)
+    return GetFunction(state, sourcePos, nodes, inventoryTerm, -1)
         .AddPort(state, new NodePos(childPos, child.Id), child.Name,
                  child.IsSource);
   }
@@ -94,7 +99,11 @@ public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
     NodePos scopePos = new(pos, _scopeId);
     Function scope = (Function)state.TryGetSource(scopePos);
     if (scope == null) {
-      scope = new("function", scopePos, _outputId, _face);
+      if ((inventoryTerm ?? "").Length > 0) {
+        scope = new Puzzle("puzzle", scopePos, _outputId, _face);
+      } else {
+        scope = new Function("function", scopePos, _outputId, _face);
+      }
       state.AddPrepared(scopePos, scope, scopePos);
       foreach (int child in new int[] { _outputId, _parameterId, _resultId }) {
         if (child != -1) {
@@ -124,8 +133,8 @@ public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
       return scopeResult;
     }
     NodeTemplate nodeTemplate = _nodeTemplates[pos.NodeId];
-    Function scope =
-        GetFunction(state, new NodePos(pos.Block, _scopeId), nodes, pos.NodeId);
+    Function scope = GetFunction(state, new NodePos(pos.Block, _scopeId), nodes,
+                                 inventoryTerm, pos.NodeId);
     Token result;
     if (pos.NodeId == _outputId) {
       state.AddPrepared(pos, scope);
