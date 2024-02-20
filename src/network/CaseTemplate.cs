@@ -11,9 +11,9 @@ public class CaseTemplate : BlockNodeTemplate, IAcceptScopePort {
   private readonly int _parameterId = -1;
   // The result node is the function body.
   private readonly int _resultId = -1;
-  private readonly int _scopeId = -1;
+  protected readonly int _scopeId = -1;
   private readonly int _matchId = -1;
-  private readonly BlockFacing _face;
+  protected readonly BlockFacing _face;
   public CaseTemplate(NodeAccessor accessor, Manager manager, string face,
                       NodeTemplate[] nodeTemplates)
       : base(accessor, manager, face, nodeTemplates) {
@@ -56,15 +56,20 @@ public class CaseTemplate : BlockNodeTemplate, IAcceptScopePort {
     }
   }
 
+  protected virtual Case CreateCase(TokenEmissionState state, NodePos matchPos,
+                                    Node[] nodes, string inventoryTerm) {
+    Node matchNode = nodes[matchPos.NodeId];
+    return state.AddCase(matchNode.Source, matchPos, _scopeId, _face,
+                         inventoryTerm);
+  }
+
   private Case GetCase(TokenEmissionState state, NodePos matchPos, Node[] nodes,
                        string inventoryTerm, int forNode) {
     Case c;
     if (state.Prepared.TryGetValue(matchPos, out Token caseToken)) {
       c = (Case)caseToken;
     } else {
-      Node matchNode = nodes[matchPos.NodeId];
-      c = state.AddCase(matchNode.Source, matchPos, _scopeId, _face,
-                        inventoryTerm);
+      c = CreateCase(state, matchPos, nodes, inventoryTerm);
       state.AddPrepared(matchPos, c, matchPos);
       state.AddPending(matchPos);
       foreach (int child in new int[] { _scopeId, _parameterId, _resultId }) {
@@ -95,9 +100,7 @@ public class CaseTemplate : BlockNodeTemplate, IAcceptScopePort {
     if (state.Prepared.TryGetValue(matchPos, out Token caseToken)) {
       c = (Case)caseToken;
     } else {
-      Node matchNode = nodes[matchPos.NodeId];
-      c = state.AddCase(matchNode.Source, matchPos, _scopeId, _face,
-                        inventoryTerm);
+      c = CreateCase(state, matchPos, nodes, inventoryTerm);
       state.AddPrepared(matchPos, c, matchPos);
       foreach (int child in new int[] { _scopeId, _parameterId, _resultId }) {
         if (child != -1) {
