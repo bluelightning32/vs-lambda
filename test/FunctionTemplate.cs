@@ -190,7 +190,7 @@ public class FunctionTemplateTest {
   [TestMethod]
   public void DanglingOutput() {
     Legend legend = _templates.CreateLegend();
-    legend.AddPuzzle('@', "nat -> nat -> nat");
+    legend.AddPuzzle('@', "nat -> nat");
     // clang-format off
     const string schematic = (
 """
@@ -230,7 +230,7 @@ public class FunctionTemplateTest {
                                     _accessor.FindNodeId(puzzleBlock, "scope")),
                         f.ScopePos);
         Assert.AreEqual("resultType", f.Children[0].Name);
-        Assert.AreEqual("nat -> nat -> nat",
+        Assert.AreEqual("nat -> nat",
                         ((Constant)f.Children[0].Children[0]).Term);
 
         Assert.AreEqual("parameter", f.Children[1].Name);
@@ -278,6 +278,51 @@ public class FunctionTemplateTest {
     } else {
       Assert.Fail();
     }
+  }
+
+  [TestMethod]
+  public void NestedDanglingOutput() {
+    Legend legend = _templates.CreateLegend();
+    legend.AddPuzzle('@', "nat -> nat");
+    // clang-format off
+    const string schematic = (
+"""
+#@########i###
+#         +++o
+# ##i#####+# #
+# # +     +# #
+# # +#i#  +o #
+# # +# F+  # #
+# # +++o   F+#
+# #  ###   # #
+# #        # #
+# ########## #
+#            #
+##############
+""");
+    // clang-format on
+
+    _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
+
+      using TokenEmissionState state = new(_accessor);
+      Random r = new(0);
+      BlockPos puzzleBlock = new(1, 0, 0, 0);
+      Token puzzle = state.Process(
+          new NodePos(puzzleBlock, _accessor.FindNodeId(puzzleBlock, "scope")),
+          r, TestContext.FullyQualifiedTestClassName,
+          TestContext.TestName);
+      if (puzzle is Function f) {
+      foreach (Token root in state.UnreferencedRoots) {
+        if (root == puzzle) {
+          continue;
+        }
+        // These are the locations of the dangling functions
+        Assert.IsTrue(root.Blocks.Contains(new NodePos(11, 0, 6, 0, 0)) ||
+                      root.Blocks.Contains(new NodePos(7, 0, 5, 0, 0)));
+      }
+      } else {
+      Assert.Fail();
+      }
   }
 
   [TestMethod]
