@@ -304,14 +304,14 @@ public class FunctionTemplateTest {
 
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
-      using TokenEmissionState state = new(_accessor);
-      Random r = new(0);
-      BlockPos puzzleBlock = new(1, 0, 0, 0);
-      Token puzzle = state.Process(
-          new NodePos(puzzleBlock, _accessor.FindNodeId(puzzleBlock, "scope")),
-          r, TestContext.FullyQualifiedTestClassName,
-          TestContext.TestName);
-      if (puzzle is Function f) {
+    using TokenEmissionState state = new(_accessor);
+    Random r = new(0);
+    BlockPos puzzleBlock = new(1, 0, 0, 0);
+    Token puzzle = state.Process(
+        new NodePos(puzzleBlock, _accessor.FindNodeId(puzzleBlock, "scope")),
+        r, TestContext.FullyQualifiedTestClassName,
+        TestContext.TestName);
+    if (puzzle is Function f) {
       foreach (Token root in state.UnreferencedRoots) {
         if (root == puzzle) {
           continue;
@@ -320,9 +320,9 @@ public class FunctionTemplateTest {
         Assert.IsTrue(root.Blocks.Contains(new NodePos(11, 0, 6, 0, 0)) ||
                       root.Blocks.Contains(new NodePos(7, 0, 5, 0, 0)));
       }
-      } else {
+    } else {
       Assert.Fail();
-      }
+    }
   }
 
   [TestMethod]

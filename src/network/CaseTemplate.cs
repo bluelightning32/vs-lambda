@@ -59,6 +59,7 @@ public class CaseTemplate : BlockNodeTemplate, IAcceptScopePort {
   protected virtual Case CreateCase(TokenEmissionState state, NodePos matchPos,
                                     Node[] nodes, string inventoryTerm) {
     Node matchNode = nodes[matchPos.NodeId];
+    Debug.Assert(_nodeTemplates[matchPos.NodeId].Network == NetworkType.Match);
     return state.AddCase(matchNode.Source, matchPos, _scopeId, _face,
                          inventoryTerm);
   }
@@ -71,7 +72,6 @@ public class CaseTemplate : BlockNodeTemplate, IAcceptScopePort {
     } else {
       c = CreateCase(state, matchPos, nodes, inventoryTerm);
       state.AddPrepared(matchPos, c, matchPos);
-      state.AddPending(matchPos);
       foreach (int child in new int[] { _scopeId, _parameterId, _resultId }) {
         if (child != -1) {
           NodePos childPos = new(matchPos.Block, child);
@@ -88,7 +88,8 @@ public class CaseTemplate : BlockNodeTemplate, IAcceptScopePort {
   public Token AddPort(TokenEmissionState state, NodePos sourcePos,
                        Node[] nodes, string inventoryTerm, BlockPos childPos,
                        NodeTemplate child) {
-    return GetCase(state, sourcePos, nodes, inventoryTerm, -1)
+    NodePos matchPos = new(sourcePos.Block, _matchId);
+    return GetCase(state, matchPos, nodes, inventoryTerm, -1)
         .AddPort(state, new NodePos(childPos, child.Id), child.Name,
                  child.IsSource);
   }

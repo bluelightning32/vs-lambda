@@ -306,4 +306,50 @@ h+M+
       Assert.Fail();
     }
   }
+
+  [TestMethod]
+  public void DisconnectedMatch() {
+    Legend legend = _templates.CreateLegend();
+    legend.AddPuzzle('@', "forall A B, A*B -> A*B");
+    legend.AddCase('a', "pair");
+    legend.AddConstant('b', "pair");
+    legend.AddConstant('O', "O");
+    // clang-format off
+    const string schematic = (
+"""
+/* A B ab */
+#@#i#i#i##########
+#      +         #
+#    ++++++++++++o
+#    +           #
+#    +  M+       #
+#    +  a#i#i##  #
+#    +  # +   #  #
+#  b+A++++A+++o  #
+#       #######  #
+#                #
+##################
+""");
+    // clang-format on
+
+    _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
+
+    using TokenEmissionState state = new(_accessor);
+    Random r = new(0);
+    BlockPos puzzleBlock = new(1, 0, 1, 0);
+    Token puzzle = state.Process(
+        new NodePos(puzzleBlock, _accessor.FindNodeId(puzzleBlock, "scope")),
+        r, TestContext.FullyQualifiedTestClassName,
+                     TestContext.TestName);
+    if (puzzle is Function f) {
+      foreach (Token root in state.UnreferencedRoots) {
+        if (root == puzzle) {
+          continue;
+        }
+        Assert.IsTrue(root.Blocks.Contains(new NodePos(8, 0, 5, 0, 0)));
+      }
+    } else {
+      Assert.Fail();
+    }
+  }
 }
