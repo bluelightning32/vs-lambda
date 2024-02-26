@@ -216,14 +216,8 @@ public class FunctionTemplateTest {
           r, i == 0 ? TestContext.FullyQualifiedTestClassName : null,
           TestContext.TestName);
       if (puzzle is Function f) {
-        foreach (Token root in state.UnreferencedRoots) {
-          if (root == puzzle) {
-            continue;
-          }
-          // This is the location of the dangling function
-          Assert.IsTrue(root.Blocks.Contains(new NodePos(6, 0, 4, 0, 0)));
-        }
-        Assert.IsTrue(state.UnreferencedRoots.Count == 2);
+        CollectionAssert.AreEqual(new Token[] { puzzle },
+                                  state.UnreferencedRoots.ToList());
         Assert.IsTrue(
             f.ScopeMatchConnectors.Contains(new NodePos(0, 0, 3, 0, 0)));
         Assert.AreEqual(new NodePos(puzzleBlock,
@@ -234,6 +228,7 @@ public class FunctionTemplateTest {
                         ((Constant)f.Children[0].Children[0]).Term);
 
         Assert.AreEqual("parameter", f.Children[1].Name);
+        Assert.AreEqual(1, ((Parameter)f.Children[1]).Unused.Count);
         Assert.AreEqual(5, f.Children[1].TermConnectors.Count);
         Assert.AreEqual("result", f.Children[1].Children[0].Name);
         Assert.AreEqual(f.Children[1], f.Children[1].Children[0].Children[0]);

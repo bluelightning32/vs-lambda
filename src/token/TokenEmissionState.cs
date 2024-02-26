@@ -62,14 +62,83 @@ public class TokenEmissionState : IDisposable {
       EmitPos(popped);
       VerifyInvariants();
     }
-    SaveGraphviz(testClass, testName, "");
+    SaveGraphviz(testClass, testName, "", null);
     Debug.Assert(_pending.Count == 0);
     Debug.Assert(
         _prepared.Count == 0,
         $"Prepared nodes were not cleared, remaining={_prepared.Count} first={_prepared.First()}");
+    Dictionary<Parameter, List<ConstructRoot>> extraEdges =
+        ReverseEdges(CollectConstructParameterParents());
+    SaveGraphviz(testClass, testName, ".parameters", extraEdges);
+    ScopeUnused(extraEdges);
+    SaveGraphviz(testClass, testName, ".scoped", null);
     SetDepths();
-    SaveGraphviz(testClass, testName, ".depth");
+    SaveGraphviz(testClass, testName, ".depth", null);
     ValidateDepths();
+    return result;
+  }
+
+  public void
+  ScopeUnused(Dictionary<Parameter, List<ConstructRoot>> extraEdges) {
+    Dictionary<Token, bool> visited = new();
+    foreach (ConstructRoot c in _unreferencedRoots.ToArray()) {
+      ScopeUnusedVisit(extraEdges, c, visited);
+    }
+  }
+
+  private void
+  ScopeUnusedVisit(Dictionary<Parameter, List<ConstructRoot>> extraEdges,
+                   Token t, Dictionary<Token, bool> visited) {
+    // Mark t with a temporary mark
+    if (!visited.TryAdd(t, false)) {
+      if (!visited[t]) {
+        throw new InvalidOperationException("The graph has a cycle.");
+      }
+      return;
+    }
+    if (t is TermInput) {
+      foreach (Token c in t.Children) {
+        // Ignore TermInput to Parameter edges to prevent cycles.
+        if (c is not Parameter) {
+          ScopeUnusedVisit(extraEdges, c, visited);
+        }
+      }
+    } else {
+      foreach (Token c in t.Children) {
+        ScopeUnusedVisit(extraEdges, c, visited);
+      }
+      if (t is Parameter p) {
+        if (extraEdges.TryGetValue(p, out List<ConstructRoot> addEdges)) {
+          foreach (ConstructRoot c in addEdges) {
+            if (c.IncomingEdgeCount != 0) {
+              // This construct was already linked in.
+              continue;
+            }
+            c.AddAnchor(p);
+            ScopeUnusedVisit(extraEdges, c, visited);
+            if (!_unreferencedRoots.Remove(c)) {
+              throw new InvalidOperationException(
+                  "Unreferenced construct was not in the unreferenced constructs list.");
+            }
+          }
+        }
+      }
+    }
+    visited[t] = true;
+  }
+
+  private static Dictionary<Parameter, List<ConstructRoot>>
+  ReverseEdges(Dictionary<ConstructRoot, List<Parameter>> rev) {
+    Dictionary<Parameter, List<ConstructRoot>> result = new();
+    foreach (KeyValuePair<ConstructRoot, List<Parameter>> pair in rev) {
+      foreach (Parameter p in pair.Value) {
+        if (!result.TryGetValue(p, out List<ConstructRoot> list)) {
+          list = new();
+          result.Add(p, list);
+        }
+        list.Add(pair.Key);
+      }
+    }
     return result;
   }
 
@@ -151,7 +220,9 @@ public class TokenEmissionState : IDisposable {
     _unreferencedRoots.Clear();
   }
 
-  public void SaveGraphviz(string testClass, string testName, string stage) {
+  public void
+  SaveGraphviz(string testClass, string testName, string stage,
+               Dictionary<Parameter, List<ConstructRoot>> extraEdges) {
     if (testClass == null) {
       return;
     }
@@ -168,14 +239,26 @@ public class TokenEmissionState : IDisposable {
       return;
     }
     using StreamWriter writer = new($"{testClass}.{testName}{stage}.dot");
-    SaveGraphviz(testName, writer);
+    SaveGraphviz(testName, writer, extraEdges);
   }
 
-  public void SaveGraphviz(string name, TextWriter writer) {
+  public void
+  SaveGraphviz(string name, TextWriter writer,
+               Dictionary<Parameter, List<ConstructRoot>> extraEdges) {
     GraphvizState graphviz = new(writer);
     graphviz.WriteHeader(name);
     foreach (ConstructRoot root in _unreferencedRoots) {
       graphviz.Add(root);
+    }
+    if (extraEdges != null) {
+      graphviz.StartSubgraph("extraedges", "blue");
+      foreach (KeyValuePair<Parameter, List<ConstructRoot>> pair in
+                   extraEdges) {
+        foreach (ConstructRoot target in pair.Value) {
+          graphviz.WriteSubgraphEdge(pair.Key, target);
+        }
+      }
+      graphviz.EndSubgraph();
     }
     graphviz.WriteFooter();
   }
@@ -277,13 +360,13 @@ public class TokenEmissionState : IDisposable {
     List<Token> result = new();
     Dictionary<Token, bool> visited = new();
     foreach (ConstructRoot c in _unreferencedRoots) {
-      TopologicalVisit(c, result, visited);
+      ReverseTopologicalSortVisit(c, result, visited);
     }
     return result;
   }
 
-  private void TopologicalVisit(Token t, List<Token> result,
-                                Dictionary<Token, bool> visited) {
+  private void ReverseTopologicalSortVisit(Token t, List<Token> result,
+                                           Dictionary<Token, bool> visited) {
     // Mark t with a temporary mark
     if (!visited.TryAdd(t, false)) {
       if (!visited[t]) {
@@ -295,12 +378,12 @@ public class TokenEmissionState : IDisposable {
       foreach (Token c in t.Children) {
         // Ignore TermInput to Parameter edges to prevent cycles.
         if (c is not Parameter) {
-          TopologicalVisit(c, result, visited);
+          ReverseTopologicalSortVisit(c, result, visited);
         }
       }
     } else {
       foreach (Token c in t.Children) {
-        TopologicalVisit(c, result, visited);
+        ReverseTopologicalSortVisit(c, result, visited);
       }
     }
     visited[t] = true;
@@ -324,6 +407,67 @@ public class TokenEmissionState : IDisposable {
       foreach (Token c in p.Children) {
         c.SetDepth(p);
       }
+    }
+  }
+
+  public Dictionary<ConstructRoot, List<Parameter>>
+  CollectConstructParameterParents() {
+    Dictionary<ConstructRoot, List<Parameter>> result = new();
+    Dictionary<ConstructRoot, HashSet<Parameter>> cache = new();
+    HashSet<Token> ancestors = new();
+    foreach (ConstructRoot c in _unreferencedRoots) {
+      HashSet<Parameter> hashset = new();
+      CollectConstructParameterParents(c, ancestors, cache, hashset);
+      result[c] = hashset.ToList();
+    }
+    return result;
+  }
+
+  private void CollectConstructParameterParents(
+      Token t, HashSet<Token> ancestors,
+      Dictionary<ConstructRoot, HashSet<Parameter>> cache,
+      HashSet<Parameter> result) {
+    HashSet<Parameter> localResult = result;
+    if (t is ConstructRoot c && c.IncomingEdgeCount > 1) {
+      if (cache.TryGetValue(c, out HashSet<Parameter> cachedResult)) {
+        result.UnionWith(cachedResult);
+        return;
+      }
+      localResult = new();
+    }
+    if (!ancestors.Add(t)) {
+      throw new InvalidOperationException("The graph has a cycle.");
+    }
+    if (t is TermInput) {
+      foreach (Token child in t.Children) {
+        if (child is Parameter p) {
+          localResult.Add(p);
+        } else {
+          CollectConstructParameterParents(child, ancestors, cache,
+                                           localResult);
+        }
+      }
+    } else {
+      foreach (Token child in t.Children) {
+        CollectConstructParameterParents(child, ancestors, cache, localResult);
+      }
+      if (t is Parameter p) {
+        localResult.Remove(p);
+        if (!ReferenceEquals(localResult, result)) {
+          result.Remove(p);
+        }
+      }
+    }
+    if (!ancestors.Remove(t)) {
+      throw new InvalidOperationException(
+          "Invariant violation: ancestor already removed.");
+    }
+    if (!ReferenceEquals(localResult, result)) {
+      if (!cache.TryAdd((ConstructRoot)t, localResult)) {
+        throw new InvalidOperationException(
+            "Invariant violation: cache is already populated.");
+      }
+      result.UnionWith(localResult);
     }
   }
 }

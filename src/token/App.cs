@@ -54,7 +54,7 @@ public class App : ConstructRoot {
         label.Append($",\\n{pos}");
       }
     }
-    state.WriteSubgraphHeader(name, label.ToString());
+    state.WriteClusterHeader(name, label.ToString());
 
     state.WriteSubgraphNode(this);
 
@@ -63,7 +63,7 @@ public class App : ConstructRoot {
     state.WriteSubgraphNode(Argument);
     state.WriteSubgraphEdge(this, Argument);
 
-    state.WriteSubgraphFooter();
+    state.WriteClusterFooter();
 
     WriteOutsideEdges(state);
     Applicand.WriteOutsideEdges(state);

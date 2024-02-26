@@ -352,4 +352,114 @@ h+M+
       Assert.Fail();
     }
   }
+
+  [TestMethod]
+  public void OrAndOne() {
+    Legend legend = _templates.CreateLegend();
+    legend.AddPuzzle('@', "forall A B C D, A+B -> C*D -> (A*C) + (B*D)");
+    legend.AddCase('a', "inl");
+    legend.AddCase('b', "inr");
+    legend.AddCase('c', "pair");
+    legend.AddConstant('d', "pair");
+    legend.AddConstant('e', "inl");
+    legend.AddConstant('g', "inr");
+    // clang-format off
+    const string schematic = (
+"""
+/* A B C D ab cd */
+#@#i#i#i#i#i##i#########
+#          +  +        #
+#+++++++++++  +++M+++++o
+#+               c#i#i #
+#+               # + + #
+#+M++++++++++++++o + + #
+# a#i##          # + + #
+# # +++++++ ++++++++ + #
+# #       + +        + #
+# #     d+A+A+       + #
+# #          +       + #
+# #        e+A+      + #
+# #           +      + #
+# #  ++++++++++      + #
+# #  +o              + #
+# #####              + #
+# .....              + #
+# b#i##              + #
+# # +++++++ ++++++++++ #
+# #       + +          #
+# #     d+A+A+         #
+# #          +         #
+# #        g+A+        #
+# #           +        #
+# #  ++++++++++        #
+# #  +o                #
+# #####                #
+#                      #
+########################
+""");
+    // clang-format on
+
+    _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
+
+    using TokenEmissionState state = new(_accessor);
+    Random r = new(0);
+    BlockPos puzzleBlock = new(1, 0, 1, 0);
+    Token puzzle = state.Process(
+        new NodePos(puzzleBlock, _accessor.FindNodeId(puzzleBlock, "scope")),
+        r, TestContext.FullyQualifiedTestClassName,
+                     TestContext.TestName);
+    if (puzzle is Function f) {
+      CollectionAssert.AreEqual(new Token[] { puzzle },
+                                state.UnreferencedRoots.ToList());
+    } else {
+      Assert.Fail();
+    }
+  }
+
+  [TestMethod]
+  public void DoubleDanglingMatch() {
+    Legend legend = _templates.CreateLegend();
+    legend.AddPuzzle('@', "forall A B, A*B -> A*B -> nat");
+    legend.AddCase('a', "pair");
+    legend.AddConstant('b', "pair");
+    legend.AddConstant('O', "O");
+    // clang-format off
+    const string schematic = (
+"""
+/* A B ab ab2 */
+#@#i#i#i##i###########
+#      +  +          #
+# ++++++  ++         #
+# +        +         #
+# +        +         #
+# +        +         #
+# +M+      +M+       #
+#  a#i#i##  a#i#i##  #
+#    +   o    +   o  #
+#    +        +      #
+#  b+A++++++++A+     #
+#                 O++o
+######################
+""");
+    // clang-format on
+
+    _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
+
+    using TokenEmissionState state = new(_accessor);
+    Random r = new(0);
+    BlockPos puzzleBlock = new(1, 0, 1, 0);
+    Token puzzle = state.Process(
+        new NodePos(puzzleBlock, _accessor.FindNodeId(puzzleBlock, "scope")),
+        r, TestContext.FullyQualifiedTestClassName,
+                     TestContext.TestName);
+    Function f = (Function)puzzle;
+    CollectionAssert.AreEqual(new Token[] { puzzle },
+                              state.UnreferencedRoots.ToList());
+    Parameter p1 = (Parameter)f.Children[1].Children[0].Children[0];
+    Assert.AreEqual(1, p1.Unused.Count);
+    Parameter p2 = (Parameter)p1.Children[0];
+    Assert.AreEqual(1, p2.Unused.Count);
+    Parameter p3 = (Parameter)p2.Unused[0].Children[0].Children[0];
+    Assert.AreEqual(1, p3.Unused.Count);
+  }
 }

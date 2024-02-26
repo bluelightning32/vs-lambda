@@ -131,13 +131,13 @@ public class Function : ConstructRoot {
         label.Append($",\\n{pos}");
       }
     }
-    state.WriteSubgraphHeader(name, label.ToString());
+    state.WriteClusterHeader(name, label.ToString());
 
     state.WriteSubgraphNode(this);
 
     WriteSubgraphNodes(state);
 
-    state.WriteSubgraphFooter();
+    state.WriteClusterFooter();
 
     WriteOutsideEdges(state);
   }

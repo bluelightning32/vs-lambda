@@ -113,7 +113,7 @@ public class Match : ConstructRoot {
         label.Append($",\\n{pos}");
       }
     }
-    state.WriteSubgraphHeader(name, label.ToString());
+    state.WriteClusterHeader(name, label.ToString());
 
     state.WriteSubgraphNode(this);
 
@@ -130,7 +130,7 @@ public class Match : ConstructRoot {
       state.WriteSubgraphEdge(this, c);
     }
 
-    state.WriteSubgraphFooter();
+    state.WriteClusterFooter();
 
     Input.WriteOutsideEdges(state);
     _matchIn?.WriteOutsideEdges(state);

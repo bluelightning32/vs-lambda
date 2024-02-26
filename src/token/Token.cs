@@ -189,4 +189,10 @@ public abstract class ConstructRoot : TermSource {
     HashSet<Token> ancestors = new();
     ValidateParameters(ancestors);
   }
+
+  public void AddAnchor(Parameter p) {
+    Debug.Assert(IncomingEdgeCount == 0);
+    p.AddUnused(this);
+    ++IncomingEdgeCount;
+  }
 }

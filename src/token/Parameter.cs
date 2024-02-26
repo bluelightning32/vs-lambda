@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Diagnostics;
 
 using Lambda.Network;
+
+using Vintagestory.API.Util;
 
 namespace Lambda.Token;
 
@@ -20,8 +22,23 @@ public class Parameter : TermSource {
 
   readonly ParameterList _parameters;
   public TermInput Type;
+  // Unused constructs that have been anchored to this parameter because they or
+  // a dependent use this parameter.
+  public List<ConstructRoot> _unused = null;
   public override IReadOnlyList<Token> Children {
-    get { return _parameters.GetChildrenAtLevel(_parameters.GetNext(this)); }
+    get {
+      Token[] children =
+          _parameters.GetChildrenAtLevel(_parameters.GetNext(this));
+      if (_unused == null || _unused.Count == 0) {
+        return children;
+      }
+      return children.Append(_unused);
+    }
+  }
+
+  public IReadOnlyList<ConstructRoot> Unused {
+    get =>
+        (IReadOnlyList<ConstructRoot>)_unused ?? Array.Empty<ConstructRoot>();
   }
 
   public Parameter(string name, NodePos pos, ConstructRoot construct,
@@ -38,6 +55,13 @@ public class Parameter : TermSource {
     _parameters.Dispose();
     Type?.Dispose();
     Type = null;
+    if (_unused != null) {
+      List<ConstructRoot> unused = _unused;
+      _unused = null;
+      foreach (ConstructRoot c in unused) {
+        c.Dispose();
+      }
+    }
     base.Dispose();
   }
 
@@ -46,5 +70,22 @@ public class Parameter : TermSource {
       return;
     }
     base.SetDepth(parent);
+  }
+
+  public void AddUnused(ConstructRoot constructRoot) {
+    _unused ??= new List<ConstructRoot>();
+    Debug.Assert(!_unused.Contains(constructRoot));
+    _unused.Add(constructRoot);
+  }
+
+  public override void WriteOutsideEdges(GraphvizState state) {
+    if (_unused == null || _unused.Count == 0) {
+      return;
+    }
+    state.StartSubgraph($"unused_{state.GetName(this)}", "blue");
+    foreach (ConstructRoot c in _unused) {
+      state.WriteEdge(this, c);
+    }
+    state.EndSubgraph();
   }
 }

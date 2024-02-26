@@ -36,10 +36,10 @@ public class Constant : ConstructRoot {
         label.Append($",\\n{pos}");
       }
     }
-    state.WriteSubgraphHeader(name, label.ToString());
+    state.WriteClusterHeader(name, label.ToString());
 
     state.WriteSubgraphNode(this);
 
-    state.WriteSubgraphFooter();
+    state.WriteClusterFooter();
   }
 }

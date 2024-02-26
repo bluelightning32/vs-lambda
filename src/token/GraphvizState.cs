@@ -76,14 +76,19 @@ public class GraphvizState {
 
   public void WriteFooter() { _writer.WriteLine("}"); }
 
-  public void WriteSubgraphHeader(string name, string label) {
-    _writer.WriteLine("");
-    _writer.WriteLine($"  subgraph \"cluster_{name}\" {{");
+  public void WriteClusterHeader(string name, string label) {
+    StartSubgraph($"cluster_{name}", "#00000050");
     _writer.WriteLine($"    label=\"{label}\";");
-    _writer.WriteLine("    edge [color=\"#00000050\"];");
   }
 
-  public void WriteSubgraphFooter() { _writer.WriteLine("  }"); }
+  public void StartSubgraph(string name, string edgeColor) {
+    _writer.WriteLine("");
+    _writer.WriteLine($"  subgraph \"{name}\" {{");
+    _writer.WriteLine($"    edge [color=\"{edgeColor}\"];");
+  }
+
+  public void EndSubgraph() { _writer.WriteLine("  }"); }
+  public void WriteClusterFooter() { EndSubgraph(); }
 
   public void WriteSubgraphNode(string name, string label) {
     _writer.WriteLine($"    \"{name}\"[label=\"{label}\"];");
