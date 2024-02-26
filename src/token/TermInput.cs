@@ -41,25 +41,4 @@ public class TermInput : Token {
       state.WriteEdge(this, Value);
     }
   }
-
-  public override void ValidateDepth() {
-    if (Value is not Parameter) {
-      base.ValidateDepth();
-    }
-  }
-
-  protected override void ValidateParameters(HashSet<Token> ancestors) {
-    if (Value is Parameter) {
-      if (!ancestors.Contains(Value)) {
-        throw new InvalidFormatException(Blocks.ToArray(),
-                                         "parameter-wrong-subtree");
-      }
-      if (Value.Depth >= Depth) {
-        throw new InvalidOperationException(
-            "TermInput puts to a Parameter with equal or greater depth.");
-      }
-    } else {
-      base.ValidateParameters(ancestors);
-    }
-  }
 }

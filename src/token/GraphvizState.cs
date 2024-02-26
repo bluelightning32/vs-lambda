@@ -95,7 +95,7 @@ public class GraphvizState {
   }
 
   public void WriteSubgraphNode(Token token) {
-    WriteSubgraphNode(GetName(token), $"{token.Depth}: {token.Name}");
+    WriteSubgraphNode(GetName(token), token.Name);
   }
 
   public void WriteSubgraphEdge(string source, string target) {

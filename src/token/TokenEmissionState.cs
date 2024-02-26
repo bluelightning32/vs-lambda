@@ -72,9 +72,6 @@ public class TokenEmissionState : IDisposable {
     SaveGraphviz(testClass, testName, ".parameters", extraEdges);
     ScopeUnused(extraEdges);
     SaveGraphviz(testClass, testName, ".scoped", null);
-    SetDepths();
-    SaveGraphviz(testClass, testName, ".depth", null);
-    ValidateDepths();
     return result;
   }
 
@@ -351,63 +348,6 @@ public class TokenEmissionState : IDisposable {
       childSource = child;
     }
     MaybeAddPendingSource(childSource);
-  }
-
-  // Returns all of the tokens in the graph in a reverse topological order. For
-  // example, the last element in the result has no ancestors. Throws
-  // `InvalidOperationException` if there is a cycle.
-  public List<Token> ReverseTopologicalSort() {
-    List<Token> result = new();
-    Dictionary<Token, bool> visited = new();
-    foreach (ConstructRoot c in _unreferencedRoots) {
-      ReverseTopologicalSortVisit(c, result, visited);
-    }
-    return result;
-  }
-
-  private void ReverseTopologicalSortVisit(Token t, List<Token> result,
-                                           Dictionary<Token, bool> visited) {
-    // Mark t with a temporary mark
-    if (!visited.TryAdd(t, false)) {
-      if (!visited[t]) {
-        throw new InvalidOperationException("The graph has a cycle.");
-      }
-      return;
-    }
-    if (t is TermInput) {
-      foreach (Token c in t.Children) {
-        // Ignore TermInput to Parameter edges to prevent cycles.
-        if (c is not Parameter) {
-          ReverseTopologicalSortVisit(c, result, visited);
-        }
-      }
-    } else {
-      foreach (Token c in t.Children) {
-        ReverseTopologicalSortVisit(c, result, visited);
-      }
-    }
-    visited[t] = true;
-    result.Add(t);
-  }
-
-  public void SetDepths() {
-    List<Token> revSorted = ReverseTopologicalSort();
-    SetDepths(revSorted);
-  }
-
-  public void ValidateDepths() {
-    foreach (ConstructRoot c in _unreferencedRoots) {
-      c.ValidateDepth();
-    }
-  }
-
-  private static void SetDepths(List<Token> revSorted) {
-    for (int i = revSorted.Count - 1; i >= 0; --i) {
-      Token p = revSorted[i];
-      foreach (Token c in p.Children) {
-        c.SetDepth(p);
-      }
-    }
   }
 
   public Dictionary<ConstructRoot, List<Parameter>>

@@ -25,7 +25,6 @@ public abstract class Token : IDisposable {
 
   public abstract IReadOnlyList<Token> Children { get; }
 
-  public int Depth { get; private set; }
   public int PendingRef { get; private set; }
 
   public string Name { get; private set; }
@@ -101,30 +100,6 @@ public abstract class Token : IDisposable {
       }
     }
   }
-
-  internal virtual void SetDepth(Token parent) { Depth = parent.Depth + 1; }
-
-  public virtual void ValidateDepth() {
-    foreach (Token c in Children) {
-      if (c.Depth <= Depth) {
-        throw new InvalidOperationException(
-            "The child's depth is less or equal to the parent's.");
-      }
-      c.ValidateDepth();
-    }
-  }
-
-  protected virtual void ValidateParameters(HashSet<Token> ancestors) {
-    ancestors.Add(this);
-    foreach (Token c in Children) {
-      if (c.Depth <= Depth) {
-        throw new InvalidOperationException(
-            "The child's depth is less or equal to the parent's.");
-      }
-      c.ValidateParameters(ancestors);
-    }
-    ancestors.Remove(this);
-  }
 }
 
 public abstract class TermSource : Token {
@@ -183,11 +158,6 @@ public abstract class ConstructRoot : TermSource {
     } else {
       base.AddSink(state, sink);
     }
-  }
-
-  public void ValidateParameters() {
-    HashSet<Token> ancestors = new();
-    ValidateParameters(ancestors);
   }
 
   public void AddAnchor(Parameter p) {

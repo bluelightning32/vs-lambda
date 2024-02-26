@@ -65,13 +65,6 @@ public class Parameter : TermSource {
     base.Dispose();
   }
 
-  internal override void SetDepth(Token parent) {
-    if (parent is TermInput) {
-      return;
-    }
-    base.SetDepth(parent);
-  }
-
   public void AddUnused(ConstructRoot constructRoot) {
     _unused ??= new List<ConstructRoot>();
     Debug.Assert(!_unused.Contains(constructRoot));
