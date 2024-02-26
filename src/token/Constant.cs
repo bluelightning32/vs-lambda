@@ -23,7 +23,7 @@ public class Constant : ConstructRoot {
     Term = term;
   }
 
-  public override void WriteConstruct(GraphvizState state) {
+  public override void WriteConstruct(GraphvizEmitter state) {
     string name = state.GetName(this);
     StringBuilder label = new();
     label.Append("Constant");

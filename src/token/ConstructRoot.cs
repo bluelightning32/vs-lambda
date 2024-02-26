@@ -8,9 +8,9 @@ public abstract class ConstructRoot : TermSource {
 
   public ConstructRoot(string name) : base(name) {}
 
-  public abstract void WriteConstruct(GraphvizState state);
+  public abstract void WriteConstruct(GraphvizEmitter state);
 
-  public override void AddSink(TokenEmissionState state, Token sink) {
+  public override void AddSink(TokenEmitter state, Token sink) {
     if (sink is TermInput input) {
       input.SetSource(this);
       ++IncomingEdgeCount;

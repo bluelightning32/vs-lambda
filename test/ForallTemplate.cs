@@ -39,7 +39,7 @@ public class ForallTemplateTest {
 
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
-    using TokenEmissionState state = new(_accessor);
+    using TokenEmitter state = new(_accessor);
     Random r = new(0);
     BlockPos startBlock = new(1, 0, 0, 0);
     Token start = state.Process(
@@ -82,7 +82,7 @@ public class ForallTemplateTest {
 
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
-    using TokenEmissionState state = new(_accessor);
+    using TokenEmitter state = new(_accessor);
     Random r = new(0);
     BlockPos startBlock = new(1, 0, 0, 0);
     Token start = state.Process(

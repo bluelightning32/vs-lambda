@@ -22,7 +22,7 @@ public class ScopeTemplate : BlockNodeTemplate {
   //
   // All ports and the parent scope are queued up to be emitted (or the port's
   // source is queued) if they are not already pending.
-  private Token CreatePorts(TokenEmissionState state, NodePos parentPos,
+  private Token CreatePorts(TokenEmitter state, NodePos parentPos,
                             Node[] nodes, NodePos forPos) {
     Node parentNode = nodes[parentPos.NodeId];
     NodeTemplate parentTemplate = _nodeTemplates[parentPos.NodeId];
@@ -71,7 +71,7 @@ public class ScopeTemplate : BlockNodeTemplate {
     return ret;
   }
 
-  public override Token Emit(TokenEmissionState state, NodePos pos,
+  public override Token Emit(TokenEmitter state, NodePos pos,
                              Node[] nodes, string inventoryTerm) {
     NodeTemplate nodeTemplate = _nodeTemplates[pos.NodeId];
     if (nodeTemplate.ParentId != -1 &&

@@ -41,7 +41,7 @@ public class FunctionTemplateTest {
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
     for (int i = 0; i < 5; ++i) {
-      using TokenEmissionState state = new(_accessor);
+      using TokenEmitter state = new(_accessor);
       Random r = new(i);
       BlockPos puzzleBlock = new(1, 0, 0, 0);
       Token puzzle = state.Process(
@@ -92,7 +92,7 @@ public class FunctionTemplateTest {
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
     for (int i = 0; i < 5; ++i) {
-      using TokenEmissionState state = new(_accessor);
+      using TokenEmitter state = new(_accessor);
       Random r = new(i);
       BlockPos puzzleBlock = new(1, 0, 0, 0);
       Token puzzle = state.Process(
@@ -149,7 +149,7 @@ public class FunctionTemplateTest {
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
     for (int i = 0; i < 5; ++i) {
-      using (TokenEmissionState state = new(_accessor)) {
+      using (TokenEmitter state = new(_accessor)) {
         Random r = new(i);
         BlockPos puzzleBlock = new(1, 0, 0, 0);
         Token puzzle = state.Process(
@@ -208,7 +208,7 @@ public class FunctionTemplateTest {
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
     for (int i = 0; i < 5; ++i) {
-      using TokenEmissionState state = new(_accessor);
+      using TokenEmitter state = new(_accessor);
       Random r = new(i);
       BlockPos puzzleBlock = new(1, 0, 0, 0);
       Token puzzle = state.Process(
@@ -253,7 +253,7 @@ public class FunctionTemplateTest {
 
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
-    using TokenEmissionState state = new(_accessor);
+    using TokenEmitter state = new(_accessor);
     Random r = new(0);
     BlockPos startBlock = new(3, 0, 0, 0);
     Token start = state.Process(
@@ -299,7 +299,7 @@ public class FunctionTemplateTest {
 
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
-    using TokenEmissionState state = new(_accessor);
+    using TokenEmitter state = new(_accessor);
     Random r = new(0);
     BlockPos puzzleBlock = new(1, 0, 0, 0);
     Token puzzle = state.Process(
@@ -340,7 +340,7 @@ public class FunctionTemplateTest {
 
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
-    using TokenEmissionState state = new(_accessor);
+    using TokenEmitter state = new(_accessor);
     Random r = new(0);
     BlockPos puzzleBlock = new(1, 0, 1, 0);
     Token puzzle = state.Process(

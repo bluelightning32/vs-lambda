@@ -71,7 +71,7 @@ public class Parameter : TermSource {
     _unused.Add(constructRoot);
   }
 
-  public override void WriteOutsideEdges(GraphvizState state) {
+  public override void WriteOutsideEdges(GraphvizEmitter state) {
     if (_unused == null || _unused.Count == 0) {
       return;
     }

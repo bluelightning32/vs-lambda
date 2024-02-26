@@ -6,14 +6,14 @@ using Lambda.Network;
 
 namespace Lambda.Token;
 
-public class GraphvizState {
+public class GraphvizEmitter {
   private readonly Dictionary<Token, string> _tokenNames = new();
   private readonly HashSet<string> _usedNames = new();
   private readonly List<ConstructRoot> _pending = new();
 
   private readonly TextWriter _writer;
 
-  public GraphvizState(TextWriter writer) { _writer = writer; }
+  public GraphvizEmitter(TextWriter writer) { _writer = writer; }
 
   public void Add(Token t) {
     GetName(t);

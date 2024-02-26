@@ -41,7 +41,7 @@ public class App : ConstructRoot {
     base.Dispose();
   }
 
-  public override void WriteConstruct(GraphvizState state) {
+  public override void WriteConstruct(GraphvizEmitter state) {
     string name = state.GetName(this);
     StringBuilder label = new();
     label.Append(Name);

@@ -40,7 +40,7 @@ public abstract class Token : IDisposable {
     Name = name;
   }
 
-  public void AddRef(TokenEmissionState state, NodePos pos) {
+  public void AddRef(TokenEmitter state, NodePos pos) {
     if (Blocks[0] == new NodePos(0, 0, 2, 0, 2) &&
         pos == new NodePos(2, 0, 2, 0, 0)) {
       PendingRef = PendingRef;
@@ -52,7 +52,7 @@ public abstract class Token : IDisposable {
     Debug.Assert(state.PreparedContains(this));
   }
 
-  public void ReleaseRef(TokenEmissionState state, NodePos child) {
+  public void ReleaseRef(TokenEmitter state, NodePos child) {
     if (!_pendingRefLocations.Remove(child)) {
       Debug.Assert(false);
     }
@@ -61,26 +61,26 @@ public abstract class Token : IDisposable {
     }
   }
 
-  public virtual void AddConnector(TokenEmissionState state,
+  public virtual void AddConnector(TokenEmitter state,
                                    NetworkType network, NodePos pos) {
     throw new InvalidOperationException(
         "Token does not accept connectors in ${network}.");
   }
 
-  public virtual void AddPendingChild(TokenEmissionState state,
+  public virtual void AddPendingChild(TokenEmitter state,
                                       NetworkType network, NodePos pos) {
     throw new InvalidOperationException(
         "Token does not accept children in ${network}.");
   }
 
-  public void AddPendingChildren(TokenEmissionState state, NetworkType network,
+  public void AddPendingChildren(TokenEmitter state, NetworkType network,
                                  IEnumerable<NodePos> children) {
     foreach (NodePos child in children) {
       AddPendingChild(state, network, child);
     }
   }
 
-  public virtual void AddSink(TokenEmissionState state, Token sink) {
+  public virtual void AddSink(TokenEmitter state, Token sink) {
     throw new InvalidOperationException("Token does not accept children.");
   }
 
@@ -93,7 +93,7 @@ public abstract class Token : IDisposable {
 
   // Write all of the edges that point outside of the construct. This does not
   // recurse with the construct or outside the construct.
-  public virtual void WriteOutsideEdges(GraphvizState state) {
+  public virtual void WriteOutsideEdges(GraphvizEmitter state) {
     foreach (Token t in Children) {
       if (t.Construct != Construct) {
         state.WriteEdge(this, t);
@@ -103,7 +103,7 @@ public abstract class Token : IDisposable {
 }
 
 public interface IAcceptScopePort {
-  public Token AddPort(TokenEmissionState state, NodePos source, Node[] nodes,
+  public Token AddPort(TokenEmitter state, NodePos source, Node[] nodes,
                        string inventoryTerm, BlockPos childPos,
                        NodeTemplate child);
 }

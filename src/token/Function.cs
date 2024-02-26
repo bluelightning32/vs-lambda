@@ -45,7 +45,7 @@ public class Function : ConstructRoot {
     _parameters = new ParameterList(face);
   }
 
-  public override void AddConnector(TokenEmissionState state,
+  public override void AddConnector(TokenEmitter state,
                                     NetworkType network, NodePos pos) {
     if (network == NetworkType.Scope) {
       _scopeConnectors.Add(pos);
@@ -55,7 +55,7 @@ public class Function : ConstructRoot {
     }
   }
 
-  public override void AddPendingChild(TokenEmissionState state,
+  public override void AddPendingChild(TokenEmitter state,
                                        NetworkType network, NodePos pos) {
     if (network == NetworkType.Scope) {
       AddRef(state, pos);
@@ -65,7 +65,7 @@ public class Function : ConstructRoot {
     }
   }
 
-  public virtual Token AddPort(TokenEmissionState state, NodePos pos,
+  public virtual Token AddPort(TokenEmitter state, NodePos pos,
                                string name, bool isSource) {
     Token added = null;
     if (isSource) {
@@ -89,7 +89,7 @@ public class Function : ConstructRoot {
     base.Dispose();
   }
 
-  protected virtual void WriteSubgraphNodes(GraphvizState state) {
+  protected virtual void WriteSubgraphNodes(GraphvizEmitter state) {
     Token parent = this;
     Parameter p = _parameters.Parameters.FirstOrDefault();
     while (true) {
@@ -105,7 +105,7 @@ public class Function : ConstructRoot {
     }
   }
 
-  public override void WriteOutsideEdges(GraphvizState state) {
+  public override void WriteOutsideEdges(GraphvizEmitter state) {
     Parameter p = _parameters.Parameters.FirstOrDefault();
     while (true) {
       foreach (Token t in _parameters.GetChildrenAtLevel(p)) {
@@ -118,7 +118,7 @@ public class Function : ConstructRoot {
     }
   }
 
-  public override void WriteConstruct(GraphvizState state) {
+  public override void WriteConstruct(GraphvizEmitter state) {
     string name = state.GetName(this);
     StringBuilder label = new();
     label.Append(Name);

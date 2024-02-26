@@ -23,7 +23,7 @@ public class Puzzle : Function {
   public Puzzle(string name, NodePos pos, int outputNodeId, BlockFacing face)
       : base(name, pos, outputNodeId, face) {}
 
-  public override Token AddPort(TokenEmissionState state, NodePos pos,
+  public override Token AddPort(TokenEmitter state, NodePos pos,
                                 string name, bool isSource) {
     if (name == "resulttype") {
       if (_resultType != null) {
@@ -44,7 +44,7 @@ public class Puzzle : Function {
     base.Dispose();
   }
 
-  protected override void WriteSubgraphNodes(GraphvizState state) {
+  protected override void WriteSubgraphNodes(GraphvizEmitter state) {
     if (_resultType != null) {
       state.WriteSubgraphNode(_resultType);
       state.WriteSubgraphEdge(this, _resultType);
@@ -52,7 +52,7 @@ public class Puzzle : Function {
     base.WriteSubgraphNodes(state);
   }
 
-  public override void WriteOutsideEdges(GraphvizState state) {
+  public override void WriteOutsideEdges(GraphvizEmitter state) {
     _resultType?.WriteOutsideEdges(state);
     base.WriteOutsideEdges(state);
   }

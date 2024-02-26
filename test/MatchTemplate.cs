@@ -37,7 +37,7 @@ public class MatchTemplateTest {
 
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
-    using TokenEmissionState state = new(_accessor);
+    using TokenEmitter state = new(_accessor);
     Random r = new();
     BlockPos startBlock = new(2, 0, 0, 0);
     Token result = state.Process(
@@ -75,7 +75,7 @@ b+M+
 
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
-    using TokenEmissionState state = new(_accessor);
+    using TokenEmitter state = new(_accessor);
     Random r = new();
     BlockPos startBlock = new(2, 0, 0, 0);
     Token result = state.Process(
@@ -130,7 +130,7 @@ b+M+
 
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
-    using TokenEmissionState state = new(_accessor);
+    using TokenEmitter state = new(_accessor);
     Random r = new();
     BlockPos startBlock = new(2, 0, 0, 0);
     Token result = state.Process(
@@ -188,7 +188,7 @@ c+M+
 
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
-    using TokenEmissionState state = new(_accessor);
+    using TokenEmitter state = new(_accessor);
     Random r = new();
     BlockPos startBlock = new(2, 0, 0, 0);
     Token result = state.Process(
@@ -277,7 +277,7 @@ h+M+
 
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
-    using TokenEmissionState state = new(_accessor);
+    using TokenEmitter state = new(_accessor);
     Random r = new(0);
     BlockPos startBlock = new(2, 0, 0, 0);
     Token result = state.Process(
@@ -334,7 +334,7 @@ h+M+
 
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
-    using TokenEmissionState state = new(_accessor);
+    using TokenEmitter state = new(_accessor);
     Random r = new(0);
     BlockPos puzzleBlock = new(1, 0, 1, 0);
     Token puzzle = state.Process(
@@ -401,7 +401,7 @@ h+M+
 
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
-    using TokenEmissionState state = new(_accessor);
+    using TokenEmitter state = new(_accessor);
     Random r = new(0);
     BlockPos puzzleBlock = new(1, 0, 1, 0);
     Token puzzle = state.Process(
@@ -445,7 +445,7 @@ h+M+
 
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
-    using TokenEmissionState state = new(_accessor);
+    using TokenEmitter state = new(_accessor);
     Random r = new(0);
     BlockPos puzzleBlock = new(1, 0, 1, 0);
     Token puzzle = state.Process(

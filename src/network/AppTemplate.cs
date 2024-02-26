@@ -72,7 +72,7 @@ public class AppTemplate : BlockNodeTemplate {
     return new NodePos(pos, 0);
   }
 
-  private void CreateAll(TokenEmissionState state, BlockPos pos, Node[] nodes,
+  private void CreateAll(TokenEmitter state, BlockPos pos, Node[] nodes,
                          string inventoryTerm, int forNode) {
     List<Token> added = new();
     NodePos outputPos = GetNodePosOrDefault(pos, _outputId);
@@ -111,7 +111,7 @@ public class AppTemplate : BlockNodeTemplate {
     }
   }
 
-  public override Token Emit(TokenEmissionState state, NodePos pos,
+  public override Token Emit(TokenEmitter state, NodePos pos,
                              Node[] nodes, string inventoryTerm) {
     if (!state.Prepared.TryGetValue(pos, out Token result)) {
       CreateAll(state, pos.Block, nodes, inventoryTerm, pos.NodeId);

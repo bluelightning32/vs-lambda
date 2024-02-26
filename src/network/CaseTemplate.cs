@@ -56,7 +56,7 @@ public class CaseTemplate : BlockNodeTemplate, IAcceptScopePort {
     }
   }
 
-  protected virtual Case CreateCase(TokenEmissionState state, NodePos matchPos,
+  protected virtual Case CreateCase(TokenEmitter state, NodePos matchPos,
                                     Node[] nodes, string inventoryTerm) {
     Node matchNode = nodes[matchPos.NodeId];
     Debug.Assert(_nodeTemplates[matchPos.NodeId].Network == NetworkType.Match);
@@ -64,7 +64,7 @@ public class CaseTemplate : BlockNodeTemplate, IAcceptScopePort {
                          inventoryTerm);
   }
 
-  private Case GetCase(TokenEmissionState state, NodePos matchPos, Node[] nodes,
+  private Case GetCase(TokenEmitter state, NodePos matchPos, Node[] nodes,
                        string inventoryTerm, int forNode) {
     Case c;
     if (state.Prepared.TryGetValue(matchPos, out Token caseToken)) {
@@ -85,7 +85,7 @@ public class CaseTemplate : BlockNodeTemplate, IAcceptScopePort {
     return c;
   }
 
-  public Token AddPort(TokenEmissionState state, NodePos sourcePos,
+  public Token AddPort(TokenEmitter state, NodePos sourcePos,
                        Node[] nodes, string inventoryTerm, BlockPos childPos,
                        NodeTemplate child) {
     NodePos matchPos = new(sourcePos.Block, _matchId);
@@ -94,7 +94,7 @@ public class CaseTemplate : BlockNodeTemplate, IAcceptScopePort {
                  child.IsSource);
   }
 
-  private Case EmitCase(TokenEmissionState state, BlockPos pos, Node[] nodes,
+  private Case EmitCase(TokenEmitter state, BlockPos pos, Node[] nodes,
                         string inventoryTerm) {
     NodePos matchPos = new(pos, _matchId);
     Case c;
@@ -120,7 +120,7 @@ public class CaseTemplate : BlockNodeTemplate, IAcceptScopePort {
     return c;
   }
 
-  public override Token Emit(TokenEmissionState state, NodePos pos,
+  public override Token Emit(TokenEmitter state, NodePos pos,
                              Node[] nodes, string inventoryTerm) {
     if (pos.NodeId == _matchId) {
       Token matchResult = EmitCase(state, pos.Block, nodes, inventoryTerm);

@@ -10,7 +10,7 @@ public abstract class TermSource : Token {
 
   public TermSource(string name) : base(name) {}
 
-  public override void AddConnector(TokenEmissionState state,
+  public override void AddConnector(TokenEmitter state,
                                     NetworkType network, NodePos pos) {
     if (network == NetworkType.Term) {
       _termConnectors.Add(pos);
@@ -20,7 +20,7 @@ public abstract class TermSource : Token {
     }
   }
 
-  public override void AddSink(TokenEmissionState state, Token sink) {
+  public override void AddSink(TokenEmitter state, Token sink) {
     if (sink is TermInput input) {
       input.SetSource(this);
     } else {
@@ -28,7 +28,7 @@ public abstract class TermSource : Token {
     }
   }
 
-  public override void AddPendingChild(TokenEmissionState state,
+  public override void AddPendingChild(TokenEmitter state,
                                        NetworkType network, NodePos pos) {
     if (network == NetworkType.Term) {
       AddRef(state, pos);

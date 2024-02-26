@@ -56,7 +56,7 @@ public class Match : ConstructRoot {
         this);
   }
 
-  public override void AddConnector(TokenEmissionState state,
+  public override void AddConnector(TokenEmitter state,
                                     NetworkType network, NodePos pos) {
     if (network == NetworkType.Match) {
       _matchConnectors.Add(pos);
@@ -66,7 +66,7 @@ public class Match : ConstructRoot {
     }
   }
 
-  public override void AddPendingChild(TokenEmissionState state,
+  public override void AddPendingChild(TokenEmitter state,
                                        NetworkType network, NodePos pos) {
     if (network == NetworkType.Match) {
       AddRef(state, pos);
@@ -100,7 +100,7 @@ public class Match : ConstructRoot {
     base.Dispose();
   }
 
-  public override void WriteConstruct(GraphvizState state) {
+  public override void WriteConstruct(GraphvizEmitter state) {
     string name = state.GetName(this);
     StringBuilder label = new();
     label.Append(Name);

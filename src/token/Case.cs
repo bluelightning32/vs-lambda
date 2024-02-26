@@ -47,7 +47,7 @@ public class Case : Token {
     _match = match;
   }
 
-  public override void AddConnector(TokenEmissionState state,
+  public override void AddConnector(TokenEmitter state,
                                     NetworkType network, NodePos pos) {
     if (network == NetworkType.Scope) {
       _scopeConnectors.Add(pos);
@@ -57,7 +57,7 @@ public class Case : Token {
     }
   }
 
-  public override void AddPendingChild(TokenEmissionState state,
+  public override void AddPendingChild(TokenEmitter state,
                                        NetworkType network, NodePos pos) {
     if (network == NetworkType.Scope) {
       AddRef(state, pos);
@@ -67,7 +67,7 @@ public class Case : Token {
     }
   }
 
-  public Token AddPort(TokenEmissionState state, NodePos pos, string name,
+  public Token AddPort(TokenEmitter state, NodePos pos, string name,
                        bool isSource) {
     Token added;
     if (isSource) {
@@ -93,7 +93,7 @@ public class Case : Token {
     base.Dispose();
   }
 
-  public void WriteSubgraphNode(GraphvizState state) {
+  public void WriteSubgraphNode(GraphvizEmitter state) {
     string name = state.GetName(this);
     state.WriteSubgraphNode(name, Name);
 
@@ -112,7 +112,7 @@ public class Case : Token {
     }
   }
 
-  public override void WriteOutsideEdges(GraphvizState state) {
+  public override void WriteOutsideEdges(GraphvizEmitter state) {
     Parameter p = _parameters.Parameters.FirstOrDefault();
     while (true) {
       foreach (Token t in _parameters.GetChildrenAtLevel(p)) {

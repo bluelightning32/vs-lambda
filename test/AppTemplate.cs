@@ -37,7 +37,7 @@ O++
 
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
-    using TokenEmissionState state = new(_accessor);
+    using TokenEmitter state = new(_accessor);
     Random r = new();
     BlockPos startBlock = new(0, 0, 0, 0);
     Token result = state.Process(
@@ -72,7 +72,7 @@ S+A+
 
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
-    using TokenEmissionState state = new(_accessor);
+    using TokenEmitter state = new(_accessor);
     Random r = new();
     BlockPos startBlock = new(2, 0, 2, 0);
     Token result = state.Process(
@@ -121,7 +121,7 @@ S+A+
     bool first = true;
     // In the past the test failed with seed 24. So start there.
     for (int i = 24; i <= 50; ++i) {
-      using TokenEmissionState state = new(_accessor);
+      using TokenEmitter state = new(_accessor);
       Random r = new(i);
       BlockPos puzzleBlock = new(1, 0, 1, 0);
       Token puzzle = state.Process(

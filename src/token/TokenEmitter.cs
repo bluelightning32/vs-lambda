@@ -10,7 +10,7 @@ using Vintagestory.API.MathTools;
 
 namespace Lambda.Token;
 
-public class TokenEmissionState : IDisposable {
+public class TokenEmitter : IDisposable {
   private readonly NodeAccessor _accessor;
   // Nodes that have already been created but whose references have not been
   // fully visited yet.
@@ -23,7 +23,7 @@ public class TokenEmissionState : IDisposable {
     get => _unreferencedRoots;
   }
 
-  public TokenEmissionState(NodeAccessor accessor) { _accessor = accessor; }
+  public TokenEmitter(NodeAccessor accessor) { _accessor = accessor; }
 
   private Token EmitPos(NodePos pos) {
     BlockNodeTemplate template = _accessor.GetBlock(pos.Block, out Node[] nodes,
@@ -242,7 +242,7 @@ public class TokenEmissionState : IDisposable {
   public void
   SaveGraphviz(string name, TextWriter writer,
                Dictionary<Parameter, List<ConstructRoot>> extraEdges) {
-    GraphvizState graphviz = new(writer);
+    GraphvizEmitter graphviz = new(writer);
     graphviz.WriteHeader(name);
     foreach (ConstructRoot root in _unreferencedRoots) {
       graphviz.Add(root);

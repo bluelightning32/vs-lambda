@@ -354,14 +354,14 @@ public class BlockNodeTemplate {
     return result;
   }
 
-  public virtual Token Emit(TokenEmissionState state, NodePos pos, Node[] nodes,
+  public virtual Token Emit(TokenEmitter state, NodePos pos, Node[] nodes,
                             string inventoryTerm) {
     return null;
   }
 
   // Add's the node's source to the pending list, unless it is already there.
   // The node may be its own source.
-  protected void AddPendingNodeSource(TokenEmissionState state, NodePos pos,
+  protected void AddPendingNodeSource(TokenEmitter state, NodePos pos,
                                       Node[] nodes) {
     // The port should be properly emitted by a connector from its source.
     // If the port is disconnected, then treat the port itself as the

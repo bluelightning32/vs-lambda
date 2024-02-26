@@ -45,7 +45,7 @@ public class MatchTemplate : BlockNodeTemplate {
     }
   }
 
-  private Match GetMatch(TokenEmissionState state, NodePos sourcePos,
+  private Match GetMatch(TokenEmitter state, NodePos sourcePos,
                          Node[] nodes, int forNode) {
     Match source = (Match)state.TryGetSource(sourcePos);
     if (source == null) {
@@ -65,7 +65,7 @@ public class MatchTemplate : BlockNodeTemplate {
     return source;
   }
 
-  public Case AddCase(TokenEmissionState state, NodePos sourcePos, Node[] nodes,
+  public Case AddCase(TokenEmitter state, NodePos sourcePos, Node[] nodes,
                       NodePos childMatchPos, int childScopeId, BlockFacing face,
                       string inventoryTerm) {
     Match m = GetMatch(state, sourcePos, nodes, -1);
@@ -74,7 +74,7 @@ public class MatchTemplate : BlockNodeTemplate {
     return c;
   }
 
-  public MatchIn AddMatchIn(TokenEmissionState state, NodePos sourcePos,
+  public MatchIn AddMatchIn(TokenEmitter state, NodePos sourcePos,
                             Node[] nodes, NodePos childMatchPos,
                             int childScopeId, BlockFacing face,
                             string inventoryTerm) {
@@ -84,7 +84,7 @@ public class MatchTemplate : BlockNodeTemplate {
     return c;
   }
 
-  private Match EmitMatch(TokenEmissionState state, BlockPos pos,
+  private Match EmitMatch(TokenEmitter state, BlockPos pos,
                           Node[] nodes) {
     NodePos matchPos = new(pos, _matchId);
     Match match = (Match)state.TryGetSource(matchPos);
@@ -103,7 +103,7 @@ public class MatchTemplate : BlockNodeTemplate {
     return match;
   }
 
-  public override Token Emit(TokenEmissionState state, NodePos pos,
+  public override Token Emit(TokenEmitter state, NodePos pos,
                              Node[] nodes, string inventoryTerm) {
     if (pos.NodeId == _matchId) {
       Token matchResult = EmitMatch(state, pos.Block, nodes);

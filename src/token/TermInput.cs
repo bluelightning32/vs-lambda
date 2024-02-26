@@ -36,7 +36,7 @@ public class TermInput : Token {
     base.Dispose();
   }
 
-  public override void WriteOutsideEdges(GraphvizState state) {
+  public override void WriteOutsideEdges(GraphvizEmitter state) {
     if (Value != null) {
       state.WriteEdge(this, Value);
     }

@@ -7,7 +7,7 @@ public class MatchInTemplate : CaseTemplate {
                          NodeTemplate[] nodeTemplates)
       : base(accessor, manager, face, nodeTemplates) {}
 
-  protected override Case CreateCase(TokenEmissionState state, NodePos matchPos,
+  protected override Case CreateCase(TokenEmitter state, NodePos matchPos,
                                      Node[] nodes, string inventoryTerm) {
     Node matchNode = nodes[matchPos.NodeId];
     return state.AddMatchIn(matchNode.Source, matchPos, _scopeId, _face,
