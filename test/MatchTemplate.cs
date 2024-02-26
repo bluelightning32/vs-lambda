@@ -455,12 +455,10 @@ h+M+
     Function f = (Function)puzzle;
     CollectionAssert.AreEqual(new Token[] { puzzle },
                               state.UnreferencedRoots.ToList());
-    Parameter p1 = (Parameter)f.Children[1].Children[0].Children[0];
-    Assert.AreEqual(1, p1.Anchored.Count);
-    Parameter p2 = (Parameter)p1.Children[0];
-    Assert.AreEqual(1, p2.Anchored.Count);
-    Parameter p3 = (Parameter)p2.Anchored[0].Children[0].Children[0];
-    Assert.AreEqual(1, p3.Anchored.Count);
+    TermInput t1 = (TermInput)f.Children[1].Children[0].Children[0].Children[0].Children[0];
+    Assert.AreEqual(2, t1.Anchored.Count);
+    TermInput t2 = (TermInput)t1.Children[2].Children[1].Children[0].Children[0].Children[0];
+    Assert.AreEqual(1, t2.Anchored.Count);
   }
 
   [TestMethod]
