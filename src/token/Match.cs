@@ -56,8 +56,8 @@ public class Match : ConstructRoot {
         this);
   }
 
-  public override void AddConnector(TokenEmitter state,
-                                    NetworkType network, NodePos pos) {
+  public override void AddConnector(TokenEmitter state, NetworkType network,
+                                    NodePos pos) {
     if (network == NetworkType.Match) {
       _matchConnectors.Add(pos);
       ReleaseRef(state, pos);
@@ -66,8 +66,8 @@ public class Match : ConstructRoot {
     }
   }
 
-  public override void AddPendingChild(TokenEmitter state,
-                                       NetworkType network, NodePos pos) {
+  public override void AddPendingChild(TokenEmitter state, NetworkType network,
+                                       NodePos pos) {
     if (network == NetworkType.Match) {
       AddRef(state, pos);
       state.AddPending(pos);

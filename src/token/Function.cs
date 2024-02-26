@@ -45,8 +45,8 @@ public class Function : ConstructRoot {
     _parameters = new ParameterList(face);
   }
 
-  public override void AddConnector(TokenEmitter state,
-                                    NetworkType network, NodePos pos) {
+  public override void AddConnector(TokenEmitter state, NetworkType network,
+                                    NodePos pos) {
     if (network == NetworkType.Scope) {
       _scopeConnectors.Add(pos);
       ReleaseRef(state, pos);
@@ -55,8 +55,8 @@ public class Function : ConstructRoot {
     }
   }
 
-  public override void AddPendingChild(TokenEmitter state,
-                                       NetworkType network, NodePos pos) {
+  public override void AddPendingChild(TokenEmitter state, NetworkType network,
+                                       NodePos pos) {
     if (network == NetworkType.Scope) {
       AddRef(state, pos);
       state.AddPending(pos);
@@ -65,8 +65,8 @@ public class Function : ConstructRoot {
     }
   }
 
-  public virtual Token AddPort(TokenEmitter state, NodePos pos,
-                               string name, bool isSource) {
+  public virtual Token AddPort(TokenEmitter state, NodePos pos, string name,
+                               bool isSource) {
     Token added = null;
     if (isSource) {
       Parameter newParam = new("parameter", pos, this, _parameters);

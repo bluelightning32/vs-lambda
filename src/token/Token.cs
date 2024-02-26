@@ -5,6 +5,7 @@ using System.Diagnostics;
 using Lambda.Network;
 
 using Vintagestory.API.MathTools;
+using Vintagestory.GameContent;
 
 namespace Lambda.Token;
 
@@ -61,14 +62,14 @@ public abstract class Token : IDisposable {
     }
   }
 
-  public virtual void AddConnector(TokenEmitter state,
-                                   NetworkType network, NodePos pos) {
+  public virtual void AddConnector(TokenEmitter state, NetworkType network,
+                                   NodePos pos) {
     throw new InvalidOperationException(
         "Token does not accept connectors in ${network}.");
   }
 
-  public virtual void AddPendingChild(TokenEmitter state,
-                                      NetworkType network, NodePos pos) {
+  public virtual void AddPendingChild(TokenEmitter state, NetworkType network,
+                                      NodePos pos) {
     throw new InvalidOperationException(
         "Token does not accept children in ${network}.");
   }
@@ -98,6 +99,25 @@ public abstract class Token : IDisposable {
       if (t.Construct != Construct) {
         state.WriteEdge(this, t);
       }
+    }
+  }
+
+  public virtual void ScopeMultiuse(Dictionary<Token, int> visited,
+                                    List<ConstructRoot> ready, bool isUse) {
+    // Mark t with a temporary mark
+    if (!visited.TryAdd(this, 0)) {
+      throw new InvalidOperationException(
+          "Non-construct token was already visited.");
+    }
+    ScopeMultiuseVisitChildren(visited, ready);
+    ++visited[this];
+  }
+
+  protected virtual void
+  ScopeMultiuseVisitChildren(Dictionary<Token, int> visited,
+                             List<ConstructRoot> ready) {
+    foreach (Token c in Children) {
+      c.ScopeMultiuse(visited, ready, true);
     }
   }
 }

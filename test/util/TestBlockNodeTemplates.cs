@@ -330,7 +330,7 @@ public class TestBlockNodeTemplates {
     legend.Dict.Add('.', new(MatchConnector, null));
     legend.Dict.Add('#', new(ScopeMatchConnector, null));
     legend.Dict.Add('+', new(Wire, null));
-    legend.Dict.Add('*', new(WireCross, null));
+    legend.Dict.Add('%', new(WireCross, null));
     legend.Dict.Add('f', new(Forall, null));
     legend.Dict.Add('i', new(InPort, null));
     legend.Dict.Add('o', new(OutPort, null));

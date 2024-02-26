@@ -228,7 +228,7 @@ public class FunctionTemplateTest {
                         ((Constant)f.Children[0].Children[0]).Term);
 
         Assert.AreEqual("parameter", f.Children[1].Name);
-        Assert.AreEqual(1, ((Parameter)f.Children[1]).Unused.Count);
+        Assert.AreEqual(1, ((Parameter)f.Children[1]).Anchored.Count);
         Assert.AreEqual(5, f.Children[1].TermConnectors.Count);
         Assert.AreEqual("result", f.Children[1].Children[0].Name);
         Assert.AreEqual(f.Children[1], f.Children[1].Children[0].Children[0]);
@@ -350,6 +350,48 @@ public class FunctionTemplateTest {
     if (puzzle is Function f) {
       CollectionAssert.AreEqual(new Token[] { puzzle },
                                 state.UnreferencedRoots.ToList());
+      Parameter lastp =
+          (Parameter)f.Children[1].Children[0].Children[0].Children[0];
+      Assert.AreEqual(1, lastp.Anchored.Count);
+    } else {
+      Assert.Fail();
+    }
+  }
+
+  [TestMethod]
+  public void NestedMultiuse() {
+    Legend legend = _templates.CreateLegend();
+    legend.AddPuzzle('@', "forall A, a -> (A * A) * (A * A)");
+    legend.AddConstant('a', "pair");
+    // clang-format off
+    const string schematic = (
+"""
+/* A a */
+#@#i#i#######
+#    +      #
+#    +++    #
+#    + +    #
+#  a+A+A+++ #
+#  +    + + #
+#  +++++A+A+o
+#############
+""");
+    // clang-format on
+
+    _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
+
+    using TokenEmitter state = new(_accessor);
+    Random r = new(0);
+    BlockPos puzzleBlock = new(1, 0, 1, 0);
+    Token puzzle = state.Process(
+        new NodePos(puzzleBlock, _accessor.FindNodeId(puzzleBlock, "scope")),
+        r, TestContext.FullyQualifiedTestClassName,
+                     TestContext.TestName);
+    if (puzzle is Function f) {
+      CollectionAssert.AreEqual(new Token[] { puzzle },
+                                state.UnreferencedRoots.ToList());
+      Parameter lastp = (Parameter)f.Children[1].Children[0];
+      Assert.AreEqual(2, lastp.Anchored.Count);
     } else {
       Assert.Fail();
     }

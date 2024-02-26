@@ -456,10 +456,55 @@ h+M+
     CollectionAssert.AreEqual(new Token[] { puzzle },
                               state.UnreferencedRoots.ToList());
     Parameter p1 = (Parameter)f.Children[1].Children[0].Children[0];
-    Assert.AreEqual(1, p1.Unused.Count);
+    Assert.AreEqual(1, p1.Anchored.Count);
     Parameter p2 = (Parameter)p1.Children[0];
-    Assert.AreEqual(1, p2.Unused.Count);
-    Parameter p3 = (Parameter)p2.Unused[0].Children[0].Children[0];
-    Assert.AreEqual(1, p3.Unused.Count);
+    Assert.AreEqual(1, p2.Anchored.Count);
+    Parameter p3 = (Parameter)p2.Anchored[0].Children[0].Children[0];
+    Assert.AreEqual(1, p3.Anchored.Count);
+  }
+
+  [TestMethod]
+  public void DoubleMultiuse() {
+    Legend legend = _templates.CreateLegend();
+    legend.AddPuzzle('@', "forall A B, A*B -> A*B*A*B");
+    legend.AddCase('a', "pair");
+    legend.AddConstant('b', "pair");
+    // clang-format off
+    const string schematic = (
+"""
+/* A B ab */
+#@#i#i#i#################
+#      +                #
+# ++++++++++++          #
+# +          +          #
+# +M++++++++ +M++++++++ #
+#  a#i#i## +  a#i#i## + #
+#  # +   # +  #   + # + #
+#  # ++++o +  #   ++o + #
+#  ####### +  ####### + #
+#          +          + #
+#    +++++++          + #
+#    +                + #
+#    + ++++++++++++++++ #
+#    + +   +            #
+#    ++%++ +            #
+#    + + + +            #
+#  b+A+A+A+A++++++++++++o
+#########################
+""");
+    // clang-format on
+
+    _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
+
+    using TokenEmitter state = new(_accessor);
+    Random r = new(0);
+    BlockPos puzzleBlock = new(1, 0, 1, 0);
+    Token puzzle = state.Process(
+        new NodePos(puzzleBlock, _accessor.FindNodeId(puzzleBlock, "scope")),
+        r, TestContext.FullyQualifiedTestClassName,
+                     TestContext.TestName);
+    Function f = (Function)puzzle;
+    CollectionAssert.AreEqual(new Token[] { puzzle },
+                              state.UnreferencedRoots.ToList());
   }
 }

@@ -10,8 +10,8 @@ public abstract class TermSource : Token {
 
   public TermSource(string name) : base(name) {}
 
-  public override void AddConnector(TokenEmitter state,
-                                    NetworkType network, NodePos pos) {
+  public override void AddConnector(TokenEmitter state, NetworkType network,
+                                    NodePos pos) {
     if (network == NetworkType.Term) {
       _termConnectors.Add(pos);
       ReleaseRef(state, pos);
@@ -28,8 +28,8 @@ public abstract class TermSource : Token {
     }
   }
 
-  public override void AddPendingChild(TokenEmitter state,
-                                       NetworkType network, NodePos pos) {
+  public override void AddPendingChild(TokenEmitter state, NetworkType network,
+                                       NodePos pos) {
     if (network == NetworkType.Term) {
       AddRef(state, pos);
       state.AddPending(pos);

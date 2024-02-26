@@ -929,7 +929,7 @@ public class BlockNodeTemplateTest {
 #      +M+++++++++o
 #       a#i#i#### #
 #       # + +   # #
-#       # ++*++ # #
+#       # ++%++ # #
 #       #   + + # #
 #       #   + + # #
 #       #   + + # #

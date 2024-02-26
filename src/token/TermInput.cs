@@ -41,4 +41,15 @@ public class TermInput : Token {
       state.WriteEdge(this, Value);
     }
   }
+
+  protected override void
+  ScopeMultiuseVisitChildren(Dictionary<Token, int> visited,
+                             List<ConstructRoot> ready) {
+    foreach (Token c in Children) {
+      // Ignore TermInput to Parameter edges to prevent cycles.
+      if (c is not Parameter) {
+        c.ScopeMultiuse(visited, ready, true);
+      }
+    }
+  }
 }

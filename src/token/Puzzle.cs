@@ -23,8 +23,8 @@ public class Puzzle : Function {
   public Puzzle(string name, NodePos pos, int outputNodeId, BlockFacing face)
       : base(name, pos, outputNodeId, face) {}
 
-  public override Token AddPort(TokenEmitter state, NodePos pos,
-                                string name, bool isSource) {
+  public override Token AddPort(TokenEmitter state, NodePos pos, string name,
+                                bool isSource) {
     if (name == "resulttype") {
       if (_resultType != null) {
         List<NodePos> blocks = new(_resultType.Blocks) { pos };

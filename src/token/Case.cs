@@ -47,8 +47,8 @@ public class Case : Token {
     _match = match;
   }
 
-  public override void AddConnector(TokenEmitter state,
-                                    NetworkType network, NodePos pos) {
+  public override void AddConnector(TokenEmitter state, NetworkType network,
+                                    NodePos pos) {
     if (network == NetworkType.Scope) {
       _scopeConnectors.Add(pos);
       ReleaseRef(state, pos);
@@ -57,8 +57,8 @@ public class Case : Token {
     }
   }
 
-  public override void AddPendingChild(TokenEmitter state,
-                                       NetworkType network, NodePos pos) {
+  public override void AddPendingChild(TokenEmitter state, NetworkType network,
+                                       NodePos pos) {
     if (network == NetworkType.Scope) {
       AddRef(state, pos);
       state.AddPending(pos);

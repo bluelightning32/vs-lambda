@@ -85,8 +85,8 @@ public class CaseTemplate : BlockNodeTemplate, IAcceptScopePort {
     return c;
   }
 
-  public Token AddPort(TokenEmitter state, NodePos sourcePos,
-                       Node[] nodes, string inventoryTerm, BlockPos childPos,
+  public Token AddPort(TokenEmitter state, NodePos sourcePos, Node[] nodes,
+                       string inventoryTerm, BlockPos childPos,
                        NodeTemplate child) {
     NodePos matchPos = new(sourcePos.Block, _matchId);
     return GetCase(state, matchPos, nodes, inventoryTerm, -1)
@@ -120,8 +120,8 @@ public class CaseTemplate : BlockNodeTemplate, IAcceptScopePort {
     return c;
   }
 
-  public override Token Emit(TokenEmitter state, NodePos pos,
-                             Node[] nodes, string inventoryTerm) {
+  public override Token Emit(TokenEmitter state, NodePos pos, Node[] nodes,
+                             string inventoryTerm) {
     if (pos.NodeId == _matchId) {
       Token matchResult = EmitCase(state, pos.Block, nodes, inventoryTerm);
       state.VerifyInvariants();

@@ -19,6 +19,7 @@ public class TokenEmitter : IDisposable {
   private readonly List<NodePos> _pending = new();
   private readonly HashSet<NodePos> _pendingSources = new();
   private readonly List<ConstructRoot> _unreferencedRoots = new();
+  private readonly List<ConstructRoot> _topLevelMultiuse = new();
   public IReadOnlyList<ConstructRoot> UnreferencedRoots {
     get => _unreferencedRoots;
   }
@@ -71,6 +72,8 @@ public class TokenEmitter : IDisposable {
         ReverseEdges(CollectConstructParameterParents());
     SaveGraphviz(testClass, testName, ".parameters", extraEdges);
     ScopeUnused(extraEdges);
+    SaveGraphviz(testClass, testName, ".unusedscoped", null);
+    ScopeMultiuse();
     SaveGraphviz(testClass, testName, ".scoped", null);
     return result;
   }
@@ -122,6 +125,23 @@ public class TokenEmitter : IDisposable {
       }
     }
     visited[t] = true;
+  }
+
+  public void ScopeMultiuse() {
+    Dictionary<Token, int> visited = new();
+    List<ConstructRoot> ready = new();
+    foreach (ConstructRoot c in _unreferencedRoots.ToArray()) {
+      c.ScopeMultiuse(visited, ready, false);
+      while (ready.Count > 0) {
+        List<ConstructRoot> newReady = new();
+        foreach (ConstructRoot r in ready) {
+          _topLevelMultiuse.Add(r);
+          r.ScopeMultiuseReady(visited, ready);
+        }
+        ready.Clear();
+        ready = newReady;
+      }
+    }
   }
 
   private static Dictionary<Parameter, List<ConstructRoot>>

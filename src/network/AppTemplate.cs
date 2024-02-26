@@ -111,8 +111,8 @@ public class AppTemplate : BlockNodeTemplate {
     }
   }
 
-  public override Token Emit(TokenEmitter state, NodePos pos,
-                             Node[] nodes, string inventoryTerm) {
+  public override Token Emit(TokenEmitter state, NodePos pos, Node[] nodes,
+                             string inventoryTerm) {
     if (!state.Prepared.TryGetValue(pos, out Token result)) {
       CreateAll(state, pos.Block, nodes, inventoryTerm, pos.NodeId);
       result = state.Prepared[pos];

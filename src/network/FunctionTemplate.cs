@@ -91,16 +91,16 @@ public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
     return source;
   }
 
-  public Token AddPort(TokenEmitter state, NodePos sourcePos,
-                       Node[] nodes, string inventoryTerm, BlockPos childPos,
+  public Token AddPort(TokenEmitter state, NodePos sourcePos, Node[] nodes,
+                       string inventoryTerm, BlockPos childPos,
                        NodeTemplate child) {
     return GetFunction(state, sourcePos, nodes, inventoryTerm, -1)
         .AddPort(state, new NodePos(childPos, child.Id), child.Name,
                  child.IsSource);
   }
 
-  private Function EmitScope(TokenEmitter state, BlockPos pos,
-                             Node[] nodes, string inventoryTerm) {
+  private Function EmitScope(TokenEmitter state, BlockPos pos, Node[] nodes,
+                             string inventoryTerm) {
     NodePos scopePos = new(pos, _scopeId);
     Function scope = (Function)state.TryGetSource(scopePos);
     if (scope == null) {
@@ -126,8 +126,8 @@ public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
     return scope;
   }
 
-  public override Token Emit(TokenEmitter state, NodePos pos,
-                             Node[] nodes, string inventoryTerm) {
+  public override Token Emit(TokenEmitter state, NodePos pos, Node[] nodes,
+                             string inventoryTerm) {
     if (pos.NodeId == _scopeId) {
       Token scopeResult = EmitScope(state, pos.Block, nodes, inventoryTerm);
       state.VerifyInvariants();
