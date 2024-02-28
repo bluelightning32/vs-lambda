@@ -342,12 +342,50 @@ h+M+
         r, TestContext.FullyQualifiedTestClassName,
                      TestContext.TestName);
     if (puzzle is Function f) {
-      foreach (Token root in state.UnreferencedRoots) {
-        if (root == puzzle) {
-          continue;
-        }
-        Assert.IsTrue(root.Blocks.Contains(new NodePos(8, 0, 5, 0, 0)));
-      }
+      CollectionAssert.AreEqual(new Token[] { f },
+                                state.UnreferencedRoots.ToList());
+    } else {
+      Assert.Fail();
+    }
+  }
+
+  [TestMethod]
+  public void DisconnectedMatchNoOutput() {
+    Legend legend = _templates.CreateLegend();
+    legend.AddPuzzle('@', "forall A B, A*B -> A*B");
+    legend.AddCase('a', "pair");
+    legend.AddConstant('b', "pair");
+    legend.AddConstant('O', "O");
+    // clang-format off
+    const string schematic = (
+"""
+/* A B ab */
+#@#i#i#i##########
+#      +         #
+#    ++++++++++++o
+#    +           #
+#    +  M+       #
+#    +  a#i#i##  #
+#    +  # +   #  #
+#  b+A++++A+  #  #
+#       #######  #
+#                #
+##################
+""");
+    // clang-format on
+
+    _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
+
+    using TokenEmitter state = new(_accessor);
+    Random r = new(0);
+    BlockPos puzzleBlock = new(1, 0, 1, 0);
+    Token puzzle = state.Process(
+        new NodePos(puzzleBlock, _accessor.FindNodeId(puzzleBlock, "scope")),
+        r, TestContext.FullyQualifiedTestClassName,
+                     TestContext.TestName);
+    if (puzzle is Function f) {
+      CollectionAssert.AreEqual(new Token[] { f },
+                                state.UnreferencedRoots.ToList());
     } else {
       Assert.Fail();
     }
@@ -456,9 +494,11 @@ h+M+
     CollectionAssert.AreEqual(new Token[] { puzzle },
                               state.UnreferencedRoots.ToList());
     TermInput t1 = (TermInput)f.Children[1].Children[0].Children[0].Children[0].Children[0];
-    Assert.AreEqual(2, t1.Anchored.Count);
-    TermInput t2 = (TermInput)t1.Children[2].Children[1].Children[0].Children[0].Children[0];
+    Assert.AreEqual(1, t1.Anchored.Count);
+    TermInput t2 = (TermInput)t1.Anchored[0].Children[1].Children[0].Children[0].Children[0];
     Assert.AreEqual(1, t2.Anchored.Count);
+    TermInput t3 = (TermInput)t2.Anchored[0].Children[1].Children[0].Children[0].Children[0];
+    Assert.AreEqual(1, t3.Anchored.Count);
   }
 
   [TestMethod]

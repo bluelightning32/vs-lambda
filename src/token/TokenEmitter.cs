@@ -68,63 +68,202 @@ public class TokenEmitter : IDisposable {
     Debug.Assert(
         _prepared.Count == 0,
         $"Prepared nodes were not cleared, remaining={_prepared.Count} first={_prepared.First()}");
-    Dictionary<Parameter, List<ConstructRoot>> extraEdges =
-        ReverseEdges(CollectConstructParameterParents());
-    SaveGraphviz(testClass, testName, ".parameters", extraEdges);
-    ScopeUnused(extraEdges);
+    Dictionary<ConstructRoot, HashSet<Parameter>> newEdgesByTarget =
+        CollectConstructParameterParents();
+    Dictionary<Parameter, HashSet<ConstructRoot>> newEdgesBySource =
+        ReverseEdges(newEdgesByTarget);
+    SaveGraphviz(testClass, testName, ".parameters", newEdgesBySource);
+    ScopeUnused(result, newEdgesBySource, newEdgesByTarget);
     SaveGraphviz(testClass, testName, ".unusedscoped", null);
     ScopeMultiuse();
     SaveGraphviz(testClass, testName, ".scoped", null);
     return result;
   }
 
-  public void
-  ScopeUnused(Dictionary<Parameter, List<ConstructRoot>> extraEdges) {
-    Dictionary<Token, bool> visited = new();
-    foreach (ConstructRoot c in _unreferencedRoots.ToArray()) {
-      ScopeUnusedVisit(extraEdges, c, visited);
+  private static bool AreEdgesPaired(
+      Dictionary<Parameter, HashSet<ConstructRoot>> newEdgesBySource,
+      Dictionary<ConstructRoot, HashSet<Parameter>> newEdgesByTarget) {
+    foreach (KeyValuePair<Parameter, HashSet<ConstructRoot>> pair in
+                 newEdgesBySource) {
+      foreach (ConstructRoot target in pair.Value) {
+        if (!newEdgesByTarget[target].Contains(pair.Key)) {
+          return false;
+        }
+      }
     }
+    foreach (KeyValuePair<ConstructRoot, HashSet<Parameter>> pair in
+                 newEdgesByTarget) {
+      foreach (Parameter source in pair.Value) {
+        if (!newEdgesBySource[source].Contains(pair.Key)) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   private void
-  ScopeUnusedVisit(Dictionary<Parameter, List<ConstructRoot>> extraEdges,
-                   Token t, Dictionary<Token, bool> visited) {
-    // Mark t with a temporary mark
-    if (!visited.TryAdd(t, false)) {
-      if (!visited[t]) {
-        throw new InvalidOperationException("The graph has a cycle.");
+  ScopeUnused(Token main,
+              Dictionary<Parameter, HashSet<ConstructRoot>> newEdgesBySource,
+              Dictionary<ConstructRoot, HashSet<Parameter>> newEdgesByTarget) {
+    Debug.Assert(AreEdgesPaired(newEdgesBySource, newEdgesByTarget));
+    HashSet<Token> ancestors = new();
+    while (newEdgesBySource.Count != 0) {
+      bool added = false;
+      // Try the adding the new edges as deep as possible in all unreferenced
+      // roots that would be referenced if the new edges were added.
+      if (main is ConstructRoot mainc) {
+        HashSet<Parameter> remaining = new();
+        Dictionary<ConstructRoot, HashSet<Parameter>> cache = new();
+        added = ScopeUnusedVisit(newEdgesBySource, newEdgesByTarget, mainc,
+                                 ancestors, false, cache, remaining);
+        Debug.Assert(remaining.Count == 0);
+        if (added) {
+          continue;
+        }
       }
-      return;
+      // If that did not add any edges, then try adding the new edges as deep as
+      // possible in all of the unreferenced roots except for the main one. The
+      // unreferenced roots are prioritized, because they can be changed into
+      // child, whereas the main root should remain parentless.
+      foreach (ConstructRoot c in _unreferencedRoots.ToArray()) {
+        if (c == main) {
+          continue;
+        }
+        HashSet<Parameter> remaining = new();
+        Dictionary<ConstructRoot, HashSet<Parameter>> cache = new();
+        added |= ScopeUnusedVisit(newEdgesBySource, newEdgesByTarget, c,
+                                  ancestors, true, cache, remaining);
+        InsertEdgesByTarget(c, remaining, newEdgesBySource, newEdgesByTarget);
+      }
+      if (added) {
+        continue;
+      }
+      // If none of the above worked, try adding the new edges somewhere inside
+      // the main tree.
+      if (main is ConstructRoot mainc2) {
+        HashSet<Parameter> remaining = new();
+        Dictionary<ConstructRoot, HashSet<Parameter>> cache = new();
+        added = ScopeUnusedVisit(newEdgesBySource, newEdgesByTarget, mainc2,
+                                 ancestors, true, cache, remaining);
+        InsertEdgesByTarget(mainc2, remaining, newEdgesBySource,
+                            newEdgesByTarget);
+      }
+    }
+  }
+
+  private static void InsertEdgesByTarget(
+      ConstructRoot target, HashSet<Parameter> sources,
+      Dictionary<Parameter, HashSet<ConstructRoot>> edgesBySource,
+      Dictionary<ConstructRoot, HashSet<Parameter>> edgesByTarget) {
+    if (sources.Count != 0) {
+      if (!edgesByTarget.TryAdd(target, sources)) {
+        edgesByTarget[target].UnionWith(sources);
+      }
+      foreach (Parameter source in sources) {
+        if (!edgesBySource.TryGetValue(source,
+                                       out HashSet<ConstructRoot> targets)) {
+          targets = new();
+          edgesBySource.Add(source, targets);
+        }
+        targets.Add(target);
+      }
+    }
+  }
+
+  private bool ScopeUnusedVisit(
+      Dictionary<Parameter, HashSet<ConstructRoot>> newEdgesBySource,
+      Dictionary<ConstructRoot, HashSet<Parameter>> newEdgesByTarget, Token t,
+      HashSet<Token> ancestors, bool allowAdd,
+      Dictionary<ConstructRoot, HashSet<Parameter>> cache,
+      HashSet<Parameter> remaining) {
+    bool result = false;
+    HashSet<Parameter> localRemaining = remaining;
+    if (t is ConstructRoot c && c.IncomingEdgeCount > 1) {
+      if (cache.TryGetValue(c, out HashSet<Parameter> cachedResult)) {
+        remaining.UnionWith(cachedResult);
+        return result;
+      }
+      localRemaining = new();
+    }
+    if (!ancestors.Add(t)) {
+      throw new InvalidOperationException("The graph has a cycle.");
     }
     if (t is TermInput) {
-      foreach (Token c in t.Children) {
+      foreach (Token child in t.Children) {
         // Ignore TermInput to Parameter edges to prevent cycles.
-        if (c is not Parameter) {
-          ScopeUnusedVisit(extraEdges, c, visited);
+        if (child is not Parameter) {
+          result |=
+              ScopeUnusedVisit(newEdgesBySource, newEdgesByTarget, child,
+                               ancestors, allowAdd, cache, localRemaining);
         }
       }
     } else {
-      foreach (Token c in t.Children) {
-        ScopeUnusedVisit(extraEdges, c, visited);
+      foreach (Token child in t.Children) {
+        result |= ScopeUnusedVisit(newEdgesBySource, newEdgesByTarget, child,
+                                   ancestors, allowAdd, cache, localRemaining);
       }
       if (t is Parameter p) {
-        if (extraEdges.TryGetValue(p, out List<ConstructRoot> addEdges)) {
-          foreach (ConstructRoot c in addEdges) {
-            if (c.IncomingEdgeCount != 0) {
-              // This construct was already linked in.
-              continue;
-            }
-            c.AddAnchor(p);
-            ScopeUnusedVisit(extraEdges, c, visited);
-            if (!_unreferencedRoots.Remove(c)) {
-              throw new InvalidOperationException(
-                  "Unreferenced construct was not in the unreferenced constructs list.");
+        if (newEdgesBySource.TryGetValue(p,
+                                         out HashSet<ConstructRoot> targets)) {
+          foreach (ConstructRoot child in targets) {
+            if (allowAdd) {
+              result |=
+                  ScopeUnusedVisit(newEdgesBySource, newEdgesByTarget, child,
+                                   ancestors, true, cache, localRemaining);
+            } else {
+              HashSet<Parameter> localRemaining2 = new();
+              result |=
+                  ScopeUnusedVisit(newEdgesBySource, newEdgesByTarget, child,
+                                   ancestors, true, cache, localRemaining2);
+              InsertEdgesByTarget(child, localRemaining2, newEdgesBySource,
+                                  newEdgesByTarget);
             }
           }
         }
+        if (allowAdd && newEdgesBySource.Remove(p, out targets)) {
+          foreach (ConstructRoot target in targets) {
+            if (target.IncomingEdgeCount != 0) {
+              throw new InvalidOperationException(
+                  "construct already linked in.");
+            }
+            // This adds the edge from `p` to `target` and updates the
+            // IncomingEdgeCount of `target`.
+            target.AddAnchor(p);
+            result = true;
+            if (!_unreferencedRoots.Remove(target)) {
+              throw new InvalidOperationException(
+                  "Unreferenced construct was not in the unreferenced constructs list.");
+            }
+            if (!newEdgesByTarget.Remove(target,
+                                         out HashSet<Parameter> sources)) {
+              throw new InvalidOperationException(
+                  "Edge missing in by-target dictionary.");
+            }
+            // `t` takes over all other new edges pointing to `target`.
+            foreach (Parameter source in sources) {
+              if (source != p) {
+                newEdgesBySource[source].Remove(target);
+                localRemaining.Add(source);
+              }
+            }
+          }
+        }
+        localRemaining.Remove(p);
       }
     }
-    visited[t] = true;
+    if (!ancestors.Remove(t)) {
+      throw new InvalidOperationException(
+          "Invariant violation: ancestor already removed.");
+    }
+    if (!ReferenceEquals(localRemaining, remaining)) {
+      if (!cache.TryAdd((ConstructRoot)t, localRemaining)) {
+        throw new InvalidOperationException(
+            "Invariant violation: cache is already populated.");
+      }
+      remaining.UnionWith(localRemaining);
+    }
+    return result;
   }
 
   public void ScopeMultiuse() {
@@ -144,12 +283,12 @@ public class TokenEmitter : IDisposable {
     }
   }
 
-  private static Dictionary<Parameter, List<ConstructRoot>>
-  ReverseEdges(Dictionary<ConstructRoot, List<Parameter>> rev) {
-    Dictionary<Parameter, List<ConstructRoot>> result = new();
-    foreach (KeyValuePair<ConstructRoot, List<Parameter>> pair in rev) {
+  private static Dictionary<Parameter, HashSet<ConstructRoot>>
+  ReverseEdges(Dictionary<ConstructRoot, HashSet<Parameter>> rev) {
+    Dictionary<Parameter, HashSet<ConstructRoot>> result = new();
+    foreach (KeyValuePair<ConstructRoot, HashSet<Parameter>> pair in rev) {
       foreach (Parameter p in pair.Value) {
-        if (!result.TryGetValue(p, out List<ConstructRoot> list)) {
+        if (!result.TryGetValue(p, out HashSet<ConstructRoot> list)) {
           list = new();
           result.Add(p, list);
         }
@@ -239,7 +378,7 @@ public class TokenEmitter : IDisposable {
 
   public void
   SaveGraphviz(string testClass, string testName, string stage,
-               Dictionary<Parameter, List<ConstructRoot>> extraEdges) {
+               Dictionary<Parameter, HashSet<ConstructRoot>> extraEdges) {
     if (testClass == null) {
       return;
     }
@@ -261,7 +400,7 @@ public class TokenEmitter : IDisposable {
 
   public void
   SaveGraphviz(string name, TextWriter writer,
-               Dictionary<Parameter, List<ConstructRoot>> extraEdges) {
+               Dictionary<Parameter, HashSet<ConstructRoot>> extraEdges) {
     GraphvizEmitter graphviz = new(writer);
     graphviz.WriteHeader(name);
     foreach (ConstructRoot root in _unreferencedRoots) {
@@ -269,7 +408,7 @@ public class TokenEmitter : IDisposable {
     }
     if (extraEdges != null) {
       graphviz.StartSubgraph("extraedges", "blue");
-      foreach (KeyValuePair<Parameter, List<ConstructRoot>> pair in
+      foreach (KeyValuePair<Parameter, HashSet<ConstructRoot>> pair in
                    extraEdges) {
         foreach (ConstructRoot target in pair.Value) {
           graphviz.WriteSubgraphEdge(pair.Key, target);
@@ -370,15 +509,15 @@ public class TokenEmitter : IDisposable {
     MaybeAddPendingSource(childSource);
   }
 
-  public Dictionary<ConstructRoot, List<Parameter>>
+  public Dictionary<ConstructRoot, HashSet<Parameter>>
   CollectConstructParameterParents() {
-    Dictionary<ConstructRoot, List<Parameter>> result = new();
+    Dictionary<ConstructRoot, HashSet<Parameter>> result = new();
     Dictionary<ConstructRoot, HashSet<Parameter>> cache = new();
     HashSet<Token> ancestors = new();
     foreach (ConstructRoot c in _unreferencedRoots) {
       HashSet<Parameter> hashset = new();
       CollectConstructParameterParents(c, ancestors, cache, hashset);
-      result[c] = hashset.ToList();
+      result[c] = hashset;
     }
     return result;
   }
