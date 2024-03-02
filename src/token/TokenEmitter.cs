@@ -267,15 +267,14 @@ public class TokenEmitter : IDisposable {
   }
 
   public void ScopeMultiuse() {
-    Dictionary<Token, int> visited = new();
     List<ConstructRoot> ready = new();
     foreach (ConstructRoot c in _unreferencedRoots.ToArray()) {
-      c.ScopeMultiuse(visited, ready, false);
+      c.ScopeMultiuse(ready, false);
       while (ready.Count > 0) {
         List<ConstructRoot> newReady = new();
         foreach (ConstructRoot r in ready) {
           _topLevelMultiuse.Add(r);
-          r.ScopeMultiuseReady(visited, ready);
+          r.ScopeMultiuseReady(ready);
         }
         ready.Clear();
         ready = newReady;

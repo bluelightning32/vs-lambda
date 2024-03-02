@@ -27,13 +27,11 @@ public abstract class ConstructRoot : TermSource {
     ++IncomingEdgeCount;
   }
 
-  public override void ScopeMultiuse(Dictionary<Token, int> visited,
-                                     List<ConstructRoot> ready, bool isUse) {
+  public override void ScopeMultiuse(List<ConstructRoot> ready, bool isUse) {
     // If isUse is false, then this construct is visited as a top-level
     // unreferenced root.
     if (isUse) {
-      visited.TryAdd(this, 0);
-      int newCount = ++visited[this];
+      int newCount = ++_multiUseVisited;
       Debug.Assert(newCount <= IncomingEdgeCount);
       if (IncomingEdgeCount > 1) {
         if (newCount == IncomingEdgeCount) {
@@ -42,15 +40,14 @@ public abstract class ConstructRoot : TermSource {
         return;
       }
     }
-    ScopeMultiuseVisitChildren(visited, ready);
+    ScopeMultiuseVisitChildren(ready);
   }
 
-  public void ScopeMultiuseReady(Dictionary<Token, int> visited,
-                                 List<ConstructRoot> ready) {
+  public void ScopeMultiuseReady(List<ConstructRoot> ready) {
     if (IncomingEdgeCount == 1) {
       throw new InvalidOperationException(
           "ScopeMultiuseReady should only be called for nodes with 2 or more references.");
     }
-    ScopeMultiuseVisitChildren(visited, ready);
+    ScopeMultiuseVisitChildren(ready);
   }
 }

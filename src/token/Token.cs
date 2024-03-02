@@ -30,6 +30,11 @@ public abstract class Token : IDisposable {
 
   public string Name { get; private set; }
 
+  // This is only used for multiuse scoping. Before the scoping is performed,
+  // this is set to 0. After the scoping is done, this is set to the number of
+  // parents, excluding the anchor edge.
+  protected int _multiUseVisited = 0;
+
   private readonly HashSet<NodePos> _pendingRefLocations = new();
 
   public IReadOnlySet<NodePos> PendingRefLocations {
@@ -102,22 +107,14 @@ public abstract class Token : IDisposable {
     }
   }
 
-  public virtual void ScopeMultiuse(Dictionary<Token, int> visited,
-                                    List<ConstructRoot> ready, bool isUse) {
-    // Mark t with a temporary mark
-    if (!visited.TryAdd(this, 0)) {
-      throw new InvalidOperationException(
-          "Non-construct token was already visited.");
-    }
-    ScopeMultiuseVisitChildren(visited, ready);
-    ++visited[this];
+  public virtual void ScopeMultiuse(List<ConstructRoot> ready, bool isUse) {
+    ScopeMultiuseVisitChildren(ready);
+    ++_multiUseVisited;
   }
 
-  protected virtual void
-  ScopeMultiuseVisitChildren(Dictionary<Token, int> visited,
-                             List<ConstructRoot> ready) {
+  protected virtual void ScopeMultiuseVisitChildren(List<ConstructRoot> ready) {
     foreach (Token c in Children) {
-      c.ScopeMultiuse(visited, ready, true);
+      c.ScopeMultiuse(ready, true);
     }
   }
 }

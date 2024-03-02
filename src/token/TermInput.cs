@@ -85,12 +85,11 @@ public class TermInput : Token {
   }
 
   protected override void
-  ScopeMultiuseVisitChildren(Dictionary<Token, int> visited,
-                             List<ConstructRoot> ready) {
+  ScopeMultiuseVisitChildren(List<ConstructRoot> ready) {
     foreach (Token c in Children) {
       // Ignore TermInput to Parameter edges to prevent cycles.
       if (c is not Parameter) {
-        c.ScopeMultiuse(visited, ready, true);
+        c.ScopeMultiuse(ready, true);
       }
     }
     while (ready.Count > 0) {
@@ -98,7 +97,7 @@ public class TermInput : Token {
       foreach (ConstructRoot c in ready) {
         _anchored ??= new();
         _anchored.Add(c);
-        c.ScopeMultiuseReady(visited, newReady);
+        c.ScopeMultiuseReady(newReady);
       }
       ready.Clear();
       ready = newReady;
