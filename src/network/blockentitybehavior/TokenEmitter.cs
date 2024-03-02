@@ -171,4 +171,8 @@ public class TokenEmitter : VSBlockEntityBehavior, IMeshGenerator {
   }
 
   public virtual string GetInventoryTerm() { return null; }
+
+  public Token.TokenEmitter Emit() {
+    return GetManager(Api).Emit(new NodePos(Pos, 0));
+  }
 }

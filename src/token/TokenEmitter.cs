@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 using Lambda.Network;
 
@@ -26,6 +27,22 @@ public class TokenEmitter : IDisposable {
 
   private Token _main = null;
 
+  public string MainName {
+    get {
+      StringBuilder sb = new();
+      sb.Append(_main.FirstBlock.Block.X);
+      sb.Append('_');
+      sb.Append(_main.FirstBlock.Block.Y);
+      sb.Append('_');
+      sb.Append(_main.FirstBlock.Block.Z);
+      sb.Append('_');
+      sb.Append(_main.FirstBlock.Block.dimension);
+      sb.Append('_');
+      sb.Append(_main.FirstBlock.NodeId);
+      return sb.ToString();
+    }
+  }
+
   public TokenEmitter(NodeAccessor accessor) { _accessor = accessor; }
 
   private Token EmitPos(NodePos pos) {
@@ -34,18 +51,32 @@ public class TokenEmitter : IDisposable {
     return template.Emit(this, pos, nodes, inventoryTerm);
   }
 
-  public Token Process(NodePos start) {
-    Token result = EmitPos(start);
+  public void Process(NodePos start) {
+    _main = EmitPos(start);
     while (_pending.Count != 0) {
       NodePos popped = _pending[_pending.Count - 1];
       _pending.RemoveAt(_pending.Count - 1);
+      _pendingSources.Remove(popped);
       EmitPos(popped);
     }
+  }
+
+  public void PostProcess() {
+    string name = MainName;
+    SaveGraphviz(name, "", null);
     Debug.Assert(_pending.Count == 0);
     Debug.Assert(
         _prepared.Count == 0,
         $"Prepared nodes were not cleared, remaining={_prepared.Count} first={_prepared.First()}");
-    return result;
+    Dictionary<ConstructRoot, HashSet<Parameter>> newEdgesByTarget =
+        CollectConstructParameterParents();
+    Dictionary<Parameter, HashSet<ConstructRoot>> newEdgesBySource =
+        ReverseEdges(newEdgesByTarget);
+    SaveGraphviz(name, ".parameters", newEdgesBySource);
+    ScopeUnused(newEdgesBySource, newEdgesByTarget);
+    SaveGraphviz(name, ".unusedscoped", null);
+    ScopeMultiuse();
+    SaveGraphviz(name, ".scoped", null);
   }
 
   // Emit all of the nodes starting at `start`, while processing the pending
@@ -379,6 +410,28 @@ public class TokenEmitter : IDisposable {
   }
 
   public void
+  SaveGraphviz(string name, string stage,
+               Dictionary<Parameter, HashSet<ConstructRoot>> extraEdges) {
+    if (name == null) {
+      return;
+    }
+    // To save graphviz files, run the tests with:
+    // dotnet test -c Debug --logger:"console;verbosity=detailed" -e GRAPHVIZ=1
+    //
+    // clang-format off
+    //
+    // To render the file, use a command like the following:
+    // dot -Tsvg test/bin/Debug/net7.0/Lambda.Tests.FunctionTemplateTest.NestedPassthrough.dot -o NestedPassthrough.svg
+    //
+    // clang-format on
+    if (Environment.GetEnvironmentVariable("GRAPHVIZ") == null) {
+      return;
+    }
+    using StreamWriter writer = new($"{name}{stage}.dot");
+    SaveGraphviz(name, writer, extraEdges);
+  }
+
+  public void
   SaveGraphviz(string testClass, string testName, string stage,
                Dictionary<Parameter, HashSet<ConstructRoot>> extraEdges) {
     if (testClass == null) {
@@ -574,10 +627,14 @@ public class TokenEmitter : IDisposable {
 
   public string EmitDefinition(string name) {
     StringWriter writer = new();
-    CoqEmitter emitter = new(writer);
-    ((ConstructRoot)_main).EmitDefinition(name, emitter);
+    EmitDefinition(name, writer);
     string result = writer.ToString();
     CoqSanitizer.Sanitize(new StringReader(result));
     return result;
+  }
+
+  public void EmitDefinition(string name, TextWriter writer) {
+    CoqEmitter emitter = new(writer);
+    ((ConstructRoot)_main).EmitDefinition(name, emitter);
   }
 }

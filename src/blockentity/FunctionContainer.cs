@@ -1,9 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.CompilerServices;
+
+using Lambda.Token;
 
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.Server;
 
 namespace Lambda.BlockEntity;
 
@@ -16,17 +21,24 @@ public class FunctionContainer : TermContainer {
     Inscribe = 2000,
   }
 
-  int _completed = 0;
   float _progress = 0;
   float _finishTime = 0;
+  long _startTime = 0;
   string _errorMessage;
-  long _processed_callback = -1;
+  bool _running = false;
+  long _processedCallback = -1;
   InscriptionRecipe _currentRecipe;
 
   public FunctionContainer() {
     // This is just the default class name. `base.Initialize` may override it if
     // the inventoryClassName block attribute is set.
     _inventoryClassName = "function";
+  }
+
+  public override void Initialize(ICoreAPI api) {
+    base.Initialize(api);
+    _currentRecipe = InscriptionSystem.GetInstance(Api).GetRecipeForIngredient(
+        Inventory[0].Itemstack);
   }
 
   private RichTextComponentBase[] GetDescription() {
@@ -94,11 +106,20 @@ public class FunctionContainer : TermContainer {
                                               byte[] data) {
     if (packetid == (int)PacketId.Inscribe) {
       Api.Logger.Debug("Server got inscribe packet");
-      if (_processed_callback == -1 && _currentRecipe != null) {
+      if (!_running && _processedCallback == -1 && _currentRecipe != null) {
         _progress = 0;
+        _startTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
         _finishTime = _currentRecipe.ProcessTime;
-        _processed_callback =
-            RegisterDelayedCallback(OnComplete, (int)(_finishTime * 1000));
+        try {
+          TokenEmitter emitter =
+              GetBehavior<Network.BlockEntityBehavior.TokenEmitter>().Emit();
+          _running = true;
+          TyronThreadPool.QueueLongDurationTask(() => Compile(emitter),
+                                                "lambda");
+        } catch (Exception e) {
+          _errorMessage = e.Message;
+          CompilationDone();
+        }
         MarkDirty(true);
       }
       return;
@@ -106,12 +127,50 @@ public class FunctionContainer : TermContainer {
     base.OnReceivedClientPacket(player, packetid, data);
   }
 
+  private void Compile(TokenEmitter emitter) {
+    try {
+      emitter.PostProcess();
+      string subpath = Path.Combine(
+          "ModData", ((ICoreServerAPI)Api).World.SavegameIdentifier,
+          CoreSystem.Domain);
+      string folder = Api.GetOrCreateDataPath(subpath);
+      string filename = Path.Combine(
+          folder, $"{emitter.MainName}_{RuntimeHelpers.GetHashCode(this)}.v");
+      Api.Logger.Debug("Lambda writing to file {0}", filename);
+      using StreamWriter writer = new(filename);
+      emitter.EmitDefinition("puzzle", writer);
+      writer.Close();
+      using StreamReader reader = new(filename);
+      CoqSanitizer.Sanitize(reader);
+      Api.Event.EnqueueMainThreadTask(() => {
+        _errorMessage = null;
+        CompilationDone();
+      }, "lambda");
+    } catch (Exception e) {
+      Api.Event.EnqueueMainThreadTask(() => {
+        _errorMessage = e.Message;
+        CompilationDone();
+      }, "lambda");
+    }
+  }
+
+  private void CompilationDone() {
+    _running = false;
+    long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+    long delay = (long)(_finishTime * 1000) - (now - _startTime);
+    if (delay <= 0) {
+      OnComplete(0);
+    } else {
+      _processedCallback = RegisterDelayedCallback(OnComplete, (int)delay);
+    }
+  }
+
   protected override void OnSlotModified(int slotId) {
     if (Api.Side == EnumAppSide.Server) {
-      if (_processed_callback != -1) {
-        UnregisterDelayedCallback(_processed_callback);
+      if (_processedCallback != -1) {
+        UnregisterDelayedCallback(_processedCallback);
       }
-      _processed_callback = -1;
+      _processedCallback = -1;
       _progress = 0;
       _finishTime = 0;
       _errorMessage = null;
@@ -124,10 +183,6 @@ public class FunctionContainer : TermContainer {
   }
 
   private ItemStack GetOutputItemStack() {
-    if (++_completed % 2 == 1) {
-      _errorMessage = "placeholder error";
-      return null;
-    }
     InscriptionRecipe recipe =
         InscriptionSystem.GetInstance(Api).GetRecipeForIngredient(
             Inventory[0].Itemstack);
@@ -141,14 +196,16 @@ public class FunctionContainer : TermContainer {
 
   private void OnComplete(float delay) {
     Api.Logger.Debug("Inscribe done on the server side.");
-    _processed_callback = -1;
+    _processedCallback = -1;
     if (_finishTime != 0) {
       _progress = 0;
       _finishTime = 0;
-      ItemStack replacement = GetOutputItemStack();
-      if (replacement is not null) {
-        Inventory[0].Itemstack = replacement;
-        Inventory[0].MarkDirty();
+      if (_errorMessage == null) {
+        ItemStack replacement = GetOutputItemStack();
+        if (replacement is not null) {
+          Inventory[0].Itemstack = replacement;
+          Inventory[0].MarkDirty();
+        }
       }
     }
     MarkDirty(true);

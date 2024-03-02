@@ -453,4 +453,10 @@ public class Manager {
       throw;
     }
   }
+
+  public Token.TokenEmitter Emit(NodePos start) {
+    Token.TokenEmitter state = new(_accessor);
+    state.Process(start);
+    return state;
+  }
 }
