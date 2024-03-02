@@ -51,6 +51,13 @@ O++
       Assert.AreEqual("O", c.Term);
       Assert.IsTrue(c.TermConnectors.Contains(new NodePos(1, 0, 0, 0, 0)));
       Assert.AreEqual(0, c.Children.Count);
+
+      Assert.AreEqual(
+  """
+Definition d:=
+O.
+
+""", state.EmitDefinition("d"));
     } else {
       Assert.Fail();
     }
@@ -92,6 +99,13 @@ S+A+
       Assert.AreEqual("argument", a.Children[1].Name);
       Assert.AreEqual(1, a.Children[1].Children.Count);
       Assert.IsTrue(a.Children[1].Children[0] is Constant);
+
+      Assert.AreEqual(
+  """
+Definition d:=
+S O.
+
+""", state.EmitDefinition("d"));
     } else {
       Assert.Fail();
     }
@@ -140,6 +154,14 @@ S+A+
         Assert.AreEqual(
             f.Children[1],
             f.Children[1].Children[0].Children[0].Children[1].Children[0]);
+
+        Assert.AreEqual(
+"""
+Definition d: (bool -> bool):=
+fun parameter_3_0_1_0_2 =>
+  negb parameter_3_0_1_0_2.
+
+""", state.EmitDefinition("d"));
       } else {
         Assert.Fail();
       }

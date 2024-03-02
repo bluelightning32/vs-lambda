@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 using Lambda.Network;
 
@@ -111,5 +110,15 @@ public class TermInput : Token {
     _anchored ??= new List<ConstructRoot>();
     Debug.Assert(!_anchored.Contains(constructRoot));
     _anchored.Add(constructRoot);
+  }
+
+  public override void EmitExpression(CoqEmitter emitter,
+                                      bool app_needs_parens) {
+    if (_anchored != null) {
+      foreach (ConstructRoot c in _anchored) {
+        c.EmitLet(emitter);
+      }
+    }
+    EmitReference(Value, emitter, app_needs_parens);
   }
 }

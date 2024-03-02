@@ -65,6 +65,14 @@ public class FunctionTemplateTest {
             f.Children[1].TermConnectors.Contains(new NodePos(3, 0, 1, 0, 0)));
         Assert.AreEqual("result", f.Children[1].Children[0].Name);
         Assert.AreEqual(f.Children[1], f.Children[1].Children[0].Children[0]);
+
+        Assert.AreEqual(
+"""
+Definition d: (nat -> nat):=
+fun parameter_3_0_0_0_2 =>
+  parameter_3_0_0_0_2.
+
+""", state.EmitDefinition("d"));
       } else {
         Assert.Fail();
       }
@@ -122,6 +130,15 @@ public class FunctionTemplateTest {
         } else {
           Assert.Fail();
         }
+
+        Assert.AreEqual(
+"""
+Definition d: (nat -> nat -> nat):=
+fun parameter_3_0_0_0_2 =>
+  fun parameter_3_0_2_0_2 =>
+    parameter_3_0_2_0_2.
+
+""", state.EmitDefinition("d"));
       } else {
         Assert.Fail();
       }
@@ -149,40 +166,48 @@ public class FunctionTemplateTest {
     _accessor.SetSchematic(new BlockPos(0, 0, 0, 0), legend, schematic);
 
     for (int i = 0; i < 5; ++i) {
-      using (TokenEmitter state = new(_accessor)) {
-        Random r = new(i);
-        BlockPos puzzleBlock = new(1, 0, 0, 0);
-        Token puzzle = state.Process(
-            new NodePos(puzzleBlock,
-                        _accessor.FindNodeId(puzzleBlock, "scope")),
-            r, i == 0 ? TestContext.FullyQualifiedTestClassName : null,
-            TestContext.TestName);
-        if (puzzle is Function f) {
-          CollectionAssert.AreEqual(new Token[] { puzzle },
-                                    state.UnreferencedRoots.ToList());
+      using TokenEmitter state = new(_accessor);
 
-          Assert.IsTrue(
-              f.ScopeMatchConnectors.Contains(new NodePos(0, 0, 3, 0, 0)));
-          Assert.AreEqual(new NodePos(puzzleBlock, _accessor.FindNodeId(
-                                                       puzzleBlock, "scope")),
-                          f.ScopePos);
-          Assert.AreEqual("resultType", f.Children[0].Name);
-          Assert.AreEqual("nat -> nat -> nat",
-                          ((Constant)f.Children[0].Children[0]).Term);
+      Random r = new(i);
+      BlockPos puzzleBlock = new(1, 0, 0, 0);
+      Token puzzle = state.Process(
+          new NodePos(puzzleBlock, _accessor.FindNodeId(puzzleBlock, "scope")),
+          r, i == 0 ? TestContext.FullyQualifiedTestClassName : null,
+          TestContext.TestName);
+      if (puzzle is Function f) {
+        CollectionAssert.AreEqual(new Token[] { puzzle },
+                                  state.UnreferencedRoots.ToList());
 
-          Assert.AreEqual("parameter", f.Children[1].Name);
-          Assert.AreEqual(3, f.Children[1].TermConnectors.Count);
-          Assert.AreEqual("result", f.Children[1].Children[0].Name);
-          if (f.Children[1].Children[0].Children[0] is Function f2) {
-            Assert.AreEqual("result", f2.Children[0].Children[0].Name);
-            Assert.AreEqual(f.Children[1],
-                            f2.Children[0].Children[0].Children[0]);
-          } else {
-            Assert.Fail();
-          }
+        Assert.IsTrue(
+            f.ScopeMatchConnectors.Contains(new NodePos(0, 0, 3, 0, 0)));
+        Assert.AreEqual(new NodePos(puzzleBlock,
+                                    _accessor.FindNodeId(puzzleBlock, "scope")),
+                        f.ScopePos);
+        Assert.AreEqual("resultType", f.Children[0].Name);
+        Assert.AreEqual("nat -> nat -> nat",
+                        ((Constant)f.Children[0].Children[0]).Term);
+
+        Assert.AreEqual("parameter", f.Children[1].Name);
+        Assert.AreEqual(3, f.Children[1].TermConnectors.Count);
+        Assert.AreEqual("result", f.Children[1].Children[0].Name);
+        if (f.Children[1].Children[0].Children[0] is Function f2) {
+          Assert.AreEqual("result", f2.Children[0].Children[0].Name);
+          Assert.AreEqual(f.Children[1],
+                          f2.Children[0].Children[0].Children[0]);
         } else {
           Assert.Fail();
         }
+
+        Assert.AreEqual(
+"""
+Definition d: (nat -> nat -> nat):=
+fun parameter_5_0_0_0_2 =>
+  fun parameter_3_0_2_0_2 =>
+    parameter_5_0_0_0_2.
+
+""", state.EmitDefinition("d"));
+      } else {
+        Assert.Fail();
       }
     }
   }
@@ -233,6 +258,17 @@ public class FunctionTemplateTest {
         Assert.AreEqual(5, f.Children[1].TermConnectors.Count);
         Assert.AreEqual("result", f.Children[1].Children[0].Name);
         Assert.AreEqual(f.Children[1], f.Children[1].Children[0].Children[0]);
+
+        Assert.AreEqual(
+"""
+Definition d: (nat -> nat):=
+fun parameter_5_0_0_0_2 =>
+  let function_6_0_4_0_0 :=
+    fun parameter_3_0_2_0_2 =>
+      parameter_5_0_0_0_2 in
+  parameter_5_0_0_0_2.
+
+""", state.EmitDefinition("d"));
       } else {
         Assert.Fail();
       }
@@ -316,6 +352,20 @@ public class FunctionTemplateTest {
         Assert.IsTrue(root.Blocks.Contains(new NodePos(11, 0, 6, 0, 0)) ||
                       root.Blocks.Contains(new NodePos(7, 0, 5, 0, 0)));
       }
+
+      Assert.AreEqual(
+"""
+Definition d: (nat -> nat):=
+fun parameter_10_0_0_0_2 =>
+  let function_11_0_6_0_0 :=
+    fun parameter_4_0_2_0_2 =>
+      let function_7_0_5_0_0 :=
+        fun parameter_6_0_4_0_2 =>
+          parameter_4_0_2_0_2 in
+      parameter_10_0_0_0_2 in
+  parameter_10_0_0_0_2.
+
+""", state.EmitDefinition("d"));
     } else {
       Assert.Fail();
     }
@@ -357,6 +407,16 @@ public class FunctionTemplateTest {
                              .Children[0]
                              .Children[0];
       Assert.AreEqual(1, result.Anchored.Count);
+
+      Assert.AreEqual(
+"""
+Definition d: (forall A B, A -> B -> ((A*B) * (A*B))):=
+fun parameter_3_0_1_0_2 parameter_5_0_1_0_2 parameter_7_0_1_0_2 parameter_9_0_1_0_2 =>
+  let app_9_0_3_0_2 :=
+    pair parameter_7_0_1_0_2 parameter_9_0_1_0_2 in
+  pair app_9_0_3_0_2 app_9_0_3_0_2.
+
+""", state.EmitDefinition("d"));
     } else {
       Assert.Fail();
     }
@@ -397,6 +457,18 @@ public class FunctionTemplateTest {
       TermInput t1 = (TermInput)f.Children[1].Children[0].Children[0];
       Assert.AreEqual(2, t1.Anchored.Count);
       Assert.AreEqual("pair", t1.Anchored[0].Name);
+
+      Assert.AreEqual(
+"""
+Definition d: (forall A, a -> (A * A) * (A * A)):=
+fun parameter_3_0_1_0_2 parameter_5_0_1_0_2 =>
+  let pair_3_0_5_0_0 :=
+    pair in
+  let app_7_0_5_0_2 :=
+    pair_3_0_5_0_0 parameter_5_0_1_0_2 parameter_5_0_1_0_2 in
+  pair_3_0_5_0_0 app_7_0_5_0_2 app_7_0_5_0_2.
+
+""", state.EmitDefinition("d"));
     } else {
       Assert.Fail();
     }

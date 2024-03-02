@@ -32,7 +32,7 @@ public class Case : Token {
   public override IReadOnlyList<NodePos> TermConnectors =>
       Array.Empty<NodePos>();
 
-  private readonly ParameterList _parameters;
+  protected readonly ParameterList _parameters;
 
   public Case(string name, NodePos matchPos, Match match, int scopeNodeId,
               BlockFacing face)
@@ -123,5 +123,25 @@ public class Case : Token {
       }
       p = _parameters.GetNext(p);
     }
+  }
+
+  public override void EmitExpression(CoqEmitter emitter,
+                                      bool app_needs_parens) {
+    emitter.Write("| ");
+    emitter.Write(Name);
+    foreach (Parameter p in _parameters.Parameters) {
+      emitter.Write(' ');
+      if (p.HasSinks) {
+        emitter.Write(emitter.GetName(p));
+      } else {
+        emitter.Write('_');
+      }
+    }
+    emitter.Write(" =>");
+    emitter.AddIndent();
+    emitter.WriteNewline();
+    EmitReference(_parameters.Result, emitter, false);
+    emitter.ReleaseIndent();
+    emitter.WriteNewline();
   }
 }

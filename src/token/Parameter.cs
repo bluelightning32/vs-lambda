@@ -53,4 +53,9 @@ public class Parameter : TermSource {
         "placeholder", _parameters.Parameters.Max.Blocks[0], _construct);
     return _parameters.Result;
   }
+
+  public override void EmitExpression(CoqEmitter emitter,
+                                      bool app_needs_parens) {
+    emitter.Write(emitter.GetName(this));
+  }
 }

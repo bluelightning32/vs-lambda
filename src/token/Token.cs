@@ -117,6 +117,18 @@ public abstract class Token : IDisposable {
       c.ScopeMultiuse(tracker, true);
     }
   }
+
+  protected static void EmitReference(Token reference, CoqEmitter emitter,
+                                      bool app_needs_parens) {
+    if (reference == null) {
+      emitter.Write('_');
+      return;
+    }
+    reference.EmitExpression(emitter, app_needs_parens);
+  }
+
+  public abstract void EmitExpression(CoqEmitter emitter,
+                                      bool app_needs_parens);
 }
 
 public interface IAcceptScopePort {

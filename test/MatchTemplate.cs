@@ -449,6 +449,22 @@ h+M+
     if (puzzle is Function f) {
       CollectionAssert.AreEqual(new Token[] { puzzle },
                                 state.UnreferencedRoots.ToList());
+
+      Assert.AreEqual(
+"""
+Definition d: (forall A B C D, A+B -> C*D -> (A*C) + (B*D)):=
+fun parameter_3_0_1_0_2 parameter_5_0_1_0_2 parameter_7_0_1_0_2 parameter_9_0_1_0_2 parameter_11_0_1_0_2 parameter_14_0_1_0_2 =>
+  match parameter_14_0_1_0_2 with
+  | pair parameter_19_0_4_0_2 parameter_21_0_4_0_2 =>
+    match parameter_11_0_1_0_2 with
+    | inl parameter_4_0_7_0_2 =>
+      inl (pair parameter_4_0_7_0_2 parameter_19_0_4_0_2)
+    | inr parameter_4_0_18_0_2 =>
+      inr (pair parameter_4_0_18_0_2 parameter_21_0_4_0_2)
+    end
+  end.
+
+""", state.EmitDefinition("d"));
     } else {
       Assert.Fail();
     }
@@ -499,6 +515,26 @@ h+M+
     Assert.AreEqual(1, t2.Anchored.Count);
     TermInput t3 = (TermInput)t2.Anchored[0].Children[1].Children[0].Children[0].Children[0];
     Assert.AreEqual(1, t3.Anchored.Count);
+
+    Assert.AreEqual(
+"""
+Definition d: (forall A B, A*B -> A*B -> nat):=
+fun parameter_3_0_1_0_2 parameter_5_0_1_0_2 parameter_7_0_1_0_2 parameter_10_0_1_0_2 =>
+  let match_3_0_7_0_0 :=
+    match parameter_7_0_1_0_2 with
+    | pair parameter_5_0_8_0_2 _ =>
+      let match_12_0_7_0_0 :=
+        match parameter_10_0_1_0_2 with
+        | pair parameter_14_0_8_0_2 _ =>
+          let app_14_0_11_0_2 :=
+            pair parameter_5_0_8_0_2 parameter_14_0_8_0_2 in
+          _
+        end in
+      _
+    end in
+  O.
+
+""", state.EmitDefinition("d"));
   }
 
   [TestMethod]
@@ -544,5 +580,22 @@ h+M+
     Function f = (Function)puzzle;
     CollectionAssert.AreEqual(new Token[] { puzzle },
                               state.UnreferencedRoots.ToList());
+    Assert.AreEqual(
+"""
+Definition d: (forall A B, A*B -> A*B*A*B):=
+fun parameter_3_0_1_0_2 parameter_5_0_1_0_2 parameter_7_0_1_0_2 =>
+  let match_14_0_5_0_0 :=
+    match parameter_7_0_1_0_2 with
+    | pair _ parameter_18_0_6_0_2 =>
+      parameter_18_0_6_0_2
+    end in
+  let match_3_0_5_0_0 :=
+    match parameter_7_0_1_0_2 with
+    | pair parameter_5_0_6_0_2 _ =>
+      parameter_5_0_6_0_2
+    end in
+  pair match_3_0_5_0_0 match_14_0_5_0_0 match_3_0_5_0_0 match_14_0_5_0_0.
+
+""", state.EmitDefinition("d"));
   }
 }

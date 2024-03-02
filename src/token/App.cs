@@ -69,4 +69,17 @@ public class App : ConstructRoot {
     Applicand.WriteOutsideEdges(state);
     Argument.WriteOutsideEdges(state);
   }
+
+  public override void EmitConstruct(CoqEmitter emitter,
+                                     bool app_needs_parens) {
+    if (app_needs_parens) {
+      emitter.Write('(');
+    }
+    EmitReference(Applicand, emitter, false);
+    emitter.Write(' ');
+    EmitReference(Argument, emitter, true);
+    if (app_needs_parens) {
+      emitter.Write(')');
+    }
+  }
 }

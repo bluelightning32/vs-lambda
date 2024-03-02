@@ -56,4 +56,11 @@ public class Puzzle : Function {
     _resultType?.WriteOutsideEdges(state);
     base.WriteOutsideEdges(state);
   }
+
+  protected override void EmitDefinitionType(CoqEmitter emitter) {
+    if (_resultType != null) {
+      emitter.Write(": ");
+      EmitReference(_resultType, emitter, false);
+    }
+  }
 }

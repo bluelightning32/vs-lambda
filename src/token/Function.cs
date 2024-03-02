@@ -141,4 +141,32 @@ public class Function : ConstructRoot {
 
     WriteOutsideEdges(state);
   }
+
+  public override void EmitConstruct(CoqEmitter emitter,
+                                     bool app_needs_parens) {
+    if (app_needs_parens) {
+      emitter.Write('(');
+    }
+    emitter.Write("fun ");
+    foreach (Parameter p in _parameters.Parameters) {
+      if (p.Type != null) {
+        emitter.Write('(');
+        emitter.Write(emitter.GetName(p));
+        emitter.Write(": ");
+        EmitReference(p.Type, emitter, false);
+        emitter.Write(") ");
+      } else {
+        emitter.Write(emitter.GetName(p));
+        emitter.Write(' ');
+      }
+    }
+    emitter.Write("=>");
+    emitter.AddIndent();
+    emitter.WriteNewline();
+    EmitReference(_parameters.Result, emitter, false);
+    if (app_needs_parens) {
+      emitter.Write(')');
+    }
+    emitter.ReleaseIndent();
+  }
 }

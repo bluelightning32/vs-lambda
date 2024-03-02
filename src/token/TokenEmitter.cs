@@ -24,6 +24,8 @@ public class TokenEmitter : IDisposable {
     get => _unreferencedRoots;
   }
 
+  private Token _main = null;
+
   public TokenEmitter(NodeAccessor accessor) { _accessor = accessor; }
 
   private Token EmitPos(NodePos pos) {
@@ -53,7 +55,7 @@ public class TokenEmitter : IDisposable {
   // variable is set and `testClass` is non-null.
   public Token Process(NodePos start, Random random, string testClass,
                        string testName) {
-    Token result = EmitPos(start);
+    _main = EmitPos(start);
     while (_pending.Count != 0) {
       ShufflePending(random);
       VerifyInvariants();
@@ -73,11 +75,11 @@ public class TokenEmitter : IDisposable {
     Dictionary<Parameter, HashSet<ConstructRoot>> newEdgesBySource =
         ReverseEdges(newEdgesByTarget);
     SaveGraphviz(testClass, testName, ".parameters", newEdgesBySource);
-    ScopeUnused(result, newEdgesBySource, newEdgesByTarget);
+    ScopeUnused(newEdgesBySource, newEdgesByTarget);
     SaveGraphviz(testClass, testName, ".unusedscoped", null);
     ScopeMultiuse();
     SaveGraphviz(testClass, testName, ".scoped", null);
-    return result;
+    return _main;
   }
 
   private static bool AreEdgesPaired(
@@ -103,8 +105,7 @@ public class TokenEmitter : IDisposable {
   }
 
   private void
-  ScopeUnused(Token main,
-              Dictionary<Parameter, HashSet<ConstructRoot>> newEdgesBySource,
+  ScopeUnused(Dictionary<Parameter, HashSet<ConstructRoot>> newEdgesBySource,
               Dictionary<ConstructRoot, HashSet<Parameter>> newEdgesByTarget) {
     Debug.Assert(AreEdgesPaired(newEdgesBySource, newEdgesByTarget));
     HashSet<Token> ancestors = new();
@@ -112,7 +113,7 @@ public class TokenEmitter : IDisposable {
       bool added = false;
       // Try the adding the new edges as deep as possible in all unreferenced
       // roots that would be referenced if the new edges were added.
-      if (main is ConstructRoot mainc) {
+      if (_main is ConstructRoot mainc) {
         HashSet<Parameter> remaining = new();
         Dictionary<ConstructRoot, HashSet<Parameter>> cache = new();
         added = ScopeUnusedVisit(newEdgesBySource, newEdgesByTarget, mainc,
@@ -127,7 +128,7 @@ public class TokenEmitter : IDisposable {
       // unreferenced roots are prioritized, because they can be changed into
       // child, whereas the main root should remain parentless.
       foreach (ConstructRoot c in _unreferencedRoots.ToArray()) {
-        if (c == main) {
+        if (c == _main) {
           continue;
         }
         HashSet<Parameter> remaining = new();
@@ -141,7 +142,7 @@ public class TokenEmitter : IDisposable {
       }
       // If none of the above worked, try adding the new edges somewhere inside
       // the main tree.
-      if (main is ConstructRoot mainc2) {
+      if (_main is ConstructRoot mainc2) {
         HashSet<Parameter> remaining = new();
         Dictionary<ConstructRoot, HashSet<Parameter>> cache = new();
         added = ScopeUnusedVisit(newEdgesBySource, newEdgesByTarget, mainc2,
@@ -569,5 +570,12 @@ public class TokenEmitter : IDisposable {
       }
       result.UnionWith(localResult);
     }
+  }
+
+  public string EmitDefinition(string name) {
+    StringWriter writer = new();
+    CoqEmitter emitter = new(writer);
+    ((ConstructRoot)_main).EmitDefinition(name, emitter);
+    return writer.ToString();
   }
 }

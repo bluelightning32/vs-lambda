@@ -5,6 +5,7 @@ using Lambda.Network;
 namespace Lambda.Token;
 
 public abstract class TermSource : Token {
+  public bool HasSinks { get; private set; } = false;
   private readonly List<NodePos> _termConnectors = new();
   public override IReadOnlyList<NodePos> TermConnectors => _termConnectors;
 
@@ -23,6 +24,7 @@ public abstract class TermSource : Token {
   public override void AddSink(TokenEmitter state, Token sink) {
     if (sink is TermInput input) {
       input.SetSource(this);
+      HasSinks = true;
     } else {
       base.AddSink(state, sink);
     }

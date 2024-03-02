@@ -138,4 +138,23 @@ public class Match : ConstructRoot {
       c.WriteOutsideEdges(state);
     }
   }
+
+  public override void EmitConstruct(CoqEmitter emitter,
+                                     bool app_needs_parens) {
+    emitter.Write("match ");
+    EmitReference(Input, emitter, false);
+
+    emitter.Write(' ');
+    if (_matchIn != null) {
+      _matchIn.EmitExpression(emitter, false);
+      emitter.Write(' ');
+    }
+
+    emitter.Write("with");
+    emitter.WriteNewline();
+    foreach (Case c in _cases) {
+      c.EmitExpression(emitter, false);
+    }
+    emitter.Write("end");
+  }
 }

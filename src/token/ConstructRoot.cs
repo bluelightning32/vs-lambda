@@ -59,4 +59,40 @@ public abstract class ConstructRoot : TermSource {
     }
     ScopeMultiuseVisitChildren(tracker);
   }
+
+  public virtual void EmitDefinition(string name, CoqEmitter emitter) {
+    emitter.Write("Definition ");
+    emitter.Write(name);
+    EmitDefinitionType(emitter);
+    emitter.Write(":=");
+    emitter.WriteNewline();
+    EmitConstruct(emitter, false);
+    emitter.Write(".");
+    emitter.WriteNewline();
+  }
+
+  protected virtual void EmitDefinitionType(CoqEmitter emitter) {}
+
+  public void EmitLet(CoqEmitter emitter) {
+    emitter.Write("let ");
+    emitter.Write(emitter.GetName(this));
+    emitter.Write(" :=");
+    emitter.AddIndent();
+    emitter.WriteNewline();
+    EmitConstruct(emitter, false);
+    emitter.ReleaseIndent();
+    emitter.Write(" in");
+    emitter.WriteNewline();
+  }
+
+  public override void EmitExpression(CoqEmitter emitter,
+                                      bool app_needs_parens) {
+    if (IncomingEdgeCount <= 1) {
+      EmitConstruct(emitter, app_needs_parens);
+    } else {
+      emitter.Write(emitter.GetName(this));
+    }
+  }
+
+  public abstract void EmitConstruct(CoqEmitter emitter, bool app_needs_parens);
 }

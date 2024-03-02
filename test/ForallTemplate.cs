@@ -61,6 +61,13 @@ public class ForallTemplateTest {
           f.Children[0].TermConnectors.Contains(new NodePos(3, 0, 1, 0, 0)));
       Assert.AreEqual("result", f.Children[0].Children[0].Name);
       Assert.AreEqual(f.Children[0], f.Children[0].Children[0].Children[0]);
+
+      Assert.AreEqual(
+  """
+Definition d:=
+forall parameter_3_0_0_0_2, parameter_3_0_0_0_2.
+
+""", state.EmitDefinition("d"));
     } else {
       Assert.Fail();
     }
@@ -104,6 +111,13 @@ public class ForallTemplateTest {
       Assert.AreEqual("result", f.Children[0].Children[0].Children[0].Name);
       Assert.AreEqual("nat",
                       f.Children[0].Children[0].Children[0].Children[0].Name);
+
+      Assert.AreEqual(
+  """
+Definition d:=
+forall parameter_3_0_0_0_2 parameter_5_0_0_0_2, nat.
+
+""", state.EmitDefinition("d"));
     } else {
       Assert.Fail();
     }
