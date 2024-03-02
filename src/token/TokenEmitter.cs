@@ -576,6 +576,8 @@ public class TokenEmitter : IDisposable {
     StringWriter writer = new();
     CoqEmitter emitter = new(writer);
     ((ConstructRoot)_main).EmitDefinition(name, emitter);
-    return writer.ToString();
+    string result = writer.ToString();
+    CoqSanitizer.Sanitize(new StringReader(result));
+    return result;
   }
 }

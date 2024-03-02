@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 using Lambda.Network;
-
-using Vintagestory.API.Util;
 
 namespace Lambda.Token;
 

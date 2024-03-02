@@ -5,7 +5,6 @@ using System.Diagnostics;
 using Lambda.Network;
 
 using Vintagestory.API.MathTools;
-using Vintagestory.GameContent;
 
 namespace Lambda.Token;
 
