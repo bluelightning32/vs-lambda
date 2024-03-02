@@ -107,14 +107,14 @@ public abstract class Token : IDisposable {
     }
   }
 
-  public virtual void ScopeMultiuse(List<ConstructRoot> ready, bool isUse) {
-    ScopeMultiuseVisitChildren(ready);
+  public virtual void ScopeMultiuse(AnchorPoint tracker, bool isUse) {
+    ScopeMultiuseVisitChildren(tracker);
     ++_multiUseVisited;
   }
 
-  protected virtual void ScopeMultiuseVisitChildren(List<ConstructRoot> ready) {
+  protected virtual void ScopeMultiuseVisitChildren(AnchorPoint tracker) {
     foreach (Token c in Children) {
-      c.ScopeMultiuse(ready, true);
+      c.ScopeMultiuse(tracker, true);
     }
   }
 }

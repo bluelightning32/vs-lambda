@@ -267,19 +267,21 @@ public class TokenEmitter : IDisposable {
   }
 
   public void ScopeMultiuse() {
-    List<ConstructRoot> ready = new();
+    AnchorPoint tracker = new();
+    int i = 0;
     foreach (ConstructRoot c in _unreferencedRoots.ToArray()) {
-      c.ScopeMultiuse(ready, false);
-      while (ready.Count > 0) {
-        List<ConstructRoot> newReady = new();
-        foreach (ConstructRoot r in ready) {
-          _topLevelMultiuse.Add(r);
-          r.ScopeMultiuseReady(ready);
-        }
-        ready.Clear();
-        ready = newReady;
+      c.ScopeMultiuse(tracker, false);
+      for (; i < tracker.ReadyCount; ++i) {
+        ConstructRoot r = tracker.Ready[i];
+        r.ScopeMultiuseReady(tracker);
       }
     }
+    if (tracker.ReadyCount != 0) {
+      _topLevelMultiuse.AddRange(tracker.Ready);
+      _topLevelMultiuse.Reverse(_topLevelMultiuse.Count - tracker.Ready.Count,
+                                tracker.Ready.Count);
+    }
+    tracker.Done();
   }
 
   private static Dictionary<Parameter, HashSet<ConstructRoot>>

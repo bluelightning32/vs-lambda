@@ -355,9 +355,7 @@ public class FunctionTemplateTest {
                              .Children[0]
                              .Children[0]
                              .Children[0]
-                             .Children[0]
-                             .Children[0]
-                             .Children[1];
+                             .Children[0];
       Assert.AreEqual(1, result.Anchored.Count);
     } else {
       Assert.Fail();
@@ -396,15 +394,9 @@ public class FunctionTemplateTest {
     if (puzzle is Function f) {
       CollectionAssert.AreEqual(new Token[] { puzzle },
                                 state.UnreferencedRoots.ToList());
-      TermInput t1 = (TermInput)f.Children[1]
-                         .Children[0]
-                         .Children[0]
-                         .Children[0]
-                         .Children[1];
-      Assert.AreEqual(1, t1.Anchored.Count);
-      TermInput t2 =
-          (TermInput)t1.Anchored[0].Children[0].Children[0].Children[0];
-      Assert.AreEqual(1, t2.Anchored.Count);
+      TermInput t1 = (TermInput)f.Children[1].Children[0].Children[0];
+      Assert.AreEqual(2, t1.Anchored.Count);
+      Assert.AreEqual("pair", t1.Anchored[0].Name);
     } else {
       Assert.Fail();
     }

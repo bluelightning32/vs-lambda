@@ -10,6 +10,10 @@ public abstract class ConstructRoot : TermSource {
 
   public ConstructRoot(string name) : base(name) {}
 
+  // This is only non-null during multiuse scoping for constructs that need to
+  // be anchored. After the construct is anchored, this is set back to null.
+  private AnchorPoint _anchorPoint = null;
+
   public abstract void WriteConstruct(GraphvizEmitter state);
 
   public override void AddSink(TokenEmitter state, Token sink) {
@@ -27,27 +31,32 @@ public abstract class ConstructRoot : TermSource {
     ++IncomingEdgeCount;
   }
 
-  public override void ScopeMultiuse(List<ConstructRoot> ready, bool isUse) {
+  public override void ScopeMultiuse(AnchorPoint tracker, bool isUse) {
     // If isUse is false, then this construct is visited as a top-level
     // unreferenced root.
     if (isUse) {
-      int newCount = ++_multiUseVisited;
-      Debug.Assert(newCount <= IncomingEdgeCount);
+      ++_multiUseVisited;
+      Debug.Assert(_multiUseVisited <= IncomingEdgeCount);
       if (IncomingEdgeCount > 1) {
-        if (newCount == IncomingEdgeCount) {
-          ready.Add(this);
+        if (_multiUseVisited == IncomingEdgeCount) {
+          _anchorPoint.AddReady(this);
+          // Dereference the anchor point so that it can get garbage collected.
+          _anchorPoint = null;
+        } else if (_multiUseVisited == 1) {
+          _anchorPoint = tracker;
+          tracker.AddReference();
         }
         return;
       }
     }
-    ScopeMultiuseVisitChildren(ready);
+    ScopeMultiuseVisitChildren(tracker);
   }
 
-  public void ScopeMultiuseReady(List<ConstructRoot> ready) {
+  public void ScopeMultiuseReady(AnchorPoint tracker) {
     if (IncomingEdgeCount == 1) {
       throw new InvalidOperationException(
           "ScopeMultiuseReady should only be called for nodes with 2 or more references.");
     }
-    ScopeMultiuseVisitChildren(ready);
+    ScopeMultiuseVisitChildren(tracker);
   }
 }

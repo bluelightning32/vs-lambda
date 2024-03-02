@@ -42,7 +42,9 @@ public class TermInput : Token {
   //
   // Entries in this list that have an IncomingEdge count of 2 or greater are
   // constructs that are used multiple times under this branch.
-  public List<ConstructRoot> _anchored = null;
+  //
+  // The
+  private List<ConstructRoot> _anchored = null;
 
   public IReadOnlyList<ConstructRoot> Anchored {
     get =>
@@ -84,24 +86,25 @@ public class TermInput : Token {
     state.EndSubgraph();
   }
 
-  protected override void
-  ScopeMultiuseVisitChildren(List<ConstructRoot> ready) {
+  protected override void ScopeMultiuseVisitChildren(AnchorPoint tracker) {
+    AnchorPoint myTracker = tracker.CreateSubtracker();
     foreach (Token c in Children) {
       // Ignore TermInput to Parameter edges to prevent cycles.
       if (c is not Parameter) {
-        c.ScopeMultiuse(ready, true);
+        c.ScopeMultiuse(myTracker, true);
       }
     }
-    while (ready.Count > 0) {
-      List<ConstructRoot> newReady = new();
-      foreach (ConstructRoot c in ready) {
-        _anchored ??= new();
-        _anchored.Add(c);
-        c.ScopeMultiuseReady(newReady);
-      }
-      ready.Clear();
-      ready = newReady;
+    for (int i = 0; i < myTracker.ReadyCount; ++i) {
+      ConstructRoot c = myTracker.Ready[i];
+      c.ScopeMultiuseReady(myTracker);
     }
+    if (myTracker.ReadyCount > 0) {
+      _anchored ??= new();
+      _anchored.AddRange(myTracker.Ready);
+      _anchored.Reverse(_anchored.Count - myTracker.Ready.Count,
+                        myTracker.Ready.Count);
+    }
+    tracker.ReleaseSubtracker(myTracker);
   }
 
   public void AddUnused(ConstructRoot constructRoot) {
