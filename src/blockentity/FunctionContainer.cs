@@ -8,7 +8,6 @@ using Lambda.Token;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
-using Vintagestory.API.Server;
 
 namespace Lambda.BlockEntity;
 
@@ -130,12 +129,10 @@ public class FunctionContainer : TermContainer {
   private void Compile(TokenEmitter emitter) {
     try {
       emitter.PostProcess();
-      string subpath = Path.Combine(
-          "ModData", ((ICoreServerAPI)Api).World.SavegameIdentifier,
-          CoreSystem.Domain);
-      string folder = Api.GetOrCreateDataPath(subpath);
+      ServerConfig config = CoreSystem.GetInstance(Api).ServerConfig;
       string filename = Path.Combine(
-          folder, $"{emitter.MainName}_{RuntimeHelpers.GetHashCode(this)}.v");
+          config.CoqTmpDir,
+          $"{emitter.MainName}_{RuntimeHelpers.GetHashCode(this)}.v");
       Api.Logger.Debug("Lambda writing to file {0}", filename);
       using StreamWriter writer = new(filename);
       emitter.EmitDefinition("puzzle", writer);
