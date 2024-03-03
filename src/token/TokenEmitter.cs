@@ -403,10 +403,10 @@ public class TokenEmitter : IDisposable {
       p.Value.Dispose();
     }
     _prepared.Clear();
-    foreach (ConstructRoot r in _unreferencedRoots) {
+    foreach (ConstructRoot r in _topLevelMultiuse) {
       r.Dispose();
     }
-    _unreferencedRoots.Clear();
+    _topLevelMultiuse.Clear();
   }
 
   public void
@@ -626,15 +626,15 @@ public class TokenEmitter : IDisposable {
   }
 
   public string EmitDefinition(string name) {
-    StringWriter writer = new();
-    EmitDefinition(name, writer);
+    using StringWriter writer = new();
+    CoqEmitter emitter = new(writer);
+    EmitDefinition(name, emitter);
     string result = writer.ToString();
     CoqSanitizer.Sanitize(new StringReader(result));
     return result;
   }
 
-  public void EmitDefinition(string name, TextWriter writer) {
-    CoqEmitter emitter = new(writer);
+  public void EmitDefinition(string name, CoqEmitter emitter) {
     ((ConstructRoot)_main).EmitDefinition(name, emitter);
   }
 }

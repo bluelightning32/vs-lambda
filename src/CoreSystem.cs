@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -54,27 +53,8 @@ public class CoreSystem : ModSystem {
         string subpath = Path.Combine("ModData", Domain);
         ServerConfig.CoqTmpDir = api.GetOrCreateDataPath(subpath);
       }
-      if (ServerConfig.CoqcPath != null) {
-        if (!File.Exists(ServerConfig.CoqcPath)) {
-          api.Logger.Fatal(
-              "Cannot find coqc at the config specified path of {0}.",
-              ServerConfig.CoqcPath);
-        }
-      } else {
-        ServerConfig.CoqcPath =
-            Environment.GetEnvironmentVariable("PATH")
-                .Split(Path.PathSeparator)
-                .SelectMany(s => new string[] { Path.Combine(s, "coqc"),
-                                                Path.Combine(s, "coqc.exe") })
-                .Where(File.Exists)
-                .FirstOrDefault();
-        if (ServerConfig.CoqcPath == null) {
-          api.Logger.Fatal(
-              "The coqc program is required on the server side for the {0} mod. First verify that Coq is installed. If Coq is installed, then either add coqc's path to the PATH environment variable, or set the CoqcPath config option to the location of the file.",
-              Domain);
-        }
-      }
       try {
+        ServerConfig.ResolveCoqcPath();
         using Process coqc = new() { StartInfo = new ProcessStartInfo {
           FileName = ServerConfig.CoqcPath, ArgumentList = { "--version" },
           UseShellExecute = false, RedirectStandardOutput = true,

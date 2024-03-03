@@ -11,15 +11,18 @@ namespace Lambda;
 
 public class PuzzleCheck : IByteSerializable {
   public string Name;
+  public string Description;
   public string Check;
 
   public void ToBytes(BinaryWriter writer) {
     writer.Write(Name);
+    writer.Write(Description);
     writer.Write(Check);
   }
 
   public void FromBytes(BinaryReader reader, IWorldAccessor resolver) {
     Name = reader.ReadString();
+    Description = reader.ReadString();
     Check = reader.ReadString();
   }
 }

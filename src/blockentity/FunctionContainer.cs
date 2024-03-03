@@ -130,17 +130,10 @@ public class FunctionContainer : TermContainer {
     try {
       emitter.PostProcess();
       ServerConfig config = CoreSystem.GetInstance(Api).ServerConfig;
-      string filename = Path.Combine(
-          config.CoqTmpDir,
-          $"{emitter.MainName}_{RuntimeHelpers.GetHashCode(this)}.v");
-      Api.Logger.Debug("Lambda writing to file {0}", filename);
-      using StreamWriter writer = new(filename);
-      emitter.EmitDefinition("puzzle", writer);
-      writer.Close();
-      using StreamReader reader = new(filename);
-      CoqSanitizer.Sanitize(reader);
+      using CoqSession session = new(config);
+      string result = session.ValidateCoq(emitter);
       Api.Event.EnqueueMainThreadTask(() => {
-        _errorMessage = null;
+        _errorMessage = result;
         CompilationDone();
       }, "lambda");
     } catch (Exception e) {
@@ -148,6 +141,8 @@ public class FunctionContainer : TermContainer {
         _errorMessage = e.Message;
         CompilationDone();
       }, "lambda");
+    } finally {
+      emitter.Dispose();
     }
   }
 
