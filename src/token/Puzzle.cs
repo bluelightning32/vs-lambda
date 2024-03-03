@@ -13,53 +13,52 @@ public class Puzzle : Function {
     get {
       Token[] parameterChildren = _parameters.GetChildrenAtLevel(
           _parameters.Parameters.FirstOrDefault());
-      return parameterChildren.InsertAt(_resultType, 0);
+      return parameterChildren.InsertAt(_resultTypeChild, 0);
     }
   }
 
-  private TermInput _resultType = null;
+  private TermInput _resultTypeChild = null;
+  private string _resultType = null;
 
   public Puzzle(string name, NodePos pos, int outputNodeId, BlockFacing face)
       : base(name, pos, outputNodeId, face) {}
 
-  public override Token AddPort(TokenEmitter state, NodePos pos, string name,
-                                bool isSource) {
-    if (name == "resulttype") {
-      if (_resultType != null) {
-        List<NodePos> blocks = new(_resultType.Blocks) { pos };
-        throw new InvalidFormatException(blocks.ToArray(),
-                                         "already-has-result");
-      }
-      _resultType = new TermInput("resultType", pos, this);
-      return _resultType;
+  public Token AddResultType(TokenEmitter state, string resultType) {
+    if (_resultTypeChild != null) {
+      List<NodePos> blocks = new(_resultTypeChild.Blocks) { FirstBlock };
+      throw new InvalidFormatException(blocks.ToArray(), "already-has-result");
     }
-    return base.AddPort(state, pos, name, isSource);
+    _resultType = resultType;
+    _resultTypeChild = new TermInput("resultType", FirstBlock, this);
+    Token constant = new Constant(FirstBlock, _resultType);
+    constant.AddSink(state, _resultTypeChild);
+    return _resultTypeChild;
   }
 
   public override void Dispose() {
-    TermInput resultType = _resultType;
-    _resultType = null;
+    TermInput resultType = _resultTypeChild;
+    _resultTypeChild = null;
     resultType?.Dispose();
     base.Dispose();
   }
 
   protected override void WriteSubgraphNodes(GraphvizEmitter state) {
-    if (_resultType != null) {
-      state.WriteSubgraphNode(_resultType);
-      state.WriteSubgraphEdge(this, _resultType);
+    if (_resultTypeChild != null) {
+      state.WriteSubgraphNode(_resultTypeChild);
+      state.WriteSubgraphEdge(this, _resultTypeChild);
     }
     base.WriteSubgraphNodes(state);
   }
 
   public override void WriteOutsideEdges(GraphvizEmitter state) {
-    _resultType?.WriteOutsideEdges(state);
+    _resultTypeChild?.WriteOutsideEdges(state);
     base.WriteOutsideEdges(state);
   }
 
   protected override void EmitDefinitionType(CoqEmitter emitter) {
-    if (_resultType != null) {
+    if (_resultTypeChild != null) {
       emitter.Write(": ");
-      EmitReference(_resultType, emitter, false);
+      EmitReference(_resultTypeChild, emitter, false);
     }
   }
 }

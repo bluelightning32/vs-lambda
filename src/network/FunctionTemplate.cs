@@ -117,9 +117,7 @@ public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
     scope.AddPendingChildren(state, _nodeTemplates[_scopeId].Network,
                              GetDownstream(scopePos));
     if (inventoryTerm != null) {
-      Token resultType = scope.AddPort(state, scopePos, "resulttype", false);
-      Token constant = new Constant(scopePos, inventoryTerm);
-      constant.AddSink(state, resultType);
+      ((Puzzle)scope).AddResultType(state, inventoryTerm);
     }
 
     scope.ReleaseRef(state, scopePos);

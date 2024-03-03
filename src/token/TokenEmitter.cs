@@ -350,6 +350,7 @@ public class TokenEmitter : IDisposable {
       throw new KeyNotFoundException("Token not found in prepared list.");
     }
     if (token is ConstructRoot root) {
+      root.Finished();
       if (root.IncomingEdgeCount == 0) {
         AddUnreferencedRoot(root);
       }

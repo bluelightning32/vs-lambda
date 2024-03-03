@@ -94,4 +94,7 @@ public abstract class ConstructRoot : TermSource {
   }
 
   public abstract void EmitConstruct(CoqEmitter emitter, bool app_needs_parens);
+
+  // This is called after all children pointing to this construct are processed.
+  public virtual void Finished() {}
 }
