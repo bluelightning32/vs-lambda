@@ -72,9 +72,9 @@ public class CoqEmitter {
   private FilePosition _pos = new();
   private readonly List<Range> _ranges = new();
 
-  private readonly TextWriter _writer;
+  private readonly StreamWriter _writer;
 
-  public CoqEmitter(TextWriter writer) {
+  public CoqEmitter(StreamWriter writer) {
     _writer = writer;
     _ranges.Add(new Range() {
       Start = _pos,

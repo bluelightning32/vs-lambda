@@ -260,11 +260,7 @@ fun parameter_5_0_0_0_2 =>
         Assert.AreEqual("result", f.Children[1].Children[0].Name);
         Assert.AreEqual(f.Children[1], f.Children[1].Children[0].Children[0]);
 
-        using StringWriter writer = new();
-        CoqEmitter emitter = new(writer);
-        state.EmitDefinition("d", emitter);
-        string coq = writer.ToString();
-        CoqSanitizer.Sanitize(new StringReader(coq));
+        string coq = state.EmitDefinition("d", out CoqEmitter emitter);
 
         Assert.AreEqual(
 """

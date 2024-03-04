@@ -626,13 +626,21 @@ public class TokenEmitter : IDisposable {
     }
   }
 
-  public string EmitDefinition(string name) {
-    using StringWriter writer = new();
-    CoqEmitter emitter = new(writer);
+  public string EmitDefinition(string name, out CoqEmitter emitter) {
+    using MemoryStream ms = new();
+    using StreamWriter writer = new(ms);
+    emitter = new(writer);
     EmitDefinition(name, emitter);
-    string result = writer.ToString();
+    writer.Flush();
+    ms.Seek(0, SeekOrigin.Begin);
+    StreamReader reader = new(ms);
+    string result = reader.ReadToEnd();
     CoqSanitizer.Sanitize(new StringReader(result));
     return result;
+  }
+
+  public string EmitDefinition(string name) {
+    return EmitDefinition(name, out CoqEmitter emitter);
   }
 
   public void EmitDefinition(string name, CoqEmitter emitter) {
