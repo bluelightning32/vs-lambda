@@ -376,7 +376,8 @@ public class Manager {
                                       BlockPos pos, BlockFacing face) {
     BlockNodeTemplate neighbor =
         _accessor.GetBlock(pos.AddCopy(face), out Node[] nodes);
-    int max = 1;
+    int maxPairable = 1;
+    int maxSources = 1;
     List<PairState> result = new();
     for (int i = 0; i < templates.Count; ++i) {
       if (templates[i] == null) {
@@ -388,20 +389,33 @@ public class Manager {
         continue;
       }
       int pairable = templates[i].GetPairableNetworkCount(face, neighbor, nodes,
-                                                          out bool hasSource);
-      if (pairable < max) {
-        result.Add(PairState.Unpaired);
-      } else {
-        result.Add(hasSource ? PairState.PairedWithSource : PairState.Paired);
-        if (pairable > max) {
-          max = pairable;
+                                                          out int sources);
+      PairState state = PairState.Unpaired;
+      if (pairable >= maxPairable) {
+        state = PairState.Paired;
+        if (pairable > maxPairable) {
+          maxPairable = pairable;
           // Null out all previous, non-null entries, because they paired using
           // less than the max pairable networks.
           for (int j = 0; j < i; ++j) {
             result[j] = PairState.Unpaired;
           }
         }
+        if (sources >= maxSources) {
+          state = PairState.PairedWithSource;
+          if (sources > maxSources) {
+            maxSources = sources;
+            // Downgrade all previous, PairedWithSource entries to Paired,
+            // because they paired using less than the max source networks.
+            for (int j = 0; j < i; ++j) {
+              if (result[j] == PairState.PairedWithSource) {
+                result[j] = PairState.Paired;
+              }
+            }
+          }
+        }
       }
+      result.Add(state);
     }
     return result;
   }

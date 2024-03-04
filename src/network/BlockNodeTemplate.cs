@@ -301,11 +301,11 @@ public class BlockNodeTemplate {
   public int GetPairableNetworkCount(BlockFacing face,
                                      BlockNodeTemplate neighbor,
                                      Node[] neighborNodes,
-                                     out bool neighborHasSource) {
+                                     out int neighborNetworkSources) {
     Debug.Assert((int)NetworkType.Max < sizeof(int) * 8 - 1);
     int usedCount = 0;
     int used = 0;
-    neighborHasSource = false;
+    neighborNetworkSources = 0;
     foreach (var edge in _index) {
       if (edge.Key.Item2.GetFace() != face) {
         continue;
@@ -313,7 +313,9 @@ public class BlockNodeTemplate {
       if (neighbor._index.TryGetValue(
               (edge.Key.Item1, edge.Key.Item2.GetOpposite()),
               out NodeTemplate neighborNode)) {
-        neighborHasSource |= neighborNodes[neighborNode.Id].Source.IsSet();
+        if (neighborNodes[neighborNode.Id].Source.IsSet()) {
+          ++neighborNetworkSources;
+        }
         if ((used & (1 << (int)edge.Key.Item1)) == 0) {
           used |= 1 << (int)edge.Key.Item1;
           ++usedCount;
