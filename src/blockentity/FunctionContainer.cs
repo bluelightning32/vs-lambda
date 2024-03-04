@@ -118,8 +118,7 @@ public class FunctionContainer : TermContainer {
           TyronThreadPool.QueueLongDurationTask(() => Compile(emitter, recipe),
                                                 "lambda");
         } catch (Exception e) {
-          _errorMessage = e.Message;
-          CompilationDone();
+          CompilationDone(CoqResult.Error(e.Message));
         }
         MarkDirty(true);
       }
@@ -134,22 +133,22 @@ public class FunctionContainer : TermContainer {
       emitter.PostProcess();
       ServerConfig config = CoreSystem.GetInstance(Api).ServerConfig;
       using CoqSession session = new(config);
-      string result = session.ValidateCoq(emitter);
-      Api.Event.EnqueueMainThreadTask(() => {
-        _errorMessage = Term.Escape(result);
-        CompilationDone();
-      }, "lambda");
+      CoqResult result = session.ValidateCoq(emitter);
+      Api.Event.EnqueueMainThreadTask(() => CompilationDone(result), "lambda");
     } catch (Exception e) {
-      Api.Event.EnqueueMainThreadTask(() => {
-        _errorMessage = Term.Escape(e.Message);
-        CompilationDone();
-      }, "lambda");
+      Api.Event.EnqueueMainThreadTask(
+          () => CompilationDone(CoqResult.Error(e.Message)), "lambda");
     } finally {
       emitter.Dispose();
     }
   }
 
-  private void CompilationDone() {
+  private void CompilationDone(CoqResult result) {
+    if (result.Successful) {
+      _errorMessage = null;
+    } else {
+      _errorMessage = Term.Escape(result.ErrorMessage);
+    }
     _running = false;
     long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
     long delay = (long)(_finishTime * 1000) - (now - _startTime);

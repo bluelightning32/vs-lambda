@@ -51,7 +51,7 @@ public class CoqSessionTest {
         new NodePos(puzzleBlock, _accessor.FindNodeId(puzzleBlock, "scope")));
     state.PostProcess();
 
-    Assert.AreEqual(null, _session.ValidateCoq(state));
+    Assert.IsTrue(_session.ValidateCoq(state).Successful);
   }
 
   [TestMethod]
@@ -80,6 +80,11 @@ public class CoqSessionTest {
         new NodePos(puzzleBlock, _accessor.FindNodeId(puzzleBlock, "scope")));
     state.PostProcess();
 
-    Assert.IsTrue(_session.ValidateCoq(state).Contains("unresolved implicit arguments"));
+    CoqResult result = _session.ValidateCoq(state);
+    Assert.IsFalse(result.Successful);
+    Assert.IsTrue(result.ErrorMessage.Contains("Cannot infer the type of a parameter."));
+    Assert.AreEqual(1, result.ErrorLocations.Count);
+    Assert.AreEqual(new BlockPos(3, 0, 2, 0), result.ErrorLocations.First().Block);
+    Assert.IsFalse(result.ErrorMessage.Contains("line"));
   }
 }

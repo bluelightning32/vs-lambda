@@ -12,7 +12,7 @@ public struct Range {
 
 public class CoqEmitter {
   private readonly Dictionary<Token, string> _tokenNames = new();
-  private readonly HashSet<string> _usedNames = new();
+  private readonly Dictionary<string, Token> _nameToToken = new();
   private int _indent = 0;
   // The byte offset of each line.
   private readonly List<long> _lineOffsets = new();
@@ -35,15 +35,18 @@ public class CoqEmitter {
     }
     name = AddName(t);
     _tokenNames.Add(t, name);
-    _usedNames.Add(name);
     return name;
+  }
+
+  public Token GetTokenByName(string name) {
+    return _nameToToken.GetValueOrDefault(name);
   }
 
   private string AddName(Token t) {
     StringBuilder sb = new();
     t.GetPreferredIdentifier(sb);
     string attempt = sb.ToString();
-    if (_usedNames.Add(attempt)) {
+    if (_nameToToken.TryAdd(attempt, t)) {
       return attempt;
     }
     sb.Append('_');
@@ -54,7 +57,7 @@ public class CoqEmitter {
       sb.Remove(offsetStart, sb.Length - offsetStart);
       sb.Append(offset);
       attempt = sb.ToString();
-    } while (!_usedNames.Add(attempt));
+    } while (!_nameToToken.TryAdd(attempt, t));
     return attempt;
   }
 
