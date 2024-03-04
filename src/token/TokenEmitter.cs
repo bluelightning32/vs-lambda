@@ -628,10 +628,8 @@ public class TokenEmitter : IDisposable {
 
   public string EmitDefinition(string name, out CoqEmitter emitter) {
     using MemoryStream ms = new();
-    using StreamWriter writer = new(ms);
-    emitter = new(writer);
+    emitter = new(ms);
     EmitDefinition(name, emitter);
-    writer.Flush();
     ms.Seek(0, SeekOrigin.Begin);
     StreamReader reader = new(ms);
     string result = reader.ReadToEnd();

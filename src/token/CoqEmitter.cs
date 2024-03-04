@@ -74,8 +74,8 @@ public class CoqEmitter {
 
   private readonly StreamWriter _writer;
 
-  public CoqEmitter(StreamWriter writer) {
-    _writer = writer;
+  public CoqEmitter(Stream stream) {
+    _writer = new StreamWriter(new BlockStreamFlush(stream));
     _ranges.Add(new Range() {
       Start = _pos,
       Token = null,
@@ -121,6 +121,7 @@ public class CoqEmitter {
     for (int i = 0; i < _indent; ++i) {
       _writer.Write(' ');
     }
+    _writer.Flush();
     _pos.Column += _indent;
     _pos.Offset += _indent;
   }
@@ -128,6 +129,7 @@ public class CoqEmitter {
   public void WriteNewline() {
     StartRange(null);
     _writer.Write('\n');
+    _writer.Flush();
     _pos.Line++;
     _pos.Column = 0;
     _pos.Offset++;
@@ -137,6 +139,7 @@ public class CoqEmitter {
   public void Write(char c, Token owner) {
     StartRange(owner);
     _writer.Write(c);
+    _writer.Flush();
     if (c == '\n') {
       _pos.Line++;
       _pos.Column = 0;
@@ -149,6 +152,7 @@ public class CoqEmitter {
   public void Write(string s, Token owner) {
     StartRange(owner);
     _writer.Write(s);
+    _writer.Flush();
 
     int lineStart = 0;
     int pos = 0;

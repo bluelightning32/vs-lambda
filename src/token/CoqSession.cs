@@ -17,10 +17,10 @@ public class CoqSession : IDisposable {
       string filename = Path.Combine(
           _config.CoqTmpDir,
           $"Puzzle_{emitter.MainName}_{Environment.CurrentManagedThreadId}.v");
-      using StreamWriter writer = new(filename);
-      CoqEmitter coqEmitter = new(writer);
+      using FileStream stream = new(filename, FileMode.Create);
+      CoqEmitter coqEmitter = new(stream);
       emitter.EmitDefinition("puzzle", coqEmitter);
-      writer.Close();
+      stream.Close();
       using StreamReader reader = new(filename);
       CoqSanitizer.Sanitize(reader);
 
