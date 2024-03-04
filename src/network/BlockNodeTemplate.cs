@@ -43,6 +43,7 @@ public class BlockNodeTemplate {
           _index.Add((nodeTemplate.Network, edge), nodeTemplate);
         }
       }
+      nodeTemplate.InitFace();
       AddTexturesToIndex(nodeTemplate);
     }
     for (int i = 0; i < nodeTemplates.Length; ++i) {
@@ -371,5 +372,13 @@ public class BlockNodeTemplate {
       sourcePos = nodes[pos.NodeId].Source;
     }
     state.MaybeAddPendingSource(sourcePos);
+  }
+
+  public BlockPos ConvertErrorLocation(NodePos pos, Node[] nodes) {
+    if (pos.NodeId > _nodeTemplates.Length || pos.NodeId > nodes.Length) {
+      // The block must have been broken and replaced.
+      return pos.Block;
+    }
+    return _nodeTemplates[pos.NodeId].ConvertErrorLocation(pos.Block);
   }
 }

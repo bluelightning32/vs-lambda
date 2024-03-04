@@ -35,6 +35,9 @@ public class NodeTemplate {
   [JsonProperty]
   public Dictionary<Scope, Dictionary<string, CompositeTexture>>
       ReplacementTextures = new();
+  // Set to non-null if all of the edges share the same face (excluding source
+  // edges).
+  public BlockFacing Face { get; private set; } = null;
 
   public NodeTemplate() {}
 
@@ -291,5 +294,29 @@ public class NodeTemplate {
                                        neighborTemplate.Id);
       }
     }
+  }
+
+  public BlockPos ConvertErrorLocation(BlockPos block) {
+    if (Face == null) {
+      return block;
+    } else {
+      return block.AddCopy(Face);
+    }
+  }
+
+  public void InitFace() {
+    BlockFacing face = null;
+    foreach (var edge in Edges) {
+      BlockFacing edgeFace = edge.GetFace();
+      if (face != edgeFace) {
+        if (face == null) {
+          face = edgeFace;
+        } else if (edgeFace != null) {
+          face = null;
+          break;
+        }
+      }
+    }
+    Face = face;
   }
 }

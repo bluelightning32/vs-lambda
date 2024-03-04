@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.CompilerServices;
+using System.Linq;
 
 using Lambda.CollectibleBehavior;
+using Lambda.Network;
 using Lambda.Token;
 
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.MathTools;
 
 namespace Lambda.BlockEntity;
 
@@ -28,6 +29,7 @@ public class FunctionContainer : TermContainer {
   bool _running = false;
   long _processedCallback = -1;
   InscriptionRecipe _currentRecipe;
+  readonly HashSet<IPlayer> _errorHighlights = new();
 
   public FunctionContainer() {
     // This is just the default class name. `base.Initialize` may override it if
@@ -115,10 +117,10 @@ public class FunctionContainer : TermContainer {
               GetBehavior<Network.BlockEntityBehavior.TokenEmitter>().Emit();
           _running = true;
           InscriptionRecipe recipe = _currentRecipe;
-          TyronThreadPool.QueueLongDurationTask(() => Compile(emitter, recipe),
-                                                "lambda");
+          TyronThreadPool.QueueLongDurationTask(
+              () => Compile(player, emitter, recipe), "lambda");
         } catch (Exception e) {
-          CompilationDone(CoqResult.Error(e.Message));
+          CompilationDone(player, CoqResult.Error(e.Message));
         }
         MarkDirty(true);
       }
@@ -127,35 +129,33 @@ public class FunctionContainer : TermContainer {
     base.OnReceivedClientPacket(player, packetid, data);
   }
 
-  private void Compile(TokenEmitter emitter, InscriptionRecipe recipe) {
+  private void Compile(IPlayer player, TokenEmitter emitter,
+                       InscriptionRecipe recipe) {
     try {
       emitter.SetPuzzleParameters(recipe.Parameters ?? Array.Empty<string>());
       emitter.PostProcess();
       ServerConfig config = CoreSystem.GetInstance(Api).ServerConfig;
       using CoqSession session = new(config);
       CoqResult result = session.ValidateCoq(emitter);
-      Api.Event.EnqueueMainThreadTask(() => CompilationDone(result), "lambda");
+      Api.Event.EnqueueMainThreadTask(() => CompilationDone(player, result),
+                                      "lambda");
     } catch (Exception e) {
       Api.Event.EnqueueMainThreadTask(
-          () => CompilationDone(CoqResult.Error(e.Message)), "lambda");
+          () => CompilationDone(player, CoqResult.Error(e.Message)), "lambda");
     } finally {
       emitter.Dispose();
     }
   }
 
-  private void CompilationDone(CoqResult result) {
-    if (result.Successful) {
-      _errorMessage = null;
-    } else {
-      _errorMessage = Term.Escape(result.ErrorMessage);
-    }
+  private void CompilationDone(IPlayer player, CoqResult result) {
     _running = false;
     long now = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
     long delay = (long)(_finishTime * 1000) - (now - _startTime);
     if (delay <= 0) {
-      OnComplete(0);
+      OnComplete(player, result);
     } else {
-      _processedCallback = RegisterDelayedCallback(OnComplete, (int)delay);
+      _processedCallback = RegisterDelayedCallback(
+          (float delay) => OnComplete(player, result), (int)delay);
     }
   }
 
@@ -168,6 +168,7 @@ public class FunctionContainer : TermContainer {
       _progress = 0;
       _finishTime = 0;
       _errorMessage = null;
+      ClearErrorHighlight();
       _currentRecipe =
           InscriptionSystem.GetInstance(Api).GetRecipeForIngredient(
               Inventory[0].Itemstack);
@@ -184,25 +185,46 @@ public class FunctionContainer : TermContainer {
       _errorMessage = "no active recipe";
       return null;
     }
-    _errorMessage = null;
     return recipe.Output.ResolvedItemstack.Clone();
   }
 
-  private void OnComplete(float delay) {
+  private void OnComplete(IPlayer player, CoqResult result) {
     Api.Logger.Debug("Inscribe done on the server side.");
-    _processedCallback = -1;
-    if (_finishTime != 0) {
-      _progress = 0;
-      _finishTime = 0;
-      if (_errorMessage == null) {
-        ItemStack replacement = GetOutputItemStack();
-        if (replacement is not null) {
-          Inventory[0].Itemstack = replacement;
-          Inventory[0].MarkDirty();
-        }
+
+    if (_finishTime == 0) {
+      // Somehow the recipe was reset while it was still inscribing.
+      _errorMessage = null;
+      ClearErrorHighlight();
+    } else if (result.Successful) {
+      _errorMessage = null;
+      ClearErrorHighlight();
+      ItemStack replacement = GetOutputItemStack();
+      if (replacement is not null) {
+        Inventory[0].Itemstack = replacement;
+        Inventory[0].MarkDirty();
       }
+    } else {
+      Manager manager = NetworkSystem.GetInstance(Api).TokenEmitterManager;
+      HashSet<BlockPos> errorLocations =
+          manager.ConvertErrorLocations(result.ErrorLocations);
+      Api.World.HighlightBlocks(player, MultiblockStructure.HighlightSlotId,
+                                errorLocations.ToList());
+      _errorHighlights.Add(player);
+      _errorMessage = Term.Escape(result.ErrorMessage);
     }
+    _progress = 0;
+    _finishTime = 0;
+    _processedCallback = -1;
+
     MarkDirty(true);
+  }
+
+  private void ClearErrorHighlight() {
+    foreach (IPlayer player in _errorHighlights) {
+      Api.World.HighlightBlocks(player, MultiblockStructure.HighlightSlotId,
+                                new());
+    }
+    _errorHighlights.Clear();
   }
 
   public override int GetMaxStackForItem(ItemStack item) {

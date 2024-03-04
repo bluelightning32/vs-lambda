@@ -459,4 +459,21 @@ public class Manager {
     state.Process(start);
     return state;
   }
+
+  public HashSet<BlockPos>
+  ConvertErrorLocations(HashSet<NodePos> errorLocations) {
+    HashSet<BlockPos> result = new();
+    foreach (NodePos pos in errorLocations) {
+      BlockNodeTemplate template =
+          _accessor.GetBlock(pos.Block, out Node[] nodes);
+      if (template == null) {
+        // The block must have been broken. Show the location where it used to
+        // be.
+        result.Add(pos.Block);
+      } else {
+        result.Add(template.ConvertErrorLocation(pos, nodes));
+      }
+    }
+    return result;
+  }
 }
