@@ -142,20 +142,21 @@ public class Match : ConstructRoot {
 
   public override void EmitConstruct(CoqEmitter emitter,
                                      bool app_needs_parens) {
-    emitter.Write("match ");
+    emitter.Write("match", this);
+    emitter.Write(' ', null);
     EmitReference(Input, emitter, false);
 
-    emitter.Write(' ');
+    emitter.Write(' ', null);
     if (_matchIn != null) {
       _matchIn.EmitExpression(emitter, false);
-      emitter.Write(' ');
+      emitter.Write(' ', null);
     }
 
-    emitter.Write("with");
+    emitter.Write("with", this);
     emitter.WriteNewline();
     foreach (Case c in _cases) {
       c.EmitExpression(emitter, false);
     }
-    emitter.Write("end");
+    emitter.Write("end", this);
   }
 }

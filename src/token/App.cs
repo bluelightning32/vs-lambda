@@ -74,13 +74,13 @@ public class App : ConstructRoot {
   public override void EmitConstruct(CoqEmitter emitter,
                                      bool app_needs_parens) {
     if (app_needs_parens) {
-      emitter.Write('(');
+      emitter.Write('(', this);
     }
     EmitReference(Applicand, emitter, false);
-    emitter.Write(' ');
+    emitter.Write(' ', this);
     EmitReference(Argument, emitter, true);
     if (app_needs_parens) {
-      emitter.Write(')');
+      emitter.Write(')', this);
     }
   }
 }

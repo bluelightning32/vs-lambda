@@ -165,10 +165,10 @@ public abstract class Token : IDisposable {
     }
   }
 
-  protected static void EmitReference(Token reference, CoqEmitter emitter,
-                                      bool app_needs_parens) {
+  protected void EmitReference(Token reference, CoqEmitter emitter,
+                               bool app_needs_parens) {
     if (reference == null) {
-      emitter.Write('_');
+      emitter.Write('_', this);
       return;
     }
     reference.EmitExpression(emitter, app_needs_parens);

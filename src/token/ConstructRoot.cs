@@ -60,27 +60,28 @@ public abstract class ConstructRoot : TermSource {
   }
 
   public virtual void EmitDefinition(string name, CoqEmitter emitter) {
-    emitter.Write("Definition ");
-    emitter.Write(name);
+    emitter.Write("Definition ", this);
+    emitter.Write(name, this);
     EmitDefinitionType(emitter);
-    emitter.Write(":=");
+    emitter.Write(":=", this);
     emitter.WriteNewline();
     EmitConstruct(emitter, false);
-    emitter.Write(".");
+    emitter.Write(".", this);
     emitter.WriteNewline();
   }
 
   protected virtual void EmitDefinitionType(CoqEmitter emitter) {}
 
   public void EmitLet(CoqEmitter emitter) {
-    emitter.Write("let ");
-    emitter.Write(emitter.GetName(this));
-    emitter.Write(" :=");
+    emitter.Write("let ", this);
+    emitter.Write(emitter.GetName(this), this);
+    emitter.Write(" :=", this);
     emitter.AddIndent();
     emitter.WriteNewline();
     EmitConstruct(emitter, false);
     emitter.ReleaseIndent();
-    emitter.Write(" in");
+    emitter.Write(' ', null);
+    emitter.Write("in", this);
     emitter.WriteNewline();
   }
 
@@ -89,7 +90,7 @@ public abstract class ConstructRoot : TermSource {
     if (IncomingEdgeCount <= 1) {
       EmitConstruct(emitter, app_needs_parens);
     } else {
-      emitter.Write(emitter.GetName(this));
+      emitter.Write(emitter.GetName(this), this);
     }
   }
 

@@ -146,27 +146,30 @@ public class Function : ConstructRoot {
   public override void EmitConstruct(CoqEmitter emitter,
                                      bool app_needs_parens) {
     if (app_needs_parens) {
-      emitter.Write('(');
+      emitter.Write('(', this);
     }
-    emitter.Write("fun ");
+    emitter.Write("fun", this);
+    emitter.Write(' ', null);
     foreach (Parameter p in _parameters.Parameters) {
       if (p.Type != null) {
-        emitter.Write('(');
-        emitter.Write(emitter.GetName(p));
-        emitter.Write(": ");
+        emitter.Write('(', p);
+        emitter.Write(emitter.GetName(p), p);
+        emitter.Write(':', p);
+        emitter.Write(' ', null);
         EmitReference(p.Type, emitter, false);
-        emitter.Write(") ");
+        emitter.Write(')', p);
+        emitter.Write(' ', null);
       } else {
-        emitter.Write(emitter.GetName(p));
-        emitter.Write(' ');
+        emitter.Write(emitter.GetName(p), p);
+        emitter.Write(' ', null);
       }
     }
-    emitter.Write("=>");
+    emitter.Write("=>", this);
     emitter.AddIndent();
     emitter.WriteNewline();
     EmitReference(_parameters.Result, emitter, false);
     if (app_needs_parens) {
-      emitter.Write(')');
+      emitter.Write(')', this);
     }
     emitter.ReleaseIndent();
   }

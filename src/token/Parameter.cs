@@ -58,7 +58,7 @@ public class Parameter : TermSource {
 
   public override void EmitExpression(CoqEmitter emitter,
                                       bool app_needs_parens) {
-    emitter.Write(emitter.GetName(this));
+    emitter.Write(emitter.GetName(this), this);
   }
 
   public override void GetPreferredIdentifier(StringBuilder sb) {

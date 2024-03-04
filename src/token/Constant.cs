@@ -69,11 +69,11 @@ public class Constant : ConstructRoot {
       }
     }
     if (!singleTerm) {
-      emitter.Write('(');
+      emitter.Write('(', this);
     }
-    emitter.Write(Term);
+    emitter.Write(Term, this);
     if (!singleTerm) {
-      emitter.Write(')');
+      emitter.Write(')', this);
     }
   }
 }

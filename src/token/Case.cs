@@ -129,17 +129,18 @@ public class Case : Token {
 
   public override void EmitExpression(CoqEmitter emitter,
                                       bool app_needs_parens) {
-    emitter.Write("| ");
-    emitter.Write(Name);
+    emitter.Write("| ", this);
+    emitter.Write(Name, this);
     foreach (Parameter p in _parameters.Parameters) {
-      emitter.Write(' ');
+      emitter.Write(' ', null);
       if (p.HasSinks) {
-        emitter.Write(emitter.GetName(p));
+        emitter.Write(emitter.GetName(p), p);
       } else {
-        emitter.Write('_');
+        emitter.Write('_', p);
       }
     }
-    emitter.Write(" =>");
+    emitter.Write(' ', null);
+    emitter.Write("=>", this);
     emitter.AddIndent();
     emitter.WriteNewline();
     EmitReference(_parameters.Result, emitter, false);

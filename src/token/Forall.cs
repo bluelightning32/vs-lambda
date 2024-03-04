@@ -13,25 +13,28 @@ public class Forall : Function {
   public override void EmitConstruct(CoqEmitter emitter,
                                      bool app_needs_parens) {
     if (app_needs_parens) {
-      emitter.Write('(');
+      emitter.Write('(', this);
     }
-    emitter.Write("forall");
+    emitter.Write("forall", this);
     foreach (Parameter p in _parameters.Parameters) {
       if (p.Type != null) {
-        emitter.Write(" (");
-        emitter.Write(emitter.GetName(p));
-        emitter.Write(": ");
+        emitter.Write(' ', null);
+        emitter.Write('(', p);
+        emitter.Write(emitter.GetName(p), p);
+        emitter.Write(':', p);
+        emitter.Write(' ', p);
         EmitReference(p.Type, emitter, false);
-        emitter.Write(")");
+        emitter.Write(')', p);
       } else {
-        emitter.Write(' ');
-        emitter.Write(emitter.GetName(p));
+        emitter.Write(' ', null);
+        emitter.Write(emitter.GetName(p), p);
       }
     }
-    emitter.Write(", ");
+    emitter.Write(',', this);
+    emitter.Write(' ', null);
     EmitReference(_parameters.Result, emitter, false);
     if (app_needs_parens) {
-      emitter.Write(')');
+      emitter.Write(')', this);
     }
   }
 }

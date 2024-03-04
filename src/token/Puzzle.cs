@@ -60,7 +60,8 @@ public class Puzzle : Function {
 
   protected override void EmitDefinitionType(CoqEmitter emitter) {
     if (_resultTypeChild != null) {
-      emitter.Write(": ");
+      emitter.Write(':', this);
+      emitter.Write(' ', null);
       EmitReference(_resultTypeChild, emitter, false);
     }
   }

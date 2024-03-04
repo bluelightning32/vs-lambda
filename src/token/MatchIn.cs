@@ -11,13 +11,19 @@ public class MatchIn : Case {
 
   public override void EmitExpression(CoqEmitter emitter,
                                       bool app_needs_parens) {
-    emitter.Write(" in ");
-    emitter.Write(Name);
+    emitter.Write(' ', null);
+    emitter.Write("in ", this);
+    emitter.Write(Name, this);
     foreach (Parameter p in _parameters.Parameters) {
-      emitter.GetName(p);
-      emitter.Write(' ');
+      if (p.HasSinks) {
+        emitter.Write(emitter.GetName(p), p);
+      } else {
+        emitter.Write('_', p);
+      }
+      emitter.Write(' ', null);
     }
-    emitter.Write(" return ");
+    emitter.Write("return", this);
+    emitter.Write(' ', null);
     EmitReference(_parameters.Result, emitter, false);
   }
 }

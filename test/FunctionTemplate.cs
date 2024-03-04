@@ -260,6 +260,12 @@ fun parameter_5_0_0_0_2 =>
         Assert.AreEqual("result", f.Children[1].Children[0].Name);
         Assert.AreEqual(f.Children[1], f.Children[1].Children[0].Children[0]);
 
+        using StringWriter writer = new();
+        CoqEmitter emitter = new(writer);
+        state.EmitDefinition("d", emitter);
+        string coq = writer.ToString();
+        CoqSanitizer.Sanitize(new StringReader(coq));
+
         Assert.AreEqual(
 """
 Definition d: (nat -> nat):=
@@ -269,7 +275,14 @@ fun n =>
       n in
   n.
 
-""", state.EmitDefinition("d"));
+""", coq);
+
+        Assert.IsTrue(new HashSet<Token>() { f.Children[0].Children[0] }
+                      .SetEquals(emitter.FindOverlapping(0, 14, 0, 26)));
+        Assert.IsTrue(new HashSet<Token>() { f }
+                      .SetEquals(emitter.FindOverlapping(1, 0, 1, 3)));
+        Assert.IsTrue(new HashSet<Token>() { f, f.Children[0].Children[0] }
+                      .SetEquals(emitter.FindOverlapping(0, 0, 0, 28)));
       } else {
         Assert.Fail();
       }
