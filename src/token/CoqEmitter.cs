@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,62 +5,8 @@ using System.Text;
 
 namespace Lambda.Token;
 
-public struct FilePosition : IEquatable<FilePosition> {
-  // 0-indexed line number
-  public int Line;
-  // 0-indexed position within the line
-  public int Column;
-  // 0-indexed character offset since the start of the file
-  public int Offset;
-
-  public readonly bool Equals(FilePosition other) {
-    return Offset == other.Offset && Line == other.Line &&
-           Column == other.Column;
-  }
-
-  public static bool operator ==(FilePosition left, FilePosition right) {
-    return left.Equals(right);
-  }
-
-  public static bool operator !=(FilePosition left, FilePosition right) {
-    return !left.Equals(right);
-  }
-
-  public override readonly bool Equals(object obj) {
-    return obj is FilePosition position && Equals(position);
-  }
-
-  public override readonly int GetHashCode() {
-    return Offset ^ (Line << 8) ^ (Column << 16);
-  }
-
-  public readonly bool IsLessThanOrEqual(int line, int column) {
-    if (Line < line) {
-      return true;
-    }
-    if (Line > line) {
-      return false;
-    }
-    return Column <= column;
-  }
-
-  public bool IsLessThan(int line, int column) {
-    if (Line < line) {
-      return true;
-    }
-    if (Line > line) {
-      return false;
-    }
-    return Column < column;
-  }
-
-  public bool IsGreaterThanOrEqual(int line, int column) {
-    return !IsLessThan(line, column);
-  }
-}
-
 public struct Range {
-  public FilePosition Start;
+  public long Start;
   public Token Token;
 }
 
@@ -69,7 +14,8 @@ public class CoqEmitter {
   private readonly Dictionary<Token, string> _tokenNames = new();
   private readonly HashSet<string> _usedNames = new();
   private int _indent = 0;
-  private FilePosition _pos = new();
+  // The byte offset of each line.
+  private readonly List<long> _lineOffsets = new();
   private readonly List<Range> _ranges = new();
 
   private readonly StreamWriter _writer;
@@ -77,9 +23,10 @@ public class CoqEmitter {
   public CoqEmitter(Stream stream) {
     _writer = new StreamWriter(new BlockStreamFlush(stream));
     _ranges.Add(new Range() {
-      Start = _pos,
+      Start = _writer.BaseStream.Position,
       Token = null,
     });
+    _lineOffsets.Add(_writer.BaseStream.Position);
   }
 
   public string GetName(Token t) {
@@ -122,17 +69,13 @@ public class CoqEmitter {
       _writer.Write(' ');
     }
     _writer.Flush();
-    _pos.Column += _indent;
-    _pos.Offset += _indent;
   }
 
   public void WriteNewline() {
     StartRange(null);
     _writer.Write('\n');
     _writer.Flush();
-    _pos.Line++;
-    _pos.Column = 0;
-    _pos.Offset++;
+    _lineOffsets.Add(_writer.BaseStream.Position);
     WriteIndent();
   }
 
@@ -141,29 +84,19 @@ public class CoqEmitter {
     _writer.Write(c);
     _writer.Flush();
     if (c == '\n') {
-      _pos.Line++;
-      _pos.Column = 0;
-    } else {
-      _pos.Column++;
+      _lineOffsets.Add(_writer.BaseStream.Position);
     }
-    _pos.Offset++;
   }
 
   public void Write(string s, Token owner) {
     StartRange(owner);
-    _writer.Write(s);
-    _writer.Flush();
-
-    int lineStart = 0;
     int pos = 0;
     while ((pos = s.IndexOf('\n', pos)) != -1) {
       pos++;
-      lineStart = pos;
-      _pos.Line++;
-      _pos.Column = 0;
+      _lineOffsets.Add(_writer.BaseStream.Position + pos);
     }
-    _pos.Column += s.Length - lineStart;
-    _pos.Offset += s.Length;
+    _writer.Write(s);
+    _writer.Flush();
   }
 
   private void StartRange(Token owner) {
@@ -171,18 +104,25 @@ public class CoqEmitter {
     if (owner == last.Token) {
       return;
     }
-    if (last.Start == _pos) {
+    if (last.Start == _writer.BaseStream.Position) {
       last.Token = owner;
       _ranges[^1] = last;
       return;
     }
-    _ranges.Add(new Range() { Start = _pos, Token = owner });
+    _ranges.Add(
+        new Range() { Start = _writer.BaseStream.Position, Token = owner });
+  }
+
+  // Returns the byte offset of the (line, column) location. Both line and
+  // column are 0-indexed. Column is simply treated as a byte offset relative to
+  // the start of the line. So if the column value goes past the end of the
+  // line, then the returned offest will be on the subsequent line.
+  public long ResolveLineColumn(int line, long column) {
+    return _lineOffsets[line] + column;
   }
 
   // Returns all tokens that overlap the range of the generated content.
-  // The line and column indices are 0-indexed.
-  public HashSet<Token> FindOverlapping(int startLine, int startCol,
-                                        int endLine, int endCol) {
+  public HashSet<Token> FindOverlapping(long start, long end) {
     // Perform a binary search to get the start of the range. startLower will
     // point to the last range that is less than or equal to (startLine,
     // startCol), or 0 if the first range is greater than (startLine, startCol).
@@ -190,7 +130,7 @@ public class CoqEmitter {
     int upper = _ranges.Count;
     while (startLower + 1 < upper) {
       int mid = ((upper - startLower) >> 1) + startLower;
-      if (_ranges[mid].Start.IsLessThanOrEqual(startLine, startCol)) {
+      if (_ranges[mid].Start <= start) {
         startLower = mid;
       } else {
         upper = mid;
@@ -204,7 +144,7 @@ public class CoqEmitter {
     int endUpper = _ranges.Count;
     while (lower + 1 < endUpper) {
       int mid = ((endUpper - lower) >> 1) + lower;
-      if (_ranges[mid].Start.IsLessThan(endLine, endCol)) {
+      if (_ranges[mid].Start < end) {
         lower = mid;
       } else {
         endUpper = mid;
@@ -214,12 +154,16 @@ public class CoqEmitter {
     HashSet<Token> result = new();
     for (int i = startLower; i < endUpper; ++i) {
       if (_ranges[i].Token != null) {
-        Debug.Assert(
-            _ranges[i].Start.IsGreaterThanOrEqual(startLine, startCol) &&
-            _ranges[i].Start.IsLessThan(endLine, endCol));
+        Debug.Assert(_ranges[i].Start >= start && _ranges[i].Start < end);
         result.Add(_ranges[i].Token);
       }
     }
     return result;
+  }
+
+  public HashSet<Token> FindOverlapping(int startLine, long startColumn,
+                                        int endLine, long endColumn) {
+    return FindOverlapping(ResolveLineColumn(startLine, startColumn),
+                           ResolveLineColumn(endLine, endColumn));
   }
 }

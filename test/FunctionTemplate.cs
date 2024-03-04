@@ -277,6 +277,9 @@ fun n =>
                       .SetEquals(emitter.FindOverlapping(0, 14, 0, 26)));
         Assert.IsTrue(new HashSet<Token>() { f }
                       .SetEquals(emitter.FindOverlapping(1, 0, 1, 3)));
+        // Verify it returns the same result when the range is given as overflowed columns.
+        Assert.IsTrue(new HashSet<Token>() { f }
+                      .SetEquals(emitter.FindOverlapping(0, emitter.ResolveLineColumn(1, 0), 0, emitter.ResolveLineColumn(1, 3))));
         Assert.IsTrue(new HashSet<Token>() { f, f.Children[0].Children[0] }
                       .SetEquals(emitter.FindOverlapping(0, 0, 0, 28)));
       } else {
