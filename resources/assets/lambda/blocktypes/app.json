@@ -42,10 +42,10 @@
             network: "term",
             directions: ["direct-in"],
             facesByType: {
-              "*-north": ["north"],
-              "*-east": ["east"],
-              "*-south": ["south"],
-              "*-west": ["west"]
+              "*-north": ["south"],
+              "*-east": ["west"],
+              "*-south": ["north"],
+              "*-west": ["east"]
             },
             inventory: {
               dialogTitleLangCode: "lambda:app-argument-container-title",
