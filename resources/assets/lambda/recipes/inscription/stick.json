@@ -10,5 +10,6 @@
   },
   description: "Placeholder to convert a stick to a plank",
   puzzletype: "forall A B, A*B -> B*A",
+  parameters: [ "A", "B", "ab" ],
   puzzlechecks: []
 }

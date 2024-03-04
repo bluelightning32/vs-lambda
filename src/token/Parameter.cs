@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 using Lambda.Network;
 
@@ -24,11 +25,13 @@ public class Parameter : TermSource {
     get { return _parameters.GetChildrenAtLevel(_parameters.GetNext(this)); }
   }
 
-  public override string Name { get; }
+  public string _name;
+  public override string Name => _name ?? "parameter";
 
-  public Parameter(string name, NodePos pos, ConstructRoot construct,
+  public void SetName(string name) { _name = name; }
+
+  public Parameter(NodePos pos, ConstructRoot construct,
                    ParameterList parameters) {
-    Name = name;
     Pos = pos;
     _construct = construct;
     _parameters = parameters;
@@ -56,5 +59,13 @@ public class Parameter : TermSource {
   public override void EmitExpression(CoqEmitter emitter,
                                       bool app_needs_parens) {
     emitter.Write(emitter.GetName(this));
+  }
+
+  public override void GetPreferredIdentifier(StringBuilder sb) {
+    if (_name != null) {
+      SanitizeIdentifier(_name, sb);
+      return;
+    }
+    base.GetPreferredIdentifier(sb);
   }
 }

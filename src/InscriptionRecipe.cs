@@ -31,6 +31,9 @@ public class InscriptionRecipe : RecipeBase<InscriptionRecipe>,
                                  IByteSerializable {
   public string Description;
   public string PuzzleType;
+  // The names of the parameters. If this is empty, then all of the parameters
+  // are simply called 'parameter_<location>'.
+  public string[] Parameters;
   public PuzzleCheck[] PuzzleChecks;
   public float ProcessTime = 1;
 

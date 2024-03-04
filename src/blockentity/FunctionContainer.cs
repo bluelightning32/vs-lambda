@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 
+using Lambda.CollectibleBehavior;
 using Lambda.Token;
 
 using Vintagestory.API.Client;
@@ -113,7 +114,8 @@ public class FunctionContainer : TermContainer {
           TokenEmitter emitter =
               GetBehavior<Network.BlockEntityBehavior.TokenEmitter>().Emit();
           _running = true;
-          TyronThreadPool.QueueLongDurationTask(() => Compile(emitter),
+          InscriptionRecipe recipe = _currentRecipe;
+          TyronThreadPool.QueueLongDurationTask(() => Compile(emitter, recipe),
                                                 "lambda");
         } catch (Exception e) {
           _errorMessage = e.Message;
@@ -126,19 +128,20 @@ public class FunctionContainer : TermContainer {
     base.OnReceivedClientPacket(player, packetid, data);
   }
 
-  private void Compile(TokenEmitter emitter) {
+  private void Compile(TokenEmitter emitter, InscriptionRecipe recipe) {
     try {
+      emitter.SetPuzzleParameters(recipe.Parameters ?? Array.Empty<string>());
       emitter.PostProcess();
       ServerConfig config = CoreSystem.GetInstance(Api).ServerConfig;
       using CoqSession session = new(config);
       string result = session.ValidateCoq(emitter);
       Api.Event.EnqueueMainThreadTask(() => {
-        _errorMessage = result;
+        _errorMessage = Term.Escape(result);
         CompilationDone();
       }, "lambda");
     } catch (Exception e) {
       Api.Event.EnqueueMainThreadTask(() => {
-        _errorMessage = e.Message;
+        _errorMessage = Term.Escape(e.Message);
         CompilationDone();
       }, "lambda");
     } finally {

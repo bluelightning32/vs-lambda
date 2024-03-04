@@ -240,6 +240,7 @@ fun parameter_5_0_0_0_2 =>
           new NodePos(puzzleBlock, _accessor.FindNodeId(puzzleBlock, "scope")),
           r, i == 0 ? TestContext.FullyQualifiedTestClassName : null,
           TestContext.TestName);
+      state.SetPuzzleParameters(new string[] { "n" });
       if (puzzle is Function f) {
         CollectionAssert.AreEqual(new Token[] { puzzle },
                                   state.UnreferencedRoots.ToList());
@@ -252,7 +253,7 @@ fun parameter_5_0_0_0_2 =>
         Assert.AreEqual("nat -> nat",
                         ((Constant)f.Children[0].Children[0]).Term);
 
-        Assert.AreEqual("parameter", f.Children[1].Name);
+        Assert.AreEqual("n", f.Children[1].Name);
         Assert.AreEqual(1,
                         ((TermInput)f.Children[1].Children[0]).Anchored.Count);
         Assert.AreEqual(5, f.Children[1].TermConnectors.Count);
@@ -262,11 +263,11 @@ fun parameter_5_0_0_0_2 =>
         Assert.AreEqual(
 """
 Definition d: (nat -> nat):=
-fun parameter_5_0_0_0_2 =>
+fun n =>
   let function_6_0_4_0_0 :=
     fun parameter_3_0_2_0_2 =>
-      parameter_5_0_0_0_2 in
-  parameter_5_0_0_0_2.
+      n in
+  n.
 
 """, state.EmitDefinition("d"));
       } else {

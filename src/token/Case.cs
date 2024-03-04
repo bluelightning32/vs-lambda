@@ -73,7 +73,7 @@ public class Case : Token {
                        bool isSource) {
     Token added;
     if (isSource) {
-      Parameter newParam = new("parameter", pos, _match, _parameters);
+      Parameter newParam = new(pos, _match, _parameters);
       _parameters.Parameters.Add(newParam);
       added = newParam;
     } else {

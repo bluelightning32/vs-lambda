@@ -70,7 +70,7 @@ public class Function : ConstructRoot {
                                bool isSource) {
     Token added = null;
     if (isSource) {
-      Parameter newParam = new("parameter", pos, this, _parameters);
+      Parameter newParam = new(pos, this, _parameters);
       _parameters.Parameters.Add(newParam);
       added = newParam;
     } else {
@@ -169,5 +169,15 @@ public class Function : ConstructRoot {
       emitter.Write(')');
     }
     emitter.ReleaseIndent();
+  }
+
+  public void SetParameterNames(string[] parameterNames) {
+    int i = 0;
+    foreach (Parameter p in _parameters.Parameters) {
+      if (i >= parameterNames.Length) {
+        break;
+      }
+      p.SetName(parameterNames[i]);
+    }
   }
 }

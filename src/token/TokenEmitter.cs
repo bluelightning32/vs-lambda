@@ -638,4 +638,8 @@ public class TokenEmitter : IDisposable {
   public void EmitDefinition(string name, CoqEmitter emitter) {
     ((ConstructRoot)_main).EmitDefinition(name, emitter);
   }
+
+  public void SetPuzzleParameters(string[] parameterNames) {
+    (_main as Puzzle)?.SetParameterNames(parameterNames);
+  }
 }
