@@ -27,7 +27,7 @@ public abstract class Token : IDisposable {
 
   public int PendingRef { get; private set; }
 
-  public string Name { get; private set; }
+  public abstract string Name { get; }
 
   // This is only used for multiuse scoping. Before the scoping is performed,
   // this is set to 0. After the scoping is done, this is set to the number of
@@ -40,10 +40,7 @@ public abstract class Token : IDisposable {
     get => _pendingRefLocations;
   }
 
-  public Token(string name) {
-    PendingRef = 0;
-    Name = name;
-  }
+  public Token() { PendingRef = 0; }
 
   public void AddRef(TokenEmitter state, NodePos pos) {
     if (Blocks[0] == new NodePos(0, 0, 2, 0, 2) &&

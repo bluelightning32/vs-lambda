@@ -9,7 +9,7 @@ public abstract class TermSource : Token {
   private readonly List<NodePos> _termConnectors = new();
   public override IReadOnlyList<NodePos> TermConnectors => _termConnectors;
 
-  public TermSource(string name) : base(name) {}
+  public TermSource() {}
 
   public override void AddConnector(TokenEmitter state, NetworkType network,
                                     NodePos pos) {

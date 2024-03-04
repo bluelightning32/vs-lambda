@@ -5,6 +5,8 @@ using Vintagestory.API.MathTools;
 namespace Lambda.Token;
 
 public class Forall : Function {
+  public override string Name => "forall";
+
   public Forall(string name, NodePos pos, int outputNodeId, BlockFacing face)
       : base(name, pos, outputNodeId, face) {}
 

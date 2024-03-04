@@ -7,7 +7,7 @@ public abstract class ConstructRoot : TermSource {
   // Number of edges that point to this element.
   public int IncomingEdgeCount { get; private set; }
 
-  public ConstructRoot(string name) : base(name) {}
+  public ConstructRoot() {}
 
   // This is only non-null during multiuse scoping for constructs that need to
   // be anchored. After the construct is anchored, this is set back to null.

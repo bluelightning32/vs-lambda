@@ -24,9 +24,11 @@ public class Parameter : TermSource {
     get { return _parameters.GetChildrenAtLevel(_parameters.GetNext(this)); }
   }
 
+  public override string Name { get; }
+
   public Parameter(string name, NodePos pos, ConstructRoot construct,
-                   ParameterList parameters)
-      : base(name) {
+                   ParameterList parameters) {
+    Name = name;
     Pos = pos;
     _construct = construct;
     _parameters = parameters;

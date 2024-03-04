@@ -35,10 +35,12 @@ public class Function : ConstructRoot {
   public override IReadOnlyList<NodePos> ScopeMatchConnectors =>
       _scopeConnectors;
 
+  public override string Name => "function";
+
   protected readonly ParameterList _parameters;
 
-  public Function(string name, NodePos pos, int outputNodeId, BlockFacing face)
-      : base(name) {
+  public Function(string name, NodePos pos, int outputNodeId,
+                  BlockFacing face) {
     ScopePos = pos;
     OutputNodeId = outputNodeId;
     _parameters = new ParameterList(face);

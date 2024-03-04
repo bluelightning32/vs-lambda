@@ -45,8 +45,9 @@ public class Match : ConstructRoot {
   public override IReadOnlyList<NodePos> ScopeMatchConnectors =>
       _matchConnectors;
 
-  public Match(string name, NodePos pos, int inputNodeId, int outputNodeId)
-      : base(name) {
+  public override string Name => "match";
+
+  public Match(string name, NodePos pos, int inputNodeId, int outputNodeId) {
     MatchPos = pos;
     OutputNodeId = outputNodeId;
     _cases = new(new TokenComparer(BlockFacing.SOUTH));

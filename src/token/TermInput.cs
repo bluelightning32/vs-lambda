@@ -50,8 +50,10 @@ public class TermInput : Token {
         (IReadOnlyList<ConstructRoot>)_anchored ?? Array.Empty<ConstructRoot>();
   }
 
-  public TermInput(string name, NodePos pos, ConstructRoot construct)
-      : base(name) {
+  public override string Name { get; }
+
+  public TermInput(string name, NodePos pos, ConstructRoot construct) {
+    Name = name;
     _pos = pos;
     _construct = construct;
   }

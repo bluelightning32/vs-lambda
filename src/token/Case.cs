@@ -32,11 +32,13 @@ public class Case : Token {
   public override IReadOnlyList<NodePos> TermConnectors =>
       Array.Empty<NodePos>();
 
+  public override string Name { get; }
+
   protected readonly ParameterList _parameters;
 
   public Case(string name, NodePos matchPos, Match match, int scopeNodeId,
-              BlockFacing face)
-      : base(name) {
+              BlockFacing face) {
+    Name = name;
     MatchPos = matchPos;
     ScopeNodeId = scopeNodeId;
     if (MatchPos.NodeId == scopeNodeId) {

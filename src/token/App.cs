@@ -20,12 +20,13 @@ public class App : ConstructRoot {
   public TermInput Applicand { get; private set; }
   public TermInput Argument { get; private set; }
 
+  public override string Name => "app";
+
   public override IReadOnlyList<NodePos> ScopeMatchConnectors =>
       Array.Empty<NodePos>();
 
   public App(string name, NodePos pos, NodePos applicandPos,
-             NodePos argumentPos)
-      : base(name) {
+             NodePos argumentPos) {
     Pos = pos;
     Applicand = new TermInput("applicand", applicandPos, this);
     Argument = new TermInput("argument", argumentPos, this);

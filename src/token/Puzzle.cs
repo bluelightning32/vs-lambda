@@ -20,6 +20,8 @@ public class Puzzle : Function {
   private TermInput _resultTypeChild = null;
   private string _resultType = null;
 
+  public override string Name => "puzzle";
+
   public Puzzle(string name, NodePos pos, int outputNodeId, BlockFacing face)
       : base(name, pos, outputNodeId, face) {}
 
