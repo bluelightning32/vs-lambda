@@ -86,10 +86,21 @@ public class Orient : VSBlockBehavior {
     Block oriented = world.BlockAccessor.GetBlock(
         block.CodeWithVariant(_facingCode, orientation));
     if (!byPlayer.Entity.Controls.ShiftKey) {
-      List<Block> matching = GetConnectedOrientations(world, blockSel.Position,
-                                                      blockSel.Face.Opposite);
-      if (!matching.Contains(oriented)) {
-        oriented = matching.FirstOrDefault(block => block != null, oriented);
+      Dictionary<Block, PairState> matching = GetConnectedOrientations(
+          world, blockSel.Position, blockSel.Face.Opposite);
+      if (!matching.TryGetValue(oriented, out PairState state) ||
+          state == PairState.Unpaired) {
+        // `oriented` was chosen purely based on angles, but it doesn't pair
+        // with its neighbor. So if any other orientations do pair, use them
+        // instead. If multiple orientations pair with the neighbors, then try
+        // to choose one that also has a source set.
+        PairState bestPairing = PairState.Unpaired;
+        foreach (KeyValuePair<Block, PairState> pairing in matching) {
+          if ((int)pairing.Value > (int)bestPairing) {
+            bestPairing = pairing.Value;
+            oriented = pairing.Key;
+          }
+        }
       }
     }
     if (!oriented.CanPlaceBlock(world, byPlayer, blockSel, ref failureCode)) {
@@ -122,9 +133,9 @@ public class Orient : VSBlockBehavior {
         .ToList();
   }
 
-  private List<Block> GetConnectedOrientations(IWorldAccessor world,
-                                               BlockPos pos,
-                                               BlockFacing preferredNeighbor) {
+  private Dictionary<Block, PairState>
+  GetConnectedOrientations(IWorldAccessor world, BlockPos pos,
+                           BlockFacing preferredNeighbor) {
     List<Block> filtered = GetOrientations(world);
     NetworkSystem networkSystem = NetworkSystem.GetInstance(world.Api);
     AutoStepManager manager = networkSystem.TokenEmitterManager;
@@ -150,9 +161,9 @@ public class Orient : VSBlockBehavior {
             manager.ParseBlockNodeTemplate(found.properties, 0, 0));
       }
     }
-    List<BlockNodeTemplate> matched = new(blockTemplates);
-    manager.RemoveUnpaired(matched, pos, preferredNeighbor);
-    if (!matched.Any(template => template != null)) {
+    List<PairState> matched =
+        manager.GetPairState(blockTemplates, pos, preferredNeighbor);
+    if (!matched.Any(state => state != PairState.Unpaired)) {
       if (_pairToAny) {
         // No matches were found on the preferred neighbor. See if any of the
         // neighbors match.
@@ -160,23 +171,17 @@ public class Orient : VSBlockBehavior {
           if (facing == preferredNeighbor) {
             continue;
           }
-          List<BlockNodeTemplate> addMatched = new(blockTemplates);
-          manager.RemoveUnpaired(addMatched, pos, facing);
+          List<PairState> addMatched =
+              manager.GetPairState(blockTemplates, pos, facing);
           for (int i = 0; i < addMatched.Count; ++i) {
-            if (addMatched[i] != null) {
+            if ((int)addMatched[i] > (int)matched[i]) {
               matched[i] = addMatched[i];
             }
           }
         }
       }
     }
-    // Filter `filtered` based on which templates could connect.
-    for (int i = 0; i < matched.Count; ++i) {
-      if (matched[i] == null) {
-        filtered[i] = null;
-      }
-    }
-    return filtered;
+    return filtered.Zip(matched).ToDictionary(p => p.First, p => p.Second);
   }
 
   public override ItemStack OnPickBlock(IWorldAccessor world, BlockPos pos,

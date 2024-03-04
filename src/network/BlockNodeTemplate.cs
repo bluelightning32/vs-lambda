@@ -299,16 +299,21 @@ public class BlockNodeTemplate {
   // neighbor on `face`. Each network is only counted once, even if it matches
   // multiple edges.
   public int GetPairableNetworkCount(BlockFacing face,
-                                     BlockNodeTemplate neighbor) {
+                                     BlockNodeTemplate neighbor,
+                                     Node[] neighborNodes,
+                                     out bool neighborHasSource) {
     Debug.Assert((int)NetworkType.Max < sizeof(int) * 8 - 1);
     int usedCount = 0;
     int used = 0;
+    neighborHasSource = false;
     foreach (var edge in _index) {
       if (edge.Key.Item2.GetFace() != face) {
         continue;
       }
-      if (neighbor._index.ContainsKey(
-              (edge.Key.Item1, edge.Key.Item2.GetOpposite()))) {
+      if (neighbor._index.TryGetValue(
+              (edge.Key.Item1, edge.Key.Item2.GetOpposite()),
+              out NodeTemplate neighborNode)) {
+        neighborHasSource |= neighborNodes[neighborNode.Id].Source.IsSet();
         if ((used & (1 << (int)edge.Key.Item1)) == 0) {
           used |= 1 << (int)edge.Key.Item1;
           ++usedCount;

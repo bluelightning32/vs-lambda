@@ -14,6 +14,12 @@ using Vintagestory.API.Util;
 
 namespace Lambda.Network;
 
+public enum PairState {
+  Unpaired,
+  Paired,
+  PairedWithSource,
+}
+
 public struct NodeQueueItem : IComparable<NodeQueueItem> {
   public int PropagationDistance = Node.InfDistance;
   public BlockPos Pos;
@@ -364,34 +370,40 @@ public class Manager {
            false;
   }
 
-  // Set entries in `templates` to null if they have no edges that pair with the
-  // edges at `pos`, or if they pair less than the max networks with the
-  // neighbor. Nulls in `templates` are ignored.
-  public void RemoveUnpaired(List<BlockNodeTemplate> templates, BlockPos pos,
-                             BlockFacing face) {
+  // Returns a list of pair states where each entry corresponds to the same
+  // index in `templates`.
+  public List<PairState> GetPairState(List<BlockNodeTemplate> templates,
+                                      BlockPos pos, BlockFacing face) {
     BlockNodeTemplate neighbor =
         _accessor.GetBlock(pos.AddCopy(face), out Node[] nodes);
     int max = 1;
+    List<PairState> result = new();
     for (int i = 0; i < templates.Count; ++i) {
       if (templates[i] == null) {
+        result.Add(PairState.Unpaired);
         continue;
       }
       if (neighbor == null) {
-        templates[i] = null;
+        result.Add(PairState.Unpaired);
         continue;
       }
-      int pairable = templates[i].GetPairableNetworkCount(face, neighbor);
+      int pairable = templates[i].GetPairableNetworkCount(face, neighbor, nodes,
+                                                          out bool hasSource);
       if (pairable < max) {
-        templates[i] = null;
-      } else if (pairable > max) {
-        max = pairable;
-        // Null out all previous, non-null entries, because they paired using
-        // less than the max pairable networks.
-        for (int j = 0; j < i; ++j) {
-          templates[j] = null;
+        result.Add(PairState.Unpaired);
+      } else {
+        result.Add(hasSource ? PairState.PairedWithSource : PairState.Paired);
+        if (pairable > max) {
+          max = pairable;
+          // Null out all previous, non-null entries, because they paired using
+          // less than the max pairable networks.
+          for (int j = 0; j < i; ++j) {
+            result[j] = PairState.Unpaired;
+          }
         }
       }
     }
+    return result;
   }
 
   // Parse the block template. `connectFaces` describes center edges to add to
