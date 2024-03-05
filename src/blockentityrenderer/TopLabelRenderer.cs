@@ -144,7 +144,8 @@ public class TopLabelRenderer : BlockEntitySignRenderer {
     // font size.
     font.UnscaledFontsize = fontSize / RuntimeEnv.GUIScale;
     double maxWidth = 0;
-    // Find the length of each line individually, because otherwise GetTextExtents treats '\n' as a space.
+    // Find the length of each line individually, because otherwise
+    // GetTextExtents treats '\n' as a space.
     string[] lines = text.Split('\n');
     foreach (string line in lines) {
       TextExtents extents = font.GetTextExtents(line);
@@ -164,7 +165,8 @@ public class TopLabelRenderer : BlockEntitySignRenderer {
       fontSize *= (float)(TextWidth * 0.9 / maxWidth);
     }
     if (maxHeight > TextHeight) {
-      fontSize = (float)Math.Min(fontSize, originalSize * TextHeight / maxHeight);
+      fontSize =
+          (float)Math.Min(fontSize, originalSize * TextHeight / maxHeight);
     }
 
     base.SetNewText(text, color);

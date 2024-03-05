@@ -56,7 +56,9 @@ public class FunctionContainer : TermContainer {
       string code = Inventory[0].Empty ? GetInventoryControl()?.GetDescription()
                                        : "lambda:function-container-success";
       return VtmlUtil.Richtextify(
-          capi, Lang.Get(AssetLocation.Create(code, CoreSystem.Domain).ToShortString()),
+          capi,
+          Lang.Get(
+              AssetLocation.Create(code, CoreSystem.Domain).ToShortString()),
           CairoFont.WhiteSmallText());
     }
   }
@@ -286,8 +288,9 @@ public class FunctionContainer : TermContainer {
     if (_currentRecipe == null) {
       SetLabel(null);
     } else {
-      string label = _currentRecipe?.Label.ToShortString();
-      SetLabel(Lang.Get(label));
+      string label = _currentRecipe.Label?.ToShortString();
+      label = label != null ? Lang.Get(label) : _currentRecipe.PuzzleType;
+      SetLabel(label);
     }
   }
 }

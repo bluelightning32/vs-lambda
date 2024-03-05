@@ -12,6 +12,11 @@
   "matchin-container-title": "Match input type family",
   "matchin-container-description": "Item to identify the input type of the match. The item's hover text must say 'is type' or 'is type family'.",
 
+  // Handbook fragments
+  "required-function-type": "Required function type:",
+  "accepts-inscriptions": "Accepts inscriptions",
+  "inscribing": "Inscribing",
+
   // Inscribe button label
   "inscribe": "Inscribe",
 
@@ -48,6 +53,14 @@
   "item-typefamily-prod": "prod (aka A * B)",
 
   // Recipes
-  "recipe-stick-desc": "Destruct the sum type, then use the pair constructor to rebuild it with the arguments swapped.",
-  "recipe-stick": "forall A B,\nA*B -> B*A"
+  "recipe-identity-desc": "Put two parameter ports (out ports) on the function followed by one result port (in port). Connect the second parameter port (the one to the right) to the result port.",
+  "recipe-either-desc": "Put 3 parameter ports on the function. Connect either parameter of type A to the result port.",
+  "recipe-build-or-desc": "Put the 'inl' or 'inr' constructor in an application block. Connect the parameter of type A to the argument port of the application block (input port on back). Connect the application port output to the function result port.",
+  "recipe-and2-desc": "Put the 'and' constructor in an application block. Connect the parameter of type A to the argument port. Connect the application result to another application block. Use the parameter of type B as the argument for the second application.",
+  "recipe-and3-desc": "Use 2 pair constructors inside application blocks, plus 2 more application blocks.",
+  "recipe-pair-first-desc": "Connect the A*B parameter to a match block to destruct it. Place a case block touching the match block. Put the pair constructor in the case block. Build a scope around the case block. Put two parameter ports and a result port in the case scope. Connect the first case parameter to the result port.",
+  "recipe-swap-and-desc": "Destruct the prod type, then use the pair constructor to rebuild it with the arguments swapped.",
+  "recipe-and-distrib-desc": "Destruct the prod type, then reconstruct it with A added on each side.",
+  "recipe-swap-or-desc": "Destruct the A+B parameter with a match block. Use two case blocks with the match block: inl and inr. In the inl case, construct the output using inr. In the inr case, construct the output using inl.",
+  "recipe-and-assoc-desc": "Destruct the parameter twice using nested match statements with the pair constructor in the case block, then rebuild it with the pair constructor.",
 }

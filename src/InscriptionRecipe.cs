@@ -101,7 +101,6 @@ public class InscriptionRecipe : RecipeBase<InscriptionRecipe>,
       return false;
     }
     Description ??= new AssetLocation(Name.Domain, $"recipe-{Name.Path}-desc");
-    Label ??= new AssetLocation(Name.Domain, $"recipe-{Name.Path}");
     return Ingredient.Resolve(world, sourceForErrorLogging) &&
            Output.Resolve(world, sourceForErrorLogging);
   }
@@ -113,7 +112,7 @@ public class InscriptionRecipe : RecipeBase<InscriptionRecipe>,
     writer.Write(Name.ToShortString());
     writer.Write(Description.ToShortString());
     writer.Write(PuzzleType);
-    writer.Write(Label.ToShortString());
+    writer.Write(Label?.ToShortString() ?? "");
     writer.Write(PuzzleChecks.Length);
     foreach (PuzzleCheck check in PuzzleChecks) {
       check.ToBytes(writer);
@@ -130,7 +129,12 @@ public class InscriptionRecipe : RecipeBase<InscriptionRecipe>,
     Name = new AssetLocation(reader.ReadString());
     Description = new AssetLocation(reader.ReadString());
     PuzzleType = reader.ReadString();
-    Label = new AssetLocation(reader.ReadString());
+    string label = reader.ReadString();
+    if (label.Length > 0) {
+      Label = new AssetLocation(label);
+    } else {
+      Label = null;
+    }
     PuzzleChecks = new PuzzleCheck[reader.ReadInt32()];
     for (int i = 0; i < PuzzleChecks.Length; ++i) {
       PuzzleChecks[i] = new PuzzleCheck();

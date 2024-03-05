@@ -73,9 +73,9 @@ public class InscriptionSystem : ModSystem {
       return components;
     }
     components.Add(Newline(marginTop));
-    components.Add(new RichTextComponent(capi,
-                                         "• " + Lang.Get("Inscribing") + "\n",
-                                         CairoFont.WhiteSmallText()));
+    components.Add(
+        new RichTextComponent(capi, "• " + Lang.Get("lambda:inscribing") + "\n",
+                              CairoFont.WhiteSmallText()));
     components.AddRange(GetRecipeComponents(groupedRecipes, openDetailPageFor));
     components.Add(Newline(10));
     return components;
@@ -100,10 +100,11 @@ public class InscriptionSystem : ModSystem {
                   openDetailPageFor(GuiHandbookItemStackPage.PageCodeForStack(
                       ingredient))) { ShowStackSize = true };
       components.Add(ingredient);
-      RichTextComponent text =
-          new(capi, " => (" + group.First().PuzzleType + ") => ",
-              CairoFont.WhiteSmallText()) { VerticalAlign =
-                                                EnumVerticalAlign.Middle };
+      RichTextComponent text = new(
+          capi,
+          " => (" + group.First().PuzzleType.ReplaceLineEndings(" ") + ") => ",
+          CairoFont.WhiteSmallText()) { VerticalAlign =
+                                            EnumVerticalAlign.Middle };
       components.Add(text);
       SlideshowItemstackTextComponent output =
           new(capi, group.Select(r => r.Output.ResolvedItemstack).ToArray(),
@@ -140,12 +141,15 @@ public class InscriptionSystem : ModSystem {
     components.Add(Newline(10));
 
     RichTextComponent typeText =
-        new(capi, "Required function type:\n  " + recipe.PuzzleType + "\n\n",
+        new(capi,
+            Lang.Get("lambda:required-function-type") + "\n  " +
+                recipe.PuzzleType.Trim().ReplaceLineEndings("\n  ") + "\n\n",
             CairoFont.WhiteSmallText());
     components.Add(typeText);
 
-    components.AddRange(VtmlUtil.Richtextify(capi, Lang.Get(recipe.Description.ToShortString()),
-                                             CairoFont.WhiteSmallText()));
+    components.AddRange(
+        VtmlUtil.Richtextify(capi, Lang.Get(recipe.Description.ToShortString()),
+                             CairoFont.WhiteSmallText()));
     return components.ToArray();
   }
 
@@ -195,7 +199,7 @@ public class InscriptionSystem : ModSystem {
       components.Add(Newline(marginTop));
     }
     components.Add(new RichTextComponent(
-        capi, Lang.Get("Accepts inscriptions") + "\n",
+        capi, Lang.Get("lambda:accepts-inscriptions") + "\n",
         CairoFont.WhiteSmallText().WithWeight(FontWeight.Bold)));
     components.AddRange(GetRecipeComponents(groupedRecipes, openDetailPageFor));
     components.Add(Newline(marginBottom));

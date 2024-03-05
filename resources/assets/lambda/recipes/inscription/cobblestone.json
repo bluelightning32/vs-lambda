@@ -1,0 +1,170 @@
+[
+  {
+    name: "identity",
+    ingredient: {
+      type: "block",
+      code: "game:cobblestone-andesite"
+    },
+    output: {
+      type: "block",
+      code: "game:rock-andesite"
+    },
+    puzzletype: "forall A,\nA -> A",
+    parameters: [
+        "A",
+        "a"
+    ],
+    puzzlechecks: []
+  },
+  {
+    name: "either",
+    ingredient: {
+      type: "block",
+      code: "game:cobblestone-chalk"
+    },
+    output: {
+      type: "block",
+      code: "game:rock-chalk"
+    },
+    puzzletype: "forall A,\nA -> A -> A",
+    parameters: [
+        "A",
+        "a1",
+        "a2"
+    ],
+    puzzlechecks: []
+  },
+  {
+    name: "build-or",
+    ingredient: {
+      type: "block",
+      code: "game:cobblestone-sandstone"
+    },
+    output: {
+      type: "block",
+      code: "game:rock-sandstone"
+    },
+    puzzletype: "forall A,\nA -> A+A",
+    parameters: [
+        "A",
+        "a"
+    ],
+    puzzlechecks: []
+  },
+  {
+    name: "and2",
+    ingredient: {
+      type: "block",
+      code: "game:cobblestone-limestone"
+    },
+    output: {
+      type: "block",
+      code: "game:rock-limestone"
+    },
+    puzzletype: "forall A B,\nA -> B -> A*B",
+    parameters: [
+        "A",
+        "B",
+        "a",
+        "b"
+    ],
+    puzzlechecks: []
+  },
+
+  {
+    name: "and3",
+    ingredient: {
+      type: "block",
+      code: "game:cobblestone-claystone"
+    },
+    output: {
+      type: "block",
+      code: "game:rock-claystone"
+    },
+    puzzletype: "forall A B C,\nA -> B -> C -> (A*B)*C",
+    parameters: [
+        "A",
+        "B",
+        "C",
+        "a",
+        "b",
+        "c"
+    ],
+    puzzlechecks: []
+  },
+  {
+    name: "pair-first",
+    ingredient: {
+      type: "block",
+      code: "game:cobblestone-shale"
+    },
+    output: {
+      type: "block",
+      code: "game:rock-shale"
+    },
+    puzzletype: "forall A B,\nA*B -> A",
+    parameters: [
+        "A",
+        "B",
+        "ab"
+    ],
+    puzzlechecks: []
+  },
+  {
+    name: "and-distrib",
+    ingredient: {
+      type: "block",
+      code: "game:cobblestone-granite"
+    },
+    output: {
+      type: "block",
+      code: "game:rock-granite"
+    },
+    puzzletype: "forall A B C,\nA -> (B*C) -> (A*B)*(A*C)",
+    parameters: [
+        "A",
+        "B",
+        "C",
+        "a",
+        "bc"
+    ],
+    puzzlechecks: []
+  },
+  {
+    name: "swap-or",
+    ingredient: {
+      type: "block",
+      code: "game:cobblestone-chert"
+    },
+    output: {
+      type: "block",
+      code: "game:rock-chert"
+    },
+    puzzletype: "forall A B,\nA+B -> B+A",
+    parameters: [
+        "A",
+        "B",
+        "ab"
+    ],
+    puzzlechecks: []
+  },
+  {
+    name: "and-assoc",
+    ingredient: {
+      type: "block",
+      code: "game:cobblestone-conglomerate"
+    },
+    output: {
+      type: "block",
+      code: "game:rock-conglomerate"
+    },
+    puzzletype: "forall A B C,\n(A*B)*C -> A*(B*C)",
+    parameters: [
+        "A",
+        "B",
+        "C",
+        "abc"
+    ],
+    puzzlechecks: []
+  },
+]
