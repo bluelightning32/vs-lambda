@@ -1,0 +1,44 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+		"term": "term/term"
+	},
+	"elements": [
+		{
+			"name": "ring",
+			"from": [ 5.0, 2.0, 5.0 ],
+			"to": [ 11.0, 4.0, 11.0 ],
+			"rotationOrigin": [ 5.0, 2.0, 5.0 ],
+			"faces": {
+				"north": { "texture": "#term", "uv": [ 0.0, 14.0, 6.0, 16.0 ] },
+				"east": { "texture": "#term", "uv": [ 0.0, 12.0, 6.0, 14.0 ] },
+				"south": { "texture": "#term", "uv": [ 0.0, 10.0, 6.0, 12.0 ], "autoUv": false },
+				"west": { "texture": "#term", "uv": [ 0.0, 8.0, 6.0, 10.0 ], "windMode": [-1,-1,-1,-1] },
+				"up": { "texture": "#term", "uv": [ 0.0, 2.0, 6.0, 8.0 ] },
+				"down": { "texture": "#term", "uv": [ 6.0, 2.0, 12.0, 8.0 ] }
+			},
+			"children": [
+				{
+					"name": "shaft",
+					"from": [ 2.0, -2.0, 2.0 ],
+					"to": [ 4.0, 4.0, 4.0 ],
+					"rotationOrigin": [ 2.0, -2.0, 2.0 ],
+					"faces": {
+						"north": { "texture": "#term", "uv": [ 6.0, 10.0, 8.0, 16.0 ] },
+						"east": { "texture": "#term", "uv": [ 8.0, 10.0, 10.0, 16.0 ] },
+						"south": { "texture": "#term", "uv": [ 10.0, 10.0, 12.0, 16.0 ] },
+						"west": { "texture": "#term", "uv": [ 12.0, 10.0, 14.0, 16.0 ] },
+						"up": { "texture": "#term", "uv": [ 6.0, 8.0, 8.0, 10.0 ], "autoUv": false },
+						"down": { "texture": "#term", "uv": [ 8.0, 8.0, 10.0, 10.0 ] }
+					}
+				}
+			]
+		}
+	]}

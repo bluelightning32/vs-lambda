@@ -110,6 +110,13 @@
       {base: "block/wire/up"},
     ]
   },
+  shapeInventory: {
+    base: "block/wire/updown"
+  },
+  guiTransform: {
+		rotation: { x: 7, y: 25, z: -55 },
+		scale: 1.5
+	},
   resistance: 3.5,
   sounds: {
     place: "game:block/ceramicplace",

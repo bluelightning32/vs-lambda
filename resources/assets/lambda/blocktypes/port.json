@@ -54,5 +54,10 @@
   sounds: {
     place: "game:block/anvil",
     walk: "game:walk/stone1"
-  }
+  },
+	guiTransform: {
+		rotation: { x: -28, y: -46, z: 0 },
+		origin: { x: 0.5, y: 0, z: 0.5 },
+		scale: 2.75
+	}
 }
