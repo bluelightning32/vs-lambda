@@ -31,13 +31,13 @@ public class CoqSanitizer {
         char c = buffer[i];
         switch (state) {
         case SanitizeState.BeforeCommand:
-          if (!Char.IsWhiteSpace(c)) {
+          if (!char.IsWhiteSpace(c)) {
             command.Append(c);
             state = SanitizeState.Command;
           }
           break;
         case SanitizeState.Command:
-          if (Char.IsWhiteSpace(c)) {
+          if (char.IsWhiteSpace(c)) {
             string cmd = command.ToString();
             if (cmd == "Require") {
               state = SanitizeState.Import;
@@ -56,7 +56,7 @@ public class CoqSanitizer {
           }
           break;
         case SanitizeState.Import:
-          if (Char.IsWhiteSpace(c) && command.Length > 1 &&
+          if (char.IsWhiteSpace(c) && command.Length > 1 &&
               command[^1] == '.') {
             SanitizeImport(command.ToString());
             state = SanitizeState.BodyTokenStart;
@@ -70,10 +70,10 @@ public class CoqSanitizer {
           }
           break;
         case SanitizeState.BodyTokenStart:
-          if (Char.IsWhiteSpace(c) || IsOperator(c)) {
-          } else if (Char.IsAsciiDigit(c)) {
+          if (char.IsWhiteSpace(c) || IsOperator(c)) {
+          } else if (char.IsAsciiDigit(c)) {
             state = SanitizeState.InNumber;
-          } else if (Char.IsAsciiLetter(c) || c == '_') {
+          } else if (char.IsAsciiLetter(c) || c == '_' || c == '@') {
             state = SanitizeState.InToken;
           } else if (c == '.') {
             state = SanitizeState.BeforeCommand;
@@ -83,9 +83,9 @@ public class CoqSanitizer {
           }
           break;
         case SanitizeState.InNumber:
-          if (Char.IsWhiteSpace(c) || IsOperator(c)) {
+          if (char.IsWhiteSpace(c) || IsOperator(c)) {
             state = SanitizeState.BodyTokenStart;
-          } else if (Char.IsAsciiDigit(c)) {
+          } else if (char.IsAsciiDigit(c)) {
 
           } else if (c == '.') {
             state = SanitizeState.RealDecimal;
@@ -95,10 +95,10 @@ public class CoqSanitizer {
           }
           break;
         case SanitizeState.RealDecimal:
-          if (Char.IsWhiteSpace(c)) {
+          if (char.IsWhiteSpace(c)) {
             // Treat the previous period as the end of a command.
             state = SanitizeState.BeforeCommand;
-          } else if (Char.IsAsciiDigit(c)) {
+          } else if (char.IsAsciiDigit(c)) {
             state = SanitizeState.RealFraction;
           } else {
             throw new ArgumentException(
@@ -106,9 +106,9 @@ public class CoqSanitizer {
           }
           break;
         case SanitizeState.RealFraction:
-          if (Char.IsWhiteSpace(c) || IsOperator(c)) {
+          if (char.IsWhiteSpace(c) || IsOperator(c)) {
             state = SanitizeState.BodyTokenStart;
-          } else if (Char.IsAsciiDigit(c)) {
+          } else if (char.IsAsciiDigit(c)) {
 
           } else if (c == '.') {
             state = SanitizeState.BeforeCommand;
@@ -118,9 +118,9 @@ public class CoqSanitizer {
           }
           break;
         case SanitizeState.InToken:
-          if (Char.IsWhiteSpace(c) || IsOperator(c)) {
+          if (char.IsWhiteSpace(c) || IsOperator(c)) {
             state = SanitizeState.BodyTokenStart;
-          } else if (Char.IsAsciiDigit(c) || Char.IsAsciiLetter(c) ||
+          } else if (char.IsAsciiDigit(c) || char.IsAsciiLetter(c) ||
                      c == '\'' || c == '_') {
           } else if (c == '.') {
             state = SanitizeState.BeforeCommand;

@@ -11,4 +11,9 @@ public class CoqSanitizerTest {
   public void DisallowDrop() {
     CoqSanitizer.Sanitize(new StringReader("Drop.\n"));
   }
+
+  [TestMethod]
+  public void AllowAt() {
+    CoqSanitizer.Sanitize(new StringReader("Definition f:= @pair.\n"));
+  }
 }
