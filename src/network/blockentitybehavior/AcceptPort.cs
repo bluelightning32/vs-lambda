@@ -229,16 +229,30 @@ public class AcceptPort : TokenEmitter, IAcceptPort, IInventoryControl {
     return false;
   }
 
+  private CompositeTexture GetReplacementTexture(string textureCode,
+                                                 PortOption option) {
+    Dictionary<string, CompositeTexture> replacementDict = null;
+    if (IsPortFull(option)) {
+      replacementDict = option.FullTextures;
+    } else if (option == GetInventoryPort()) {
+      if (IsPortInventoryFull(option)) {
+        replacementDict = option.Inventory?.FullTextures;
+      } else {
+        replacementDict = option.Inventory?.EmptyTextures;
+      }
+    }
+    if (replacementDict != null &&
+        replacementDict.TryGetValue(textureCode,
+                                    out CompositeTexture replacement)) {
+      return replacement;
+    }
+    return null;
+  }
+
   public override TextureAtlasPosition GetTexture(string textureCode) {
     foreach (PortOption option in _configuration.Ports) {
-      if ((option.FullTextures != null &&
-           option.FullTextures.TryGetValue(textureCode,
-                                           out CompositeTexture replacement) &&
-           IsPortFull(option)) ||
-          (option.Inventory?.FullTextures != null &&
-           option.Inventory.FullTextures.TryGetValue(textureCode,
-                                                     out replacement) &&
-           IsPortInventoryFull(option))) {
+      CompositeTexture replacement = GetReplacementTexture(textureCode, option);
+      if (replacement != null) {
         ICoreClientAPI capi = (ICoreClientAPI)Api;
         replacement.Bake(capi.Assets);
         ITextureAtlasAPI atlas = capi.BlockTextureAtlas;

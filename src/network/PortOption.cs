@@ -21,6 +21,7 @@ public class InventoryOptions {
   public string DialogDescLangCode;
   public bool HidePerishRate;
   public Dictionary<string, CompositeTexture> FullTextures;
+  public Dictionary<string, CompositeTexture> EmptyTextures;
 
   public int GetMaxStackForItem(ItemStack item) {
     CollectibleBehavior.Term term =

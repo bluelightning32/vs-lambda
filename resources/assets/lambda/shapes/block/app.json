@@ -9,7 +9,7 @@
 	},
 	"textures": {
 		"center-sides": "app/center-sides",
-		"crystal": "app/crystal",
+		"crystal": "app/crystal-unlabelled",
 		"down": "scope/down",
 		"output": "scope/down-porthole",
 		"argument": "scope/down-porthole",

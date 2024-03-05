@@ -63,6 +63,14 @@
                 },
                 "applicand": {
                   base: "scope/down"
+                },
+                "crystal": {
+                  base: "app/crystal"
+                }
+              },
+              emptyTextures: {
+                "crystal": {
+                  base: "app/crystal"
                 }
               }
             }
@@ -87,6 +95,14 @@
               fullTextures: {
                 "applicand": {
                   base: "scope/down"
+                },
+                "crystal": {
+                  base: "app/crystal"
+                }
+              },
+              emptyTextures: {
+                "crystal": {
+                  base: "app/crystal"
                 }
               }
             }
