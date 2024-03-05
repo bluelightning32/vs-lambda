@@ -8,6 +8,7 @@ using Lambda.Token;
 
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 
@@ -55,7 +56,7 @@ public class FunctionContainer : TermContainer {
       string code = Inventory[0].Empty ? GetInventoryControl()?.GetDescription()
                                        : "lambda:function-container-success";
       return VtmlUtil.Richtextify(
-          capi, AssetLocation.Create(code, CoreSystem.Domain).ToShortString(),
+          capi, Lang.Get(AssetLocation.Create(code, CoreSystem.Domain).ToShortString()),
           CairoFont.WhiteSmallText());
     }
   }
@@ -281,5 +282,12 @@ public class FunctionContainer : TermContainer {
     return _currentRecipe?.PuzzleType;
   }
 
-  protected override void SetLabel() { SetLabel(_currentRecipe?.ShortName); }
+  protected override void SetLabel() {
+    if (_currentRecipe == null) {
+      SetLabel(null);
+    } else {
+      string label = _currentRecipe?.Label.ToShortString();
+      SetLabel(Lang.Get(label));
+    }
+  }
 }

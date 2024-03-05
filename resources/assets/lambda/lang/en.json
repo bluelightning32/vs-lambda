@@ -1,13 +1,53 @@
 {
+  // Dialog title and descriptions
   "app-argument-container-title": "Argument",
   "app-argument-container-description": "Argument item or constant item, depending on whether the block has an applicand port.",
   "app-applicand-container-title": "Applicand",
-  "app-applicand-container-description": "Function item to apply to the argument.",
+  "app-applicand-container-description": "Function to apply to the argument.",
   "case-container-title": "Case constructor",
   "case-container-description": "Constructor item to identify the case to handle. The item's hover text must say that it is a constructor.",
-  "inscribe": "Inscribe",
+  "function-container-title": "Inscribe item",
+  "function-container-empty": "Place an inscribable item in the slot, build the function required by the recipe, then click inscribe.",
+  "function-container-success": "Inscription successful!",
   "matchin-container-title": "Match input type family",
   "matchin-container-description": "Item to identify the input type of the match. The item's hover text must say 'is type' or 'is type family'.",
-  "tab-container": "container",
-  "tab-errors": "errors"
+
+  // Inscribe button label
+  "inscribe": "Inscribe",
+
+  // Names of the puzzle block dialog tabs
+  "tab-container": "Container",
+  "tab-errors": "Errors",
+
+  // Names of blocks
+  "block-app-north": "Application",
+  "block-doublescope-ud": "Double-sided scope",
+  "block-case-north": "Case",
+  "block-corner": "Scope corner",
+  "block-forall-north": "Forall",
+  "block-function-north": "Function",
+  "block-match-north": "Match",
+  "block-matchin-north": "Match input and return type",
+  "block-scope-up": "Scope",
+  "block-port-short-direct-out": "Out port",
+  "block-port-short-direct-in": "In port",
+  "block-wire": "Wire",
+
+  // Names of constructors
+  "item-constructor-unit-tt": "tt",
+  "item-constructor-nat-s": "S",
+  "item-constructor-nat-o": "O",
+  "item-constructor-sum-inr": "inr",
+  "item-constructor-sum-inl": "inl",
+  "item-constructor-prod-pair": "pair",
+
+  // Names of type families
+  "item-typefamily-unit": "unit",
+  "item-typefamily-nat": "nat",
+  "item-typefamily-sum": "sum (aka A + B)",
+  "item-typefamily-prod": "prod (aka A * B)",
+
+  // Recipes
+  "recipe-stick-desc": "Destruct the sum type, then use the pair constructor to rebuild it with the arguments swapped.",
+  "recipe-stick": "forall A B,\nA*B -> B*A"
 }

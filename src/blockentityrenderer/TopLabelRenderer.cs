@@ -1,3 +1,5 @@
+using System;
+
 using Cairo;
 
 using Vintagestory.API.Client;
@@ -141,14 +143,28 @@ public class TopLabelRenderer : BlockEntitySignRenderer {
     // Reduce the font size if it doesn't fit in the bounds. Don't increase the
     // font size.
     font.UnscaledFontsize = fontSize / RuntimeEnv.GUIScale;
-    TextExtents extents = font.GetTextExtents(text);
-    if (extents.Width > TextWidth) {
+    double maxWidth = 0;
+    // Find the length of each line individually, because otherwise GetTextExtents treats '\n' as a space.
+    string[] lines = text.Split('\n');
+    foreach (string line in lines) {
+      TextExtents extents = font.GetTextExtents(line);
+      if (extents.Width > maxWidth) {
+        maxWidth = extents.Width;
+      }
+    }
+    int lineCount = lines.Length;
+    if (text.EndsWith('\n')) {
+      --lineCount;
+    }
+    double maxHeight = lineCount * api.Gui.Text.GetLineHeight(font);
+    double originalSize = fontSize;
+    if (maxWidth > TextWidth) {
       // Somehow this calculation doesn't shrink the font enough without the 0.9
       // multiple.
-      fontSize *= (float)(TextWidth * 0.9 / extents.Width);
+      fontSize *= (float)(TextWidth * 0.9 / maxWidth);
     }
-    if (extents.Height > TextHeight) {
-      fontSize *= (float)(TextHeight / extents.Height);
+    if (maxHeight > TextHeight) {
+      fontSize = (float)Math.Min(fontSize, originalSize * TextHeight / maxHeight);
     }
 
     base.SetNewText(text, color);

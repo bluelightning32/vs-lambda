@@ -29,9 +29,9 @@ public class PuzzleCheck : IByteSerializable {
 
 public class InscriptionRecipe : RecipeBase<InscriptionRecipe>,
                                  IByteSerializable {
-  public string Description;
+  public AssetLocation Description;
   public string PuzzleType;
-  public string ShortName;
+  public AssetLocation Label;
   // The names of the parameters. If this is empty, then all of the parameters
   // are simply called 'parameter_<location>'.
   public string[] Parameters;
@@ -48,7 +48,7 @@ public class InscriptionRecipe : RecipeBase<InscriptionRecipe>,
       RecipeId = RecipeId,         Ingredient = Ingredient.Clone(),
       Output = Output.Clone(),     Name = Name,
       Enabled = Enabled,           Description = Description,
-      PuzzleType = PuzzleType,     ShortName = ShortName,
+      PuzzleType = PuzzleType,     Label = Label,
       PuzzleChecks = PuzzleChecks, ProcessTime = ProcessTime,
     };
   }
@@ -100,7 +100,8 @@ public class InscriptionRecipe : RecipeBase<InscriptionRecipe>,
           sourceForErrorLogging, Ingredients.Length);
       return false;
     }
-    ShortName ??= Name.ToShortString();
+    Description ??= new AssetLocation(Name.Domain, $"recipe-{Name.Path}-desc");
+    Label ??= new AssetLocation(Name.Domain, $"recipe-{Name.Path}");
     return Ingredient.Resolve(world, sourceForErrorLogging) &&
            Output.Resolve(world, sourceForErrorLogging);
   }
@@ -110,9 +111,9 @@ public class InscriptionRecipe : RecipeBase<InscriptionRecipe>,
     Ingredient.ToBytes(writer);
     Output.ToBytes(writer);
     writer.Write(Name.ToShortString());
-    writer.Write(Description);
+    writer.Write(Description.ToShortString());
     writer.Write(PuzzleType);
-    writer.Write(ShortName);
+    writer.Write(Label.ToShortString());
     writer.Write(PuzzleChecks.Length);
     foreach (PuzzleCheck check in PuzzleChecks) {
       check.ToBytes(writer);
@@ -127,9 +128,9 @@ public class InscriptionRecipe : RecipeBase<InscriptionRecipe>,
     Output.FromBytes(reader, resolver.ClassRegistry);
     Output.Resolve(resolver, "FromBytes");
     Name = new AssetLocation(reader.ReadString());
-    Description = reader.ReadString();
+    Description = new AssetLocation(reader.ReadString());
     PuzzleType = reader.ReadString();
-    ShortName = reader.ReadString();
+    Label = new AssetLocation(reader.ReadString());
     PuzzleChecks = new PuzzleCheck[reader.ReadInt32()];
     for (int i = 0; i < PuzzleChecks.Length; ++i) {
       PuzzleChecks[i] = new PuzzleCheck();

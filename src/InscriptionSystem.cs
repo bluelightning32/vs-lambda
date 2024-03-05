@@ -144,7 +144,7 @@ public class InscriptionSystem : ModSystem {
             CairoFont.WhiteSmallText());
     components.Add(typeText);
 
-    components.AddRange(VtmlUtil.Richtextify(capi, recipe.Description,
+    components.AddRange(VtmlUtil.Richtextify(capi, Lang.Get(recipe.Description.ToShortString()),
                                              CairoFont.WhiteSmallText()));
     return components.ToArray();
   }
