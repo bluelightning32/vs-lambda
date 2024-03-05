@@ -83,14 +83,6 @@ public class FunctionContainer : TermContainer {
       Api.Logger.Debug("FromTreeAttributes is updating the dialog");
       dialog.SetProgress(_progress, _finishTime);
       dialog.ErrorMessage = _errorMessage;
-      InscriptionRecipe recipe =
-          InscriptionSystem.GetInstance(Api).GetRecipeForIngredient(
-              Inventory[0].Itemstack);
-      if (recipe != _currentRecipe || recipe == null) {
-        _currentRecipe = recipe;
-        dialog.SetInscribeEnabled(_currentRecipe is not null);
-        dialog.Description = GetDescription();
-      }
     }
   }
 
@@ -166,6 +158,12 @@ public class FunctionContainer : TermContainer {
   }
 
   protected override void OnSlotModified(int slotId) {
+    InscriptionRecipe newRecipe =
+        InscriptionSystem.GetInstance(Api).GetRecipeForIngredient(
+            Inventory[0].Itemstack);
+    bool recipeChanged = _currentRecipe != newRecipe;
+    _currentRecipe = newRecipe;
+
     if (Api.Side == EnumAppSide.Server) {
       if (_processedCallback != -1) {
         UnregisterDelayedCallback(_processedCallback);
@@ -175,11 +173,16 @@ public class FunctionContainer : TermContainer {
       _finishTime = 0;
       _errorMessage = null;
       ClearErrorHighlight();
-      _currentRecipe =
-          InscriptionSystem.GetInstance(Api).GetRecipeForIngredient(
-              Inventory[0].Itemstack);
       MarkDirty(true);
+    } else {
+      if (invDialog is Gui.DialogFunctionInventory dialog) {
+        if (recipeChanged || _currentRecipe == null) {
+          dialog.SetInscribeEnabled(_currentRecipe is not null);
+          dialog.Description = GetDescription();
+        }
+      }
     }
+
     base.OnSlotModified(slotId);
   }
 
