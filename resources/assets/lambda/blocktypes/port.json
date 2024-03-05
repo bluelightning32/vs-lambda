@@ -16,6 +16,10 @@
     { code: "type", states: ["direct", "passthrough"]},
     { code: "dir", states: ["in", "out"]}
   ],
+  // The other variants are unfinished
+  allowedVariants: [
+    "port-short-direct-*"
+  ],
   skipVariants: [ "*-long-*-out" ],
   creativeinventory: { general: ["*-short-direct-*", "*-short-passthrough-out"] },
   blockmaterial: "Stone",
