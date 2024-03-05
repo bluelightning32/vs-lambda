@@ -212,6 +212,11 @@ public class FunctionContainer : TermContainer {
       Api.World.HighlightBlocks(player, MultiblockStructure.HighlightSlotId,
                                 errorLocations.ToList());
       _errorHighlights.Add(player);
+      if (errorLocations.Count < 5) {
+        foreach (BlockPos pos in errorLocations) {
+          SpawnErrorParticles(pos);
+        }
+      }
       _errorMessage = Term.Escape(result.ErrorMessage);
     }
     _progress = 0;
@@ -219,6 +224,24 @@ public class FunctionContainer : TermContainer {
     _processedCallback = -1;
 
     MarkDirty(true);
+  }
+
+  private void SpawnErrorParticles(BlockPos pos) {
+    SimpleParticleProperties properties = new() {
+      MinQuantity = 10,
+      AddQuantity = 20,
+      Color = ColorUtil.ColorFromRgba(20, 50, 255, 150),
+      MinPos = pos.ToVec3d().Sub(.5, .5, .5),
+      AddPos = new Vec3d(1.5, 1.5, 1.5),
+      MinVelocity = new Vec3f(-1, 1, -1),
+      AddVelocity = new Vec3f(2, 5, 2),
+      LifeLength = 2,
+      ParticleModel = EnumParticleModel.Quad,
+      GravityEffect = 1,
+      MinSize = 0.25f,
+      MaxSize = 0.5f,
+    };
+    Api.World.SpawnParticles(properties, null);
   }
 
   private void ClearErrorHighlight() {
