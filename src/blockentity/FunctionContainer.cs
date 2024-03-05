@@ -47,12 +47,15 @@ public class FunctionContainer : TermContainer {
     if (Api is not ICoreClientAPI capi) {
       return null;
     }
-    if (_currentRecipe is null) {
-      return VtmlUtil.Richtextify(capi, GetInventoryControl()?.GetDescription(),
-                                  CairoFont.WhiteSmallText());
-    } else {
+    if (_currentRecipe is not null) {
       return InscriptionSystem.GetInstance(Api).GetRecipeDescription(
           _currentRecipe);
+    } else {
+      string code = Inventory[0].Empty ? GetInventoryControl()?.GetDescription()
+                                       : "lambda:function-container-success";
+      return VtmlUtil.Richtextify(
+          capi, AssetLocation.Create(code, CoreSystem.Domain).ToShortString(),
+          CairoFont.WhiteSmallText());
     }
   }
 
@@ -82,7 +85,7 @@ public class FunctionContainer : TermContainer {
       InscriptionRecipe recipe =
           InscriptionSystem.GetInstance(Api).GetRecipeForIngredient(
               Inventory[0].Itemstack);
-      if (recipe != _currentRecipe) {
+      if (recipe != _currentRecipe || recipe == null) {
         _currentRecipe = recipe;
         dialog.SetInscribeEnabled(_currentRecipe is not null);
         dialog.Description = GetDescription();
