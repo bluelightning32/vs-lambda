@@ -92,6 +92,8 @@
   sideOpaque: {
     all: false
   },
+  rainPermeable: true,
+  lightAbsorption: 0,
   collisionSelectionBox: {
     x1: 0.40625, y1: 0.40625, z1: 0.40625, x2: 0.59375, y2: 0.59375, z2: 0.59375
   },
