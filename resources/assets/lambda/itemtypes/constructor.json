@@ -33,9 +33,9 @@
           "*-unit-*": "{unit}",
           "*-nat-o": "O",
           "*-nat-s": "S",
-          "*-sum-inl": "@inl",
-          "*-sum-inr": "@inr",
-          "*-prod-pair": "@pair",
+          "*-sum-inl": "inl",
+          "*-sum-inr": "inr",
+          "*-prod-pair": "pair",
         },
         "typeByType": {
           "*-unit-tt": "unit",
