@@ -17,7 +17,11 @@
   ],
   entityClass: "TermContainer",
   attributes: {
-    inventoryClassName: "app"
+    inventoryClassName: "app",
+    facingCode: "side",
+    labelFrom: [ 1, 4.5 ],
+    labelTo: [ 15, 13 ],
+    labelFontSize: 30
   },
   entityBehaviors: [
     { name: "CacheMesh" },

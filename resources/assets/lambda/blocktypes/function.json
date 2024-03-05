@@ -18,7 +18,11 @@
   ],
   entityClass: "FunctionContainer",
   attributes: {
-    inventoryClassName: "function"
+    inventoryClassName: "function",
+    facingCode: "side",
+    labelFrom: [ 1, 0.5 ],
+    labelTo: [ 15, 14.5 ],
+    labelFontSize: 200
   },
   entityBehaviors: [
     { name: "CacheMesh" },

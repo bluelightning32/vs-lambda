@@ -1,7 +1,11 @@
+using System.Drawing;
 using System.Text;
+
+using Lambda.BlockEntityRenderer;
 
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
 namespace Lambda.BlockEntity;
@@ -27,6 +31,7 @@ public class TermContainer : BlockEntityOpenableContainer {
 
   protected string _inventoryClassName = "term";
   public override string InventoryClassName => _inventoryClassName;
+  private TopLabelRenderer _labelRenderer = null;
 
   public TermContainer() { _inventory.SlotModified += OnSlotModified; }
 
@@ -53,8 +58,8 @@ public class TermContainer : BlockEntityOpenableContainer {
 
   private void SetSlot() {
     ItemStack item = _inventory[0].Itemstack;
-    _inventory[0] = new SelectiveItemSlot(_inventory, GetMaxStackForItem);
-    _inventory[0].Itemstack = item;
+    _inventory[0] = new SelectiveItemSlot(
+        _inventory, GetMaxStackForItem) { Itemstack = item };
   }
 
   public virtual string GetInventoryTerm() {
@@ -74,6 +79,7 @@ public class TermContainer : BlockEntityOpenableContainer {
     // The inventory was created with a generic slot. Set the correct slot type
     // now.
     SetSlot();
+    SetLabel();
   }
 
   protected virtual GuiDialogBlockEntity CreateDialog(string title) {
@@ -108,6 +114,43 @@ public class TermContainer : BlockEntityOpenableContainer {
 
   protected virtual void OnSlotModified(int slotId) {
     GetInventoryControl()?.OnSlotModified();
+    SetLabel();
+  }
+
+  protected virtual void SetLabel() {
+    ItemStack item = _inventory[0].Itemstack;
+    CollectibleBehavior.Term term =
+        item?.Collectible.GetBehavior<CollectibleBehavior.Term>();
+    SetLabel(term?.GetTerm(item));
+  }
+
+  protected void SetLabel(string text) {
+    if (Api is ICoreClientAPI capi) {
+      if (text == null || text.Length == 0) {
+        if (_labelRenderer != null) {
+          _labelRenderer.Dispose();
+          _labelRenderer = null;
+        }
+      } else {
+        if (_labelRenderer == null) {
+          string facingCode = Block.Attributes["facingCode"].AsString("side");
+          float[] labelFrom =
+              Block.Attributes["labelFrom"].AsArray(new float[] { 0, 0 });
+          float[] labelTo =
+              Block.Attributes["labelTo"].AsArray(new float[] { 16, 16 });
+          _labelRenderer = new TopLabelRenderer(
+              BlockFacing.FromCode(Block.VariantStrict[facingCode]), Pos,
+              new Vec2f(labelFrom[0], labelFrom[1]),
+              new Vec2f(labelTo[0], labelTo[1]), capi);
+        }
+        _labelRenderer.fontSize =
+            Block.Attributes["labelFontSize"].AsFloat(_labelRenderer.fontSize);
+        Color c = ColorTranslator.FromHtml(
+            Block.Attributes["labelColor"].AsString("black"));
+        _labelRenderer.SetNewText(text,
+                                  ColorUtil.ColorFromRgba(c.B, c.G, c.R, c.A));
+      }
+    }
   }
 
   // Update the slot and dialog options.
@@ -120,8 +163,6 @@ public class TermContainer : BlockEntityOpenableContainer {
       invDialog?.Dispose();
       invDialog = null;
     }
-    // Recreate the inventory slot.
-    SetSlot();
   }
 
   public override void OnBlockPlaced(ItemStack byItemStack) {

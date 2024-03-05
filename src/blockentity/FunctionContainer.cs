@@ -41,6 +41,7 @@ public class FunctionContainer : TermContainer {
     base.Initialize(api);
     _currentRecipe = InscriptionSystem.GetInstance(Api).GetRecipeForIngredient(
         Inventory[0].Itemstack);
+    SetLabel();
   }
 
   private RichTextComponentBase[] GetDescription() {
@@ -276,4 +277,6 @@ public class FunctionContainer : TermContainer {
   public override string GetInventoryTerm() {
     return _currentRecipe?.PuzzleType;
   }
+
+  protected override void SetLabel() { SetLabel(_currentRecipe?.ShortName); }
 }

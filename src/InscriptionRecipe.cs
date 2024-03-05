@@ -33,6 +33,7 @@ public class InscriptionRecipe : RecipeBase<InscriptionRecipe>,
   public string PuzzleType;
   // The names of the parameters. If this is empty, then all of the parameters
   // are simply called 'parameter_<location>'.
+  public string ShortName;
   public string[] Parameters;
   public PuzzleCheck[] PuzzleChecks;
   public float ProcessTime = 1;
@@ -44,11 +45,11 @@ public class InscriptionRecipe : RecipeBase<InscriptionRecipe>,
   // proceeds to modify the output.
   public override InscriptionRecipe Clone() {
     return new InscriptionRecipe {
-      RecipeId = RecipeId,       Ingredient = Ingredient.Clone(),
-      Output = Output.Clone(),   Name = Name,
-      Enabled = Enabled,         Description = Description,
-      PuzzleType = PuzzleType,   PuzzleChecks = PuzzleChecks,
-      ProcessTime = ProcessTime,
+      RecipeId = RecipeId,         Ingredient = Ingredient.Clone(),
+      Output = Output.Clone(),     Name = Name,
+      Enabled = Enabled,           Description = Description,
+      PuzzleType = PuzzleType,     ShortName = ShortName,
+      PuzzleChecks = PuzzleChecks, ProcessTime = ProcessTime,
     };
   }
 
@@ -99,6 +100,7 @@ public class InscriptionRecipe : RecipeBase<InscriptionRecipe>,
           sourceForErrorLogging, Ingredients.Length);
       return false;
     }
+    ShortName ??= Name.ToShortString();
     return Ingredient.Resolve(world, sourceForErrorLogging) &&
            Output.Resolve(world, sourceForErrorLogging);
   }
@@ -110,6 +112,7 @@ public class InscriptionRecipe : RecipeBase<InscriptionRecipe>,
     writer.Write(Name.ToShortString());
     writer.Write(Description);
     writer.Write(PuzzleType);
+    writer.Write(ShortName);
     writer.Write(PuzzleChecks.Length);
     foreach (PuzzleCheck check in PuzzleChecks) {
       check.ToBytes(writer);
@@ -126,6 +129,7 @@ public class InscriptionRecipe : RecipeBase<InscriptionRecipe>,
     Name = new AssetLocation(reader.ReadString());
     Description = reader.ReadString();
     PuzzleType = reader.ReadString();
+    ShortName = reader.ReadString();
     PuzzleChecks = new PuzzleCheck[reader.ReadInt32()];
     for (int i = 0; i < PuzzleChecks.Length; ++i) {
       PuzzleChecks[i] = new PuzzleCheck();
