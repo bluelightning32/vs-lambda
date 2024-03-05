@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection.Metadata.Ecma335;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
 using Lambda.Network;
 
+using Vintagestory.API.Common;
 using Vintagestory.API.Util;
 
 namespace Lambda.Token;
@@ -48,6 +49,15 @@ public partial class CoqResult {
     result.ErrorMessage = sb.ToString();
 
     return result;
+  }
+
+  public static CoqResult Error(InvalidFormatException e) {
+    return new() {
+      Successful = false,
+      ErrorMessage =
+          AssetLocation.Create(e.Message, CoreSystem.Domain).ToShortString(),
+      ErrorLocations = e.Nodes.ToHashSet()
+    };
   }
 
   private void AddError(string message, RegexMatch lineInfo, int end,

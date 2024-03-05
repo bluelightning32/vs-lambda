@@ -119,6 +119,8 @@ public class FunctionContainer : TermContainer {
           InscriptionRecipe recipe = _currentRecipe;
           TyronThreadPool.QueueLongDurationTask(
               () => Compile(player, emitter, recipe), "lambda");
+        } catch (InvalidFormatException e) {
+          CompilationDone(player, CoqResult.Error(e));
         } catch (Exception e) {
           CompilationDone(player, CoqResult.Error(e.Message));
         }

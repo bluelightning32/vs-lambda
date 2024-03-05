@@ -69,6 +69,12 @@ public class MatchTemplate : BlockNodeTemplate {
                       NodePos childMatchPos, int childScopeId, BlockFacing face,
                       string inventoryTerm) {
     Match m = GetMatch(state, sourcePos, nodes, -1);
+    if (inventoryTerm == null || inventoryTerm.Length == 0) {
+      throw new InvalidFormatException(
+          new[] { childMatchPos,
+                  new NodePos(childMatchPos.Block, childScopeId) },
+          "case-missing-constructor");
+    }
     Case c = new(inventoryTerm, childMatchPos, m, childScopeId, face);
     m.AddCase(c);
     return c;
