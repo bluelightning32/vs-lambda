@@ -4,7 +4,7 @@
 	"modid": "lambda",
 	"version": "0.1.0",
 	
-	"description" : "Solve puzzles in Coq.",
+	"description" : "Coq logic puzzles",
 	"website": "https://github.com/bluelightning32/vs-lambda",
 	"authors": [ "bluelightning32" ],
 	
