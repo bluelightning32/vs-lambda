@@ -48,7 +48,7 @@
     all: false
   },
   sidesolid: {
-    all: true
+    all: false
   },
   lightAbsorption: 2,
   resistance: 3,
