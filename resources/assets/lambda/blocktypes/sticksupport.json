@@ -1,0 +1,61 @@
+{
+  code: "sticksupport",
+  variantGroups: [
+    {
+      code: "orientation",
+      states: [
+        "ns",
+        "we"
+      ]
+    }
+  ],
+  creativeinventory: {
+    "construction": [
+      "*"
+    ]
+  },
+  shape: {
+    base: "block/sticksupport",
+    rotateYByType: {
+      "*-ns": 0,
+      "*-we": 90
+    }
+  },
+  selectionBox: {
+    x1: 0.1796875, y1: 0.40625, z1: -0.0625, x2: 0.8203125, y2: 0.5, z2: 1.0625,
+    rotateYByType: {
+      "*-ns": 0,
+      "*-we": 90
+    }
+  },
+  collisionBox: {
+    x1: 0.1796875, y1: 0.40625, z1: 0, x2: 0.8203125, y2: 0.5, z2: 1,
+    rotateYByType: {
+      "*-ns": 0,
+      "*-we": 90
+    }
+  },
+  blockmaterial: "Wood",
+  drawtype: "json",
+  drops: [
+    {
+      type: "item",
+      code: "stick",
+      quantity: { avg: 3, var: 0 }
+    }
+  ],
+  sideopaque: {
+    all: false
+  },
+  sidesolid: {
+    all: true
+  },
+  lightAbsorption: 2,
+  resistance: 3,
+  sounds: {
+    "hit": "block/planks",
+    "place": "block/loosestick",
+    "break": "block/stickbreak",
+    "walk": "walk/wood"
+  }
+}
