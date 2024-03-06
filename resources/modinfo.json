@@ -2,13 +2,13 @@
 	"type": "code",
 	"name": "Lambda",
 	"modid": "lambda",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	
 	"description" : "Coq logic puzzles",
 	"website": "https://github.com/bluelightning32/vs-lambda",
 	"authors": [ "bluelightning32" ],
 	
 	"dependencies": {
-		"game": "1.19.0-rc.4"
+		"game": "1.19.4"
 	}
 }
