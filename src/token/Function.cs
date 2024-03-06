@@ -181,6 +181,7 @@ public class Function : ConstructRoot {
         break;
       }
       p.SetName(parameterNames[i]);
+      ++i;
     }
   }
 }
