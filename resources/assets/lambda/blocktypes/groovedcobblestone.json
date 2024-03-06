@@ -1,0 +1,61 @@
+{
+  code: "groovedcobblestone",
+  variantgroups: [
+    {
+      code: "rock",
+      states: [
+        "chert",
+        "granite",
+        "andesite",
+        "basalt",
+        "peridotite"
+      ]
+    }
+  ],
+  attributes: {
+    mapColorCode: "settlement",
+    handbook: {
+      groupBy: [
+        "cobblestone-*"
+      ]
+    }
+  },
+  creativeinventory: {
+    "general": [
+      "*"
+    ],
+    "construction": [
+      "*"
+    ]
+  },
+  shape: {
+    base: "block/groovedcobblestone"
+  },
+  blockmaterial: "Stone",
+  drawtype: "json",
+  "textures": {
+    "rock": {
+      base: "game:block/stone/cobblestone/{rock}*"
+    }
+  },
+  resistance: 3.5,
+  sounds: {
+    "walk": "walk/stone",
+      byTool: {
+        Pickaxe: {
+          hit: "block/rock-hit-pickaxe",
+          break: "block/rock-break-pickaxe"
+      }
+    }
+  },
+  heldTpIdleAnimation: "holdbothhandslarge", heldRightReadyAnimation: "heldblockready", heldTpUseAnimation: "twohandplaceblock",
+  tpHandTransform: {
+    translation: {
+      x: -1.23, y: -0.91, z: -0.8
+    },
+    rotation: {
+      x: -2, y: 25, z: -78
+    },
+    scale: 0.4
+  }
+}
