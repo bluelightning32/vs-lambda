@@ -16,4 +16,15 @@ public class CoqSanitizerTest {
   public void AllowAt() {
     CoqSanitizer.Sanitize(new StringReader("Definition f:= @pair.\n"));
   }
+
+  [TestMethod]
+  public void AllowCheck() {
+    CoqSanitizer.Sanitize(new StringReader("Check nat.\n"));
+  }
+
+  [TestMethod]
+  [ExpectedException(typeof(ArgumentException))]
+  public void DisallowRedirect() {
+    CoqSanitizer.Sanitize(new StringReader("Redirect \"escape\" Check nat.\n"));
+  }
 }
