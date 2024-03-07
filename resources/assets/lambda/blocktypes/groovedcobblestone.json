@@ -12,6 +12,24 @@
       ]
     }
   ],
+  behaviors: [
+    {
+      name: "ConstructAdjacent",
+      properties: {
+        construct: {
+          north: "sticksupport-ns",
+          south: "sticksupport-ns",
+          east: "sticksupport-we",
+          west: "sticksupport-we"
+        },
+        ingredient: {
+          type: "item",
+          code: "game:stick",
+          stacksize: 3
+        }
+      }
+    }
+  ],
   attributes: {
     mapColorCode: "settlement",
     handbook: {

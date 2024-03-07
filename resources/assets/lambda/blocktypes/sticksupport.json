@@ -50,7 +50,7 @@
   sidesolid: {
     all: false
   },
-  lightAbsorption: 2,
+  lightAbsorption: 1,
   resistance: 3,
   sounds: {
     "hit": "game:block/planks",
