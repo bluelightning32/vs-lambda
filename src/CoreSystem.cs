@@ -85,8 +85,8 @@ public class CoreSystem : ModSystem {
                                    typeof(BlockBehavior.BlockEntityForward));
     api.RegisterBlockBehaviorClass("BlockEntityForward",
                                    typeof(BlockBehavior.BlockEntityForward));
-    api.RegisterBlockBehaviorClass("ConstructAdjacent",
-                                   typeof(BlockBehavior.ConstructAdjacent));
+    api.RegisterBlockBehaviorClass("Construct",
+                                   typeof(BlockBehavior.Construct));
     api.RegisterBlockBehaviorClass("DropCraft",
                                    typeof(BlockBehavior.DropCraft));
     api.RegisterBlockBehaviorClass("Orient", typeof(BlockBehavior.Orient));

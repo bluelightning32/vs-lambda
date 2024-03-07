@@ -14,7 +14,7 @@
   ],
   behaviors: [
     {
-      name: "ConstructAdjacent",
+      name: "Construct",
       properties: {
         construct: {
           north: "sticksupport-ns",
@@ -22,10 +22,11 @@
           east: "sticksupport-we",
           west: "sticksupport-we"
         },
+        adjacent: true,
         ingredient: {
           type: "item",
           code: "game:stick",
-          stacksize: 3
+          quantity: 3
         }
       }
     }

@@ -9,6 +9,22 @@
       ]
     }
   ],
+  behaviors: [
+    {
+      name: "Construct",
+      properties: {
+        construct: {
+          all: "supportedslab-{input}-{orientation}"
+        },
+        adjacent: false,
+        ingredient: {
+          type: "block",
+          code: "game:cobblestoneslab-*-down-free",
+          quantity: 1
+        }
+      }
+    }
+  ],
   creativeinventory: {
     "construction": [
       "*"
