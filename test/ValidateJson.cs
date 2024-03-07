@@ -30,10 +30,9 @@ public class ValidateJson {
     foreach (string file in Directory.EnumerateFiles(
                  resources, "*.json", SearchOption.AllDirectories)) {
       try {
-        using (StreamReader stream = File.OpenText(file)) using (
-            JsonTextReader reader = new(stream)) {
-          JToken.ReadFrom(reader);
-        }
+        using StreamReader stream = File.OpenText(file);
+        using JsonTextReader reader = new(stream);
+        JToken.ReadFrom(reader);
       } catch (JsonException ex) {
         Assert.Fail("Validation failed for JSON file: {0}\n{1}", file, ex);
       }

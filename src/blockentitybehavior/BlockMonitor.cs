@@ -1,3 +1,5 @@
+using Lambda.BlockBehavior;
+
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
@@ -7,13 +9,14 @@ namespace Lambda.BlockEntityBehavior;
 using VSBlockEntityBehavior = Vintagestory.API.Common.BlockEntityBehavior;
 using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 
-interface IReplacementWatcher {
-  public void BlockReplaced(BlockPos watcher, BlockPos replaced);
+interface IBlockWatcher {
+  public void BlockChanged(BlockPos watcher, BlockPos changed);
 }
 
-public class ReplacementMonitor : VSBlockEntityBehavior {
+// Monitors for block replacement.
+public class BlockMonitor : VSBlockEntityBehavior, IBlockEntityForward {
   BlockPos _watcher = new(0);
-  public ReplacementMonitor(VSBlockEntity blockentity) : base(blockentity) {}
+  public BlockMonitor(VSBlockEntity blockentity) : base(blockentity) {}
 
   public override void Initialize(ICoreAPI api, JsonObject properties) {
     base.Initialize(api, properties);
@@ -47,11 +50,20 @@ public class ReplacementMonitor : VSBlockEntityBehavior {
     }
   }
 
+  public void NotifyWatcher(BlockPos changed) {
+    Block watcher = Api.World.BlockAccessor.GetBlock(_watcher);
+    watcher.GetInterface<IBlockWatcher>(Api.World, _watcher)
+        ?.BlockChanged(_watcher, changed);
+  }
+
   public override void OnBlockRemoved() {
     base.OnBlockRemoved();
 
-    Block watcher = Api.World.BlockAccessor.GetBlock(_watcher);
-    watcher.GetInterface<IReplacementWatcher>(Api.World, _watcher)
-        ?.BlockReplaced(_watcher, Pos);
+    NotifyWatcher(Pos);
+  }
+
+  void IBlockEntityForward.OnNeighbourBlockChange(BlockPos neibpos,
+                                                  ref EnumHandling handling) {
+    NotifyWatcher(neibpos);
   }
 }

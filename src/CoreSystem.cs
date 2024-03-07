@@ -83,6 +83,8 @@ public class CoreSystem : ModSystem {
                                          typeof(CollectibleBehavior.Term));
     api.RegisterBlockBehaviorClass("BlockEntityForward",
                                    typeof(BlockBehavior.BlockEntityForward));
+    api.RegisterBlockBehaviorClass("BlockEntityForward",
+                                   typeof(BlockBehavior.BlockEntityForward));
     api.RegisterBlockBehaviorClass("DropCraft",
                                    typeof(BlockBehavior.DropCraft));
     api.RegisterBlockBehaviorClass("Orient", typeof(BlockBehavior.Orient));
@@ -93,7 +95,7 @@ public class CoreSystem : ModSystem {
     api.RegisterBlockEntityBehaviorClass("CacheMesh",
                                          typeof(BlockEntityBehavior.CacheMesh));
     api.RegisterBlockEntityBehaviorClass(
-        "ReplacementMonitor", typeof(BlockEntityBehavior.ReplacementMonitor));
+        "BlockMonitor", typeof(BlockEntityBehavior.BlockMonitor));
   }
 
   public override void StartClientSide(ICoreClientAPI api) {}
