@@ -23,6 +23,21 @@
           quantity: 1
         }
       }
+    },
+    {
+      name: "MultiAttached",
+      properties: {
+        requiredSidesByType: {
+          "*-ns": {
+            north: "groovedcobblestone-*",
+            south: "groovedcobblestone-*"
+          },
+          "*-we": {
+            west: "groovedcobblestone-*",
+            east: "groovedcobblestone-*"
+          }
+        }
+      }
     }
   ],
   creativeinventory: {
@@ -56,7 +71,7 @@
   drops: [
     {
       type: "item",
-      code: "stick",
+      code: "game:stick",
       quantity: { avg: 3, var: 0 }
     }
   ],

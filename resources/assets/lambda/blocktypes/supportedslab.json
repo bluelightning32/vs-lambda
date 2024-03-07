@@ -18,6 +18,21 @@
           }
         ]
       }
+    },
+    {
+      name: "MultiAttached",
+      properties: {
+        requiredSidesByType: {
+          "*-ns": {
+            north: "groovedcobblestone-*",
+            south: "groovedcobblestone-*"
+          },
+          "*-we": {
+            west: "groovedcobblestone-*",
+            east: "groovedcobblestone-*"
+          }
+        }
+      }
     }
   ],
   variantGroups: [

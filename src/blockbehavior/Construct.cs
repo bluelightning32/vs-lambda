@@ -99,13 +99,13 @@ public class Construct : VSBlockBehavior {
       hotbarSlot.MarkDirty();
     }
 
+    // SetBlock internally calls OnBlockPlaced.
     world.BlockAccessor.SetBlock(constructBlock.Id, constructPos);
     world.PlaySoundAt(
         constructBlock.GetSounds(world.BlockAccessor, blockSel.Position).Place,
         constructPos.X + 0.5, constructPos.Y + 0.5, constructPos.Z + 0.5,
         byPlayer, true, 12);
 
-    constructBlock.OnBlockPlaced(world, constructPos, null);
     world.BlockAccessor.TriggerNeighbourBlockUpdate(constructPos);
     return true;
   }

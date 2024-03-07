@@ -89,6 +89,8 @@ public class CoreSystem : ModSystem {
                                    typeof(BlockBehavior.Construct));
     api.RegisterBlockBehaviorClass("DropCraft",
                                    typeof(BlockBehavior.DropCraft));
+    api.RegisterBlockBehaviorClass("MultiAttached",
+                                   typeof(BlockBehavior.MultiAttached));
     api.RegisterBlockBehaviorClass("Orient", typeof(BlockBehavior.Orient));
     api.RegisterBlockEntityClass("FunctionContainer",
                                  typeof(BlockEntity.FunctionContainer));
