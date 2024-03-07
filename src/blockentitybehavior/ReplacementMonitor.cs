@@ -35,16 +35,16 @@ public class ReplacementMonitor : VSBlockEntityBehavior {
 
   public override void OnBlockPlaced(ItemStack byItemStack) {
     base.OnBlockPlaced(byItemStack);
-    // For debug purposes, allow the player to create the block with:
-    // /giveblock lambda:replacementblock{watcherX: x, watcherY: y, watcherZ:
-    // z}.
-    //
-    // Do not use `GetBlockPos`, because it can't handle when the attributes
-    // are internally represented as longs instead of ints, which
-    // Newtonsoft.Json does by default.
-    _watcher.X = byItemStack.Attributes.GetAsInt("watcherX", _watcher.X);
-    _watcher.Y = byItemStack.Attributes.GetAsInt("watcherY", _watcher.Y);
-    _watcher.Z = byItemStack.Attributes.GetAsInt("watcherZ", _watcher.Z);
+    // `byItemStack` is null on the client side when it was created by an item
+    // stack on the server side.
+    if (byItemStack != null) {
+      // Do not use `GetBlockPos`, because it can't handle when the attributes
+      // are internally represented as longs instead of ints, which
+      // happens when the block is created with the giveblock command.
+      _watcher.X = byItemStack.Attributes.GetAsInt("watcherX", _watcher.X);
+      _watcher.Y = byItemStack.Attributes.GetAsInt("watcherY", _watcher.Y);
+      _watcher.Z = byItemStack.Attributes.GetAsInt("watcherZ", _watcher.Z);
+    }
   }
 
   public override void OnBlockRemoved() {

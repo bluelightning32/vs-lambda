@@ -83,6 +83,8 @@ public class CoreSystem : ModSystem {
                                          typeof(CollectibleBehavior.Term));
     api.RegisterBlockBehaviorClass("BlockEntityForward",
                                    typeof(BlockBehavior.BlockEntityForward));
+    api.RegisterBlockBehaviorClass("DropCraft",
+                                   typeof(BlockBehavior.DropCraft));
     api.RegisterBlockBehaviorClass("Orient", typeof(BlockBehavior.Orient));
     api.RegisterBlockEntityClass("FunctionContainer",
                                  typeof(BlockEntity.FunctionContainer));

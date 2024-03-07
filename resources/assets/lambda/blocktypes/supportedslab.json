@@ -1,5 +1,25 @@
 {
   code: "supportedslab",
+  behaviors: [
+    {
+      name: "DropCraft",
+      properties: {
+        yieldStrength: 3,
+        yieldDrops: [
+          {
+            type: "item",
+            code: "game:stick",
+            quantity: { avg: 2.75, var: 0.5 }
+          },
+          {
+            type: "item",
+            code: "game:stone-{rock}",
+            quantity: { avg: 1.75, var: 0.5 }
+          }
+        ]
+      }
+    }
+  ],
   variantGroups: [
     {
       code: "rock",
