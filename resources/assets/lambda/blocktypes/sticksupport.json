@@ -53,9 +53,9 @@
   lightAbsorption: 2,
   resistance: 3,
   sounds: {
-    "hit": "block/planks",
-    "place": "block/loosestick",
-    "break": "block/stickbreak",
-    "walk": "walk/wood"
+    "hit": "game:block/planks",
+    "place": "game:block/loosestick",
+    "break": "game:block/stickbreak",
+    "walk": "game:walk/wood"
   }
 }
