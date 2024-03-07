@@ -1,0 +1,41 @@
+{
+	code: "replacementmonitor",
+	attributes: {
+		handbook: {
+			exclude: true
+		}
+	},
+	entityBehaviors: [
+	  { name: "ReplacementMonitor" }
+	],
+	drawtype: "cube",
+	creativeinventory: { "meta": ["*"] },
+	drops: [],
+	blockmaterial: "Meta",
+  // If two blocks of this type are placed next to each other, then don't render the shared faces.
+	faceCullMode: "Merge",
+	vertexFlags: {
+    // Prevent the block faces from z-fighting with adjacent blocks of different types.
+		zOffset: 7
+	},
+  // Only show the block in creative mode if meta block rendering is enabled (toggle with ctrl-F4).
+	renderPass: "meta",
+  // Allow player block placement to replace this block.
+	replaceable: 6000,
+	textures: {
+    // This texture has transparency
+		all: { base: "replacementmonitor" }
+	},
+  // Mark the block as transparent
+	lightAbsorption: 0,
+	sideopaque: {
+		all: false
+	},
+	sidesolid: {
+		all: false
+	},
+	collisionboxByType: {
+    // Let entities walk through the block.
+		"*": null,
+	}
+}

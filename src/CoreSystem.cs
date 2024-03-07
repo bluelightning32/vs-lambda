@@ -90,6 +90,8 @@ public class CoreSystem : ModSystem {
                                  typeof(BlockEntity.TermContainer));
     api.RegisterBlockEntityBehaviorClass("CacheMesh",
                                          typeof(BlockEntityBehavior.CacheMesh));
+    api.RegisterBlockEntityBehaviorClass(
+        "ReplacementMonitor", typeof(BlockEntityBehavior.ReplacementMonitor));
   }
 
   public override void StartClientSide(ICoreClientAPI api) {}
