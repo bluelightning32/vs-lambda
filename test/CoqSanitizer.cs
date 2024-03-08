@@ -57,4 +57,12 @@ Ltac2 @ external print : message -> unit := "coq-core.plugins.ltac2" "print".
 Locate File "Ltac2".
 """));
   }
+
+  [TestMethod]
+  [ExpectedException(typeof(ArgumentException))]
+  public void DisallowExtraction() {
+    CoqSanitizer.Sanitize(new StringReader("""
+Require Import Extraction.
+"""));
+  }
 }
