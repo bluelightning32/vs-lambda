@@ -12,7 +12,7 @@ using Vintagestory.GameContent;
 
 namespace Lambda.BlockEntity;
 
-public class FusionJig : BlockEntityDisplay, IBlockEntityForward {
+public class ApplicationJig : BlockEntityDisplay, IBlockEntityForward {
   // Pass in null for the API and inventory class name for now. The correct
   // values will be passed by `BlockEntityContainer.Initialize` when it calls
   // `Inventory.LateInitialize`.
@@ -20,7 +20,7 @@ public class FusionJig : BlockEntityDisplay, IBlockEntityForward {
   public override InventoryBase Inventory => _inventory;
   private Cuboidf[] _inventoryBounds = null;
 
-  public override string InventoryClassName => "fusionjig";
+  public override string InventoryClassName => "applicationjig";
 
   public override void Initialize(ICoreAPI api) {
     base.Initialize(api);

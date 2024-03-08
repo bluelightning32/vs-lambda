@@ -1,5 +1,5 @@
 {
-  code: "fusionjig",
+  code: "applicationjig",
   variantgroups: [
     {
       code: "rock",
@@ -16,7 +16,7 @@
   behaviors: [
     { name: "BlockEntityForward" }
   ],
-  entityClass: "FusionJig",
+  entityClass: "ApplicationJig",
   attributes: {
     mapColorCode: "settlement",
     handbook: {
@@ -34,7 +34,7 @@
     ]
   },
   shape: {
-    base: "block/fusionjig"
+    base: "block/applicationjig"
   },
   blockmaterial: "Stone",
   drawtype: "json",

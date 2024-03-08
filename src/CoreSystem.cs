@@ -94,7 +94,7 @@ public class CoreSystem : ModSystem {
     api.RegisterBlockBehaviorClass("Orient", typeof(BlockBehavior.Orient));
     api.RegisterBlockEntityClass("FunctionContainer",
                                  typeof(BlockEntity.FunctionContainer));
-    api.RegisterBlockEntityClass("FusionJig", typeof(BlockEntity.FusionJig));
+    api.RegisterBlockEntityClass("ApplicationJig", typeof(BlockEntity.ApplicationJig));
     api.RegisterBlockEntityClass("TermContainer",
                                  typeof(BlockEntity.TermContainer));
     api.RegisterBlockEntityBehaviorClass("CacheMesh",
