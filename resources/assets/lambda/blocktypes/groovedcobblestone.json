@@ -54,7 +54,11 @@
   drawtype: "json",
   textures: {
     "rock": {
-      base: "game:block/stone/cobblestone/{rock}*"
+      base: "game:block/stone/cobblestone/{rock}1"
+    },
+    "rockdark": {
+      base: "game:block/stone/cobblestone/{rock}1",
+			overlays: [ "game:block/overlay/moss1" ]
     }
   },
   resistance: 3.5,
