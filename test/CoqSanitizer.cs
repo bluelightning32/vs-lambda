@@ -29,6 +29,12 @@ public class CoqSanitizerTest {
   }
 
   [TestMethod]
+  [ExpectedException(typeof(ArgumentException))]
+  public void DisallowCD() {
+    CoqSanitizer.Sanitize(new StringReader("Cd \"..\".\n"));
+  }
+
+  [TestMethod]
   public void AllowLtac2Import() {
     CoqSanitizer.Sanitize(new StringReader("""
 From Ltac2 Require Import Ltac2.
@@ -41,6 +47,14 @@ From Ltac2 Require Import Ltac2.
     CoqSanitizer.Sanitize(new StringReader("""
 From Ltac2 Require Import Ltac2.
 Ltac2 @ external print : message -> unit := "coq-core.plugins.ltac2" "print".
+"""));
+  }
+
+  [TestMethod]
+  [ExpectedException(typeof(ArgumentException))]
+  public void DisallowLocateFile() {
+    CoqSanitizer.Sanitize(new StringReader("""
+Locate File "Ltac2".
 """));
   }
 }

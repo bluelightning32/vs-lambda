@@ -91,6 +91,9 @@ only allows a few Coq commands to be run. Here are the known Coq escapes. These
 are all blocked by the sanitizer (see `CoqSanitizerTest`).
 * [Drop](https://coq.inria.fr/doc/V8.19.0/refman/proof-engine/vernacular-commands.html?highlight=drop#coq:cmd.Drop) - allows running arbitrary OCaml code
 * [Redirect](https://coq.inria.fr/doc/V8.19.0/refman/proof-engine/vernacular-commands.html?highlight=drop#coq:cmd.Drop) - allows writing to any filename that ends with ".out".
+* [Cd](https://coq.inria.fr/doc/V8.18.0/refman/proof-engine/vernacular-commands.html#coq:cmd.Cd) - changes the current directory. It would let the player probe which directories exist on the file system.
+* [Ltac2 @ external](https://coq.inria.fr/doc/V8.18.0/refman/proof-engine/ltac2.html#coq:cmd.Ltac2-external) - binds an ltac function defined in ocaml to ltac2. These should be safe, but the command is blocked to be safe, in case there was an ltac2 function that was purposefully not imported to Coq.
+* [Locate File](https://coq.inria.fr/doc/V8.18.0/refman/proof-engine/ltac2.html#coq:cmd.Ltac2-external) - allows probing the filesystem to check whether files exist.
 
 Server owners that are especially worried about security are encouraged to host
 the game on Linux and wrap coqc with the unshare program to block its access to
