@@ -38,7 +38,7 @@ public class ApplicationJig : BlockEntityDisplay, IBlockEntityForward {
   }
 
   protected override float[][] genTransformationMatrices() {
-    float[][] matrices = new float[_inventory.Count][];
+    float[][] matrices = new float [_inventory.Count][];
     for (int i = 0; i < _inventory.Count; ++i) {
       ItemSlot slot = Inventory[i];
       MeshData mesh = null;
@@ -78,9 +78,17 @@ public class ApplicationJig : BlockEntityDisplay, IBlockEntityForward {
     return matrices;
   }
 
-  private bool TryPut(IPlayer player) {
+  private bool TryPut(IPlayer player, ref EnumHandling handled) {
     ItemSlot hotbarSlot = player.InventoryManager.ActiveHotbarSlot;
     if (hotbarSlot.Empty) {
+      handled = EnumHandling.PassThrough;
+      return false;
+    }
+    if (hotbarSlot.Itemstack.Collectible
+            .GetBehavior<CollectibleBehavior.Term>() == null) {
+      (Api as ICoreClientAPI)
+          ?.TriggerIngameError(this, "onlyterms", Lang.Get("lambda:onlyterms"));
+      handled = EnumHandling.PreventSubsequent;
       return false;
     }
     for (int i = 0; i < _inventory.Count; ++i) {
@@ -90,13 +98,16 @@ public class ApplicationJig : BlockEntityDisplay, IBlockEntityForward {
       // These are the bounds of where the item will be rendered.
       Cuboidf itemBounds = GetItemBounds(i, i + 1);
       if (itemBounds.Y2 > 1.01f) {
-        // Prevent the new item from being reported as intersecting back with this block.
+        // Prevent the new item from being reported as intersecting back with
+        // this block.
         itemBounds.Y1 = 1.01f;
-        if (Api.World.CollisionTester.IsColliding(Api.World.BlockAccessor, itemBounds, Pos.ToVec3d(), false)) {
+        if (Api.World.CollisionTester.IsColliding(
+                Api.World.BlockAccessor, itemBounds, Pos.ToVec3d(), false)) {
           (Api as ICoreClientAPI)
               ?.TriggerIngameError(this, "nospaceabove",
                                    Lang.Get("lambda:nospaceabove"));
-          return true;
+          handled = EnumHandling.PreventSubsequent;
+          return false;
         }
       }
       if (hotbarSlot.TryPutInto(Api.World, _inventory[i], 1) > 0) {
@@ -107,14 +118,17 @@ public class ApplicationJig : BlockEntityDisplay, IBlockEntityForward {
           _inventoryBounds = null;
         }
         MarkDirty();
+        handled = EnumHandling.PreventSubsequent;
         return true;
       }
     }
+    handled = EnumHandling.PassThrough;
     return false;
   }
 
   private static Cuboidf GetItemBounds(int begin, int end) {
-    return new(5f / 16f, 0.5f + begin * 6f / 16f, 5f / 16f, 11f / 16f, 0.5f + end * 6f / 16f, 11f / 16f);
+    return new(5f / 16f, 0.5f + begin * 6f / 16f, 5f / 16f, 11f / 16f,
+               0.5f + end * 6f / 16f, 11f / 16f);
   }
 
   private bool TryTake(IPlayer player) {
@@ -143,11 +157,7 @@ public class ApplicationJig : BlockEntityDisplay, IBlockEntityForward {
                                                 BlockSelection blockSel,
                                                 ref EnumHandling handled) {
     if (byPlayer.Entity.Controls.ShiftKey) {
-      if (TryPut(byPlayer)) {
-        handled = EnumHandling.PreventSubsequent;
-        // Return true to sync the action with the server
-        return true;
-      }
+      return TryPut(byPlayer, ref handled);
     } else {
       if (TryTake(byPlayer)) {
         handled = EnumHandling.PreventSubsequent;

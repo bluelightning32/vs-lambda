@@ -11,7 +11,7 @@ using VSBlockEntityBehavior = Vintagestory.API.Common.BlockEntityBehavior;
 // The BlockEntity should implement this interface.
 public interface IBlockEntityForward {
   public void OnNeighbourBlockChange(BlockPos neibpos,
-                                     ref EnumHandling handling) { }
+                                     ref EnumHandling handling) {}
 
   public ItemStack OnPickBlock(ref EnumHandling handling) { return null; }
 
@@ -29,7 +29,7 @@ public interface IBlockEntityForward {
 
 // Forwards more methods from the Block to the BlockEntity.
 public class BlockEntityForward : StrongBlockBehavior {
-  public BlockEntityForward(Block block) : base(block) { }
+  public BlockEntityForward(Block block) : base(block) {}
 
   private IBlockEntityForward GetForward(IWorldAccessor world, BlockPos pos) {
     return GetForward(world.BlockAccessor, pos);
@@ -134,7 +134,7 @@ public class BlockEntityForward : StrongBlockBehavior {
         }
       }
     }
-    
+
     if (handled != EnumHandling.PassThrough) {
       return result?.ToArray();
     }
