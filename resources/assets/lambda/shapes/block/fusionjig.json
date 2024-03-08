@@ -1,0 +1,73 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+		"rock": "game:block/stone/cobblestone/andesite1",
+		"rockdark": "game:block/stone/agedbrick/andesite1"
+	},
+	"elements": [
+		{
+			"name": "outer",
+			"from": [ 0.0, 0.0, 0.0 ],
+			"to": [ 16.0, 16.0, 16.0 ],
+			"faces": {
+				"north": { "texture": "#rock", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"east": { "texture": "#rock", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"south": { "texture": "#rock", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"west": { "texture": "#rock", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"down": { "texture": "#rock", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
+			},
+			"children": [
+				{
+					"name": "north",
+					"from": [ 0.0, 0.0, 0.0 ],
+					"to": [ 16.0, 16.0, 5.0 ],
+					"faces": {
+						"south": { "texture": "#rockdark", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+						"up": { "texture": "#rock", "uv": [ 0.0, 0.0, 16.0, 5.0 ] }
+					}
+				},
+				{
+					"name": "south",
+					"from": [ 0.0, 0.0, 11.0 ],
+					"to": [ 16.0, 16.0, 16.0 ],
+					"faces": {
+						"north": { "texture": "#rockdark", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+						"up": { "texture": "#rock", "uv": [ 0.0, 11.0, 16.0, 16.0 ] }
+					}
+				},
+				{
+					"name": "west",
+					"from": [ 0.0, 0.0, 5.0 ],
+					"to": [ 5.0, 16.0, 11.0 ],
+					"faces": {
+						"east": { "texture": "#rockdark", "uv": [ 5.0, 0.0, 11.0, 16.0 ] },
+						"up": { "texture": "#rock", "uv": [ 0.0, 5.0, 5.0, 11.0 ] }
+					}
+				},
+				{
+					"name": "east",
+					"from": [ 11.0, 0.0, 5.0 ],
+					"to": [ 16.0, 16.0, 11.0 ],
+					"faces": {
+						"west": { "texture": "#rockdark", "uv": [ 5.0, 0.0, 11.0, 16.0 ] },
+						"up": { "texture": "#rock", "uv": [ 11.0, 5.0, 16.0, 11.0 ] }
+					}
+				},
+				{
+					"name": "center",
+					"from": [ 5.0, 0.0, 5.0 ],
+					"to": [ 11.0, 6.0, 11.0 ],
+					"faces": {
+						"up": { "texture": "#rockdark", "uv": [ 5.0, 5.0, 11.0, 11.0 ] }
+					}
+				}
+			]
+		}
+	]}
