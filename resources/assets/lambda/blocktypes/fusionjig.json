@@ -12,8 +12,11 @@
       ]
     }
   ],
+  class: "BlockGeneric",
   behaviors: [
+    { name: "BlockEntityForward" }
   ],
+  entityClass: "FusionJig",
   attributes: {
     mapColorCode: "settlement",
     handbook: {

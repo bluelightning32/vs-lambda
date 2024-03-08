@@ -59,6 +59,37 @@ public static class MeshUtil {
     }
   }
 
+  static public Cuboidf GetMeshBounds(MeshData mesh) {
+    Cuboidf result = new();
+    if (mesh == null || mesh.VerticesCount == 0) {
+      return result;
+    }
+    result.Set(mesh.xyz[0], mesh.xyz[1], mesh.xyz[2], mesh.xyz[0], mesh.xyz[1],
+               mesh.xyz[2]);
+
+    for (int i = 3; i < mesh.VerticesCount * 3; i += 3) {
+      if (mesh.xyz[i + 0] < result.X1) {
+        result.X1 = mesh.xyz[i + 0];
+      }
+      if (mesh.xyz[i + 0] > result.X2) {
+        result.X2 = mesh.xyz[i + 0];
+      }
+      if (mesh.xyz[i + 1] < result.Y1) {
+        result.Y1 = mesh.xyz[i + 1];
+      }
+      if (mesh.xyz[i + 1] > result.Y2) {
+        result.Y2 = mesh.xyz[i + 1];
+      }
+      if (mesh.xyz[i + 2] < result.Z1) {
+        result.Z1 = mesh.xyz[i + 2];
+      }
+      if (mesh.xyz[i + 2] > result.Z2) {
+        result.Z2 = mesh.xyz[i + 2];
+      }
+    }
+    return result;
+  }
+
   static public bool IsEmptyFace(float[] xyz, int beginVertex, int endVertex) {
     Cuboidf bounds = new Cuboidf();
     GetFaceBounds(bounds, xyz, beginVertex, endVertex);
