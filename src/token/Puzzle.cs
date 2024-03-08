@@ -34,7 +34,7 @@ public class Puzzle : Function {
     _resultType = resultType;
     _resultTypeChild = new TermInput("resultType", FirstBlock, this);
     Token constant = new Constant(FirstBlock, _resultType);
-    constant.AddSink(state, _resultTypeChild);
+    constant.AddSink(_resultTypeChild);
     return _resultTypeChild;
   }
 

@@ -15,12 +15,12 @@ public abstract class ConstructRoot : TermSource {
 
   public abstract void WriteConstruct(GraphvizEmitter state);
 
-  public override void AddSink(TokenEmitter state, Token sink) {
+  public override void AddSink(Token sink) {
     if (sink is TermInput input) {
       input.SetSource(this);
       ++IncomingEdgeCount;
     } else {
-      base.AddSink(state, sink);
+      base.AddSink(sink);
     }
   }
 

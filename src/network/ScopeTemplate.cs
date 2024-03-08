@@ -85,7 +85,7 @@ public class ScopeTemplate : BlockNodeTemplate {
         NodePos portSourcePos = nodes[pos.NodeId].Source;
         Token source = state.Prepared[portSourcePos];
         if (!nodeTemplate.IsSource) {
-          source.AddSink(state, port);
+          source.AddSink(port);
         }
         source.AddPendingChildren(state, nodeTemplate.Network,
                                   GetDownstream(pos));

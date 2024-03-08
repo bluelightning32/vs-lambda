@@ -133,7 +133,7 @@ public abstract class Token : IDisposable {
     }
   }
 
-  public virtual void AddSink(TokenEmitter state, Token sink) {
+  public virtual void AddSink(Token sink) {
     throw new InvalidOperationException("Token does not accept children.");
   }
 

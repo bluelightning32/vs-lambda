@@ -21,12 +21,12 @@ public abstract class TermSource : Token {
     }
   }
 
-  public override void AddSink(TokenEmitter state, Token sink) {
+  public override void AddSink(Token sink) {
     if (sink is TermInput input) {
       input.SetSource(this);
       HasSinks = true;
     } else {
-      base.AddSink(state, sink);
+      base.AddSink(sink);
     }
   }
 

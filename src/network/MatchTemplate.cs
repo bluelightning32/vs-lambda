@@ -129,7 +129,7 @@ public class MatchTemplate : BlockNodeTemplate {
       if (nodes[pos.NodeId].IsConnected()) {
         NodePos sourcePos = nodes[pos.NodeId].Source;
         Token source = state.Prepared[sourcePos];
-        source.AddSink(state, result);
+        source.AddSink(result);
         source.ReleaseRef(state, pos);
       }
     }

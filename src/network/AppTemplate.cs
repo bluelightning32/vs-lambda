@@ -86,13 +86,13 @@ public class AppTemplate : BlockNodeTemplate {
         added.Add(app.Applicand);
       } else {
         Constant appConstant = new(outputPos, inventoryTerm);
-        appConstant.AddSink(state, app.Applicand);
+        appConstant.AddSink(app.Applicand);
       }
       if (_argument != -1) {
         added.Add(app.Argument);
       } else {
         Constant argConstant = new(outputPos, inventoryTerm);
-        argConstant.AddSink(state, app.Argument);
+        argConstant.AddSink(app.Argument);
       }
     }
     foreach (Token a in added) {
@@ -125,7 +125,7 @@ public class AppTemplate : BlockNodeTemplate {
       if (nodes[pos.NodeId].IsConnected()) {
         NodePos sourcePos = nodes[pos.NodeId].Source;
         Token source = state.Prepared[sourcePos];
-        source.AddSink(state, result);
+        source.AddSink(result);
         source.ReleaseRef(state, pos);
       }
     }
