@@ -27,4 +27,20 @@ public class CoqSanitizerTest {
   public void DisallowRedirect() {
     CoqSanitizer.Sanitize(new StringReader("Redirect \"escape\" Check nat.\n"));
   }
+
+  [TestMethod]
+  public void AllowLtac2Import() {
+    CoqSanitizer.Sanitize(new StringReader("""
+From Ltac2 Require Import Ltac2.
+"""));
+  }
+
+  [TestMethod]
+  [ExpectedException(typeof(ArgumentException))]
+  public void DisallowLtac2External() {
+    CoqSanitizer.Sanitize(new StringReader("""
+From Ltac2 Require Import Ltac2.
+Ltac2 @ external print : message -> unit := "coq-core.plugins.ltac2" "print".
+"""));
+  }
 }
