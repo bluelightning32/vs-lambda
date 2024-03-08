@@ -7,8 +7,8 @@ namespace Lambda.Token;
 public class Forall : Function {
   public override string Name => "forall";
 
-  public Forall(string name, NodePos pos, int outputNodeId, BlockFacing face)
-      : base(name, pos, outputNodeId, face) {}
+  public Forall(NodePos pos, int outputNodeId, BlockFacing face)
+      : base(pos, outputNodeId, face) {}
 
   public override void EmitConstruct(CoqEmitter emitter,
                                      bool app_needs_parens) {

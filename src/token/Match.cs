@@ -47,7 +47,7 @@ public class Match : ConstructRoot {
 
   public override string Name => "match";
 
-  public Match(string name, NodePos pos, int inputNodeId, int outputNodeId) {
+  public Match(NodePos pos, int inputNodeId, int outputNodeId) {
     MatchPos = pos;
     OutputNodeId = outputNodeId;
     _cases = new(new TokenComparer(BlockFacing.SOUTH));

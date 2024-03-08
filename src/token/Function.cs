@@ -39,8 +39,7 @@ public class Function : ConstructRoot {
 
   protected readonly ParameterList _parameters;
 
-  public Function(string name, NodePos pos, int outputNodeId,
-                  BlockFacing face) {
+  public Function(NodePos pos, int outputNodeId, BlockFacing face) {
     ScopePos = pos;
     OutputNodeId = outputNodeId;
     _parameters = new ParameterList(face);

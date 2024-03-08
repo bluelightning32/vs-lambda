@@ -23,8 +23,8 @@ public class Puzzle : Function {
 
   public override string Name => "puzzle";
 
-  public Puzzle(string name, NodePos pos, int outputNodeId, BlockFacing face)
-      : base(name, pos, outputNodeId, face) {}
+  public Puzzle(NodePos pos, int outputNodeId, BlockFacing face)
+      : base(pos, outputNodeId, face) {}
 
   public Token AddResultType(TokenEmitter state, string resultType) {
     if (_resultTypeChild != null) {

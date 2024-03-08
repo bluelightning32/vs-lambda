@@ -49,7 +49,7 @@ public class MatchTemplate : BlockNodeTemplate {
                          int forNode) {
     Match source = (Match)state.TryGetSource(sourcePos);
     if (source == null) {
-      source = new("match", sourcePos, _inputId, _outputId);
+      source = new(sourcePos, _inputId, _outputId);
       state.AddPrepared(sourcePos, source, sourcePos);
       state.AddPending(sourcePos);
       foreach (int child in new int[] { _outputId, _inputId }) {
@@ -93,7 +93,7 @@ public class MatchTemplate : BlockNodeTemplate {
     NodePos matchPos = new(pos, _matchId);
     Match match = (Match)state.TryGetSource(matchPos);
     if (match == null) {
-      match = new("match", matchPos, _inputId, _outputId);
+      match = new(matchPos, _inputId, _outputId);
       state.AddPrepared(matchPos, match, matchPos);
       foreach (int child in new int[] { _outputId, _inputId }) {
         if (child != -1) {

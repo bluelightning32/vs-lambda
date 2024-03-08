@@ -79,7 +79,7 @@ public class AppTemplate : BlockNodeTemplate {
     if (_applicand == -1 && _argument == -1) {
       added.Add(new Constant(outputPos, inventoryTerm));
     } else {
-      App app = new("app", outputPos, GetNodePosOrDefault(pos, _applicand),
+      App app = new(outputPos, GetNodePosOrDefault(pos, _applicand),
                     GetNodePosOrDefault(pos, _argument));
       added.Add(app);
       if (_applicand != -1) {

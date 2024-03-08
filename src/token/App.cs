@@ -25,8 +25,7 @@ public class App : ConstructRoot {
   public override IReadOnlyList<NodePos> ScopeMatchConnectors =>
       Array.Empty<NodePos>();
 
-  public App(string name, NodePos pos, NodePos applicandPos,
-             NodePos argumentPos) {
+  public App(NodePos pos, NodePos applicandPos, NodePos argumentPos) {
     Pos = pos;
     Applicand = new TermInput("applicand", applicandPos, this);
     Argument = new TermInput("argument", argumentPos, this);

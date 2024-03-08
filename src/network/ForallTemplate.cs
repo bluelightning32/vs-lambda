@@ -14,6 +14,6 @@ public class ForallTemplate : FunctionTemplate {
 
   protected override Function CreateFunction(NodePos sourcePos,
                                              string inventoryTerm) {
-    return new Forall("forall", sourcePos, _outputId, _face);
+    return new Forall(sourcePos, _outputId, _face);
   }
 }

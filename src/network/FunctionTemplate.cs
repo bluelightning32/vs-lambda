@@ -64,9 +64,9 @@ public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
   protected virtual Function CreateFunction(NodePos sourcePos,
                                             string inventoryTerm) {
     if ((inventoryTerm ?? "").Length > 0) {
-      return new Puzzle("puzzle", sourcePos, _outputId, _face);
+      return new Puzzle(sourcePos, _outputId, _face);
     } else {
-      return new Function("function", sourcePos, _outputId, _face);
+      return new Function(sourcePos, _outputId, _face);
     }
   }
 
