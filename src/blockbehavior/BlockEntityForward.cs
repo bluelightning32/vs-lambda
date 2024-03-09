@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 using Vintagestory.API.Common;
@@ -31,62 +32,36 @@ public interface IBlockEntityForward {
 public class BlockEntityForward : StrongBlockBehavior {
   public BlockEntityForward(Block block) : base(block) {}
 
-  private IBlockEntityForward GetForward(IWorldAccessor world, BlockPos pos) {
-    return GetForward(world.BlockAccessor, pos);
-  }
-
-  private IBlockEntityForward GetForward(IBlockAccessor blockAccessor,
-                                         BlockPos pos) {
-    if (block.EntityClass == null) {
-      return null;
-    }
-    return blockAccessor.GetBlockEntity(pos) as IBlockEntityForward;
-  }
-
   public override void OnNeighbourBlockChange(IWorldAccessor world,
                                               BlockPos pos, BlockPos neibpos,
-                                              ref EnumHandling handling) {
-    // The base sets handling to EnumHandling.PassThrough. So call the block
-    // entity afterwards so that it has a chance to override it.
-    base.OnNeighbourBlockChange(world, pos, neibpos, ref handling);
+                                              ref EnumHandling handled) {
     VSBlockEntity entity = world.BlockAccessor.GetBlockEntity(pos);
-    if (entity != null) {
-      foreach (VSBlockEntityBehavior behavior in entity.Behaviors) {
-        IBlockEntityForward forward = behavior as IBlockEntityForward;
-        if (forward != null) {
-          EnumHandling behaviorResult = EnumHandling.PassThrough;
-          forward.OnNeighbourBlockChange(neibpos, ref behaviorResult);
-          if (behaviorResult != EnumHandling.PassThrough) {
-            handling = behaviorResult;
-          }
-          if (handling == EnumHandling.PreventSubsequent) {
-            return;
-          }
-        }
-      }
-      if (handling == EnumHandling.PreventDefault) {
-        return;
-      }
-      {
-        IBlockEntityForward forward = entity as IBlockEntityForward;
-        if (forward != null) {
-          EnumHandling entityResult = EnumHandling.PassThrough;
-          forward.OnNeighbourBlockChange(neibpos, ref entityResult);
-          if (entityResult != EnumHandling.PassThrough) {
-            handling = entityResult;
-          }
-          if (handling == EnumHandling.PreventSubsequent) {
-            return;
-          }
-        }
-      }
+    WalkBlockEntityBehaviors(
+        entity,
+        (IBlockEntityForward forward, ref EnumHandling handled) =>
+            forward.OnNeighbourBlockChange(neibpos, ref handled),
+        ref handled);
+    if (handled != EnumHandling.PassThrough) {
+      return;
     }
+    base.OnNeighbourBlockChange(world, pos, neibpos, ref handled);
   }
 
   public override ItemStack OnPickBlock(IWorldAccessor world, BlockPos pos,
-                                        ref EnumHandling handling) {
-    handling = EnumHandling.PassThrough;
-    return GetForward(world, pos)?.OnPickBlock(ref handling);
+                                        ref EnumHandling handled) {
+    ItemStack result = null;
+    VSBlockEntity entity = world.BlockAccessor.GetBlockEntity(pos);
+    WalkBlockEntityBehaviors(
+        entity, (IBlockEntityForward forward, ref EnumHandling handled) => {
+          ItemStack localResult = forward.OnPickBlock(ref handled);
+          if (handled != EnumHandling.PassThrough) {
+            result = localResult;
+          }
+        }, ref handled);
+    if (handled != EnumHandling.PassThrough) {
+      return result;
+    }
+    return base.OnPickBlock(world, pos, ref handled);
   }
 
   public override Cuboidf[] GetSelectionBoxes(IBlockAccessor blockAccessor,
@@ -94,47 +69,16 @@ public class BlockEntityForward : StrongBlockBehavior {
                                               ref EnumHandling handled) {
     List<Cuboidf> result = null;
     VSBlockEntity entity = blockAccessor.GetBlockEntity(pos);
-    if (entity != null) {
-      foreach (VSBlockEntityBehavior behavior in entity.Behaviors) {
-        if (behavior is IBlockEntityForward forward) {
-          EnumHandling behaviorHandled = EnumHandling.PassThrough;
-          Cuboidf[] behaviorResult =
-              forward.GetSelectionBoxes(ref behaviorHandled);
-          if (behaviorHandled == EnumHandling.PreventSubsequent) {
-            handled = EnumHandling.PreventSubsequent;
-            return behaviorResult;
-          }
-          if (behaviorHandled != EnumHandling.PassThrough) {
-            handled = behaviorHandled;
-            if (behaviorResult != null) {
+    WalkBlockEntityBehaviors(
+        entity, (IBlockEntityForward forward, ref EnumHandling handled) => {
+          Cuboidf[] localResult = forward.GetSelectionBoxes(ref handled);
+          if (handled != EnumHandling.PassThrough) {
+            if (localResult != null) {
               result ??= new();
-              result.AddRange(behaviorResult);
+              result.AddRange(localResult);
             }
           }
-        }
-      }
-      if (handled == EnumHandling.PreventDefault) {
-        return result?.ToArray();
-      }
-      {
-        if (entity is IBlockEntityForward forward) {
-          EnumHandling entityHandled = EnumHandling.PassThrough;
-          Cuboidf[] entityResult = forward.GetSelectionBoxes(ref entityHandled);
-          if (entityHandled == EnumHandling.PreventSubsequent) {
-            handled = EnumHandling.PreventSubsequent;
-            return entityResult;
-          }
-          if (entityHandled != EnumHandling.PassThrough) {
-            handled = entityHandled;
-            if (entityResult != null) {
-              result ??= new();
-              result.AddRange(entityResult);
-            }
-          }
-        }
-      }
-    }
-
+        }, ref handled);
     if (handled != EnumHandling.PassThrough) {
       return result?.ToArray();
     }
@@ -146,47 +90,16 @@ public class BlockEntityForward : StrongBlockBehavior {
                                               ref EnumHandling handled) {
     List<Cuboidf> result = null;
     VSBlockEntity entity = blockAccessor.GetBlockEntity(pos);
-    if (entity != null) {
-      foreach (VSBlockEntityBehavior behavior in entity.Behaviors) {
-        if (behavior is IBlockEntityForward forward) {
-          EnumHandling behaviorHandled = EnumHandling.PassThrough;
-          Cuboidf[] behaviorResult =
-              forward.GetCollisionBoxes(ref behaviorHandled);
-          if (behaviorHandled == EnumHandling.PreventSubsequent) {
-            handled = EnumHandling.PreventSubsequent;
-            return behaviorResult;
-          }
-          if (behaviorHandled != EnumHandling.PassThrough) {
-            handled = behaviorHandled;
-            if (behaviorResult != null) {
+    WalkBlockEntityBehaviors(
+        entity, (IBlockEntityForward forward, ref EnumHandling handled) => {
+          Cuboidf[] localResult = forward.GetCollisionBoxes(ref handled);
+          if (handled != EnumHandling.PassThrough) {
+            if (localResult != null) {
               result ??= new();
-              result.AddRange(behaviorResult);
+              result.AddRange(localResult);
             }
           }
-        }
-      }
-      if (handled == EnumHandling.PreventDefault) {
-        return result?.ToArray();
-      }
-      {
-        if (entity is IBlockEntityForward forward) {
-          EnumHandling entityHandled = EnumHandling.PassThrough;
-          Cuboidf[] entityResult = forward.GetCollisionBoxes(ref entityHandled);
-          if (entityHandled == EnumHandling.PreventSubsequent) {
-            handled = EnumHandling.PreventSubsequent;
-            return entityResult;
-          }
-          if (entityHandled != EnumHandling.PassThrough) {
-            handled = entityHandled;
-            if (entityResult != null) {
-              result ??= new();
-              result.AddRange(entityResult);
-            }
-          }
-        }
-      }
-    }
-
+        }, ref handled);
     if (handled != EnumHandling.PassThrough) {
       return result?.ToArray();
     }
@@ -200,43 +113,72 @@ public class BlockEntityForward : StrongBlockBehavior {
     bool result = true;
     VSBlockEntity entity =
         world.BlockAccessor.GetBlockEntity(blockSel.Position);
-    if (entity != null) {
-      foreach (VSBlockEntityBehavior behavior in entity.Behaviors) {
-        if (behavior is IBlockEntityForward forward) {
-          EnumHandling behaviorHandled = EnumHandling.PassThrough;
-          bool behaviorResult = forward.OnBlockInteractStart(
-              byPlayer, blockSel, ref behaviorHandled);
-          if (behaviorHandled != EnumHandling.PassThrough) {
-            handled = behaviorHandled;
-            result = behaviorResult;
+    WalkBlockEntityBehaviors(
+        entity, (IBlockEntityForward forward, ref EnumHandling handled) => {
+          bool localResult =
+              forward.OnBlockInteractStart(byPlayer, blockSel, ref handled);
+          if (handled != EnumHandling.PassThrough) {
+            result = localResult;
           }
-          if (handled == EnumHandling.PreventSubsequent) {
-            return result;
-          }
-        }
-      }
-      if (handled == EnumHandling.PreventDefault) {
-        return result;
-      }
-      {
-        if (entity is IBlockEntityForward forward) {
-          EnumHandling entityHandled = EnumHandling.PassThrough;
-          bool entityResult = forward.OnBlockInteractStart(byPlayer, blockSel,
-                                                           ref entityHandled);
-          if (entityHandled != EnumHandling.PassThrough) {
-            handled = entityHandled;
-            result = entityResult;
-          }
-          if (handled == EnumHandling.PreventSubsequent) {
-            return result;
-          }
-        }
-      }
-    }
+        }, ref handled);
     if (handled != EnumHandling.PassThrough) {
       return result;
     }
-
     return base.OnBlockInteractStart(world, byPlayer, blockSel, ref handled);
+  }
+
+  public delegate void
+  BlockEntityBehaviorDelegate(VSBlockEntityBehavior behavior,
+                              ref EnumHandling handled);
+  public delegate void BlockEntityDelegate(VSBlockEntity entity,
+                                           ref EnumHandling handled);
+
+  public static void WalkBlockEntityBehaviors(
+      VSBlockEntity entity, BlockEntityBehaviorDelegate callBehavior,
+      BlockEntityDelegate callEntity, ref EnumHandling handled) {
+    if (entity == null) {
+      return;
+    }
+    foreach (VSBlockEntityBehavior behavior in entity.Behaviors) {
+      EnumHandling behaviorHandled = EnumHandling.PassThrough;
+      callBehavior(behavior, ref behaviorHandled);
+      if (behaviorHandled != EnumHandling.PassThrough) {
+        handled = behaviorHandled;
+      }
+      if (handled == EnumHandling.PreventSubsequent) {
+        return;
+      }
+    }
+    if (handled == EnumHandling.PreventDefault) {
+      return;
+    }
+    EnumHandling entityHandled = EnumHandling.PassThrough;
+    callEntity(entity, ref entityHandled);
+
+    if (entityHandled != EnumHandling.PassThrough) {
+      handled = entityHandled;
+    }
+  }
+
+  private delegate void IBlockEntityForwardDelegate(IBlockEntityForward forward,
+                                                    ref EnumHandling handled);
+
+  private static void
+  WalkBlockEntityBehaviors(VSBlockEntity entity,
+                           IBlockEntityForwardDelegate callForward,
+                           ref EnumHandling handled) {
+    WalkBlockEntityBehaviors(
+        entity,
+        (VSBlockEntityBehavior behavior, ref EnumHandling handled) => {
+          if (behavior is IBlockEntityForward forward) {
+            callForward(forward, ref handled);
+          }
+        },
+        (VSBlockEntity entity, ref EnumHandling handled) => {
+          if (entity is IBlockEntityForward forward) {
+            callForward(forward, ref handled);
+          }
+        },
+        ref handled);
   }
 }
