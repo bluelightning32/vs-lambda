@@ -87,4 +87,14 @@ public class CoqSessionTest {
     Assert.AreEqual(new BlockPos(3, 0, 2, 0), result.ErrorLocations.First().Block);
     Assert.IsFalse(result.ErrorMessage.Contains("line"));
   }
+
+  [TestMethod]
+  public void SInfo() {
+    TermInfo info = _session.GetTermInfo(new BlockPos(0, 0, 0, 0), "S");
+    Assert.AreEqual(null, info.ErrorMessage);
+    Assert.AreEqual("S", info.Term);
+    Assert.AreEqual("nat", info.Constructs);
+    Assert.IsFalse(info.IsType);
+    Assert.IsFalse(info.IsTypeFamily);
+  }
 }

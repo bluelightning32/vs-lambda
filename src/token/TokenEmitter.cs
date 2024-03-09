@@ -633,7 +633,7 @@ public class TokenEmitter : IDisposable {
     ms.Seek(0, SeekOrigin.Begin);
     StreamReader reader = new(ms);
     string result = reader.ReadToEnd();
-    CoqSanitizer.Sanitize(new StringReader(result));
+    CoqSanitizer.Sanitize(result);
     return result;
   }
 

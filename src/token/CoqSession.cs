@@ -9,11 +9,54 @@ using System.Text.RegularExpressions;
 using Lambda.Network;
 
 using Vintagestory.API.Common;
+using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
 namespace Lambda.Token;
 
 using RegexMatch = System.Text.RegularExpressions.Match;
+
+public partial class TermInfo {
+  public string ErrorMessage;
+  public string Term;
+  public string Type;
+  public string Constructs;
+  public bool IsType;
+  public bool IsTypeFamily;
+
+  public static TermInfo Error(string message, string filename) {
+    return new() { ErrorMessage = message };
+  }
+
+  public static TermInfo Success(string message) {
+    RegexMatch match = ParseInfo().Match(message);
+    if (!match.Success) {
+      throw new ArgumentException("Coq output does not match regex.");
+    }
+    TermInfo result =
+        new() { Term = match.Groups[2].Value, Type = match.Groups[1].Value };
+    if (match.Groups[3].Value.StartsWith("constructor: ")) {
+      result.Constructs =
+          match.Groups[3].Value.Substring("constructor: ".Length);
+    } else {
+      result.IsType = match.Groups[3].Value switch {
+        "prod" => true,
+        "sort" => true,
+        "inductive" => true,
+        _ => false,
+      };
+      if (match.Groups[4].Value == "true" && result.IsType) {
+        result.IsType = false;
+        result.IsTypeFamily = true;
+      }
+    }
+    return result;
+  }
+  [GeneratedRegex(
+      @"^lambda: type: (.+)\nlambda: reduced: (.+)\nlambda: (.+)\nlambda: function: (.+)\n- : unit = \(\)\n*$",
+      RegexOptions.Compiled | RegexOptions.Singleline)]
+  private static partial Regex ParseInfo();
+}
 
 public partial class CoqResult {
   public bool Successful;
@@ -152,4 +195,91 @@ public class CoqSession : IDisposable {
       return CoqResult.Error(e.ToString());
     }
   }
+
+  public TermInfo GetTermInfo(BlockPos pos, string term) {
+    string filename = Path.Combine(
+        _config.CoqTmpDir,
+        $"CheckTerm_{pos.X}_{pos.Y}_{pos.Z}_{Environment.CurrentManagedThreadId}.v");
+    try {
+      using FileStream stream = new(filename, FileMode.Create);
+      using StreamWriter writer = new(stream);
+      writer.Write(TermInfoHeader);
+      writer.WriteLine($"Ltac2 Eval print_info \"lambda: \" constr:({term}).");
+      writer.Close();
+
+      using StreamReader reader = new(filename);
+      CoqSanitizer.Sanitize(reader);
+
+      StringBuilder stdoutBuilder = new();
+      StringBuilder stderrBuilder = new();
+
+      using Process coqc = new() {
+        StartInfo = new ProcessStartInfo { FileName = _config.CoqcPath,
+                                           ArgumentList = { filename },
+                                           UseShellExecute = false,
+                                           RedirectStandardOutput = true,
+                                           RedirectStandardError = true,
+                                           CreateNoWindow = true },
+      };
+      coqc.OutputDataReceived += (sender, e) =>
+          stdoutBuilder.AppendLine(e.Data);
+      coqc.ErrorDataReceived += (sender, e) => stderrBuilder.AppendLine(e.Data);
+      coqc.Start();
+      coqc.BeginOutputReadLine();
+      coqc.BeginErrorReadLine();
+      coqc.WaitForExit(600000);
+      TermInfo result = new();
+      if (coqc.ExitCode != 0) {
+        return TermInfo.Error(stderrBuilder.ToString(), filename);
+      }
+      return TermInfo.Success(stdoutBuilder.ToString());
+    } catch (Exception e) {
+      return TermInfo.Error(e.ToString(), filename);
+    }
+  }
+
+  // clang-format off
+  private static readonly string TermInfoHeader = """
+From Ltac2 Require Import Ltac2.
+From Ltac2 Require Import Message.
+From Ltac2 Require Import Constr.
+From Ltac2 Require Import Constructor.
+From Ltac2 Require Import Printf.
+
+Ltac2 get_kind (c: constr) :=
+  match Unsafe.kind c with
+  | Unsafe.Constructor a b =>
+    fprintf "constructor: %t"
+    (Constr.Unsafe.make (Constr.Unsafe.Ind (inductive a) b))
+  | Unsafe.Ind inductive instance =>
+    fprintf "inductive"
+  | Unsafe.Sort sort =>
+    fprintf "sort"
+  | Unsafe.Prod binder constr =>
+    fprintf "prod"
+  | _ =>
+    fprintf "unknown"
+  end.
+
+Ltac2 get_is_function (c: constr) :=
+  fprintf "function: %s"
+    (match! type c with
+    | forall x : _, ?y => "true"
+    | _ => "false"
+    end).
+
+Ltac2 get_type (c: constr) :=
+  fprintf "type: %t" (type c).
+
+Ltac2 get_reduced (c: constr) :=
+  fprintf "reduced: %t" (eval cbn in $c).
+
+Ltac2 print_info (p: string) (c: constr) :=
+  let tmp :=
+    List.map (fun x => printf "%s%s" p (to_string x))
+      [get_type c; get_reduced c; get_kind c;
+      get_is_function c] in ().
+
+""";
+  // clang-format on
 }

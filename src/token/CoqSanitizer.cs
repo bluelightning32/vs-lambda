@@ -21,6 +21,9 @@ public class CoqSanitizer {
   }
 
   // Throws an exception if the Coq code is potentially unsafe.
+  static public void Sanitize(string code) { Sanitize(new StringReader(code)); }
+
+  // Throws an exception if the Coq code is potentially unsafe.
   static public void Sanitize(TextReader reader) {
     char[] buffer = new char[1000];
     SanitizeState state = SanitizeState.BeforeCommand;
