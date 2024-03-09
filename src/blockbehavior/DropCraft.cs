@@ -9,9 +9,16 @@ namespace Lambda.BlockBehavior;
 
 using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
 
+public interface IDropCraftListener {
+  // `pos` is the position of the listener. `dropper` is the position of the
+  // DropCraft block.
+  void OnDropCraft(IWorldAccessor world, BlockPos pos, BlockPos dropper);
+}
+
 public class DropCraft : VSBlockBehavior, IBlockWatcher {
   ICoreAPI _api;
   int _yieldStrength = 3;
+  int _listenerSearchDist = 3;
   Block _blockMonitor;
   private BlockDropItemStack[] _yieldDrops;
 
@@ -20,6 +27,8 @@ public class DropCraft : VSBlockBehavior, IBlockWatcher {
   public override void Initialize(JsonObject properties) {
     base.Initialize(properties);
     _yieldStrength = properties["yieldStrength"].AsInt(_yieldStrength);
+    _listenerSearchDist =
+        properties["_listenerSearchDist"].AsInt(_listenerSearchDist);
     _yieldDrops =
         properties["yieldDrops"].AsArray(block.Drops, CoreSystem.Domain);
   }
@@ -96,6 +105,23 @@ public class DropCraft : VSBlockBehavior, IBlockWatcher {
     }
 
     _api.World.BlockAccessor.TriggerNeighbourBlockUpdate(pos);
+
+    BlockPos listenerPos = pos.Copy();
+    for (int i = 0; i < 3; ++i) {
+      listenerPos.Down();
+      Block listenerBlock = _api.World.BlockAccessor.GetBlock(listenerPos);
+      IDropCraftListener listener =
+          listenerBlock.GetInterface<IDropCraftListener>(_api.World,
+                                                         listenerPos);
+      if (listener != null) {
+        listener.OnDropCraft(_api.World, listenerPos, pos);
+        break;
+      }
+      if (listenerBlock.Id != 0) {
+        // Some block other than air is in the way.
+        break;
+      }
+    }
 
     return true;
   }

@@ -1,8 +1,13 @@
+using System;
+using System.Collections.Generic;
 using System.Text;
+
+using Lambda.Token;
 
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.Util;
 
 namespace Lambda.CollectibleBehavior;
 
@@ -31,6 +36,11 @@ public class Term : VSCollectibleBehavior {
     _isTypeFamily = properties["isTypeFamily"].Exists
                         ? properties["isTypeFamily"].AsBool()
                         : null;
+  }
+
+  public override void OnLoaded(ICoreAPI api) {
+    base.OnLoaded(api);
+    GetTermDict(api).Add(_term ?? "", collObj);
   }
 
   public string GetTerm(ItemStack stack) {
@@ -91,5 +101,24 @@ public class Term : VSCollectibleBehavior {
     } else if (GetIsTypeFamily(inSlot.Itemstack)) {
       dsc.AppendLine("Is type family");
     }
+  }
+
+  static private Dictionary<string, CollectibleObject>
+  GetTermDict(ICoreAPI api) {
+    return ObjectCacheUtil.GetOrCreate(
+        api, $"lambda-terms",
+        () => new Dictionary<string, CollectibleObject>());
+  }
+
+  public static ItemStack Find(ICoreAPI api, TermInfo termInfo) {
+    Dictionary<string, CollectibleObject> termDict = GetTermDict(api);
+    if (termDict.TryGetValue(termInfo.Term, out CollectibleObject term)) {
+      return new ItemStack(term, 1);
+    }
+    CollectibleObject generic = termDict[""];
+    TreeAttribute tree = new();
+    termInfo.ToTreeAttributes(tree);
+    ItemStack stack = new(generic.Id, generic.ItemClass, 1, tree, api.World);
+    return stack;
   }
 }

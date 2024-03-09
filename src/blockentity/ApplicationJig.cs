@@ -17,7 +17,9 @@ using Vintagestory.GameContent;
 
 namespace Lambda.BlockEntity;
 
-public class ApplicationJig : BlockEntityDisplay, IBlockEntityForward {
+public class ApplicationJig : BlockEntityDisplay,
+                              IBlockEntityForward,
+                              IDropCraftListener {
   // Pass in null for the API and inventory class name for now. The correct
   // values will be passed by `BlockEntityContainer.Initialize` when it calls
   // `Inventory.LateInitialize`.
@@ -27,7 +29,7 @@ public class ApplicationJig : BlockEntityDisplay, IBlockEntityForward {
   private bool _compilationOutdated = true;
   private bool _compilationRunning = false;
   TermInfo _termInfo = null;
-  BlockPos _dropWaiting = null;
+  bool _dropWaiting = false;
 
   public override string InventoryClassName => "applicationjig";
 
@@ -170,13 +172,11 @@ public class ApplicationJig : BlockEntityDisplay, IBlockEntityForward {
     }
     string[] terms = new string[2];
     for (int i = 0; i < 2; ++i) {
-      CollectibleBehavior.Term termBhv =
-          _inventory[i]
-              .Itemstack.Collectible.GetBehavior<CollectibleBehavior.Term>();
+      Term termBhv = _inventory[i].Itemstack.Collectible.GetBehavior<Term>();
       string term = termBhv?.GetTerm(_inventory[i].Itemstack);
       if (term == null) {
         _compilationOutdated = false;
-        NotifyWatcher();
+        _dropWaiting = false;
         return;
       }
       terms[i] = term;
@@ -222,6 +222,7 @@ public class ApplicationJig : BlockEntityDisplay, IBlockEntityForward {
     }
     _termInfo = info;
     if (info.ErrorMessage != null) {
+      _dropWaiting = false;
       if (!_inventory[1].Empty) {
         ItemStack removed = _inventory[1].TakeOutWhole();
         Api.World.SpawnItemEntity(removed, Pos.ToVec3d().Add(0.5, 0.5, 0.5),
@@ -229,19 +230,31 @@ public class ApplicationJig : BlockEntityDisplay, IBlockEntityForward {
         SetInventoryBounds(1);
         MarkDirty();
       }
+    } else if (_dropWaiting) {
+      _dropWaiting = false;
+      ((IDropCraftListener)this).OnDropCraft(Api.World, Pos, Pos);
     }
-    NotifyWatcher();
   }
 
-  private void NotifyWatcher() {
-    if (_dropWaiting == null) {
+  void IDropCraftListener.OnDropCraft(IWorldAccessor world, BlockPos pos,
+                                      BlockPos dropper) {
+    if (Api.Side != EnumAppSide.Server) {
       return;
     }
-    BlockPos dropWaiting = _dropWaiting;
-    _dropWaiting = null;
-    Block watcher = Api.World.BlockAccessor.GetBlock(dropWaiting);
-    watcher.GetInterface<IBlockWatcher>(Api.World, dropWaiting)
-        ?.BlockChanged(dropWaiting, Pos);
+    if (_compilationRunning) {
+      _dropWaiting = true;
+      return;
+    }
+    if (_termInfo == null || _termInfo.Term == null) {
+      return;
+    }
+    ItemStack drop = Term.Find(Api, _termInfo);
+    Api.World.SpawnItemEntity(drop, Pos.ToVec3d().Add(0.5, 0.5, 0.5), null);
+
+    for (int i = 0; i < _inventory.Count; ++i) {
+      _inventory[i].TakeOutWhole();
+    }
+    MarkDirty();
   }
 
   private static Cuboidf GetItemBounds(int begin, int end) {
