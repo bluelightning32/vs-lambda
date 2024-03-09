@@ -10,11 +10,14 @@ public class CoqSanitizer {
     BeforeCommand,
     Command,
     Import,
+    Ltac2Start,
     BodyTokenStart,
     InNumber,
     RealDecimal,
     RealFraction,
     InToken,
+    InTokenDot,
+    InQuote,
   }
 
   // Throws an exception if the Coq code is potentially unsafe.
@@ -42,6 +45,9 @@ public class CoqSanitizer {
             if (cmd == "Require" || cmd == "From") {
               command.Append(c);
               state = SanitizeState.Import;
+            } else if (cmd == "Ltac2") {
+              command.Clear();
+              state = SanitizeState.Ltac2Start;
             } else {
               SanitizeCommand(cmd);
               state = SanitizeState.BodyTokenStart;
@@ -59,7 +65,7 @@ public class CoqSanitizer {
           if (char.IsWhiteSpace(c) && command.Length > 1 &&
               command[^1] == '.') {
             SanitizeImport(command.ToString());
-            state = SanitizeState.BodyTokenStart;
+            state = SanitizeState.BeforeCommand;
             command.Clear();
           } else if (char.IsAsciiLetterOrDigit(c) || c == '.' ||
                      char.IsWhiteSpace(c)) {
@@ -73,14 +79,36 @@ public class CoqSanitizer {
                 $"Unexpected character '{c}' in import command.");
           }
           break;
+        case SanitizeState.Ltac2Start:
+          if (char.IsWhiteSpace(c)) {
+          } else if (char.IsAsciiLetter(c) || c == '_') {
+            state = SanitizeState.InToken;
+          } else {
+            throw new ArgumentException(
+                $"Unexpected character '{c}' at start of ltac2 command.");
+          }
+          break;
+        case SanitizeState.InTokenDot:
+          if (char.IsWhiteSpace(c)) {
+            state = SanitizeState.BeforeCommand;
+          } else if (char.IsAsciiLetter(c) || c == '_' || c == '@') {
+            state = SanitizeState.InToken;
+          } else {
+            throw new ArgumentException(
+                $"Unexpected character '{c}' in command body after dot.");
+          }
+          break;
         case SanitizeState.BodyTokenStart:
           if (char.IsWhiteSpace(c) || IsOperator(c)) {
           } else if (char.IsAsciiDigit(c)) {
             state = SanitizeState.InNumber;
-          } else if (char.IsAsciiLetter(c) || c == '_' || c == '@') {
+          } else if (char.IsAsciiLetter(c) || c == '_' || c == '@' ||
+                     c == '?' || c == '$') {
             state = SanitizeState.InToken;
           } else if (c == '.') {
             state = SanitizeState.BeforeCommand;
+          } else if (c == '\"') {
+            state = SanitizeState.InQuote;
           } else {
             throw new ArgumentException(
                 $"Unexpected character '{c}' in command body.");
@@ -125,12 +153,20 @@ public class CoqSanitizer {
           if (char.IsWhiteSpace(c) || IsOperator(c)) {
             state = SanitizeState.BodyTokenStart;
           } else if (char.IsAsciiDigit(c) || char.IsAsciiLetter(c) ||
-                     c == '\'' || c == '_') {
+                     c == '\'' || c == '_' || c == '!') {
           } else if (c == '.') {
-            state = SanitizeState.BeforeCommand;
+            state = SanitizeState.InTokenDot;
           } else {
             throw new ArgumentException(
                 $"Unexpected character '{c}' in command body.");
+          }
+          break;
+        case SanitizeState.InQuote:
+          if (c == '\"') {
+            state = SanitizeState.BodyTokenStart;
+          } else if (!char.IsAscii(c)) {
+            throw new ArgumentException(
+                "Only ASCII characters are allowed in strings.");
           }
           break;
         }
@@ -144,15 +180,20 @@ public class CoqSanitizer {
     }
   }
 
-  private static readonly HashSet<char> _allowedOperators =
-      new() { ':', '(', ')', ',', '*', '+', '-', '>', '<', '=', '|' };
+  private static readonly HashSet<char> AllowedOperators =
+      new() { ':', '(', ')', ',', '*', '+', '-',
+              '>', '<', '=', '|', '[', ']', ';' };
 
   private static bool IsOperator(char c) {
-    return _allowedOperators.Contains(c);
+    return AllowedOperators.Contains(c);
   }
 
-  private static readonly List<string> AllowedImports =
-      new() { "Ltac2.Ltac2", "Coq.Lists.List", "Coq.Reals.Reals" };
+  private static readonly List<string> AllowedImports = new() {
+    "Coq.Lists.List",    "Coq.Reals.Reals",
+
+    "Ltac2.Ltac2",       "Ltac2.Message",   "Ltac2.Constr",
+    "Ltac2.Constructor", "Ltac2.Printf",
+  };
 
   private static void SanitizeImport(string import) {
     List<string> tokens = new(import.Split());
