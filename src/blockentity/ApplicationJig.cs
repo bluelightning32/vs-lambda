@@ -1,7 +1,12 @@
 using System;
-using System.Linq;
+using System.IO;
+using System.Text;
 
 using Lambda.BlockBehavior;
+using Lambda.BlockEntityBehavior;
+using Lambda.CollectibleBehavior;
+using Lambda.Network;
+using Lambda.Token;
 
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -19,6 +24,10 @@ public class ApplicationJig : BlockEntityDisplay, IBlockEntityForward {
   private readonly InventoryGeneric _inventory = new(2, null, null);
   public override InventoryBase Inventory => _inventory;
   private Cuboidf[] _inventoryBounds = null;
+  private bool _compilationOutdated = true;
+  private bool _compilationRunning = false;
+  TermInfo _termInfo = null;
+  BlockPos _dropWaiting = null;
 
   public override string InventoryClassName => "applicationjig";
 
@@ -29,11 +38,36 @@ public class ApplicationJig : BlockEntityDisplay, IBlockEntityForward {
     // necessary, because the container shouldn't accept blocks (only term
     // items), but this is set anyway for future proofing.
     Block.PlacedPriorityInteract = true;
+
+    if (Api.Side == EnumAppSide.Server) {
+      StartCompilation();
+    }
+  }
+
+  public override void ToTreeAttributes(ITreeAttribute tree) {
+    base.ToTreeAttributes(tree);
+    if (!_compilationOutdated) {
+      _termInfo?.ToTreeAttributes(tree);
+    }
   }
 
   public override void FromTreeAttributes(ITreeAttribute tree,
                                           IWorldAccessor worldForResolving) {
     base.FromTreeAttributes(tree, worldForResolving);
+
+    _termInfo ??= new();
+    _termInfo.FromTreeAttributes(tree);
+    _compilationOutdated =
+        _termInfo.ErrorMessage == null && _termInfo.Term == null;
+    if (_compilationOutdated) {
+      _termInfo = null;
+    }
+
+    int used = _inventory.Count;
+    while (used > 0 && _inventory[used - 1].Empty) {
+      --used;
+    }
+    SetInventoryBounds(used);
     RedrawAfterReceivingTreeAttributes(worldForResolving);
   }
 
@@ -111,19 +145,103 @@ public class ApplicationJig : BlockEntityDisplay, IBlockEntityForward {
         }
       }
       if (hotbarSlot.TryPutInto(Api.World, _inventory[i], 1) > 0) {
-        Cuboidf bounds = GetItemBounds(0, i + 1);
-        if (bounds.Y2 > 1) {
-          _inventoryBounds = new Cuboidf[1] { bounds };
-        } else {
-          _inventoryBounds = null;
-        }
+        SetInventoryBounds(i + 1);
         MarkDirty();
         handled = EnumHandling.PreventSubsequent;
+        MarkTermInfoDirty();
+        if (i == 1 && Api.Side == EnumAppSide.Server) {
+          StartCompilation();
+        }
         return true;
       }
     }
     handled = EnumHandling.PassThrough;
     return false;
+  }
+
+  private void MarkTermInfoDirty() {
+    _compilationOutdated = true;
+    _termInfo = null;
+  }
+
+  private void StartCompilation() {
+    if (_compilationRunning) {
+      return;
+    }
+    string[] terms = new string[2];
+    for (int i = 0; i < 2; ++i) {
+      CollectibleBehavior.Term termBhv =
+          _inventory[i]
+              .Itemstack.Collectible.GetBehavior<CollectibleBehavior.Term>();
+      string term = termBhv?.GetTerm(_inventory[i].Itemstack);
+      if (term == null) {
+        _compilationOutdated = false;
+        NotifyWatcher();
+        return;
+      }
+      terms[i] = term;
+    }
+
+    _compilationRunning = true;
+    _compilationOutdated = false;
+    Api.Logger.Notification(
+        "Starting compilation for application jig {0}. Applicand='{1}' argument='{2}'",
+        Pos, terms[0], terms[1]);
+    TyronThreadPool.QueueLongDurationTask(() => Compile(terms[0], terms[1]),
+                                          "lambda");
+  }
+
+  private void Compile(string applicand, string argument) {
+    NodePos nodePos = new(Pos, 0);
+    App app = new(nodePos, nodePos, nodePos);
+    Constant applicandConstant = new(nodePos, applicand);
+    applicandConstant.AddSink(app.Applicand);
+    Constant argumentConstant = new(nodePos, argument);
+    argumentConstant.AddSink(app.Argument);
+
+    using MemoryStream ms = new();
+    CoqEmitter emitter = new(ms);
+    app.EmitConstruct(emitter, false);
+    ms.Seek(0, SeekOrigin.Begin);
+    StreamReader reader = new(ms);
+    string term = reader.ReadToEnd();
+
+    ServerConfig config = CoreSystem.GetInstance(Api).ServerConfig;
+    using CoqSession session = new(config);
+
+    TermInfo info = session.GetTermInfo(Pos, term);
+
+    Api.Event.EnqueueMainThreadTask(() => CompilationDone(info), "lambda");
+  }
+
+  private void CompilationDone(TermInfo info) {
+    _compilationRunning = false;
+    if (_compilationOutdated) {
+      StartCompilation();
+      return;
+    }
+    _termInfo = info;
+    if (info.ErrorMessage != null) {
+      if (!_inventory[1].Empty) {
+        ItemStack removed = _inventory[1].TakeOutWhole();
+        Api.World.SpawnItemEntity(removed, Pos.ToVec3d().Add(0.5, 0.5, 0.5),
+                                  null);
+        SetInventoryBounds(1);
+        MarkDirty();
+      }
+    }
+    NotifyWatcher();
+  }
+
+  private void NotifyWatcher() {
+    if (_dropWaiting == null) {
+      return;
+    }
+    BlockPos dropWaiting = _dropWaiting;
+    _dropWaiting = null;
+    Block watcher = Api.World.BlockAccessor.GetBlock(dropWaiting);
+    watcher.GetInterface<IBlockWatcher>(Api.World, dropWaiting)
+        ?.BlockChanged(dropWaiting, Pos);
   }
 
   private static Cuboidf GetItemBounds(int begin, int end) {
@@ -141,16 +259,21 @@ public class ApplicationJig : BlockEntityDisplay, IBlockEntityForward {
         Api.World.SpawnItemEntity(removed, Pos.ToVec3d().Add(0.5, 0.5, 0.5),
                                   null);
       }
-      Cuboidf bounds = GetItemBounds(0, i);
-      if (bounds.Y2 > 1) {
-        _inventoryBounds = new Cuboidf[1] { bounds };
-      } else {
-        _inventoryBounds = null;
-      }
+      SetInventoryBounds(i);
+      MarkTermInfoDirty();
       MarkDirty();
       return true;
     }
     return false;
+  }
+
+  private void SetInventoryBounds(int usedSlots) {
+    Cuboidf bounds = GetItemBounds(0, usedSlots);
+    if (bounds.Y2 > 1) {
+      _inventoryBounds = new Cuboidf[1] { bounds };
+    } else {
+      _inventoryBounds = null;
+    }
   }
 
   bool IBlockEntityForward.OnBlockInteractStart(IPlayer byPlayer,
@@ -181,5 +304,13 @@ public class ApplicationJig : BlockEntityDisplay, IBlockEntityForward {
       handled = EnumHandling.Handled;
     }
     return _inventoryBounds;
+  }
+
+  public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc) {
+    base.GetBlockInfo(forPlayer, dsc);
+    string error = _termInfo?.ErrorMessage;
+    if (error != null) {
+      dsc.AppendLine(Term.Escape(error));
+    }
   }
 }

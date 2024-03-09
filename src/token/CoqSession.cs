@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using Lambda.Network;
 
 using Vintagestory.API.Common;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
@@ -25,7 +26,19 @@ public partial class TermInfo {
   public bool IsTypeFamily;
 
   public static TermInfo Error(string message, string filename) {
-    return new() { ErrorMessage = message };
+    MatchCollection locations =
+        CoqResult.ParseErrorLocationGenerator().Matches(message);
+    StringBuilder sb = new();
+    int start = 0;
+    foreach (RegexMatch m in locations) {
+      if (!m.Groups[1].ValueSpan.SequenceEqual(filename)) {
+        continue;
+      }
+      sb.Append(message.AsSpan(start, m.Index - start));
+      start = m.Index + m.Length;
+    }
+    sb.Append(message.AsSpan(start, message.Length - start));
+    return new() { ErrorMessage = sb.ToString() };
   }
 
   public static TermInfo Success(string message) {
@@ -56,6 +69,32 @@ public partial class TermInfo {
       @"^lambda: type: (.+)\nlambda: reduced: (.+)\nlambda: (.+)\nlambda: function: (.+)\n- : unit = \(\)\n*$",
       RegexOptions.Compiled | RegexOptions.Singleline)]
   private static partial Regex ParseInfo();
+
+  public void ToTreeAttributes(ITreeAttribute tree) {
+    if (ErrorMessage != null) {
+      tree.SetString("ErrorMessage", ErrorMessage);
+    }
+    if (Term != null) {
+      tree.SetString("Term", Term);
+    }
+    if (Type != null) {
+      tree.SetString("Type", Type);
+    }
+    if (Constructs != null) {
+      tree.SetString("Constructs", Constructs);
+    }
+    tree.SetBool("IsType", IsType);
+    tree.SetBool("IsTypeFamily", IsTypeFamily);
+  }
+
+  public void FromTreeAttributes(ITreeAttribute tree) {
+    ErrorMessage = tree.GetAsString("ErrorMessage");
+    Term = tree.GetAsString("Term");
+    Type = tree.GetAsString("Type");
+    Constructs = tree.GetAsString("Constructs");
+    IsType = tree.GetAsBool("IsType");
+    IsTypeFamily = tree.GetAsBool("IsTypeFamily");
+  }
 }
 
 public partial class CoqResult {
@@ -142,7 +181,7 @@ public partial class CoqResult {
 
   [GeneratedRegex("^File \"(.+)\", line (\\d+), characters (\\d+)-(\\d+):\\n",
                   RegexOptions.Multiline | RegexOptions.Compiled)]
-  private static partial Regex ParseErrorLocationGenerator();
+  public static partial Regex ParseErrorLocationGenerator();
 
   [GeneratedRegex(
       @"^Error:\nThe following term contains unresolved implicit arguments:\n.*More precisely:.*Cannot infer the type of (\S+) in.+environment:",
