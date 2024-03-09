@@ -41,13 +41,20 @@ public partial class TermInfo {
     return new() { ErrorMessage = sb.ToString() };
   }
 
+  private static string RemoveOuterParens(string term) {
+    if (term.StartsWith('(') && term.EndsWith(')')) {
+      return term[1.. ^ 1];
+    }
+    return term;
+  }
+
   public static TermInfo Success(string message) {
     RegexMatch match = ParseInfo().Match(message);
     if (!match.Success) {
       throw new ArgumentException("Coq output does not match regex.");
     }
-    TermInfo result =
-        new() { Term = match.Groups[2].Value, Type = match.Groups[1].Value };
+    TermInfo result = new() { Term = RemoveOuterParens(match.Groups[2].Value),
+                              Type = RemoveOuterParens(match.Groups[1].Value) };
     if (match.Groups[3].Value.StartsWith("constructor: ")) {
       result.Constructs =
           match.Groups[3].Value.Substring("constructor: ".Length);
@@ -72,19 +79,19 @@ public partial class TermInfo {
 
   public void ToTreeAttributes(ITreeAttribute tree) {
     if (ErrorMessage != null) {
-      tree.SetString("ErrorMessage", ErrorMessage);
+      tree.SetString("errorMessage", ErrorMessage);
     }
     if (Term != null) {
-      tree.SetString("Term", Term);
+      tree.SetString("term", Term);
     }
     if (Type != null) {
-      tree.SetString("Type", Type);
+      tree.SetString("type", Type);
     }
     if (Constructs != null) {
-      tree.SetString("Constructs", Constructs);
+      tree.SetString("constructs", Constructs);
     }
-    tree.SetBool("IsType", IsType);
-    tree.SetBool("IsTypeFamily", IsTypeFamily);
+    tree.SetBool("isType", IsType);
+    tree.SetBool("isTypeFamily", IsTypeFamily);
   }
 
   public void FromTreeAttributes(ITreeAttribute tree) {
@@ -243,7 +250,8 @@ public class CoqSession : IDisposable {
       using FileStream stream = new(filename, FileMode.Create);
       using StreamWriter writer = new(stream);
       writer.Write(TermInfoHeader);
-      writer.WriteLine($"Ltac2 Eval print_info \"lambda: \" constr:({term}).");
+      writer.WriteLine(
+          $"Ltac2 Eval print_info \"lambda: \" open_constr:({term}).");
       writer.Close();
 
       using StreamReader reader = new(filename);

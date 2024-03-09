@@ -37,7 +37,7 @@
         "constructs": "{constructs}",
         "termByType": {
           "*-unit-*": "{unit}",
-          "*-nat-o": "O",
+          "*-nat-o": "0",
           "*-nat-s": "S",
           "*-sum-inl": "inl",
           "*-sum-inr": "inr",

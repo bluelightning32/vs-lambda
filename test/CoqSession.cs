@@ -93,7 +93,19 @@ public class CoqSessionTest {
     TermInfo info = _session.GetTermInfo(new BlockPos(0, 0, 0, 0), "S");
     Assert.AreEqual(null, info.ErrorMessage);
     Assert.AreEqual("S", info.Term);
+    Assert.AreEqual("nat -> nat", info.Type);
     Assert.AreEqual("nat", info.Constructs);
+    Assert.IsFalse(info.IsType);
+    Assert.IsFalse(info.IsTypeFamily);
+  }
+
+  [TestMethod]
+  public void Pair1() {
+    TermInfo info = _session.GetTermInfo(new BlockPos(0, 0, 0, 0), "pair 1");
+    Assert.AreEqual(null, info.ErrorMessage);
+    Assert.AreEqual("pair 1", info.Term);
+    Assert.AreEqual(null, info.Constructs);
+    Assert.AreEqual("?B -> nat * ?B", info.Type);
     Assert.IsFalse(info.IsType);
     Assert.IsFalse(info.IsTypeFamily);
   }
