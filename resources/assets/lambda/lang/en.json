@@ -24,6 +24,9 @@
   "tab-container": "Container",
   "tab-errors": "Errors",
 
+  // The prefix shown before the term name in the item info.
+  "term-name-prefix": "Term ",
+
   // Names of blocks
   "block-app-north": "Application",
   "block-doublescope-ud": "Double-sided scope",

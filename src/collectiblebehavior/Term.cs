@@ -1,6 +1,7 @@
 using System.Text;
 
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 
 namespace Lambda.CollectibleBehavior;
@@ -64,12 +65,14 @@ public class Term : VSCollectibleBehavior {
   }
 
   public static string Escape(string s) {
-    return s.Replace("<", "&lt;").Replace(">", "&gt;");
+    return s == null ? "null" : s.Replace("<", "&lt;").Replace(">", "&gt;");
   }
 
   public override void GetHeldItemName(StringBuilder sb, ItemStack stack) {
-    if (_term == null) {
-      sb.Append("term ");
+    string term = GetTerm(stack);
+    if (term != null) {
+      sb.Clear();
+      sb.Append(Lang.Get("lambda:term-name-prefix"));
       sb.Append(Escape(GetTerm(stack)));
     }
   }

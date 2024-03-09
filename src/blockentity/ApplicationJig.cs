@@ -308,6 +308,25 @@ public class ApplicationJig : BlockEntityDisplay, IBlockEntityForward {
 
   public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc) {
     base.GetBlockInfo(forPlayer, dsc);
+    bool hasTerms = false;
+    foreach (ItemSlot slot in _inventory) {
+      if (slot.Empty) {
+        continue;
+      }
+      Term t = slot.Itemstack.Collectible.GetBehavior<Term>();
+      if (t != null) {
+        if (!hasTerms) {
+          dsc.Append("Contents: ");
+          hasTerms = true;
+        } else {
+          dsc.Append(' ');
+        }
+        dsc.Append(t.GetTerm(slot.Itemstack));
+      }
+    }
+    if (hasTerms) {
+      dsc.AppendLine();
+    }
     string error = _termInfo?.ErrorMessage;
     if (error != null) {
       dsc.AppendLine(Term.Escape(error));
