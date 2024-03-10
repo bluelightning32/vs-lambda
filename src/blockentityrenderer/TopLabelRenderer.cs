@@ -124,7 +124,7 @@ public class TopLabelRenderer : BlockEntitySignRenderer {
     // PreparedStandardShader already set ExtraGodray = 0.
     prog.SsaoAttn = 0;
     prog.AlphaTest = 0.05f;
-    // PreparedStandardShader already OverlayOpacity = 0.
+    // PreparedStandardShader already set OverlayOpacity = 0.
 
     rpi.RenderMesh(quadModelRef);
     // Stop using the shader. The shader was enabled in
