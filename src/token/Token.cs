@@ -176,6 +176,8 @@ public abstract class Token : IDisposable {
 
   public abstract void EmitExpression(CoqEmitter emitter,
                                       bool app_needs_parens);
+
+  public abstract void GatherImports(CoqEmitter emitter);
 }
 
 public interface IAcceptScopePort {

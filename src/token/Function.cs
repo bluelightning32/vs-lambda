@@ -173,6 +173,13 @@ public class Function : ConstructRoot {
     emitter.ReleaseIndent();
   }
 
+  public override void GatherConstructImports(CoqEmitter emitter) {
+    foreach (Parameter p in _parameters.Parameters) {
+      p.Type?.GatherImports(emitter);
+    }
+    _parameters.Result?.GatherImports(emitter);
+  }
+
   public void SetParameterNames(string[] parameterNames) {
     int i = 0;
     foreach (Parameter p in _parameters.Parameters) {

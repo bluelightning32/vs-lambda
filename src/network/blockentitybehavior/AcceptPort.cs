@@ -324,7 +324,12 @@ public class AcceptPort : TokenEmitter, IAcceptPort, IInventoryControl {
     return GetInventoryOptions()?.GetMaxStackForItem(item) ?? 0;
   }
 
-  public override string GetInventoryTerm() {
-    return (Blockentity as TermContainer)?.GetInventoryTerm();
+  public override string GetInventoryTerm(out string[] imports) {
+    if (Blockentity is TermContainer container) {
+      return container.GetInventoryTerm(out imports);
+    } else {
+      imports = Array.Empty<string>();
+      return null;
+    }
   }
 }

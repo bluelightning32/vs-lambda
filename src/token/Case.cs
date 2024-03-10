@@ -147,4 +147,8 @@ public class Case : Token {
     emitter.ReleaseIndent();
     emitter.WriteNewline();
   }
+
+  public override void GatherImports(CoqEmitter emitter) {
+    _parameters.Result?.GatherImports(emitter);
+  }
 }

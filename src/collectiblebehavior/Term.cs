@@ -20,6 +20,7 @@ public class Term : VSCollectibleBehavior {
   private string _constructs;
   private bool? _isType;
   private bool? _isTypeFamily;
+  private string[] _imports;
 
   public Term(CollectibleObject collObj) : base(collObj) {}
 
@@ -28,6 +29,7 @@ public class Term : VSCollectibleBehavior {
     // `AsObject` converts the token into a string without the quotes, and
     // Newtonsoft fails to parse that back as an enum. So instead use the Token
     // directly.
+    _imports = properties["imports"].AsArray<string>(Array.Empty<string>());
     _term = properties["term"].AsString();
     _type = properties["type"].AsString();
     _constructs = properties["constructs"].AsString();
@@ -72,6 +74,14 @@ public class Term : VSCollectibleBehavior {
 
   public bool GetIsTypeFamily(ItemStack stack) {
     return _isTypeFamily ?? stack.Attributes.GetAsBool("isTypeFamily");
+  }
+
+  public string[] GetImports(ItemStack stack) {
+    if (_imports != null) {
+      return _imports;
+    }
+    return (stack.Attributes["imports"] as StringArrayAttribute)?.value ??
+           Array.Empty<string>();
   }
 
   public static string Escape(string s) {

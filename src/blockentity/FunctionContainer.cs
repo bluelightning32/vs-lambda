@@ -280,8 +280,14 @@ public class FunctionContainer : TermContainer {
     return maxStack;
   }
 
-  public override string GetInventoryTerm() {
-    return _currentRecipe?.PuzzleType;
+  public override string GetInventoryTerm(out string[] imports) {
+    if (_currentRecipe != null) {
+      imports = _currentRecipe.PuzzleImports;
+      return _currentRecipe.PuzzleType;
+    } else {
+      imports = Array.Empty<string>();
+      return null;
+    }
   }
 
   protected override void SetLabel() {

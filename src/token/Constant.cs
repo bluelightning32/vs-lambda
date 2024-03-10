@@ -8,6 +8,7 @@ namespace Lambda.Token;
 
 public class Constant : ConstructRoot {
   public readonly NodePos Pos;
+  private readonly string[] _imports;
   public readonly string Term;
   public override IReadOnlyList<NodePos> Blocks => new NodePos[] { Pos };
 
@@ -33,7 +34,8 @@ public class Constant : ConstructRoot {
     return term.Substring(0, stop);
   }
 
-  public Constant(NodePos pos, string term) {
+  public Constant(NodePos pos, string[] imports, string term) {
+    _imports = imports;
     Name = CreateName(term);
     Pos = pos;
     Term = term;
@@ -75,5 +77,9 @@ public class Constant : ConstructRoot {
     if (!singleTerm) {
       emitter.Write(')', this);
     }
+  }
+
+  public override void GatherConstructImports(CoqEmitter emitter) {
+    emitter.AddImports(_imports, this);
   }
 }

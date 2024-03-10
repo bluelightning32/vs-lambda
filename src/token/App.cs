@@ -82,4 +82,9 @@ public class App : ConstructRoot {
       emitter.Write(')', this);
     }
   }
+
+  public override void GatherConstructImports(CoqEmitter emitter) {
+    Applicand?.GatherImports(emitter);
+    Argument?.GatherImports(emitter);
+  }
 }

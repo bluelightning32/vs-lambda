@@ -26,14 +26,15 @@ public class Puzzle : Function {
   public Puzzle(NodePos pos, int outputNodeId, BlockFacing face)
       : base(pos, outputNodeId, face) {}
 
-  public Token AddResultType(TokenEmitter state, string resultType) {
+  public Token AddResultType(TokenEmitter state, string[] imports,
+                             string resultType) {
     if (_resultTypeChild != null) {
       List<NodePos> blocks = new(_resultTypeChild.Blocks) { FirstBlock };
       throw new InvalidFormatException(blocks.ToArray(), "already-has-result");
     }
     _resultType = resultType;
     _resultTypeChild = new TermInput("resultType", FirstBlock, this);
-    Token constant = new Constant(FirstBlock, _resultType);
+    Token constant = new Constant(FirstBlock, imports, _resultType);
     constant.AddSink(_resultTypeChild);
     return _resultTypeChild;
   }

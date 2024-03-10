@@ -94,7 +94,15 @@ public abstract class ConstructRoot : TermSource {
     }
   }
 
+  public override void GatherImports(CoqEmitter emitter) {
+    if (IncomingEdgeCount <= 1) {
+      GatherConstructImports(emitter);
+    }
+  }
+
   public abstract void EmitConstruct(CoqEmitter emitter, bool app_needs_parens);
+
+  public abstract void GatherConstructImports(CoqEmitter emitter);
 
   // This is called after all children pointing to this construct are processed.
   public virtual void Finished() {}

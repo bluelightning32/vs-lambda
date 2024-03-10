@@ -108,7 +108,7 @@ public class MatchTemplate : BlockNodeTemplate {
   }
 
   public override Token Emit(TokenEmitter state, NodePos pos, Node[] nodes,
-                             string inventoryTerm) {
+                             string[] inventoryImports, string inventoryTerm) {
     if (pos.NodeId == _matchId) {
       Token matchResult = EmitMatch(state, pos.Block, nodes);
       state.VerifyInvariants();

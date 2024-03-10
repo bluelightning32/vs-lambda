@@ -72,7 +72,7 @@ public class ScopeTemplate : BlockNodeTemplate {
   }
 
   public override Token Emit(TokenEmitter state, NodePos pos, Node[] nodes,
-                             string inventoryTerm) {
+                             string[] inventoryImports, string inventoryTerm) {
     NodeTemplate nodeTemplate = _nodeTemplates[pos.NodeId];
     if (nodeTemplate.ParentId != -1 &&
         nodeTemplate.Network != NetworkType.Placeholder) {

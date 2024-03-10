@@ -9,6 +9,7 @@ namespace Lambda.Tests;
 public class BlockNodeInfo {
   public BlockNodeTemplate Template;
   public Node[] Nodes;
+  public string[] InventoryImports = Array.Empty<string>();
   public string InventoryTerm;
 
   public BlockNodeInfo() {}
@@ -30,14 +31,17 @@ public class MemoryNodeAccessor : NodeAccessor {
   }
 
   public override BlockNodeTemplate GetBlock(BlockPos pos, out Node[] nodes,
+                                             out string[] inventoryImports,
                                              out string inventoryTerm) {
     BlockNodeInfo value;
     if (!_nodes.TryGetValue(pos, out value)) {
       nodes = null;
+      inventoryImports = Array.Empty<string>();
       inventoryTerm = null;
       return null;
     }
     nodes = value.Nodes;
+    inventoryImports = value.InventoryImports;
     inventoryTerm = value.InventoryTerm;
     return value.Template;
   }
@@ -89,7 +93,8 @@ public class MemoryNodeAccessor : NodeAccessor {
 
   public string GetTermInventory(int x, int y, int z, int dimension) {
     BlockPos pos = new(x, y, z, dimension);
-    GetBlock(pos, out Node[] nodes, out string termInventory);
+    GetBlock(pos, out Node[] nodes, out string[] termImports,
+             out string termInventory);
     return termInventory;
   }
 

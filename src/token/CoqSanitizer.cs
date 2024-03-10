@@ -192,7 +192,7 @@ public class CoqSanitizer {
   }
 
   private static readonly List<string> AllowedImports = new() {
-    "Coq.Lists.List",    "Coq.Reals.Reals",
+    "Coq.Lists.List",    "Coq.Reals.Reals", "Coq.ZArith.ZArith",
 
     "Ltac2.Ltac2",       "Ltac2.Message",   "Ltac2.Constr",
     "Ltac2.Constructor", "Ltac2.Printf",

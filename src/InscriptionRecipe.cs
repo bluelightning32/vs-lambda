@@ -30,6 +30,7 @@ public class PuzzleCheck : IByteSerializable {
 public class InscriptionRecipe : RecipeBase<InscriptionRecipe>,
                                  IByteSerializable {
   public AssetLocation Description;
+  public string[] PuzzleImports = Array.Empty<string>();
   public string PuzzleType;
   public AssetLocation Label;
   // The names of the parameters. If this is empty, then all of the parameters
@@ -45,11 +46,17 @@ public class InscriptionRecipe : RecipeBase<InscriptionRecipe>,
   // proceeds to modify the output.
   public override InscriptionRecipe Clone() {
     return new InscriptionRecipe {
-      RecipeId = RecipeId,         Ingredient = Ingredient.Clone(),
-      Output = Output.Clone(),     Name = Name,
-      Enabled = Enabled,           Description = Description,
-      PuzzleType = PuzzleType,     Label = Label,
-      PuzzleChecks = PuzzleChecks, ProcessTime = ProcessTime,
+      RecipeId = RecipeId,
+      Ingredient = Ingredient.Clone(),
+      Output = Output.Clone(),
+      Name = Name,
+      Enabled = Enabled,
+      Description = Description,
+      PuzzleImports = PuzzleImports,
+      PuzzleType = PuzzleType,
+      Label = Label,
+      PuzzleChecks = PuzzleChecks,
+      ProcessTime = ProcessTime,
     };
   }
 
@@ -111,6 +118,7 @@ public class InscriptionRecipe : RecipeBase<InscriptionRecipe>,
     Output.ToBytes(writer);
     writer.Write(Name.ToShortString());
     writer.Write(Description.ToShortString());
+    writer.WriteArray(PuzzleImports);
     writer.Write(PuzzleType);
     writer.Write(Label?.ToShortString() ?? "");
     writer.Write(PuzzleChecks.Length);
@@ -128,6 +136,7 @@ public class InscriptionRecipe : RecipeBase<InscriptionRecipe>,
     Output.Resolve(resolver, "FromBytes");
     Name = new AssetLocation(reader.ReadString());
     Description = new AssetLocation(reader.ReadString());
+    PuzzleImports = reader.ReadStringArray();
     PuzzleType = reader.ReadString();
     string label = reader.ReadString();
     if (label.Length > 0) {

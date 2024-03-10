@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 
 using Lambda.BlockEntityBehavior;
@@ -36,15 +37,17 @@ public class TokenEmitter : VSBlockEntityBehavior, IMeshGenerator {
     }
 
     public override BlockNodeTemplate GetBlock(BlockPos pos, out Node[] nodes,
+                                               out string[] inventoryImports,
                                                out string inventoryTerm) {
       TokenEmitter behavior = _getBehavior(pos);
       if (behavior == null) {
         nodes = null;
+        inventoryImports = null;
         inventoryTerm = null;
         return null;
       }
       nodes = behavior._nodes;
-      inventoryTerm = behavior.GetInventoryTerm();
+      inventoryTerm = behavior.GetInventoryTerm(out inventoryImports);
       return behavior._template;
     }
 
@@ -170,7 +173,10 @@ public class TokenEmitter : VSBlockEntityBehavior, IMeshGenerator {
     return NetworkSystem.GetInstance(api).TokenEmitterManager;
   }
 
-  public virtual string GetInventoryTerm() { return null; }
+  public virtual string GetInventoryTerm(out string[] imports) {
+    imports = Array.Empty<string>();
+    return null;
+  }
 
   public Token.TokenEmitter Emit() {
     return GetManager(Api).Emit(new NodePos(Pos, 0));

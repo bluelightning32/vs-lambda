@@ -46,9 +46,10 @@ public class TokenEmitter : IDisposable {
   public TokenEmitter(NodeAccessor accessor) { _accessor = accessor; }
 
   private Token EmitPos(NodePos pos) {
-    BlockNodeTemplate template = _accessor.GetBlock(pos.Block, out Node[] nodes,
-                                                    out string inventoryTerm);
-    return template.Emit(this, pos, nodes, inventoryTerm);
+    BlockNodeTemplate template = _accessor.GetBlock(
+        pos.Block, out Node[] nodes, out string[] inventoryImports,
+        out string inventoryTerm);
+    return template.Emit(this, pos, nodes, inventoryImports, inventoryTerm);
   }
 
   public void Process(NodePos start) {
@@ -477,7 +478,8 @@ public class TokenEmitter : IDisposable {
 
   public Token AddPort(NodePos source, BlockPos childPos, NodeTemplate child) {
     BlockNodeTemplate template = _accessor.GetBlock(
-        source.Block, out Node[] nodes, out string inventoryTerm);
+        source.Block, out Node[] nodes, out string[] inventoryImports,
+        out string inventoryTerm);
     return ((IAcceptScopePort) template)
         .AddPort(this, source, nodes, inventoryTerm, childPos, child);
   }
@@ -485,7 +487,8 @@ public class TokenEmitter : IDisposable {
   public Case AddCase(NodePos source, NodePos childMatchPos, int childScopeId,
                       BlockFacing face, string inventoryTerm) {
     BlockNodeTemplate template = _accessor.GetBlock(
-        source.Block, out Node[] nodes, out string matchInventory);
+        source.Block, out Node[] nodes, out string[] matchImports,
+        out string matchInventory);
     return ((MatchTemplate) template)
         .AddCase(this, source, nodes, childMatchPos, childScopeId, face,
                  inventoryTerm);
@@ -495,7 +498,8 @@ public class TokenEmitter : IDisposable {
                             int childScopeId, BlockFacing face,
                             string inventoryTerm) {
     BlockNodeTemplate template = _accessor.GetBlock(
-        source.Block, out Node[] nodes, out string matchInventory);
+        source.Block, out Node[] nodes, out string[] matchImports,
+        out string matchInventory);
     return ((MatchTemplate) template)
         .AddMatchIn(this, source, nodes, childMatchPos, childScopeId, face,
                     inventoryTerm);
@@ -510,7 +514,8 @@ public class TokenEmitter : IDisposable {
             $"The pending list contains multiple copies of {pos}.");
       }
       BlockNodeTemplate template = _accessor.GetBlock(
-          pos.Block, out Node[] nodes, out string inventoryTerm);
+          pos.Block, out Node[] nodes, out string[] inventoryImports,
+          out string inventoryTerm);
       NodePos source = nodes[pos.NodeId].Source;
       if (!nodes[pos.NodeId].IsConnected()) {
         source = pos;
@@ -532,7 +537,8 @@ public class TokenEmitter : IDisposable {
       }
       foreach (NodePos refHolder in entry.Value.PendingRefLocations) {
         BlockNodeTemplate template = _accessor.GetBlock(
-            refHolder.Block, out Node[] nodes, out string inventoryTerm);
+            refHolder.Block, out Node[] nodes, out string[] inventoryImports,
+            out string inventoryTerm);
         NodePos source = nodes[refHolder.NodeId].Source;
         if (!nodes[refHolder.NodeId].IsConnected()) {
           source = refHolder;
@@ -639,6 +645,11 @@ public class TokenEmitter : IDisposable {
 
   public string EmitDefinition(string name) {
     return EmitDefinition(name, out CoqEmitter emitter);
+  }
+
+  public void EmitImports(CoqEmitter emitter) {
+    ((ConstructRoot)_main).GatherImports(emitter);
+    emitter.EmitImports();
   }
 
   public void EmitDefinition(string name, CoqEmitter emitter) {

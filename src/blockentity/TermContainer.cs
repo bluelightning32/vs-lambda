@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using System.Text;
 
@@ -62,11 +63,17 @@ public class TermContainer : BlockEntityOpenableContainer {
         _inventory, GetMaxStackForItem) { Itemstack = item };
   }
 
-  public virtual string GetInventoryTerm() {
+  public virtual string GetInventoryTerm(out string[] imports) {
     ItemStack item = _inventory[0].Itemstack;
     CollectibleBehavior.Term term =
         item?.Collectible.GetBehavior<CollectibleBehavior.Term>();
-    return term?.GetTerm(item);
+    if (term != null) {
+      imports = term.GetImports(item);
+      return term.GetTerm(item);
+    } else {
+      imports = Array.Empty<string>();
+      return null;
+    }
   }
 
   public override void Initialize(ICoreAPI api) {

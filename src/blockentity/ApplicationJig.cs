@@ -1,9 +1,9 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 using Lambda.BlockBehavior;
-using Lambda.BlockEntityBehavior;
 using Lambda.CollectibleBehavior;
 using Lambda.Network;
 using Lambda.Token;
@@ -176,6 +176,7 @@ public class ApplicationJig : BlockEntityDisplay,
       return;
     }
     string[] terms = new string[2];
+    string[][] imports = new string[2][];
     for (int i = 0; i < 2; ++i) {
       Term termBhv = _inventory[i].Itemstack?.Collectible.GetBehavior<Term>();
       string term = termBhv?.GetTerm(_inventory[i].Itemstack);
@@ -185,6 +186,7 @@ public class ApplicationJig : BlockEntityDisplay,
         return;
       }
       terms[i] = term;
+      imports[i] = termBhv?.GetImports(_inventory[i].Itemstack);
     }
 
     _compilationRunning = true;
@@ -192,20 +194,22 @@ public class ApplicationJig : BlockEntityDisplay,
     Api.Logger.Notification(
         "Starting compilation for application jig {0}. Applicand='{1}' argument='{2}'",
         Pos, terms[0], terms[1]);
-    TyronThreadPool.QueueLongDurationTask(() => Compile(terms[0], terms[1]),
-                                          "lambda");
+    TyronThreadPool.QueueLongDurationTask(
+        () => Compile(imports[0], terms[0], imports[1], terms[1]), "lambda");
   }
 
-  private void Compile(string applicand, string argument) {
+  private void Compile(string[] applicandImports, string applicand,
+                       string[] argumentImports, string argument) {
     NodePos nodePos = new(Pos, 0);
     App app = new(nodePos, nodePos, nodePos);
-    Constant applicandConstant = new(nodePos, applicand);
+    Constant applicandConstant = new(nodePos, applicandImports, applicand);
     applicandConstant.AddSink(app.Applicand);
-    Constant argumentConstant = new(nodePos, argument);
+    Constant argumentConstant = new(nodePos, argumentImports, argument);
     argumentConstant.AddSink(app.Argument);
 
     using MemoryStream ms = new();
     CoqEmitter emitter = new(ms);
+    app.GatherConstructImports(emitter);
     app.EmitConstruct(emitter, false);
     ms.Seek(0, SeekOrigin.Begin);
     StreamReader reader = new(ms);
@@ -214,7 +218,8 @@ public class ApplicationJig : BlockEntityDisplay,
     ServerConfig config = CoreSystem.GetInstance(Api).ServerConfig;
     using CoqSession session = new(config);
 
-    TermInfo info = session.GetTermInfo(Pos, term);
+    TermInfo info =
+        session.GetTermInfo(Pos, emitter.Imports.Keys.ToArray(), term);
 
     Api.Event.EnqueueMainThreadTask(() => CompilationDone(info), "lambda");
   }

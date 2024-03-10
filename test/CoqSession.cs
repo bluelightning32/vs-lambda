@@ -90,7 +90,8 @@ public class CoqSessionTest {
 
   [TestMethod]
   public void SInfo() {
-    TermInfo info = _session.GetTermInfo(new BlockPos(0, 0, 0, 0), "S");
+    TermInfo info = _session.GetTermInfo(new BlockPos(0, 0, 0, 0),
+                                         Array.Empty<string>(), "S");
     Assert.AreEqual(null, info.ErrorMessage);
     Assert.AreEqual("S", info.Term);
     Assert.AreEqual("nat -> nat", info.Type);
@@ -101,12 +102,25 @@ public class CoqSessionTest {
 
   [TestMethod]
   public void Pair1() {
-    TermInfo info = _session.GetTermInfo(new BlockPos(0, 0, 0, 0), "pair 1");
+    TermInfo info = _session.GetTermInfo(new BlockPos(0, 0, 0, 0),
+                                         Array.Empty<string>(), "pair 1");
     Assert.AreEqual(null, info.ErrorMessage);
     Assert.AreEqual("pair 1", info.Term);
     Assert.AreEqual(null, info.Constructs);
     Assert.AreEqual("?B -> nat * ?B", info.Type);
     Assert.IsFalse(info.IsType);
+    Assert.IsFalse(info.IsTypeFamily);
+  }
+
+  [TestMethod]
+  public void ZInfo() {
+    TermInfo info = _session.GetTermInfo(
+        new BlockPos(0, 0, 0, 0), new string[] { "Coq.ZArith.ZArith" }, "Z");
+    Assert.AreEqual(null, info.ErrorMessage);
+    Assert.AreEqual("Z", info.Term);
+    Assert.AreEqual(null, info.Constructs);
+    Assert.AreEqual("Set", info.Type);
+    Assert.IsTrue(info.IsType);
     Assert.IsFalse(info.IsTypeFamily);
   }
 }

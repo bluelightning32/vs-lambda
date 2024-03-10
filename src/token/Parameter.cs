@@ -68,4 +68,6 @@ public class Parameter : TermSource {
     }
     base.GetPreferredIdentifier(sb);
   }
+
+  public override void GatherImports(CoqEmitter emitter) {}
 }

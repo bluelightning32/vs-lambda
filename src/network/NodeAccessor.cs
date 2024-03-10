@@ -34,10 +34,12 @@ public abstract class NodeAccessor {
   }
 
   public abstract BlockNodeTemplate GetBlock(BlockPos pos, out Node[] nodes,
+                                             out string[] inventoryImports,
                                              out string inventoryTerm);
 
   public virtual BlockNodeTemplate GetBlock(BlockPos pos, out Node[] nodes) {
-    return GetBlock(pos, out nodes, out string inventoryTerm);
+    return GetBlock(pos, out nodes, out string[] inventoryImports,
+                    out string inventoryTerm);
   }
 
   // Set the contents of the node at `pos`:`nodeId` to `node`. The caller must

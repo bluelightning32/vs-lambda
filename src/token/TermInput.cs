@@ -123,4 +123,13 @@ public class TermInput : Token {
     }
     EmitReference(Value, emitter, app_needs_parens);
   }
+
+  public override void GatherImports(CoqEmitter emitter) {
+    if (_anchored != null) {
+      foreach (ConstructRoot c in _anchored) {
+        c.GatherConstructImports(emitter);
+      }
+    }
+    Value?.GatherImports(emitter);
+  }
 }

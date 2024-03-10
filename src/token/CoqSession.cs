@@ -19,6 +19,7 @@ using RegexMatch = System.Text.RegularExpressions.Match;
 
 public partial class TermInfo {
   public string ErrorMessage;
+  public string[] Imports;
   public string Term;
   public string Type;
   public string Constructs;
@@ -48,12 +49,13 @@ public partial class TermInfo {
     return term;
   }
 
-  public static TermInfo Success(string message) {
+  public static TermInfo Success(string[] imports, string message) {
     RegexMatch match = ParseInfo().Match(message);
     if (!match.Success) {
       throw new ArgumentException("Coq output does not match regex.");
     }
-    TermInfo result = new() { Term = RemoveOuterParens(match.Groups[2].Value),
+    TermInfo result = new() { Imports = imports,
+                              Term = RemoveOuterParens(match.Groups[2].Value),
                               Type = RemoveOuterParens(match.Groups[1].Value) };
     if (match.Groups[3].Value.StartsWith("constructor: ")) {
       result.Constructs =
@@ -81,6 +83,9 @@ public partial class TermInfo {
     if (ErrorMessage != null) {
       tree.SetString("errorMessage", ErrorMessage);
     }
+    if (Imports != null) {
+      tree["imports"] = new StringArrayAttribute(Imports);
+    }
     if (Term != null) {
       tree.SetString("term", Term);
     }
@@ -96,6 +101,7 @@ public partial class TermInfo {
 
   public void FromTreeAttributes(ITreeAttribute tree) {
     ErrorMessage = tree.GetAsString("ErrorMessage");
+    Imports = (tree["imports"] as StringArrayAttribute)?.value;
     Term = tree.GetAsString("Term");
     Type = tree.GetAsString("Type");
     Constructs = tree.GetAsString("Constructs");
@@ -210,6 +216,7 @@ public class CoqSession : IDisposable {
           $"Puzzle_{emitter.MainName}_{Environment.CurrentManagedThreadId}.v");
       using FileStream stream = new(filename, FileMode.Create);
       CoqEmitter coqEmitter = new(stream);
+      emitter.EmitImports(coqEmitter);
       emitter.EmitDefinition("puzzle", coqEmitter);
       stream.Close();
       using StreamReader reader = new(filename);
@@ -242,13 +249,16 @@ public class CoqSession : IDisposable {
     }
   }
 
-  public TermInfo GetTermInfo(BlockPos pos, string term) {
+  public TermInfo GetTermInfo(BlockPos pos, string[] imports, string term) {
     string filename = Path.Combine(
         _config.CoqTmpDir,
         $"CheckTerm_{pos.X}_{pos.Y}_{pos.Z}_{Environment.CurrentManagedThreadId}.v");
     try {
       using FileStream stream = new(filename, FileMode.Create);
       using StreamWriter writer = new(stream);
+      foreach (string import in imports) {
+        writer.WriteLine($"Require Import {import}.");
+      }
       writer.Write(TermInfoHeader);
       writer.WriteLine(
           $"Ltac2 Eval print_info \"lambda: \" open_constr:({term}).");
@@ -279,7 +289,7 @@ public class CoqSession : IDisposable {
       if (coqc.ExitCode != 0) {
         return TermInfo.Error(stderrBuilder.ToString(), filename);
       }
-      return TermInfo.Success(stdoutBuilder.ToString());
+      return TermInfo.Success(imports, stdoutBuilder.ToString());
     } catch (Exception e) {
       return TermInfo.Error(e.ToString(), filename);
     }

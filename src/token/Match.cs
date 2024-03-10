@@ -159,4 +159,13 @@ public class Match : ConstructRoot {
     }
     emitter.Write("end", this);
   }
+
+  public override void GatherConstructImports(CoqEmitter emitter) {
+    Input?.GatherImports(emitter);
+    _matchIn?.GatherImports(emitter);
+
+    foreach (Case c in _cases) {
+      c.GatherImports(emitter);
+    }
+  }
 }

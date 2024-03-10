@@ -20,6 +20,10 @@ public class CoqEmitter {
 
   private readonly StreamWriter _writer;
 
+  private readonly Dictionary<string, Token> _imports = new();
+
+  public IReadOnlyDictionary<string, Token> Imports { get => _imports; }
+
   public CoqEmitter(Stream stream) {
     _writer = new StreamWriter(new BlockStreamFlush(stream));
     _ranges.Add(new Range() {
@@ -168,5 +172,18 @@ public class CoqEmitter {
                                         int endLine, long endColumn) {
     return FindOverlapping(ResolveLineColumn(startLine, startColumn),
                            ResolveLineColumn(endLine, endColumn));
+  }
+
+  public void AddImports(string[] imports, Token owner) {
+    foreach (string import in imports) {
+      _imports.TryAdd(import, owner);
+    }
+  }
+
+  public void EmitImports() {
+    foreach (KeyValuePair<string, Token> import in _imports) {
+      Write($"Require Import {import.Key}.", import.Value);
+      WriteNewline();
+    }
   }
 }

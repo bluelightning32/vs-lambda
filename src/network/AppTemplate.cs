@@ -73,11 +73,12 @@ public class AppTemplate : BlockNodeTemplate {
   }
 
   private void CreateAll(TokenEmitter state, BlockPos pos, Node[] nodes,
-                         string inventoryTerm, int forNode) {
+                         string[] inventoryImports, string inventoryTerm,
+                         int forNode) {
     List<Token> added = new();
     NodePos outputPos = GetNodePosOrDefault(pos, _outputId);
     if (_applicand == -1 && _argument == -1) {
-      added.Add(new Constant(outputPos, inventoryTerm));
+      added.Add(new Constant(outputPos, inventoryImports, inventoryTerm));
     } else {
       App app = new(outputPos, GetNodePosOrDefault(pos, _applicand),
                     GetNodePosOrDefault(pos, _argument));
@@ -85,13 +86,13 @@ public class AppTemplate : BlockNodeTemplate {
       if (_applicand != -1) {
         added.Add(app.Applicand);
       } else {
-        Constant appConstant = new(outputPos, inventoryTerm);
+        Constant appConstant = new(outputPos, inventoryImports, inventoryTerm);
         appConstant.AddSink(app.Applicand);
       }
       if (_argument != -1) {
         added.Add(app.Argument);
       } else {
-        Constant argConstant = new(outputPos, inventoryTerm);
+        Constant argConstant = new(outputPos, inventoryImports, inventoryTerm);
         argConstant.AddSink(app.Argument);
       }
     }
@@ -112,9 +113,10 @@ public class AppTemplate : BlockNodeTemplate {
   }
 
   public override Token Emit(TokenEmitter state, NodePos pos, Node[] nodes,
-                             string inventoryTerm) {
+                             string[] inventoryImports, string inventoryTerm) {
     if (!state.Prepared.TryGetValue(pos, out Token result)) {
-      CreateAll(state, pos.Block, nodes, inventoryTerm, pos.NodeId);
+      CreateAll(state, pos.Block, nodes, inventoryImports, inventoryTerm,
+                pos.NodeId);
       result = state.Prepared[pos];
     }
     NodeTemplate nodeTemplate = _nodeTemplates[pos.NodeId];

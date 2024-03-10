@@ -100,7 +100,7 @@ public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
   }
 
   private Function EmitScope(TokenEmitter state, BlockPos pos, Node[] nodes,
-                             string inventoryTerm) {
+                             string[] inventoryImports, string inventoryTerm) {
     NodePos scopePos = new(pos, _scopeId);
     Function scope = (Function)state.TryGetSource(scopePos);
     if (scope == null) {
@@ -117,7 +117,7 @@ public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
     scope.AddPendingChildren(state, _nodeTemplates[_scopeId].Network,
                              GetDownstream(scopePos));
     if (inventoryTerm != null) {
-      ((Puzzle)scope).AddResultType(state, inventoryTerm);
+      ((Puzzle)scope).AddResultType(state, inventoryImports, inventoryTerm);
     }
 
     scope.ReleaseRef(state, scopePos);
@@ -125,9 +125,10 @@ public class FunctionTemplate : BlockNodeTemplate, IAcceptScopePort {
   }
 
   public override Token Emit(TokenEmitter state, NodePos pos, Node[] nodes,
-                             string inventoryTerm) {
+                             string[] inventoryImports, string inventoryTerm) {
     if (pos.NodeId == _scopeId) {
-      Token scopeResult = EmitScope(state, pos.Block, nodes, inventoryTerm);
+      Token scopeResult =
+          EmitScope(state, pos.Block, nodes, inventoryImports, inventoryTerm);
       state.VerifyInvariants();
       return scopeResult;
     }
