@@ -79,6 +79,8 @@ public class CoreSystem : ModSystem {
     Domain = Mod.Info.ModID;
     LoadConfigFile(api);
 
+    api.RegisterCollectibleBehaviorClass(
+        "ForwardToBlock", typeof(CollectibleBehavior.ForwardToBlock));
     api.RegisterCollectibleBehaviorClass("Term",
                                          typeof(CollectibleBehavior.Term));
     api.RegisterBlockBehaviorClass("BlockEntityForward",
