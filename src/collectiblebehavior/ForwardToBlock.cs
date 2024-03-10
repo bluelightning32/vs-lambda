@@ -16,20 +16,24 @@ public interface ICollectibleTarget {
                                 BlockSelection blockSel,
                                 EntitySelection entitySel,
                                 ref EnumHandHandling handHandling,
-                                ref EnumHandling handled);
+                                ref EnumHandling handled) {}
 
   public bool OnHeldAttackStep(BlockPos originalTarget, float secondsPassed,
                                ItemSlot slot, EntityAgent byEntity,
                                BlockSelection blockSelection,
                                EntitySelection entitySel,
-                               ref EnumHandling handled);
+                               ref EnumHandling handled) {
+    return true;
+  }
 
   public bool OnHeldAttackCancel(BlockPos originalTarget, float secondsPassed,
                                  ItemSlot slot, EntityAgent byEntity,
                                  BlockSelection blockSelection,
                                  EntitySelection entitySel,
                                  EnumItemUseCancelReason cancelReason,
-                                 ref EnumHandling handled);
+                                 ref EnumHandling handled) {
+    return true;
+  }
 }
 
 // Forwards the attack events to the block that the player is targeting.
@@ -48,26 +52,32 @@ public class ForwardToBlock : VSCollectibleBehavior {
                                          EntitySelection entitySel,
                                          ref EnumHandHandling handHandling,
                                          ref EnumHandling handled) {
-    EnumHandHandling localHandHandling = EnumHandHandling.NotHandled;
-    WalkBlockBehaviors(
-        _api.World.BlockAccessor, blockSel.Block, blockSel.Position,
-        (ICollectibleTarget forward, ref EnumHandling handled) => {
-          forward.OnHeldAttackStart(slot, byEntity, blockSel, entitySel,
-                                    ref localHandHandling, ref handled);
-        },
-        ref handled);
-    if (handled != EnumHandling.PassThrough) {
-      handHandling = localHandHandling;
-      if (localHandHandling != EnumHandHandling.NotHandled) {
-        slot.Itemstack.TempAttributes.SetBlockPos("forward-target",
-                                                  blockSel.Position);
-      } else {
-        ClearForwardTarget(slot);
+    if (blockSel != null) {
+      Block targetBlock = blockSel.Block;
+      if (targetBlock == null && _api.Side == EnumAppSide.Server) {
+        // `blockSel.Block` isn't filled in on the server.
+        targetBlock = _api.World.BlockAccessor.GetBlock(blockSel.Position);
       }
-      return;
-    } else {
-      ClearForwardTarget(slot);
+      EnumHandHandling localHandHandling = EnumHandHandling.NotHandled;
+      WalkBlockBehaviors(
+          _api.World.BlockAccessor, targetBlock, blockSel.Position,
+          (ICollectibleTarget forward, ref EnumHandling handled) => {
+            forward.OnHeldAttackStart(slot, byEntity, blockSel, entitySel,
+                                      ref localHandHandling, ref handled);
+          },
+          ref handled);
+      if (handled != EnumHandling.PassThrough) {
+        handHandling = localHandHandling;
+        if (localHandHandling != EnumHandHandling.NotHandled) {
+          slot.Itemstack.TempAttributes.SetBlockPos("forward-target",
+                                                    blockSel.Position);
+        } else {
+          ClearForwardTarget(slot);
+        }
+        return;
+      }
     }
+    ClearForwardTarget(slot);
     base.OnHeldAttackStart(slot, byEntity, blockSel, entitySel,
                            ref handHandling, ref handled);
   }
@@ -87,21 +97,19 @@ public class ForwardToBlock : VSCollectibleBehavior {
         slot.Itemstack.TempAttributes.GetBlockPos("forward-target");
     if (target != null) {
       Block targetBlock = _api.World.BlockAccessor.GetBlock(target);
-      if (targetBlock != null) {
-        bool result = false;
-        WalkBlockBehaviors(
-            _api.World.BlockAccessor, targetBlock,
-            target, (ICollectibleTarget forward, ref EnumHandling handled) => {
-              bool localResult = forward.OnHeldAttackStep(
-                  target, secondsPassed, slot, byEntity, blockSelection,
-                  entitySel, ref handled);
-              if (handled != EnumHandling.PassThrough) {
-                result = localResult;
-              }
-            }, ref handled);
-        if (handled != EnumHandling.PassThrough) {
-          return result;
-        }
+      bool result = false;
+      WalkBlockBehaviors(
+          _api.World.BlockAccessor, targetBlock,
+          target, (ICollectibleTarget forward, ref EnumHandling handled) => {
+            bool localResult = forward.OnHeldAttackStep(
+                target, secondsPassed, slot, byEntity, blockSelection,
+                entitySel, ref handled);
+            if (handled != EnumHandling.PassThrough) {
+              result = localResult;
+            }
+          }, ref handled);
+      if (handled != EnumHandling.PassThrough) {
+        return result;
       }
     }
     return base.OnHeldAttackStep(secondsPassed, slot, byEntity, blockSelection,
@@ -118,21 +126,19 @@ public class ForwardToBlock : VSCollectibleBehavior {
         slot.Itemstack.TempAttributes.GetBlockPos("forward-target");
     if (target != null) {
       Block targetBlock = _api.World.BlockAccessor.GetBlock(target);
-      if (targetBlock != null) {
-        bool result = false;
-        WalkBlockBehaviors(
-            _api.World.BlockAccessor, targetBlock,
-            target, (ICollectibleTarget forward, ref EnumHandling handled) => {
-              bool localResult = forward.OnHeldAttackCancel(
-                  target, secondsPassed, slot, byEntity, blockSelection,
-                  entitySel, cancelReason, ref handled);
-              if (handled != EnumHandling.PassThrough) {
-                result = localResult;
-              }
-            }, ref handled);
-        if (handled != EnumHandling.PassThrough) {
-          return result;
-        }
+      bool result = false;
+      WalkBlockBehaviors(
+          _api.World.BlockAccessor, targetBlock,
+          target, (ICollectibleTarget forward, ref EnumHandling handled) => {
+            bool localResult = forward.OnHeldAttackCancel(
+                target, secondsPassed, slot, byEntity, blockSelection,
+                entitySel, cancelReason, ref handled);
+            if (handled != EnumHandling.PassThrough) {
+              result = localResult;
+            }
+          }, ref handled);
+      if (handled != EnumHandling.PassThrough) {
+        return result;
       }
     }
     return base.OnHeldAttackCancel(secondsPassed, slot, byEntity,

@@ -19,7 +19,8 @@ namespace Lambda.BlockEntity;
 
 public class ApplicationJig : BlockEntityDisplay,
                               IBlockEntityForward,
-                              IDropCraftListener {
+                              IDropCraftListener,
+                              ICollectibleTarget {
   // Pass in null for the API and inventory class name for now. The correct
   // values will be passed by `BlockEntityContainer.Initialize` when it calls
   // `Inventory.LateInitialize`.
@@ -30,6 +31,7 @@ public class ApplicationJig : BlockEntityDisplay,
   private bool _compilationRunning = false;
   TermInfo _termInfo = null;
   bool _dropWaiting = false;
+  int _hammerHits = 0;
 
   public override string InventoryClassName => "applicationjig";
 
@@ -51,6 +53,7 @@ public class ApplicationJig : BlockEntityDisplay,
     if (!_compilationOutdated) {
       _termInfo?.ToTreeAttributes(tree);
     }
+    tree.SetInt("hammerHits", _hammerHits);
   }
 
   public override void FromTreeAttributes(ITreeAttribute tree,
@@ -59,6 +62,7 @@ public class ApplicationJig : BlockEntityDisplay,
 
     _termInfo ??= new();
     _termInfo.FromTreeAttributes(tree);
+    _hammerHits = tree.GetInt("hammerHits", 0);
     _compilationOutdated =
         _termInfo.ErrorMessage == null && _termInfo.Term == null;
     if (_compilationOutdated) {
@@ -164,6 +168,7 @@ public class ApplicationJig : BlockEntityDisplay,
   private void MarkTermInfoDirty() {
     _compilationOutdated = true;
     _termInfo = null;
+    _hammerHits = 0;
   }
 
   private void StartCompilation() {
@@ -172,7 +177,7 @@ public class ApplicationJig : BlockEntityDisplay,
     }
     string[] terms = new string[2];
     for (int i = 0; i < 2; ++i) {
-      Term termBhv = _inventory[i].Itemstack.Collectible.GetBehavior<Term>();
+      Term termBhv = _inventory[i].Itemstack?.Collectible.GetBehavior<Term>();
       string term = termBhv?.GetTerm(_inventory[i].Itemstack);
       if (term == null) {
         _compilationOutdated = false;
@@ -236,8 +241,7 @@ public class ApplicationJig : BlockEntityDisplay,
     }
   }
 
-  void IDropCraftListener.OnDropCraft(IWorldAccessor world, BlockPos pos,
-                                      BlockPos dropper) {
+  private void CreateCombinedTerm() {
     if (Api.Side != EnumAppSide.Server) {
       return;
     }
@@ -248,13 +252,20 @@ public class ApplicationJig : BlockEntityDisplay,
     if (_termInfo == null || _termInfo.Term == null) {
       return;
     }
-    ItemStack drop = Term.Find(Api, _termInfo);
-    Api.World.SpawnItemEntity(drop, Pos.ToVec3d().Add(0.5, 0.5, 0.5), null);
-
+    TermInfo termInfo = _termInfo;
+    MarkTermInfoDirty();
     for (int i = 0; i < _inventory.Count; ++i) {
       _inventory[i].TakeOutWhole();
     }
+    ItemStack combined = Term.Find(Api, termInfo);
+    _inventory[0].Itemstack = combined;
+    _inventory[0].MarkDirty();
     MarkDirty();
+  }
+
+  void IDropCraftListener.OnDropCraft(IWorldAccessor world, BlockPos pos,
+                                      BlockPos dropper) {
+    CreateCombinedTerm();
   }
 
   private static Cuboidf GetItemBounds(int begin, int end) {
@@ -343,6 +354,97 @@ public class ApplicationJig : BlockEntityDisplay,
     string error = _termInfo?.ErrorMessage;
     if (error != null) {
       dsc.AppendLine(Term.Escape(error));
+    }
+  }
+
+  void ICollectibleTarget.OnHeldAttackStart(ItemSlot slot, EntityAgent byEntity,
+                                            BlockSelection blockSel,
+                                            EntitySelection entitySel,
+                                            ref EnumHandHandling handHandling,
+                                            ref EnumHandling handled) {
+    Api.Logger.Notification("Got OnHeldAttackStart");
+
+    handHandling = EnumHandHandling.PreventDefault;
+    handled = EnumHandling.PreventSubsequent;
+
+    if (_compilationRunning || _termInfo == null || _termInfo.Term == null) {
+      // There's no easy way to prevent the attack animation from playing. This
+      // method doesn't start the animation, but it will later get started by
+      // EntityPlayer.HandleHandAnimations.
+      //
+      // Return with handHandling set to `EnumHandHandling.PreventDefault`. This
+      // way the block won't get broken in creative mode. Although, the hammer's
+      // nimationAuthoritative behavior would have set handHandling to that
+      // anyway, if `handled` allowed it to run.
+      return;
+    }
+    MarkToolAsHitting(slot, true);
+    string anim =
+        slot.Itemstack.Collectible.GetHeldTpHitAnimation(slot, byEntity);
+    float framesound =
+        CollectibleBehaviorAnimationAuthoritative.getSoundAtFrame(byEntity,
+                                                                  anim);
+
+    byEntity.AnimManager.RegisterFrameCallback(
+        new AnimFrameCallback() { Animation = anim, Frame = framesound,
+                                  Callback = () => OnHammerStrike(slot) });
+  }
+
+  private void OnHammerStrike(ItemSlot tool) {
+    Api.Logger.Notification("Got hammer strike");
+    if (GetToolIsHitting(tool) == true) {
+      Api.Logger.Notification("Still hitting the jig");
+      if (!_compilationRunning && _termInfo?.Term != null) {
+        ++_hammerHits;
+        int necessaryHits = Block.Attributes["hammerHits"].AsInt(2);
+        if (_hammerHits >= necessaryHits) {
+          CreateCombinedTerm();
+        }
+      }
+    }
+  }
+
+  private void MarkToolAsHitting(ItemSlot tool, bool value) {
+    tool.Itemstack.TempAttributes.SetBool($"hitting-{Block.Code}", value);
+  }
+
+  private bool GetToolIsHitting(ItemSlot tool) {
+    if (tool.Itemstack == null) {
+      return false;
+    }
+    return tool.Itemstack.TempAttributes.GetAsBool($"hitting-{Block.Code}",
+                                                   false);
+  }
+
+  bool ICollectibleTarget.OnHeldAttackStep(BlockPos originalTarget,
+                                           float secondsPassed, ItemSlot slot,
+                                           EntityAgent byEntity,
+                                           BlockSelection blockSelection,
+                                           EntitySelection entitySel,
+                                           ref EnumHandling handled) {
+    handled = EnumHandling.PreventSubsequent;
+
+    MarkToolAsHitting(slot,
+                      blockSelection != null && blockSelection.Position == Pos);
+
+    string animCode =
+        slot.Itemstack.Collectible.GetHeldTpHitAnimation(slot, byEntity);
+    return byEntity.AnimManager.IsAnimationActive(animCode);
+  }
+
+  bool ICollectibleTarget.OnHeldAttackCancel(
+      BlockPos originalTarget, float secondsPassed, ItemSlot slot,
+      EntityAgent byEntity, BlockSelection blockSelection,
+      EntitySelection entitySel, EnumItemUseCancelReason cancelReason,
+      ref EnumHandling handled) {
+    Api.Logger.Debug("Got OnHeldAttackCancel");
+    handled = EnumHandling.PreventSubsequent;
+    if (cancelReason == EnumItemUseCancelReason.Death ||
+        cancelReason == EnumItemUseCancelReason.Destroyed) {
+      MarkToolAsHitting(slot, false);
+      return true;
+    } else {
+      return false;
     }
   }
 }

@@ -1,0 +1,10 @@
+[
+  {
+    // Insert the new behavior instead of appending it, because it must be
+    // inserted before the existing AnimationAuthoritative behavior.
+    file: "game:itemtypes/tool/hammer", op: "add", path: "/behaviors/0",
+    value: {
+      name: "ForwardToBlock"
+    }
+  },
+]
