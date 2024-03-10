@@ -1,0 +1,73 @@
+[
+  // Change the uv coordinates of the top and bottom faces of the center of
+  // the pan so that they do not overlap with each other or with the textures
+  // used on the edge of the pan.
+  {
+    side: "client",
+    file: "game:shapes/block/wood/pan/empty", op: "replace", path: "/elements/0/faces/up/uv",
+    value: [ 2, 2, 9, 9 ]
+  },
+  {
+    side: "client",
+    file: "game:shapes/block/wood/pan/empty", op: "replace", path: "/elements/0/faces/down/uv",
+    value: [ 2, 9, 9, 16 ]
+  },
+  {
+    side: "client",
+    file: "game:shapes/block/wood/pan/filled", op: "replace", path: "/elements/0/faces/up/uv",
+    value: [ 2, 2, 9, 9 ]
+  },
+  {
+    side: "client",
+    file: "game:shapes/block/wood/pan/filled", op: "replace", path: "/elements/0/faces/down/uv",
+    value: [ 2, 9, 9, 16 ]
+  },
+  {
+    side: "server",
+    file: "game:blocktypes/wood/pan", op: "addmerge", path: "/variantgroups/0/states/-",
+    value: "enhanced",
+  },
+  {
+    side: "server",
+    file: "game:blocktypes/wood/pan", op: "addmerge", path: "/texturesByType",
+    value: {
+      "*-enhanced": {
+        "wood-generic": {
+          base: "game:block/wood-generic",
+          blendedOverlays: [
+            {
+              base: "lambda:pan/overlay",
+              blendMode: "overlay"
+            }
+          ]
+        }
+      },
+      "*": {}
+    }
+  },
+  {
+    side: "server",
+    file: "game:blocktypes/wood/pan", op: "addmerge", path: "/attributes/panningDropsByType",
+    value: {
+      "*-enhanced": {
+        "@(sand|gravel)-.*": [
+          // Since the "panning" key exists in vanilla, and this patch is
+          // adding a panningDropsByType key, the RegistryObjectType will add
+          // these new entries to the end of the existing array as part of
+          // merging the entries. The pan shuffles the list before drawing.
+          // The value below combines with the existing 15% to make the
+          // combined chance 50% greater. The combined chance would be 22.5%,
+          // except the chance of panning any of the other blocks lowers the
+          // probability (each panning action produces 0 or 1 items).
+          {
+            type: "item", code: "nugget-nativecopper",
+            chance: { avg: 0.0882, var: 0 }
+          },
+          // The base chance is 0.02. This increases it by about 50%.
+          { type: "item", code: "nugget-sphalerite",  chance: { avg: 0.01, var: 0 }  },
+        ]
+      },
+      "*": {}
+    }
+  },
+]
