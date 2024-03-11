@@ -1,6 +1,6 @@
 # Lambda - Coq logic puzzle mod
 
-This is a mod for the Vintage Story video game. The mod introduces two new crafting mechanics:
+This is a [mod](https://mods.vintagestory.at/lambda) for the Vintage Story video game. The mod introduces two new crafting mechanics:
 * Applying functions in the application jig
 * Inscribing, where an item is put into the function block, and it shows a
   program the player must create to transform the item into the recipe output.
