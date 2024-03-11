@@ -8,7 +8,7 @@
 	"textureSizes": {
 	},
 	"textures": {
-		"term": "term/term"
+		"term": "term/normal"
 	},
 	"elements": [
 		{

@@ -1,0 +1,33 @@
+{
+  code: "denaturedterm",
+  creativeinventory: { "general": ["*"]},
+  maxStackSize: 256,
+  shape: { base: "item/term" },
+  textures: {
+    "term": {
+      base: "term/denatured"
+    },
+  },
+  guiTransform: {
+		translation: { x: 3, y: 0, z: 0 },
+		rotation: { x: 9, y: 39, z: -41 },
+		origin: { x: 0.5, y: 0.2, z: 0.5 },
+		scale: 3
+	},
+  nutritionProps: {
+    satiety: 30,
+    foodcategory: "Fruit"
+  },
+  transitionableProps: [
+    {
+      type: "Perish",
+      freshHours: { avg: 120 },
+      spoilHours: { avg: 36 },
+      transitionedStack: {
+        type: "item",
+        code: "game:rot"
+      },
+      transitionRatio: 1
+    }
+  ]
+}

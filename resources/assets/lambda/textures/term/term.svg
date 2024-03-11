@@ -9,11 +9,12 @@
    id="svg1"
    inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
    sodipodi:docname="term.svg"
-   inkscape:export-filename="term.png"
+   inkscape:export-filename="denatured.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <sodipodi:namedview
@@ -27,9 +28,9 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      showgrid="true"
-     inkscape:zoom="18.484375"
-     inkscape:cx="29.051564"
-     inkscape:cy="19.340659"
+     inkscape:zoom="26.140854"
+     inkscape:cx="11.801451"
+     inkscape:cy="20.791211"
      inkscape:window-width="2560"
      inkscape:window-height="1371"
      inkscape:window-x="0"
@@ -55,6 +56,60 @@
   </sodipodi:namedview>
   <defs
      id="defs1">
+    <inkscape:path-effect
+       effect="powerclip"
+       id="path-effect344"
+       is_visible="true"
+       lpeversion="1"
+       inverse="true"
+       flatten="false"
+       hide_clip="false"
+       message="Use fill-rule evenodd on &lt;b&gt;fill and stroke&lt;/b&gt; dialog if no flatten result after convert clip to paths." />
+    <inkscape:path-effect
+       effect="powerclip"
+       id="path-effect343"
+       is_visible="true"
+       lpeversion="1"
+       inverse="true"
+       flatten="false"
+       hide_clip="false"
+       message="Use fill-rule evenodd on &lt;b&gt;fill and stroke&lt;/b&gt; dialog if no flatten result after convert clip to paths." />
+    <inkscape:path-effect
+       effect="powerclip"
+       id="path-effect342"
+       is_visible="true"
+       lpeversion="1"
+       inverse="true"
+       flatten="false"
+       hide_clip="false"
+       message="Use fill-rule evenodd on &lt;b&gt;fill and stroke&lt;/b&gt; dialog if no flatten result after convert clip to paths." />
+    <inkscape:path-effect
+       effect="powerclip"
+       id="path-effect341"
+       is_visible="true"
+       lpeversion="1"
+       inverse="true"
+       flatten="false"
+       hide_clip="false"
+       message="Use fill-rule evenodd on &lt;b&gt;fill and stroke&lt;/b&gt; dialog if no flatten result after convert clip to paths." />
+    <inkscape:path-effect
+       effect="powerclip"
+       id="path-effect340"
+       is_visible="true"
+       lpeversion="1"
+       inverse="true"
+       flatten="false"
+       hide_clip="false"
+       message="Use fill-rule evenodd on &lt;b&gt;fill and stroke&lt;/b&gt; dialog if no flatten result after convert clip to paths." />
+    <inkscape:path-effect
+       effect="powerclip"
+       id="path-effect339"
+       is_visible="true"
+       lpeversion="1"
+       inverse="true"
+       flatten="false"
+       hide_clip="false"
+       message="Use fill-rule evenodd on &lt;b&gt;fill and stroke&lt;/b&gt; dialog if no flatten result after convert clip to paths." />
     <clipPath
        clipPathUnits="userSpaceOnUse"
        id="clipPath97">
@@ -126,109 +181,1943 @@
            inkscape:label="full" />
       </g>
     </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath339">
+      <rect
+         style="font-variation-settings:normal;display:none;vector-effect:none;fill:#265b9d;fill-opacity:1;stroke:none;stroke-width:2.02548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+         id="rect339"
+         width="10"
+         height="10"
+         x="13"
+         y="5"
+         d="M 13,5 H 23 V 15 H 13 Z" />
+      <path
+         id="lpe_path-effect339"
+         style="font-variation-settings:normal;vector-effect:none;fill:#265b9d;fill-opacity:1;stroke:none;stroke-width:2.02548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+         class="powerclip"
+         d="M 7,-1 H 29 V 21 H 7 Z m 6,6 V 15 H 23 V 5 Z" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath340">
+      <rect
+         style="font-variation-settings:normal;display:none;vector-effect:none;fill:#265b9d;fill-opacity:1;stroke:none;stroke-width:2.02548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+         id="rect340"
+         width="10"
+         height="10"
+         x="1"
+         y="5"
+         d="M 1,5 H 11 V 15 H 1 Z" />
+      <path
+         id="lpe_path-effect340"
+         style="font-variation-settings:normal;vector-effect:none;fill:#265b9d;fill-opacity:1;stroke:none;stroke-width:2.02548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+         class="powerclip"
+         d="M -5,-1 H 17 V 21 H -5 Z M 1,5 V 15 H 11 V 5 Z" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath341">
+      <rect
+         style="font-variation-settings:normal;display:none;vector-effect:none;fill:#265b9d;fill-opacity:1;stroke:none;stroke-width:2.02548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+         id="rect341"
+         width="10"
+         height="2"
+         x="1"
+         y="17"
+         d="m 1,17 h 10 v 2 H 1 Z" />
+      <path
+         id="lpe_path-effect341"
+         style="font-variation-settings:normal;vector-effect:none;fill:#265b9d;fill-opacity:1;stroke:none;stroke-width:2.02548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+         class="powerclip"
+         d="M -5,11 H 17 V 25 H -5 Z m 6,6 v 2 h 10 v -2 z" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath342">
+      <rect
+         style="font-variation-settings:normal;display:none;vector-effect:none;fill:#265b9d;fill-opacity:1;stroke:none;stroke-width:2.02548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+         id="rect342"
+         width="10"
+         height="2"
+         x="1"
+         y="21"
+         d="m 1,21 h 10 v 2 H 1 Z" />
+      <path
+         id="lpe_path-effect342"
+         style="font-variation-settings:normal;vector-effect:none;fill:#265b9d;fill-opacity:1;stroke:none;stroke-width:2.02548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+         class="powerclip"
+         d="M -5,15 H 17 V 29 H -5 Z m 6,6 v 2 h 10 v -2 z" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath343">
+      <rect
+         style="font-variation-settings:normal;display:none;vector-effect:none;fill:#265b9d;fill-opacity:1;stroke:none;stroke-width:2.02548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+         id="rect343"
+         width="10"
+         height="2"
+         x="1"
+         y="25"
+         d="m 1,25 h 10 v 2 H 1 Z" />
+      <path
+         id="lpe_path-effect343"
+         style="font-variation-settings:normal;vector-effect:none;fill:#265b9d;fill-opacity:1;stroke:none;stroke-width:2.02548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+         class="powerclip"
+         d="M -5,19 H 17 V 33 H -5 Z m 6,6 v 2 h 10 v -2 z" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath344">
+      <rect
+         style="font-variation-settings:normal;display:none;vector-effect:none;fill:#265b9d;fill-opacity:1;stroke:none;stroke-width:2.02548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+         id="rect344"
+         width="10"
+         height="2"
+         x="1"
+         y="29"
+         d="m 1,29 h 10 v 2 H 1 Z" />
+      <path
+         id="lpe_path-effect344"
+         style="font-variation-settings:normal;vector-effect:none;fill:#265b9d;fill-opacity:1;stroke:none;stroke-width:2.02548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+         class="powerclip"
+         d="M -5,23 H 17 V 37 H -5 Z m 6,6 v 2 h 10 v -2 z" />
+    </clipPath>
   </defs>
   <g
      inkscape:groupmode="layer"
-     id="layer2"
-     inkscape:label="image"
-     style="display:inline">
+     id="layer1"
+     inkscape:label="background">
     <rect
-       style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#265b9d;fill-opacity:1;stroke-width:2.02548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+       style="display:inline;font-variation-settings:normal;opacity:1;vector-effect:none;fill:#265b9d;fill-opacity:1;stroke-width:2.02548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
        id="rect31"
        width="32"
        height="32"
        x="0"
        y="0" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="denature"
+     style="display:inline">
+    <rect
+       style="display:inline;fill:#a2e5ff;fill-opacity:0.683723;stroke-width:4.00002;stroke-linecap:round;-inkscape-stroke:none"
+       id="rect33"
+       width="1"
+       height="1"
+       x="-3"
+       y="3" />
     <g
-       id="g10"
-       transform="translate(0,35)">
-      <rect
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#186ed3;fill-opacity:1;stroke:none;stroke-width:0.947331;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
-         id="rect4"
-         width="12"
-         height="4"
+       id="g78"
+       style="display:inline">
+      <g
+         id="g47">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use37"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use38"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use39"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use41"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use42"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use43"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use44"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use45"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use46"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use47"
+           transform="translate(4,2)" />
+      </g>
+      <g
+         id="g68"
+         transform="translate(1)">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use59"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use60"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use61"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use62"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use63"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use64"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use65"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use66"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use67"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use68"
+           transform="translate(4,2)" />
+      </g>
+    </g>
+    <g
+       id="g98"
+       transform="translate(4)"
+       style="display:inline">
+      <g
+         id="g87">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use78"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use79"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use80"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use81"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use82"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use83"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use84"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use85"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use86"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use87"
+           transform="translate(4,2)" />
+      </g>
+      <g
+         id="g97"
+         transform="translate(1)">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use88"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use89"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use90"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use91"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use92"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use93"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use94"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use95"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use96"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use97"
+           transform="translate(4,2)" />
+      </g>
+    </g>
+    <g
+       id="g118"
+       transform="translate(8)"
+       style="display:inline">
+      <g
+         id="g107">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use98"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use99"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use100"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use101"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use102"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use103"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use104"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use105"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use106"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use107"
+           transform="translate(4,2)" />
+      </g>
+      <g
+         id="g117"
+         transform="translate(1)">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use108"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use109"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use110"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use111"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use112"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use113"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use114"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use115"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use116"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use117"
+           transform="translate(4,2)" />
+      </g>
+    </g>
+    <g
+       id="g138"
+       transform="translate(-4)"
+       style="display:inline">
+      <g
+         id="g127">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use118"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use119"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use120"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use121"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use122"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use123"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use124"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use125"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use126"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use127"
+           transform="translate(4,2)" />
+      </g>
+      <g
+         id="g137"
+         transform="translate(1)">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use128"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use129"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use130"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use131"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use132"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use133"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use134"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use135"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use136"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use137"
+           transform="translate(4,2)" />
+      </g>
+    </g>
+    <g
+       id="g158"
+       transform="translate(-8,0.01901944)"
+       style="display:inline">
+      <g
+         id="g147">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use138"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use139"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use140"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use141"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use142"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use143"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use144"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use145"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use146"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use147"
+           transform="translate(4,2)" />
+      </g>
+      <g
+         id="g157"
+         transform="translate(1)">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use148"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use149"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use150"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use151"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use152"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use153"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use154"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use155"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use156"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use157"
+           transform="translate(4,2)" />
+      </g>
+    </g>
+    <g
+       id="g178"
+       transform="translate(12)"
+       style="display:inline">
+      <g
+         id="g167">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use158"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use159"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use160"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use161"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use162"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use163"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use164"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use165"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use166"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use167"
+           transform="translate(4,2)" />
+      </g>
+      <g
+         id="g177"
+         transform="translate(1)">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use168"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use169"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use170"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use171"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use172"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use173"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use174"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use175"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use176"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use177"
+           transform="translate(4,2)" />
+      </g>
+    </g>
+    <g
+       id="g198"
+       transform="translate(16)"
+       style="display:inline">
+      <g
+         id="g187">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use178"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use179"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use180"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use181"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use182"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use183"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use184"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use185"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use186"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use187"
+           transform="translate(4,2)" />
+      </g>
+      <g
+         id="g197"
+         transform="translate(1)">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use188"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use189"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use190"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use191"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use192"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use193"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use194"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use195"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use196"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use197"
+           transform="translate(4,2)" />
+      </g>
+    </g>
+    <g
+       id="g218"
+       transform="translate(20)"
+       style="display:inline">
+      <g
+         id="g207">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use198"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use199"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use200"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use201"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use202"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use203"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use204"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use205"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use206"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use207"
+           transform="translate(4,2)" />
+      </g>
+      <g
+         id="g217"
+         transform="translate(1)">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use208"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use209"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use210"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use211"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use212"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use213"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use214"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use215"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use216"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use217"
+           transform="translate(4,2)" />
+      </g>
+    </g>
+    <g
+       id="g238"
+       transform="translate(0,12)"
+       style="display:inline">
+      <g
+         id="g227">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use218"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use219"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use220"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use221"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use222"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use223"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use224"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use225"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use226"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use227"
+           transform="translate(4,2)" />
+      </g>
+      <g
+         id="g237"
+         transform="translate(1)">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use228"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use229"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use230"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use231"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use232"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use233"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use234"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use235"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use236"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use237"
+           transform="translate(4,2)" />
+      </g>
+    </g>
+    <g
+       id="g339"
+       style="display:inline">
+      <use
          x="0"
-         y="-7" />
-      <rect
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#265b9d;fill-opacity:1;stroke:none;stroke-width:2.02548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
-         id="rect5"
-         width="10"
-         height="2"
-         x="1"
-         y="-6" />
-    </g>
-    <g
-       id="g18"
-       transform="translate(-18,19)">
-      <rect
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#186ed3;fill-opacity:1;stroke:none;stroke-width:0.947331;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
-         id="rect6"
-         width="12"
-         height="12"
-         x="18"
-         y="-15" />
-      <rect
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#265b9d;fill-opacity:1;stroke:none;stroke-width:2.02548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
-         id="rect10"
-         width="10"
-         height="10"
-         x="19"
-         y="-14" />
-    </g>
-    <g
-       id="g12"
-       transform="translate(0,31)">
-      <rect
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#186ed3;fill-opacity:1;stroke:none;stroke-width:0.947331;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
-         id="rect11"
-         width="12"
-         height="4"
+         y="0"
+         xlink:href="#rect33"
+         id="use238"
+         transform="translate(13,15)" />
+      <use
          x="0"
-         y="-7" />
-      <rect
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#265b9d;fill-opacity:1;stroke:none;stroke-width:2.02548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
-         id="rect12"
-         width="10"
-         height="2"
-         x="1"
-         y="-6" />
+         y="0"
+         xlink:href="#rect33"
+         id="use239"
+         transform="translate(14,16)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#rect33"
+         id="use247"
+         transform="translate(12,14)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#rect33"
+         id="use248"
+         transform="translate(14,15)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#rect33"
+         id="use257"
+         transform="translate(13,14)" />
     </g>
     <g
-       id="g14"
-       transform="translate(0,27)">
-      <rect
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#186ed3;fill-opacity:1;stroke:none;stroke-width:0.947331;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
-         id="rect13"
-         width="12"
-         height="4"
-         x="0"
-         y="-7" />
-      <rect
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#265b9d;fill-opacity:1;stroke:none;stroke-width:2.02548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
-         id="rect14"
-         width="10"
-         height="2"
-         x="1"
-         y="-6" />
+       id="g278"
+       transform="translate(4,12)"
+       style="display:inline">
+      <g
+         id="g267">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use258"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use259"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use260"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use261"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use262"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use263"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use264"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use265"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use266"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use267"
+           transform="translate(4,2)" />
+      </g>
+      <g
+         id="g277"
+         transform="translate(1)">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use268"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use269"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use270"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use271"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use272"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use273"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use274"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use275"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use276"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use277"
+           transform="translate(4,2)" />
+      </g>
     </g>
     <g
-       id="g16"
-       transform="translate(0,23)">
-      <rect
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#186ed3;fill-opacity:1;stroke:none;stroke-width:0.947331;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
-         id="rect15"
-         width="12"
-         height="4"
-         x="0"
-         y="-7" />
-      <rect
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#265b9d;fill-opacity:1;stroke:none;stroke-width:2.02548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
-         id="rect16"
-         width="10"
-         height="2"
-         x="1"
-         y="-6" />
+       id="g298"
+       transform="translate(-1,15)"
+       style="display:inline">
+      <g
+         id="g287">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use278"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use279"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use280"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use281"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use282"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use283"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use284"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use285"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use286"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use287"
+           transform="translate(4,2)" />
+      </g>
+      <g
+         id="g297"
+         transform="translate(1)">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use288"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use289"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use290"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use291"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use292"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use293"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use294"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use295"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use296"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use297"
+           transform="translate(4,2)" />
+      </g>
     </g>
+    <g
+       id="g318"
+       transform="translate(-1,19)"
+       style="display:inline">
+      <g
+         id="g307">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use298"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use299"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use300"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use301"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use302"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use303"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use304"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use305"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use306"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use307"
+           transform="translate(4,2)" />
+      </g>
+      <g
+         id="g317"
+         transform="translate(1)">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use308"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use309"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use310"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use311"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use312"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use313"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use314"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use315"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use316"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use317"
+           transform="translate(4,2)" />
+      </g>
+    </g>
+    <g
+       id="g338"
+       transform="translate(-1,23)"
+       style="display:inline">
+      <g
+         id="g327">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use318"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use319"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use320"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use321"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use322"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use323"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use324"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use325"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use326"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use327"
+           transform="translate(4,2)" />
+      </g>
+      <g
+         id="g337"
+         transform="translate(1)">
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use328"
+           transform="translate(5,3)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use329"
+           transform="translate(6,4)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use330"
+           transform="translate(7,5)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use331"
+           transform="translate(8,6)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use332"
+           transform="translate(9,7)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use333"
+           transform="translate(10,8)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use334"
+           transform="translate(11,9)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use335"
+           transform="translate(12,10)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use336"
+           transform="translate(13,11)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect33"
+           id="use337"
+           transform="translate(4,2)" />
+      </g>
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="image"
+     style="display:inline">
+    <path
+       style="font-variation-settings:normal;vector-effect:none;fill:#186ed3;fill-opacity:1;stroke:none;stroke-width:0.947331;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       id="rect4"
+       width="12"
+       height="4"
+       x="0"
+       y="28"
+       clip-path="url(#clipPath344)"
+       inkscape:path-effect="#path-effect344"
+       sodipodi:type="rect"
+       d="m 0,28 h 12 v 4 H 0 Z" />
+    <path
+       style="font-variation-settings:normal;vector-effect:none;fill:#186ed3;fill-opacity:1;stroke:none;stroke-width:0.947331;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       id="rect6"
+       width="12"
+       height="12"
+       x="0"
+       y="4"
+       clip-path="url(#clipPath340)"
+       inkscape:path-effect="#path-effect340"
+       sodipodi:type="rect"
+       d="M 0,4 H 12 V 16 H 0 Z" />
+    <path
+       style="font-variation-settings:normal;vector-effect:none;fill:#186ed3;fill-opacity:1;stroke:none;stroke-width:0.947331;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       id="rect11"
+       width="12"
+       height="4"
+       x="0"
+       y="24"
+       clip-path="url(#clipPath343)"
+       inkscape:path-effect="#path-effect343"
+       sodipodi:type="rect"
+       d="m 0,24 h 12 v 4 H 0 Z" />
+    <path
+       style="font-variation-settings:normal;vector-effect:none;fill:#186ed3;fill-opacity:1;stroke:none;stroke-width:0.947331;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       id="rect13"
+       width="12"
+       height="4"
+       x="0"
+       y="20"
+       clip-path="url(#clipPath342)"
+       inkscape:path-effect="#path-effect342"
+       sodipodi:type="rect"
+       d="m 0,20 h 12 v 4 H 0 Z" />
+    <path
+       style="font-variation-settings:normal;vector-effect:none;fill:#186ed3;fill-opacity:1;stroke:none;stroke-width:0.947331;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       id="rect15"
+       width="12"
+       height="4"
+       x="0"
+       y="16"
+       clip-path="url(#clipPath341)"
+       inkscape:path-effect="#path-effect341"
+       sodipodi:type="rect"
+       d="m 0,16 h 12 v 4 H 0 Z" />
     <g
        id="g22"
        transform="translate(-31,35)">
@@ -245,24 +2134,6 @@
          width="2"
          height="10"
          x="44"
-         y="-14" />
-    </g>
-    <g
-       id="g20"
-       transform="translate(-6,19)">
-      <rect
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#186ed3;fill-opacity:1;stroke:none;stroke-width:0.947331;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
-         id="rect19"
-         width="12"
-         height="12"
-         x="18"
-         y="-15" />
-      <rect
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#265b9d;fill-opacity:1;stroke:none;stroke-width:2.02548;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
-         id="rect20"
-         width="10"
-         height="10"
-         x="19"
          y="-14" />
     </g>
     <g
@@ -362,5 +2233,16 @@
        height="6"
        x="12"
        y="23" />
+    <path
+       style="font-variation-settings:normal;vector-effect:none;fill:#186ed3;fill-opacity:1;stroke:none;stroke-width:0.947331;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       id="rect19"
+       width="12"
+       height="12"
+       x="12"
+       y="4"
+       clip-path="url(#clipPath339)"
+       inkscape:path-effect="#path-effect339"
+       sodipodi:type="rect"
+       d="M 12,4 H 24 V 16 H 12 Z" />
   </g>
 </svg>

@@ -40,6 +40,11 @@
   "block-port-short-direct-out": "Out port",
   "block-port-short-direct-in": "In port",
   "block-wire": "Wire",
+  "game:block-pan-enhanced": "Enhanced wooden pan",
+
+  // Names of items
+  "item-denaturedterm": "Denatured term",
+  "itemdesc-denaturedterm": "This is edible, but barely. It smells like overripe fruit and has a slimy, rubbery texture.",
 
   // Names of constructors
   "item-constructor-unit-tt": "tt",
@@ -66,6 +71,4 @@
   "recipe-and-distrib-desc": "Destruct the prod type, then reconstruct it with A added on each side.",
   "recipe-swap-or-desc": "Destruct the A+B parameter with a match block. Use two case blocks with the match block: inl and inr. In the inl case, construct the output using inr. In the inr case, construct the output using inl.",
   "recipe-and-assoc-desc": "Destruct the parameter twice using nested match statements with the pair constructor in the case block, then rebuild it with the pair constructor.",
-
-  "game:block-pan-enhanced": "Enhanced wooden pan"
 }
