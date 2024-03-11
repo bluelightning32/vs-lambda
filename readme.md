@@ -1,53 +1,18 @@
 # Lambda - Coq logic puzzle mod
 
-This is a mod for the Vintage Story video game. The mod has inscription recipes
-(flavor text for compilation recipes) where input items are transformed into
-output items. Along with providing the correct input item, the player must also
-build a function that matches the function type specified in the inscription
-recipe. The functions are built with a visual programming language that
-compiles into Coq.
+This is a mod for the Vintage Story video game. The mod introduces two new crafting mechanics:
+* Applying functions in the application jig
+* Inscribing, where an item is put into the function block, and it shows a
+  program the player must create to transform the item into the recipe output.
+  The program is built by connecting more blocks to the function block, which
+  act as a visual programming language that compiles into Coq.
 
-![Swap and solution](swap-and-solution.png)
+To learn how to play the mod after it is installed, see the [getting started guide](getting-started.md).
+
+![Swap and solution](screenshots/swap-and-solution.png)
 
 The screenshot above shows solution for an inscription recipe that requires a
-`forall A B, A*B -> B*A` function. The input item for the inscription recipe
-was placed in the function block. The function block shows the function type on
-its label on top.
-
-The blue outline connecting the function block shows the scope of the function.
-The function type indicates that the function takes 3 parameters: `A`, `B`, and
-`A*B`. So within the function scope are 3 parameter ports. They were placed by
-taking the "Out port" and right clicking it onto the blue scope face. There is
-also a result port for the function, placed by right clicking an "In port" on a
-blue scope face. The result expression of the function was connected to the
-result port.
-
-The parameter ports are ordered left-to-right then top-to-bottom (if there were
-multiple lines of parameters). The 3rd parameter is connected to the input port
-of a match block, and the output of the match block is connected to the result
-port for the function.
-
-The match block has one case block. The case block's label shows that it
-contains the pair constructor. The `pair` constructor was chosen, because that
-is the constructor for `A*B`. The case's scope is shown in orange. The case
-scope has two parameter ports to match the two parameters of the `pair`
-constructor. It also has a result port.
-
-Inside the case statement are two application blocks. The left-most one gets
-its applicand (the function it applies) from its inventory. This is represented
-by the label on top of the block. Application blocks need both an applicand and
-an argument. The first application block gets its argument from its port on its
-backside, which is connected to the `B` parameter of the case scope. The `pair`
-constructor takes two arguments. The function is curried, which means after the
-first argument is applied, a new function is returned. This partially applied
-function is connected to the applicand port of the second application block.
-The second application block applies the `A` parameter of the case scope. The
-result of the second application has the correct result type, so its result is
-connected to the case result.
-
-Right clicking the function block brings up a dialog. When "Inscribe" is
-clicked in the dialog, the mod transpiles the block-based visual program into
-the following Coq program, then calls `coqc` to verify it is correct.
+`forall A B, A*B -> B*A` function. The solution shown above compiles into this program, which the mod passes to Coq to type check.
 ```
 Definition puzzle: (forall A B,
 A*B -> B*A):=
@@ -76,12 +41,10 @@ Coq code is only run on the Vintage Story server side. So there is no security
 risk to Vintage Story game clients, beyond the usual risk of running a mod that
 has not gone through an official security review.
 
-Currently the kind of Coq programs that the mod generates are very constrained.
-The programs are only compiled once to verify they match the inscription recipe
-type, then they are thrown away. In the future the mod may be expanded to allow
-the player to save functions they created inside of a blank function crystal
-item. At that point a player in creative mode could directly edit the attribute
-of a function crystal to input arbitrary Coq code.
+Players can create new Coq programs by appending existing ones together. So the
+kinds of programs that can be created in survival mode are very constrained.
+However, in creative mode, a player could directly edit the attribute of the
+genericterm item to create an arbitrary Coq program.
 
 Since the Coq language was designed for proving math statements, there are
 relatively few ways to escape out and arbitrarily access the hosting computer.
@@ -103,19 +66,17 @@ the rest of the computer.
 ## Missing features
 
 This mod is in early access. It is still missing the following features:
-1. A primitive application block that invokes functions without have to build a full function scope.
-2. A primitive destruct block to introduce the player to the concept of `match` without having to build a full match with cases in a function scope.
-3. Handbook entries or maybe a wiki. For now, look at the recipe descriptions. Try solving the inscription recipes in the order listed in the `en.lang` file.
-4. Recipes to obtain the lambda blocks (can only be accessed in creative mode currently).
-5. Drops or recipes to obtain the constructor and type items (can only be accessed in creative mode currently).
-6. Balanced inscription recipes.
-7. A few reward items (maybe a slightly more powerful axe?) to motivate the player to solve the puzzles.
-8. Puzzle/function block breaks the solution blocks upon a successful inscription, to stop the player from spamming the inscription recipe, and to force the player to learn through some repetition.
-9. A way to inspect the type of ports while building a function.
-10. Better translation of Coq errors into block locations.
-11. Inscription sound effects.
-12. Puzzles that check not just the output type but the term produced by the function.
-13. Fixpoints.
+1. A primitive destruct block to introduce the player to the concept of `match` without having to build a full match with cases in a function scope. The destruct block would also let the player unlock the rest of the constructor terms (most can only be accessed in creative mode).
+2. Handbook entries or maybe a wiki. For now, look at the [getting started guide](getting-started.md) to see how to use the application jig. If you're feeling adventurous, look up the inscription recipes in the source code, and try solving them in creative mode.
+3. Recipes to obtain the blocks to perform inscription crafting (can only be accessed in creative mode currently). The application jig blocks have recipes.
+5. Balanced inscription recipes.
+6. A few reward items (maybe a slightly more powerful axe?) to motivate the player to solve the puzzles.
+7. Puzzle/function block breaks the solution blocks upon a successful inscription, to stop the player from spamming the inscription recipe, and to force the player to learn through some repetition.
+8. A way to inspect the type of ports while building a function.
+9. Better translation of Coq errors into block locations.
+10. Inscription sound effects.
+11. Puzzles that check not just the output type but the term produced by the function.
+12. Fixpoints.
 
 ## Building
 
