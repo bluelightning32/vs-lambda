@@ -27,6 +27,8 @@
   // The prefix shown before the term name in the item info.
   "term-name-prefix": "Term ",
 
+  "game:tabname-terms": "Terms",
+
   // Names of blocks
   "block-app-north": "Application",
   "block-doublescope-ud": "Double-sided scope",
@@ -41,6 +43,22 @@
   "block-port-short-direct-in": "In port",
   "block-wire": "Wire",
   "game:block-pan-enhanced": "Enhanced wooden pan",
+  "block-groovedcobblestone-chert": "Chert grooved cobblestone",
+  "block-groovedcobblestone-granite": "Granite grooved cobblestone",
+  "block-groovedcobblestone-andesite": "Andesite grooved cobblestone",
+  "block-groovedcobblestone-basalt": "Basalt grooved cobblestone",
+  "block-groovedcobblestone-peridotite": "Peridotite grooved cobblestone",
+  "block-applicationjig-chert": "Chert application jig",
+  "block-applicationjig-granite": "Granite application jig",
+  "block-applicationjig-andesite": "Andesite application jig",
+  "block-applicationjig-basalt": "Basalt application jig",
+  "block-applicationjig-peridotite": "Peridotite application jig",
+  "block-sticksupport-*": "Stick support",
+  "block-supportedslab-chert-*": "Supported chert cobblestone slab",
+  "block-supportedslab-granite-*": "Supported granite cobblestone slab",
+  "block-supportedslab-andesite-*": "Supported andesite cobblestone slab",
+  "block-supportedslab-basalt-*": "Supported basalt cobblestone slab",
+  "block-supportedslab-peridotite-*": "Supported peridotite cobblestone slab",
 
   // Names of items
   "item-denaturedterm": "Denatured term",
