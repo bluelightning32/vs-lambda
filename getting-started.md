@@ -3,18 +3,18 @@ client side does not need Coq installed. However, if you are running a server,
 or playing in single player mode, Coq must be installed, as explained on the
 [readme page](readme.md).
 
-## Function application crafting
-
-This is the mod's early game form of crafting. Many of the term objects are
-functions, and the application jig allows combining them together to create new
-terms.
-
 Currently the only item in the mod not related to building functions is the
 enhanced pan. The enhanced pan has a 50% greater chance of dropping copper
 nuggets (about 22.5% total) and a 50% greater chance of dropping sphalerite
 nuggets (3% total). So the early game goal of the mod is to use function
 application crafting to create the term `(3, 12, 5)`, which is required in the
 crafting grid recipe for the enhanced pan.
+
+## Function application crafting
+
+This is the mod's early game form of crafting. Many of the term objects are
+functions, and the application jig allows combining them together to create new
+terms.
 
 ![Application jig](screenshots/application-jig.png)
 
@@ -70,7 +70,7 @@ Besides combining terms in the application jig, terms can be gathered in the fol
 
 You will need a variety of terms to craft the `(3, 12, 5)` term in the
 application jig. However, if you end up with too many or the wrong kinds, you
-can cook them into denatured terms in a firepit then eat them. Although the
+can cook them into denatured terms in a firepit, then eat them. Although the
 denatured terms only provide a little bit of fruit satiety.
 
 ## Inscription crafting
