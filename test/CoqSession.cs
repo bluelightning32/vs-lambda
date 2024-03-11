@@ -123,4 +123,16 @@ public class CoqSessionTest {
     Assert.IsTrue(info.IsType);
     Assert.IsFalse(info.IsTypeFamily);
   }
+
+  [TestMethod]
+  public void PairPairS() {
+    TermInfo info = _session.GetTermInfo(
+        new BlockPos(0, 0, 0, 0), Array.Empty<string>(), "(pair, S)");
+    Assert.AreEqual(null, info.ErrorMessage);
+    Assert.AreEqual("(pair, S)", info.Term);
+    Assert.AreEqual(null, info.Constructs);
+    Assert.AreEqual("(?A -> ?B -> ?A * ?B) * (nat -> nat)", info.Type);
+    Assert.IsFalse(info.IsType);
+    Assert.IsFalse(info.IsTypeFamily);
+  }
 }

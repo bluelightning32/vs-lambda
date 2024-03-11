@@ -42,9 +42,9 @@ public partial class TermInfo {
     return new() { ErrorMessage = sb.ToString() };
   }
 
-  private static string RemoveOuterParens(string term) {
-    if (term.StartsWith('(') && term.EndsWith(')')) {
-      return term[1.. ^ 1];
+  private static string RemoveOuterTypeScope(string term) {
+    if (term.StartsWith('(') && term.EndsWith(")%type")) {
+      return term[1.. ^ 6];
     }
     return term;
   }
@@ -55,8 +55,8 @@ public partial class TermInfo {
       throw new ArgumentException("Coq output does not match regex.");
     }
     TermInfo result = new() { Imports = imports,
-                              Term = RemoveOuterParens(match.Groups[2].Value),
-                              Type = RemoveOuterParens(match.Groups[1].Value) };
+                              Term = match.Groups[2].Value,
+                              Type = RemoveOuterTypeScope(match.Groups[1].Value) };
     if (match.Groups[3].Value.StartsWith("constructor: ")) {
       result.Constructs =
           match.Groups[3].Value.Substring("constructor: ".Length);
@@ -75,7 +75,7 @@ public partial class TermInfo {
     return result;
   }
   [GeneratedRegex(
-      @"^lambda: type: (.+)\nlambda: reduced: (.+)\nlambda: (.+)\nlambda: function: (.+)\n- : unit = \(\)\n*$",
+      @"^- : constr \* constr \* message \* bool =\s+\(constr:\((.+)\),\s+constr:\((.+)\),\s+message:\((.+)\),\s+(true|false)\)\s+$",
       RegexOptions.Compiled | RegexOptions.Singleline)]
   private static partial Regex ParseInfo();
 
@@ -261,7 +261,7 @@ public class CoqSession : IDisposable {
       }
       writer.Write(TermInfoHeader);
       writer.WriteLine(
-          $"Ltac2 Eval print_info \"lambda: \" open_constr:({term}).");
+          $"Ltac2 Eval get_info open_constr:({term}).");
       writer.Close();
 
       using StreamReader reader = new(filename);
@@ -319,23 +319,20 @@ Ltac2 get_kind (c: constr) :=
   end.
 
 Ltac2 get_is_function (c: constr) :=
-  fprintf "function: %s"
     (match! type c with
-    | forall x : _, ?y => "true"
-    | _ => "false"
+    | forall x : _, ?y => true
+    | _ => false
     end).
 
 Ltac2 get_type (c: constr) :=
-  fprintf "type: %t" (type c).
+  (type c).
 
 Ltac2 get_reduced (c: constr) :=
-  fprintf "reduced: %t" (eval cbn in $c).
+  (eval cbn in $c).
 
-Ltac2 print_info (p: string) (c: constr) :=
-  let tmp :=
-    List.map (fun x => printf "%s%s" p (to_string x))
-      [get_type c; get_reduced c; get_kind c;
-      get_is_function c] in ().
+Ltac2 get_info (c: constr) :=
+  (get_type c, get_reduced c, get_kind c,
+      get_is_function c).
 
 """;
   // clang-format on
