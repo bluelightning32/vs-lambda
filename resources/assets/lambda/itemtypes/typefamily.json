@@ -9,11 +9,11 @@
   maxStackSize: 64,
   shape: { base: "item/term" },
   guiTransform: {
-		translation: { x: 3, y: 0, z: 0 },
-		rotation: { x: 9, y: 39, z: -41 },
-		origin: { x: 0.5, y: 0.2, z: 0.5 },
-		scale: 3
-	},
+    translation: { x: 3, y: 0, z: 0 },
+    rotation: { x: 9, y: 39, z: -41 },
+    origin: { x: 0.5, y: 0.2, z: 0.5 },
+    scale: 3
+  },
   behaviors: [
     {
       name: "Term",
@@ -35,5 +35,13 @@
         "isTypeFamily": true
       }
     }
-  ]
+  ],
+  combustibleProps: {
+    meltingPoint: 200,
+    meltingDuration: 15,
+    smeltedRatio: 1,
+    smeltingType: "cook",
+    smeltedStack: { type: "item", code: "denaturedterm" },
+    requiresContainer: false
+  }
 }
