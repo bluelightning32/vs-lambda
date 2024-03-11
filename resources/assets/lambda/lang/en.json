@@ -46,13 +46,20 @@
   "item-denaturedterm": "Denatured term",
   "itemdesc-denaturedterm": "This is edible, but barely. It smells like overripe fruit and has a slimy, rubbery texture.",
 
+  "itemdesc-term-fst": "Use this as the applicand in the application jig to convert a term like (A, B) into A.",
+  "itemdesc-term-snd": "Use this as the applicand in the application jig to convert a term like (A, B) into B.",
+  "itemdesc-term-hd": "Use this as the applicand in the application jig to get the first item from a list like A :: B :: nil.",
+  "itemdesc-term-nth": "Use this as the applicand in the application jig to get the first item from a list like A :: B :: nil.",
+
   // Names of constructors
   "item-constructor-unit-tt": "tt",
   "item-constructor-nat-s": "S",
+  "itemdesc-constructor-nat-s": "Use this as the applicand in the application jig to add 1 to a natural number.",
   "item-constructor-nat-o": "O",
   "item-constructor-sum-inr": "inr",
   "item-constructor-sum-inl": "inl",
   "item-constructor-prod-pair": "pair",
+  "itemdesc-constructor-prod-pair": "Use this as the applicand in the application jig twice to create a pair like (A, B).",
 
   // Names of type families
   "item-typefamily-unit": "unit",

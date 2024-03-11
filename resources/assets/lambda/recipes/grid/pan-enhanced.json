@@ -1,0 +1,10 @@
+{
+  ingredientPattern: "PT",
+  ingredients: {
+    "P": { type: "block", code: "game:pan-wooden" },
+    "T": { type: "item", code: "term-tuple3125" },
+  },
+  width: 2,
+  height: 1,
+  output: { type: "block", code: "game:pan-enhanced" }
+}

@@ -1,0 +1,144 @@
+[
+  {
+    side: "server",
+    file: "game:blocktypes/plant/reedpapyrus", op: "addmerge", path: "/dropsByType",
+    value: {
+      "*coopersreed-*-normal-*": [
+        {
+          type: "item", code: "lambda:term-fst",
+          quantity: { avg: 0.03, var: 0 }
+        }
+      ],
+      "*papyrus-*-normal-*":  [
+        {
+          type: "item", code: "lambda:term-fst",
+          quantity: { avg: 0.03, var: 0 }
+        }
+      ]
+    }
+  },
+  {
+    side: "server",
+    file: "game:entities/land/drifter", op: "addmerge", path: "/server/behaviors/9/dropsByType/*-normal/-",
+    value: {
+      type: "item", code: "lambda:term-snd",
+      quantity: { avg: 0.1, var: 0 }
+    },
+  },
+  {
+    side: "server",
+    file: "game:blocktypes/wood/pan", op: "addmerge", path: "/attributes/panningDrops",
+    value: {
+			"@(bonysoil|bonysoil-.*)": [
+        {
+          type: "item", code: "lambda:term-snd",
+          chance: { avg: 0.15, var: 0 }
+        },
+      ],
+      "@(sand|gravel)-.*": [
+        {
+          type: "item", code: "lambda:term-snd",
+          chance: { avg: 0.05, var: 0 }
+        },
+      ]
+    }
+  },
+  {
+    side: "server",
+    file: "game:blocktypes/plant/leaves/normal", op: "addmerge", path: "/drops",
+    value: [
+      {
+        type: "item", code: "lambda:term-pair3s",
+        chance: { avg: 0.002, var: 0 }
+      },
+    ]
+  },
+  {
+    side: "server",
+    file: "game:blocktypes/plant/mushroom", op: "addmerge", path: "/drops",
+    value: [
+      {
+        type: "item", code: "lambda:term-pairpair",
+        chance: { avg: 0.05, var: 0 }
+      },
+    ]
+  },
+  {
+    side: "server",
+    file: "game:blocktypes/stone/looseboulders", op: "addmerge", path: "/drops",
+    value: [
+      {
+        type: "item", code: "lambda:constructor-nat-s",
+        chance: { avg: 0.2, var: 0 }
+      },
+      {
+        type: "item", code: "lambda:term-12",
+        chance: { avg: 0.2, var: 0 }
+      },
+    ]
+  },
+  {
+    side: "server",
+    file: "game:entities/land/wolf-male", op: "addmerge", path: "/server/behaviors/6/drops/-",
+    value: {
+      type: "item", code: "lambda:term-list40053",
+      quantity: { avg: 0.1, var: 0 }
+    },
+  },
+  {
+    side: "server",
+    file: "game:entities/land/wolf-female", op: "addmerge", path: "/server/behaviors/6/drops/-",
+    value: {
+      type: "item", code: "lambda:term-list40053",
+      quantity: { avg: 0.1, var: 0 }
+    },
+  },
+  {
+    side: "server",
+    file: "game:entities/land/hare-female", op: "addeach", path: "/server/behaviors/6/drops/-",
+    value: [
+      {
+        type: "item", code: "lambda:term-hd",
+        quantity: { avg: 0.05, var: 0 }
+      },
+      {
+        type: "item", code: "lambda:term-nth",
+        quantity: { avg: 0.05, var: 0 }
+      },
+    ]
+  },
+  {
+    side: "server",
+    file: "game:entities/land/hare-male", op: "addeach", path: "/server/behaviors/6/drops/-",
+    value: [
+      {
+        type: "item", code: "lambda:term-hd",
+        quantity: { avg: 0.05, var: 0 }
+      },
+      {
+        type: "item", code: "lambda:term-nth",
+        quantity: { avg: 0.05, var: 0 }
+      },
+    ]
+  },
+  {
+    side: "server",
+    file: "game:entities/land/hyena-male", op: "addeach", path: "/server/behaviors/6/drops/-",
+    value: [
+      {
+        type: "item", code: "lambda:term-fstpair",
+        quantity: { avg: 0.1, var: 0 }
+      },
+    ]
+  },
+  {
+    side: "server",
+    file: "game:entities/land/hyena-female", op: "addeach", path: "/server/behaviors/6/drops/-",
+    value: [
+      {
+        type: "item", code: "lambda:term-fstpair",
+        quantity: { avg: 0.1, var: 0 }
+      },
+    ]
+  },
+]

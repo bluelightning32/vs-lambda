@@ -1,0 +1,65 @@
+{
+  code: "term",
+  variantgroups: [
+    {
+      code: "value", states: ["fst", "snd", "pair3", "pair3s", "pairpair", "12", "list40053", "hd", "nth", "fstpair", "tuple3125"]
+    },
+  ],
+  creativeinventory: { "general": ["*"], "terms": ["*"]},
+  maxStackSize: 64,
+  shape: { base: "item/term" },
+  guiTransform: {
+    translation: { x: 3, y: 0, z: 0 },
+    rotation: { x: 9, y: 39, z: -41 },
+    origin: { x: 0.5, y: 0.2, z: 0.5 },
+    scale: 3
+  },
+  behaviors: [
+    {
+      name: "Term",
+      properties: {
+        "typeByType": {
+          "*-fst": "?A * ?B -> ?A",
+          "*-snd": "?A * ?B -> ?B",
+          "*-pair3": "?B -> nat * ?B",
+          "*-pair3s": "nat * (nat -> nat)",
+          "*-pairpair": "(?A -> ?B -> ?A * ?B) * (?A0 -> ?B0 -> ?A0 * ?B0)",
+          "*-12": "nat",
+          "*-list40053": "list nat",
+          "*-hd": "?A -> list ?A -> ?A",
+          "*-nth": "nat -> list ?A -> ?A -> ?A",
+          "*-fstpair": "(?A * ?B -> ?A) * (?A0 -> ?B0 -> ?A0 * ?B0)",
+          "*-tuple3125": "nat * nat * nat",
+        },
+        "termByType": {
+          "*-fst": "fst",
+          "*-snd": "snd",
+          "*-pair3": "pair 3",
+          "*-pair3s": "(3, S)",
+          "*-pairpair": "(pair, pair)",
+          "*-12": "12",
+          "*-list40053": "4 :: 0 :: 0 :: 5 :: 3 :: nil",
+          "*-hd": "hd",
+          "*-nth": "nth",
+          "*-fstpair": "(fst, pair)",
+          "*-tuple3125": "(3, 12, 5)",
+        },
+        importsByType: {
+          "*-hd": [ "Coq.Lists.List" ],
+          "*-nth": [ "Coq.Lists.List" ],
+          "*": []
+        },
+        "isType": false,
+        "isTypeFamily": false
+      }
+    }
+  ],
+  combustibleProps: {
+    meltingPoint: 200,
+    meltingDuration: 15,
+    smeltedRatio: 1,
+    smeltingType: "cook",
+    smeltedStack: { type: "item", code: "denaturedterm" },
+    requiresContainer: false
+  }
+}
