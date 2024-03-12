@@ -45,13 +45,11 @@
   },
   {
     side: "server",
-    file: "game:blocktypes/plant/leaves/normal", op: "addmerge", path: "/drops",
-    value: [
-      {
-        type: "item", code: "lambda:term-pair3s",
-        chance: { avg: 0.002, var: 0 }
-      },
-    ]
+    file: "game:blocktypes/plant/leaves/normal", op: "addmerge", path: "/drops/-",
+    value:{
+      type: "item", code: "lambda:term-pair3s",
+      quantity: { avg: 0.002, var: 0 }
+    }
   },
   {
     side: "server",
@@ -59,7 +57,7 @@
     value: [
       {
         type: "item", code: "lambda:term-pairpair",
-        chance: { avg: 0.05, var: 0 }
+        quantity: { avg: 0.05, var: 0 }
       },
     ]
   },
@@ -69,11 +67,11 @@
     value: [
       {
         type: "item", code: "lambda:constructor-nat-s",
-        chance: { avg: 0.2, var: 0 }
+        quantity: { avg: 0.2, var: 0 }
       },
       {
         type: "item", code: "lambda:term-12",
-        chance: { avg: 0.2, var: 0 }
+        quantity: { avg: 0.2, var: 0 }
       },
     ]
   },
