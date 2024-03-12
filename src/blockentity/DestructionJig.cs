@@ -21,7 +21,7 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
   private readonly InventoryGeneric _inventory =
       new(2, null, null, (int slot, InventoryGeneric inv) => {
         if (slot == 0)
-          return new ItemSlotLiquidOnly(inv, 10);
+          return new ItemSlotLiquidOnly(inv, 5);
         else
           return new ItemSlotSurvival(inv);
       });
