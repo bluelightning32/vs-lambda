@@ -83,6 +83,7 @@ public class CoreSystem : ModSystem {
         "ForwardToBlock", typeof(CollectibleBehavior.ForwardToBlock));
     api.RegisterCollectibleBehaviorClass("Term",
                                          typeof(CollectibleBehavior.Term));
+    api.RegisterBlockClass("DestructionJig", typeof(Blocks.DestructionJig));
     api.RegisterBlockBehaviorClass("BlockEntityForward",
                                    typeof(BlockBehavior.BlockEntityForward));
     api.RegisterBlockBehaviorClass("BlockEntityForward",
@@ -98,6 +99,8 @@ public class CoreSystem : ModSystem {
                                  typeof(BlockEntity.FunctionContainer));
     api.RegisterBlockEntityClass("ApplicationJig",
                                  typeof(BlockEntity.ApplicationJig));
+    api.RegisterBlockEntityClass("DestructionJig",
+                                 typeof(BlockEntity.DestructionJig));
     api.RegisterBlockEntityClass("TermContainer",
                                  typeof(BlockEntity.TermContainer));
     api.RegisterBlockEntityBehaviorClass("CacheMesh",

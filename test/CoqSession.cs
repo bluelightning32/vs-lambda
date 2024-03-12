@@ -126,8 +126,8 @@ public class CoqSessionTest {
 
   [TestMethod]
   public void PairPairS() {
-    TermInfo info = _session.GetTermInfo(
-        new BlockPos(0, 0, 0, 0), Array.Empty<string>(), "(pair, S)");
+    TermInfo info = _session.GetTermInfo(new BlockPos(0, 0, 0, 0),
+                                         Array.Empty<string>(), "(pair, S)");
     Assert.AreEqual(null, info.ErrorMessage);
     Assert.AreEqual("(pair, S)", info.Term);
     Assert.AreEqual(null, info.Constructs);

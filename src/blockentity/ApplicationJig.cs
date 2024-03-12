@@ -308,7 +308,8 @@ public class ApplicationJig : BlockEntityDisplay,
   bool IBlockEntityForward.OnBlockInteractStart(IPlayer byPlayer,
                                                 BlockSelection blockSel,
                                                 ref EnumHandling handled) {
-    if (byPlayer.Entity.Controls.ShiftKey) {
+    ItemSlot hotbarSlot = byPlayer.InventoryManager.ActiveHotbarSlot;
+    if (!hotbarSlot.Empty) {
       return TryPut(byPlayer, ref handled);
     } else {
       if (TryTake(byPlayer)) {

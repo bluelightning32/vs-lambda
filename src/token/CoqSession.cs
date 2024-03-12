@@ -54,9 +54,9 @@ public partial class TermInfo {
     if (!match.Success) {
       throw new ArgumentException("Coq output does not match regex.");
     }
-    TermInfo result = new() { Imports = imports,
-                              Term = match.Groups[2].Value,
-                              Type = RemoveOuterTypeScope(match.Groups[1].Value) };
+    TermInfo result =
+        new() { Imports = imports, Term = match.Groups[2].Value,
+                Type = RemoveOuterTypeScope(match.Groups[1].Value) };
     if (match.Groups[3].Value.StartsWith("constructor: ")) {
       result.Constructs =
           match.Groups[3].Value.Substring("constructor: ".Length);
@@ -260,8 +260,7 @@ public class CoqSession : IDisposable {
         writer.WriteLine($"Require Import {import}.");
       }
       writer.Write(TermInfoHeader);
-      writer.WriteLine(
-          $"Ltac2 Eval get_info open_constr:({term}).");
+      writer.WriteLine($"Ltac2 Eval get_info open_constr:({term}).");
       writer.Close();
 
       using StreamReader reader = new(filename);
