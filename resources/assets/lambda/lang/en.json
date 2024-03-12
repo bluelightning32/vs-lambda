@@ -59,11 +59,21 @@
   "block-supportedslab-andesite-*": "Supported andesite cobblestone slab",
   "block-supportedslab-basalt-*": "Supported basalt cobblestone slab",
   "block-supportedslab-peridotite-*": "Supported peridotite cobblestone slab",
+  "block-log-placed-lambda-ud": "Lambda log",
+  "block-leaves-placed-lambda": "Lambda leaves",
+  "block-leavesbranchy-placed-lambda": "Lambda branchy leaves",
+  "block-sapling-lambda-free": "Lambda sapling",
 
-  // Names of items
+  // Items
   "item-denaturedterm": "Denatured term",
   "itemdesc-denaturedterm": "This is edible, but barely. It smells like overripe fruit and has a slimy, rubbery texture.",
+  "item-sapportion-raw": "Lambda sap",
+  "incontainer-item-sapportion-raw": "Lambda sap",
+  "item-sapportion-destruction": "Term destruction fluid",
+  "incontainer-item-sapportion-destruction": "Term destruction fluid",
+  "item-treeseed-lambda": "Lambda tree seed",
 
+  // Terms that are not constructors or types
   "itemdesc-term-fst": "Use this as the applicand in the application jig to convert a term like (A, B) into A.",
   "itemdesc-term-snd": "Use this as the applicand in the application jig to convert a term like (A, B) into B.",
   "itemdesc-term-hd": "Use this as the applicand in the application jig to get the first item from a list like A :: B :: nil.",

@@ -22,6 +22,12 @@
     treeFellingGroupCode: "lambda",
     treeFellingGroupSpreadIndex: 4,
     preventsDecay: true,
+    sapPropertiesByType: {
+      "*-grown-*": {
+        dripTime: 1,
+        sap: "lambda:sapportion-raw"
+      }
+    }
   },
   texturesByType: {
     "*-ud": {

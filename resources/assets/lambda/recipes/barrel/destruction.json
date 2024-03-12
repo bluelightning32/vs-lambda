@@ -1,0 +1,11 @@
+[
+  {
+    code: "sap-destruction",
+    sealHours: 24,
+    ingredients: [
+      { type: "item", code: "denaturedterm",  quantity: 2 },
+      { type: "item", code: "sapportion-raw",  litres: 10 },
+    ],
+    output: { type: "item", code: "sapportion-destruction", litres: 10 }
+  }
+]

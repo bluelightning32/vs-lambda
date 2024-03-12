@@ -1,0 +1,11 @@
+[
+  {
+    code: "sap-raw",
+    sealHours: 24,
+    ingredients: [
+      { type: "block", code: "log-placed-lambda-ud",  quantity: 1 },
+      { type: "item", code: "game:waterportion",  litres: 10 },
+    ],
+    output: { type: "item", code: "sapportion-raw", litres: 10 }
+  }
+]

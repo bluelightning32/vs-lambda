@@ -1,0 +1,22 @@
+[
+  {
+    op: "add",
+    path: "/treegens/-",
+    value: {
+      Generator: "lambda:lambda",
+      Weight: 100,
+      MinTemp: 28,
+      MaxTemp: 40,
+      MinRain: 80,
+      MaxRain: 140,
+      MinFert: 50,
+      MaxFert: 200,
+      MinForest: 40,
+      MaxForest: 200,
+      MinHeight: 0.0,
+      MaxHeight: 0.8
+    },
+    file: "game:worldgen/treengenproperties.json",
+    side: "server"
+  }
+]
