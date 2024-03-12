@@ -1,0 +1,49 @@
+{
+  treeWorldPropertyCode: "lambda",
+  sizeMultiplier: 0,
+  sizeVar: { avg: 1},
+  trunks: [{
+    widthloss: 0.1,
+    randomWidthLoss: { avg: 0.12, var: 0.03 },
+    dieAt: { avg: 0.38 },
+    branchStart: { avg: 0.01, var: 0.0 },
+    branchSpacing: { avg: 1.0, var: 0.0 },
+    branchVerticalAngle:  { avg: 1.5, var: 0.1 },
+    branchHorizontalAngle: { avg: 0, var: 3.1415 },
+    branchWidthMultiplier: { avg: 1.2, var: 0 },
+    branchQuantity: { avg: 12, var: 0 }
+  }],
+  branches: [{
+    widthLoss: 0.1,
+    gravityDrag: -0.3,
+    dieAt: { avg: 0.01 },
+
+    branchStart: { avg: 0.5 },
+    branchSpacing: { avg: 0.8, var: 0.0 },
+    branchQuantity: { avg: 2, var: 0 },
+    branchHorizontalAngle: { avg: 0, var: 1 },
+    branchVerticalAngle:  { avg: 1.5, var: 0.1 },
+    branchWidthMultiplier: { avg: 0.8, var: 0 },
+  },
+  {
+    widthLoss: 0.1,
+    gravityDrag: -0.3,
+    dieAt: { avg: 0.01 },
+
+    branchStart:  { avg: 3 },
+    branchSpacing: { avg: 3, var: 0.0 },
+    branchQuantity: { avg: 0, var: 0 },
+    branchHorizontalAngle: { avg: 0, var: 1 },
+    branchVerticalAngle:  { avg: 0, var: 0.1 },
+    branchWidthMultiplier: { avg: 1, var: 0 },
+  }
+  ],
+  treeBlocks: {
+    logBlockCode: "lambda:log-grown-lambda-ud",
+    leavesBlockCode: "lambda:leaves-grown-lambda",
+    leavesBranchyBlockCode: "lambda:leavesbranchy-grown-lambda",
+    vinesBlockCode: "game:wildvine-section-north",
+    vinesEndBlockCode: "game:wildvine-end-north",
+    mossDecorCode: "game:attachingplant-spottymoss"
+  }
+}

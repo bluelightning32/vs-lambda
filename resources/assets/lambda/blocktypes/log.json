@@ -1,0 +1,290 @@
+{
+  code: "log",
+  class: "BlockLog",
+  behaviorsByType: {
+    "*-grown-*": [{name: "PushEventOnBlockBroken",	properties: {eventName: "testForDecay"}}, { name: "MyceliumHost" }],
+    "*-placed-*": [{name: "Pillar"}, { name: "WrenchOrientable", properties: { baseCode: "log-placed"  } }]
+  },
+  variantgroups: [
+    { code: "type", states: ["grown", "placed"] },
+		{ code: "wood", states: ["lambda"] },
+    { code: "rotation", states: ["ud", "ns", "we"] },
+  ],
+  creativeinventory: { "general": ["log-placed-lambda-ud"], "flora": ["log-placed-lambda-ud"], "construction": ["log-placed-lambda-ud"] },
+  shape: { base: "game:block/basic/cube" },
+  drawtype: "cube",
+  blockmaterial: "Wood",
+  requiredMiningTier: 1,
+  attributes: {
+    handbook: {
+      groupBy: ["log-*-lambda-*"]
+    },
+    treeFellingGroupCode: "lambda",
+    treeFellingGroupSpreadIndex: 4,
+    preventsDecay: true,
+  },
+  texturesByType: {
+    "*-ud": {
+      "all": {
+        base: "game:block/wood/bark/walnut",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ]
+      },
+      "inside-north": {
+        base: "game:block/wood/debarked/walnut",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+        rotation: 90
+      },
+      "inside-east": {
+        base: "game:block/wood/debarked/walnut",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+        rotation: 90
+      },
+      "inside-south": {
+        base: "game:block/wood/debarked/walnut",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+        rotation: 90
+      },
+      "inside-west": {
+        base: "game:block/wood/debarked/walnut",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+        rotation: 90
+      },
+
+      "up": {
+        base: "game:block/wood/treetrunk/walnut",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+      },
+      "down": {
+        base: "game:block/wood/treetrunk/walnut",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+      }
+    },
+    "*-ns": {
+      "all": {
+        base: "game:block/wood/bark/walnut-h",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+      },
+      "up": {
+        base: "game:block/wood/bark/walnut",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+      },
+      "down": {
+        base: "game:block/wood/bark/walnut",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+      },
+
+
+      "inside-up": {
+        base: "game:block/wood/debarked/walnut",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+        rotation: 90
+      },
+      "inside-down": {
+        base: "game:block/wood/debarked/walnut",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+        rotation: 90
+      },
+      "inside-west": {
+        base: "game:block/wood/debarked/walnut",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+      },
+      "inside-east": {
+        base: "game:block/wood/debarked/walnut",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+      },
+
+
+      "north": {
+        base: "game:block/wood/treetrunk/walnut",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+      },
+      "south": {
+        base: "game:block/wood/treetrunk/walnut",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+      }
+    },
+    "*-we": {
+      "all": {
+        base: "game:block/wood/bark/walnut-h",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+      },
+      "up": {
+        base: "game:block/wood/bark/walnut-h",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+      },
+
+      "inside-up": {
+        base: "game:block/wood/debarked/walnut",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+      },
+      "inside-down": {
+        base: "game:block/wood/debarked/walnut",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+      },
+      "inside-north": {
+        base: "game:block/wood/debarked/walnut",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+      },
+      "inside-south": {
+        base: "game:block/wood/debarked/walnut",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+      },
+
+
+      "west": {
+        base: "game:block/wood/treetrunk/walnut",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+      },
+      "east": {
+        base: "game:block/wood/treetrunk/walnut",
+        blendedOverlays: [
+          {
+            base: "tree/log-overlay",
+            blendMode: "overlay"
+          }
+        ],
+      }
+    },
+  },
+  replaceable: 500,
+  resistance: 4.5,
+  sounds: {
+    "place": "game:block/planks",
+    "walk": "game:walk/wood",
+    "hit": "game:block/planks",
+    "break": "game:block/planks",
+    byTool: {
+      "Axe": { hit: "game:block/chop", break: "game:block/planks" }
+    }
+  },
+  drops: [
+    { type: "block", code: "log-placed-lambda-ud", quantity: { avg: 1 }  }
+  ],
+  combustibleProps: {
+    burnTemperature: 800,
+    burnDuration: 72,
+  },
+  maxStackSize: 16,
+  materialDensity: 700,
+  heldTpIdleAnimation: "holdbothhandslarge", heldRightReadyAnimation: "heldblockready", heldTpUseAnimation: "twohandplaceblock",
+  tpHandTransform: {
+    translation: { x: -1.23, y: -0.91, z: -0.8 },
+    rotation: { x: -2, y: 25, z: -78 },
+    scale: 0.4
+  }
+}
