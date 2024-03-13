@@ -96,9 +96,9 @@ public class ApplicationJig : BlockEntityDisplay,
       // cube. If the mesh is already within those bounds, don't translate it.
       // However, if it is outside of those bounds, translate its lowest corner
       // to (5,0,5).
-      if (bounds.X1 < 5.001f / 16f || bounds.X1 > 11.001f / 16f ||
+      if (bounds.X1 < 4.999f / 16f || bounds.X1 > 11.001f / 16f ||
           bounds.Y1 < -0.001f / 16f || bounds.Y1 > 6.001f / 16f ||
-          bounds.Z1 < 5.001f / 16f || bounds.Z1 > 11.001f / 16f) {
+          bounds.Z1 < 4.999f / 16f || bounds.Z1 > 11.001f / 16f) {
         float size =
             Math.Max(Math.Max(bounds.XSize, bounds.YSize), bounds.ZSize);
         // 3. Move the mesh to bottom the center of the cube.
@@ -346,7 +346,7 @@ public class ApplicationJig : BlockEntityDisplay,
       Term t = slot.Itemstack.Collectible.GetBehavior<Term>();
       if (t != null) {
         if (!hasTerms) {
-          dsc.Append("Contents: ");
+          dsc.Append(Lang.Get("Contents: "));
           hasTerms = true;
         } else {
           dsc.Append(' ');

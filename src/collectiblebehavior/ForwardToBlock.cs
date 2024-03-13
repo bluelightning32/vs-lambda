@@ -150,12 +150,12 @@ public class ForwardToBlock : VSCollectibleBehavior {
 
   public delegate void BlockBehaviorDelegate(VSBlockBehavior behavior,
                                              ref EnumHandling handled);
-  public static void WalkBlockBehaviors(
-      IBlockAccessor blockAccessor, Block block, BlockPos pos,
-      BlockBehaviorDelegate callBehavior, BlockDelegate callBlock,
-      BlockEntityForward.BlockEntityBehaviorDelegate callEntityBehavior,
-      BlockEntityForward.BlockEntityDelegate callEntity,
-      ref EnumHandling handled) {
+  public static void
+  WalkBlockBehaviors(IBlockAccessor blockAccessor, Block block, BlockPos pos,
+                     BlockBehaviorDelegate callBehavior,
+                     BlockDelegate callBlock,
+                     BlockEntityForward.BlockEntityDelegate callEntity,
+                     ref EnumHandling handled) {
     foreach (VSBlockBehavior behavior in block.BlockBehaviors) {
       EnumHandling behaviorHandled = EnumHandling.PassThrough;
       callBehavior(behavior, ref behaviorHandled);
@@ -178,12 +178,31 @@ public class ForwardToBlock : VSCollectibleBehavior {
       }
     }
 
-    VSBlockEntity entity = blockAccessor.GetBlockEntity(pos);
-    if (entity == null) {
-      return;
+    {
+      VSBlockEntity entity = blockAccessor.GetBlockEntity(pos);
+      if (entity == null) {
+        return;
+      }
+      EnumHandling blockEntityHandled = EnumHandling.PassThrough;
+      callEntity(entity, ref blockEntityHandled);
+      if (blockEntityHandled != EnumHandling.PassThrough) {
+        handled = blockEntityHandled;
+      }
     }
-    BlockEntityForward.WalkBlockEntityBehaviors(entity, callEntityBehavior,
-                                                callEntity, ref handled);
+  }
+
+  public static void WalkBlockBehaviors(
+      IBlockAccessor blockAccessor, Block block, BlockPos pos,
+      BlockBehaviorDelegate callBehavior, BlockDelegate callBlock,
+      BlockEntityForward.BlockEntityBehaviorDelegate callEntityBehavior,
+      BlockEntityForward.BlockEntityDelegate callEntity,
+      ref EnumHandling handled) {
+    WalkBlockBehaviors(
+        blockAccessor, block, pos, callBehavior, callBlock,
+        (VSBlockEntity entity, ref EnumHandling handled) =>
+            BlockEntityForward.WalkBlockEntityBehaviors(
+                entity, callEntityBehavior, callEntity, ref handled),
+        ref handled);
   }
 
   private delegate void ICollectibleTargetDelegate(ICollectibleTarget forward,

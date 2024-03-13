@@ -23,7 +23,9 @@
       groupBy: [
         "cobblestone-*"
       ]
-    }
+    },
+    capacityLitres: 5,
+    liquidContentShapeLoc: "block/destructionjig/liquid",
   },
   creativeinventory: {
     "general": [
@@ -34,7 +36,7 @@
     ]
   },
   shape: {
-    base: "block/destructionjig"
+    base: "block/destructionjig/container"
   },
   blockmaterial: "Stone",
   drawtype: "json",

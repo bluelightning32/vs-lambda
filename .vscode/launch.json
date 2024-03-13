@@ -15,6 +15,7 @@
       "c:\\Users\\Tyron\\Documents\\vintagestory\\game\\VintagestoryApi\\": "${env:VINTAGE_STORY}/source/vsapi/",
       "c:\\Users\\Tyron\\Documents\\vintagestory\\game\\VintagestoryLib\\": "${env:VINTAGE_STORY}/source/vslib/",
       "c:\\Users\\Tyron\\Documents\\vintagestory\\game\\VSSurvivalMod\\": "${env:VINTAGE_STORY}/source/vssurvivalmod/"
-    }
+    },
+    "requireExactSource": false
   }]
 }

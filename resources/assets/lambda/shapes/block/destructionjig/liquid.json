@@ -1,0 +1,23 @@
+{
+	"editor": {
+		"collapsedPaths": "Root/Origin lid/origin handle,Root/origin lower ring,Root/origin barrel/Origin lid,Root/Origin lid/Cube14",
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+	},
+	"elements": [
+		{
+			"name": "Cube2",
+			"from": [ 4.0, 0.0, 4.0 ],
+			"to": [ 12.0, 0.0, 12.0 ],
+                        "renderPass": 4,
+			"faces": {
+				"up": { "texture": "#null", "uv": [ 0.0, 0.0, 8.0, 8.0 ], "windMode": [-1,-1,-1,-1] }
+			}
+		}
+	]}
