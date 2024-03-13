@@ -26,6 +26,9 @@
     },
     capacityLitres: 5,
     liquidContentShapeLoc: "block/destructionjig/liquid",
+    errorTexture: {
+      base: "destructionjig/error"
+    }
   },
   creativeinventory: {
     "general": [

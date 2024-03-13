@@ -236,14 +236,14 @@ public partial class DestructInfo {
   }
 
   public void FromTreeAttributes(ITreeAttribute tree) {
-    ErrorMessage = tree.GetAsString("ErrorMessage");
+    ErrorMessage = tree.GetAsString("errorMessage");
     TreeAttribute[] terms = (tree["terms"] as TreeArrayAttribute)?.value;
     if (terms != null) {
       Terms = new List<TermInfo>(terms.Length);
       for (int i = 0; i < terms.Length; ++i) {
         TermInfo term = new();
         term.FromTreeAttributes(terms[i]);
-        Terms[i] = term;
+        Terms.Add(term);
       }
     }
   }

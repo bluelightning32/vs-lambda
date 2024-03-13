@@ -15,7 +15,20 @@ using Vintagestory.GameContent;
 
 namespace Lambda.BlockEntities;
 
+public class DestructionFluidProps {
+  public float UseLitres;
+  public float OutputLitres = -1;
+  public JsonItemStack Output;
+}
+
 public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
+  private enum TermState {
+    Invalid,
+    CompilationWaiting,
+    CompilationRunning,
+    CompilationDone,
+  }
+
   // Pass in null for the API and inventory class name for now. The correct
   // values will be passed by `BlockEntityContainer.Initialize` when it calls
   // `Inventory.LateInitialize`.
@@ -28,10 +41,24 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
       });
   public override InventoryBase Inventory => _inventory;
   private Cuboidf[] _inventoryBounds = null;
-  private bool _compilationOutdated = true;
-  TermInfo _termInfo = null;
+  private bool _compilationRunning = false;
+  DestructInfo _destructInfo = null;
+  bool _dropWaiting = false;
+  // `_termState` applies to `_lastTerm`. This is used to check whether the term
+  // currently in the inventory changed since the last state update.
+  string _lastTerm = null;
+  TermState _termState = TermState.Invalid;
+  private ItemSlot LiquidSlot => _inventory[0];
 
   public override string InventoryClassName => "destructionjig";
+
+  public DestructionJig() { _inventory.SlotModified += OnSlotModified; }
+
+  private void OnSlotModified(int slot) {
+    if (Api.Side == EnumAppSide.Server) {
+      StartCompilation();
+    }
+  }
 
   public override void Initialize(ICoreAPI api) {
     // Set CapacityLitres before calling the base, because the base calls back
@@ -47,12 +74,15 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
     // necessary, because the container shouldn't accept blocks (only term
     // items), but this is set anyway for future proofing.
     Block.PlacedPriorityInteract = true;
+    GetOrCreateErrorMesh();
   }
 
   public override void ToTreeAttributes(ITreeAttribute tree) {
     base.ToTreeAttributes(tree);
-    if (!_compilationOutdated) {
-      _termInfo?.ToTreeAttributes(tree);
+    tree.SetInt("termState", (int)_termState);
+    tree.SetString("lastTerm", _lastTerm);
+    if (_termState == TermState.CompilationDone) {
+      _destructInfo?.ToTreeAttributes(tree);
     }
   }
 
@@ -60,12 +90,13 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
                                           IWorldAccessor worldForResolving) {
     base.FromTreeAttributes(tree, worldForResolving);
 
-    _termInfo ??= new();
-    _termInfo.FromTreeAttributes(tree);
-    _compilationOutdated =
-        _termInfo.ErrorMessage == null && _termInfo.Term == null;
-    if (_compilationOutdated) {
-      _termInfo = null;
+    _termState = (TermState)tree.GetAsInt("termState", (int)TermState.Invalid);
+    _lastTerm = tree.GetAsString("lastTerm");
+    if (_termState != TermState.CompilationDone) {
+      _destructInfo = null;
+    } else {
+      _destructInfo ??= new();
+      _destructInfo.FromTreeAttributes(tree);
     }
 
     SetInventoryBounds(!_inventory[1].Empty);
@@ -113,8 +144,51 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
     return mat;
   }
 
+  private MeshData CreateLiquidMesh(ICoreClientAPI capi,
+                                    ITexPositionSource contentSource) {
+    AssetLocation shapeLocation =
+        AssetLocation
+            .Create(Block.Attributes["liquidContentShapeLoc"].AsString(),
+                    CoreSystem.Domain)
+            .WithPathAppendixOnce(".json")
+            .WithPathPrefixOnce("shapes/");
+    Shape shape = Shape.TryGet(capi, shapeLocation);
+
+    capi.Tesselator.TesselateShape("distructionjig", shape,
+                                   out MeshData contentMesh, contentSource);
+
+    // Since this shape is a liquid, it needs its liquid flags set, otherwise
+    // the tessellator will fail with a null reference exception. The liquid
+    // flag constants are defined in assets/game/shaders/chunkliquid.vsh.
+    contentMesh.CustomInts = new CustomMeshDataPartInt(
+        contentMesh.FlagsCount) { Count = contentMesh.FlagsCount };
+    // Use reduced waves and reduced foam for all of the liquid shape
+    // vertices.
+    contentMesh.CustomInts.Values.Fill((1 << 26) | (1 << 27));
+    // I'm not sure what the floats do. Maybe they are flow vectors? Anyway,
+    // the JsonTesselator needs 2 per vertex.
+    contentMesh.CustomFloats = new CustomMeshDataPartFloat(
+        contentMesh.FlagsCount * 2) { Count = contentMesh.FlagsCount * 2 };
+    return contentMesh;
+  }
+
+  private MeshData GetOrCreateErrorMesh() {
+    if (MeshCache.TryGetValue("error", out MeshData result)) {
+      return result;
+    }
+
+    ICoreClientAPI capi = Api as ICoreClientAPI;
+    ITexPositionSource contentSource = new ContainerTextureSource(
+        capi, null,
+        Block.Attributes["errorTexture"].AsObject<CompositeTexture>(
+            null, Block.Code.Domain));
+    MeshData contentMesh = CreateLiquidMesh(capi, contentSource);
+    MeshCache["error"] = contentMesh;
+    return contentMesh;
+  }
+
   protected override MeshData getOrCreateMesh(ItemStack stack, int index) {
-    if (Inventory[index] is ItemSlotLiquidOnly slot) {
+    if (Inventory[index] == LiquidSlot) {
       string cacheKey = getMeshCacheKey(stack);
       if (MeshCache.TryGetValue(cacheKey, out MeshData result)) {
         return result;
@@ -123,29 +197,7 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
       ICoreClientAPI capi = Api as ICoreClientAPI;
       ITexPositionSource contentSource = BlockBarrel.getContentTexture(
           capi, stack, out float unusedFillHeight);
-      AssetLocation shapeLocation =
-          AssetLocation
-              .Create(Block.Attributes["liquidContentShapeLoc"].AsString(),
-                      CoreSystem.Domain)
-              .WithPathAppendixOnce(".json")
-              .WithPathPrefixOnce("shapes/");
-      Shape shape = Shape.TryGet(capi, shapeLocation);
-
-      capi.Tesselator.TesselateShape("distructionjig", shape,
-                                     out MeshData contentMesh, contentSource);
-
-      // Since this shape is a liquid, it needs its liquid flags set, otherwise
-      // the tessellator will fail with a null reference exception. The liquid
-      // flag constants are defined in assets/game/shaders/chunkliquid.vsh.
-      contentMesh.CustomInts = new CustomMeshDataPartInt(
-          contentMesh.FlagsCount) { Count = contentMesh.FlagsCount };
-      // Use reduced waves and reduced foam for all of the liquid shape
-      // vertices.
-      contentMesh.CustomInts.Values.Fill((1 << 26) | (1 << 27));
-      // I'm not sure what the floats do. Maybe they are flow vectors? Anyway,
-      // the JsonTesselator needs 2 per vertex.
-      contentMesh.CustomFloats = new CustomMeshDataPartFloat(
-          contentMesh.FlagsCount * 2) { Count = contentMesh.FlagsCount * 2 };
+      MeshData contentMesh = CreateLiquidMesh(capi, contentSource);
 
       MeshCache[cacheKey] = contentMesh;
       return contentMesh;
@@ -158,18 +210,17 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
     float[][] matrices = new float [_inventory.Count][];
     float fill = 0;
     float capacity = 1;
-    ItemSlot liquidSlot = Inventory[0];
-    if (!liquidSlot.Empty) {
+    if (!LiquidSlot.Empty) {
       WaterTightContainableProps props =
-          BlockLiquidContainerBase.GetContainableProps(liquidSlot.Itemstack);
-      fill = liquidSlot.StackSize / props.ItemsPerLitre;
-      capacity = ((ItemSlotLiquidOnly)liquidSlot).CapacityLitres;
+          BlockLiquidContainerBase.GetContainableProps(LiquidSlot.Itemstack);
+      fill = LiquidSlot.StackSize / props.ItemsPerLitre;
+      capacity = ((ItemSlotLiquidOnly)LiquidSlot).CapacityLitres;
     }
     const float liquidContainerHeight = 2f / 16f;
     const float liquidContainerBase = 0.5f + 6 / 16f;
     Matrixf liquidMat = GetTransformationMatrix(
         liquidContainerBase + liquidContainerHeight * fill / capacity,
-        liquidSlot);
+        LiquidSlot);
     matrices[0] = liquidMat.Values;
     for (int i = 1; i < _inventory.Count; ++i) {
       ItemSlot slot = Inventory[i];
@@ -215,7 +266,6 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
         SetInventoryBounds(true);
         MarkDirty();
         handled = EnumHandling.PreventSubsequent;
-        MarkTermInfoDirty();
         return true;
       }
     }
@@ -223,9 +273,114 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
     return false;
   }
 
-  private void MarkTermInfoDirty() {
-    _compilationOutdated = true;
-    _termInfo = null;
+  public static DestructionFluidProps GetDestructionProps(ItemStack stack) {
+    return stack?.ItemAttributes["destructionFluidProps"]
+        .AsObject<DestructionFluidProps>();
+  }
+
+  private void StartCompilation() {
+    Term termBhv = _inventory[1].Itemstack?.Collectible.GetBehavior<Term>();
+    string term = termBhv?.GetTerm(_inventory[1].Itemstack);
+    if (term == null) {
+      _destructInfo = null;
+      _dropWaiting = false;
+      _lastTerm = null;
+      _termState = TermState.Invalid;
+      return;
+    }
+    string[] imports = termBhv?.GetImports(_inventory[1].Itemstack);
+
+    // If the term changed, then reset the state.
+    if (term != _lastTerm) {
+      _termState = TermState.Invalid;
+    }
+    _lastTerm = term;
+
+    // Unless the state is in the done phase, check the liquid.
+    //
+    // If the liquid isn't a valid destruction fluid, then reset the state and
+    // return.
+    //
+    // This check is skipped in the done phase, because the player is allowed to
+    // remove the liquid in that phase.
+    if (_termState != TermState.CompilationDone) {
+      ItemStack liquid = LiquidSlot.Itemstack;
+      if (liquid == null) {
+        _termState = TermState.Invalid;
+        return;
+      }
+      WaterTightContainableProps props =
+          BlockLiquidContainerBase.GetContainableProps(liquid);
+      DestructionFluidProps destructionProps = GetDestructionProps(liquid);
+      float fill = liquid.StackSize / props.ItemsPerLitre;
+      if (destructionProps == null || fill < destructionProps.UseLitres) {
+        _termState = TermState.Invalid;
+        return;
+      }
+    }
+
+    if (_termState == TermState.Invalid) {
+      _termState = TermState.CompilationWaiting;
+    }
+
+    if (_compilationRunning) {
+      return;
+    }
+
+    if (_termState == TermState.CompilationWaiting) {
+      _termState = TermState.CompilationRunning;
+      _compilationRunning = true;
+      Api.Logger.Notification(
+          "Starting compilation for destruction jig {0}. Term='{1}'", Pos,
+          term);
+      TyronThreadPool.QueueLongDurationTask(() => Compile(imports, term),
+                                            "lambda");
+    }
+  }
+
+  private void Compile(string[] imports, string term) {
+    ServerConfig config = CoreSystem.GetInstance(Api).ServerConfig;
+    using CoqSession session = new(config);
+
+    DestructInfo info = session.GetDestructInfo(Pos, imports, term);
+
+    Api.Event.EnqueueMainThreadTask(() => CompilationDone(info), "lambda");
+  }
+
+  private void CompilationDone(DestructInfo info) {
+    _compilationRunning = false;
+    if (_termState != TermState.CompilationRunning) {
+      if (_termState == TermState.CompilationWaiting) {
+        StartCompilation();
+      }
+      return;
+    }
+    _destructInfo = info;
+    _termState = TermState.CompilationDone;
+    if (info.ErrorMessage != null) {
+      _dropWaiting = false;
+      MarkDirty();
+      return;
+    }
+
+    ItemStack liquid = LiquidSlot.Itemstack;
+    DestructionFluidProps destructionProps = GetDestructionProps(liquid);
+    destructionProps.Output.Resolve(Api.World, Block.Code.Path);
+    if (destructionProps.OutputLitres > 0) {
+      WaterTightContainableProps outputProps =
+          BlockLiquidContainerBase.GetContainableProps(
+              destructionProps.Output.ResolvedItemstack);
+      destructionProps.Output.ResolvedItemstack.StackSize =
+          (int)(destructionProps.OutputLitres * outputProps.ItemsPerLitre);
+    }
+    LiquidSlot.Itemstack = destructionProps.Output.ResolvedItemstack;
+    LiquidSlot.MarkDirty();
+    MarkDirty();
+
+    if (_dropWaiting) {
+      _dropWaiting = false;
+      ((IDropCraftListener)this).OnDropCraft(Api.World, Pos, Pos);
+    }
   }
 
   private static Cuboidf GetItemBounds(int begin, int end) {
@@ -248,7 +403,6 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
                                   null);
       }
       SetInventoryBounds(false);
-      MarkTermInfoDirty();
       MarkDirty();
       return true;
     }
@@ -311,7 +465,7 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
     if (!hasContents) {
       dsc.AppendLine(Lang.Get("Empty"));
     }
-    string error = _termInfo?.ErrorMessage;
+    string error = _destructInfo?.ErrorMessage;
     if (error != null) {
       dsc.AppendLine(Term.Escape(error));
     }
@@ -334,8 +488,33 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
     return true;
   }
 
+  // Override BlockEntityDisplay.OnTesselation so that the error mesh is shown
+  // instead of the liquid mesh when there is an error.
   public override bool OnTesselation(ITerrainMeshPool mesher,
                                      ITesselatorAPI tessThreadTesselator) {
-    return base.OnTesselation(mesher, tessThreadTesselator);
+    ItemStack liquid = LiquidSlot.Itemstack;
+    if (liquid != null) {
+      string key;
+      if (_termState == TermState.CompilationDone &&
+          _destructInfo.ErrorMessage != null) {
+        key = "error";
+      } else {
+        key = getMeshCacheKey(liquid);
+      }
+      MeshCache.TryGetValue(key, out MeshData mesh);
+      mesher.AddMeshData(mesh, tfMatrices[0]);
+    }
+    for (int i = 1; i < Inventory.Count; i++) {
+      ItemStack stack = Inventory[i].Itemstack;
+      if (stack != null) {
+        mesher.AddMeshData(getMesh(stack), tfMatrices[i]);
+      }
+    }
+
+    bool result = false;
+    for (int i = 0; i < Behaviors.Count; i++) {
+      result |= Behaviors[i].OnTesselation(mesher, tessThreadTesselator);
+    }
+    return result;
   }
 }

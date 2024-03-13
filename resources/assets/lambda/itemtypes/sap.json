@@ -21,6 +21,16 @@
         action: "DropContents",
         stack: { type: "item", code: "sapportion" } 
       }
+    },
+    destructionFluidPropsByType: {
+      "*-destruction": {
+        useLitres: 5,
+        outputLitres: 5,
+        output: {
+          type: "item",
+          code: "game:waterportion"
+        }
+      }
     }
   },
   shape: { base: "game:item/liquid" },
