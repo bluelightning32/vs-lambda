@@ -135,4 +135,25 @@ public class CoqSessionTest {
     Assert.IsFalse(info.IsType);
     Assert.IsFalse(info.IsTypeFamily);
   }
+
+  [TestMethod]
+  public void Destruct5() {
+    DestructInfo info = _session.GetDestructInfo(new BlockPos(0, 0, 0, 0),
+                                                 Array.Empty<string>(), "5");
+    Assert.AreEqual(null, info.ErrorMessage);
+    Assert.AreEqual("S", info.Terms[0].Term);
+    Assert.AreEqual("nat -> nat", info.Terms[0].Type);
+    Assert.AreEqual("nat", info.Terms[0].Constructs);
+    Assert.AreEqual("4", info.Terms[1].Term);
+    Assert.AreEqual("nat", info.Terms[1].Type);
+  }
+
+  [TestMethod]
+  public void DestructBad() {
+    DestructInfo info = _session.GetDestructInfo(
+        new BlockPos(0, 0, 0, 0), Array.Empty<string>(), "nat -> nat");
+    Assert.AreEqual("The term does not reduce to a constructed inductive type.",
+                    info.ErrorMessage);
+    Assert.AreEqual(null, info.Terms);
+  }
 }

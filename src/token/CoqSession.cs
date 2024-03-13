@@ -74,10 +74,42 @@ public partial class TermInfo {
     }
     return result;
   }
+
+  public static TermInfo SuccessFromContents(string[] imports, string message) {
+    RegexMatch match = ParseContentsInfo().Match(message);
+    if (!match.Success) {
+      throw new ArgumentException("Coq output does not match regex.");
+    }
+    TermInfo result =
+        new() { Imports = imports, Term = match.Groups[2].Value,
+                Type = RemoveOuterTypeScope(match.Groups[1].Value) };
+    if (match.Groups[3].Value.StartsWith("constructor: ")) {
+      result.Constructs =
+          match.Groups[3].Value.Substring("constructor: ".Length);
+    } else {
+      result.IsType = match.Groups[3].Value switch {
+        "prod" => true,
+        "sort" => true,
+        "inductive" => true,
+        _ => false,
+      };
+      if (match.Groups[4].Value == "true" && result.IsType) {
+        result.IsType = false;
+        result.IsTypeFamily = true;
+      }
+    }
+    return result;
+  }
+
   [GeneratedRegex(
       @"^- : constr \* constr \* message \* bool =\s+\(constr:\((.+)\),\s+constr:\((.+)\),\s+message:\((.+)\),\s+(true|false)\)\s+$",
       RegexOptions.Compiled | RegexOptions.Singleline)]
   private static partial Regex ParseInfo();
+
+  [GeneratedRegex(
+      @"^\(constr:\((.+)\),\s+constr:\((.+)\),\s+message:\((.+)\),\s+(true|false)\)$",
+      RegexOptions.Compiled | RegexOptions.Singleline)]
+  private static partial Regex ParseContentsInfo();
 
   public void ToTreeAttributes(ITreeAttribute tree) {
     if (ErrorMessage != null) {
@@ -107,6 +139,113 @@ public partial class TermInfo {
     Constructs = tree.GetAsString("Constructs");
     IsType = tree.GetAsBool("IsType");
     IsTypeFamily = tree.GetAsBool("IsTypeFamily");
+  }
+}
+
+public partial class DestructInfo {
+  public string ErrorMessage;
+  public List<TermInfo> Terms;
+
+  private static string TrimLtac2Error(string message) {
+    RegexMatch match = ParseLtac2Error().Match(message);
+    if (!match.Success) {
+      return message;
+    }
+    return match.Groups[1].Value;
+  }
+
+  public static DestructInfo Error(string message, string filename) {
+    MatchCollection locations =
+        CoqResult.ParseErrorLocationGenerator().Matches(message);
+    StringBuilder sb = new();
+    int start = 0;
+    foreach (RegexMatch m in locations) {
+      if (!m.Groups[1].ValueSpan.SequenceEqual(filename)) {
+        continue;
+      }
+      sb.Append(TrimLtac2Error(message[start..m.Index]));
+      start = m.Index + m.Length;
+    }
+    sb.Append(TrimLtac2Error(message[start..].TrimEnd()));
+    return new() { ErrorMessage = sb.ToString() };
+  }
+
+  public static DestructInfo Success(string[] imports, string message) {
+    RegexMatch match = ParseInfo().Match(message);
+    if (!match.Success) {
+      throw new ArgumentException("Coq output does not match regex.");
+    }
+    List<TermInfo> terms = new();
+    string list = match.Groups[1].Value;
+    int parens = 0;
+    int start = 0;
+    bool first = true;
+    bool sawSemi = false;
+    for (int i = 0; i < list.Length; ++i) {
+      char c = list[i];
+      if (c == '(') {
+        ++parens;
+        if (parens == 1) {
+          if (!first && !sawSemi) {
+            throw new ArgumentException(
+                "Unexpected Coq output: missing semicolon between terms.");
+          }
+          first = false;
+          start = i;
+        }
+      } else if (c == ')') {
+        --parens;
+        if (parens == 0) {
+          terms.Add(
+              TermInfo.SuccessFromContents(imports, list[start..(i + 1)]));
+          sawSemi = false;
+        }
+      } else if (parens == 0) {
+        if (c == ';') {
+          sawSemi = true;
+        } else if (!char.IsWhiteSpace(c)) {
+          throw new ArgumentException(
+              $"Unexpected character between terms in Coq output: '{c}'.");
+        }
+      }
+    }
+    return new() { Terms = terms };
+  }
+  [GeneratedRegex(
+      @"^- : \(constr \* constr \* message \* bool\)\s+list\s+=\s+\[(.*)\]\s+$",
+      RegexOptions.Compiled | RegexOptions.Singleline)]
+  private static partial Regex ParseInfo();
+
+  [GeneratedRegex(
+      @".*Uncaught Ltac2 exception:.*\(Some\s+\(message:\((.*)\)\)\)\s*$",
+      RegexOptions.Compiled | RegexOptions.Singleline)]
+  private static partial Regex ParseLtac2Error();
+
+  public void ToTreeAttributes(ITreeAttribute tree) {
+    if (ErrorMessage != null) {
+      tree.SetString("errorMessage", ErrorMessage);
+    }
+    if (Terms != null) {
+      TreeAttribute[] terms = new TreeAttribute[Terms.Count];
+      for (int i = 0; i < Terms.Count; ++i) {
+        terms[i] = new TreeAttribute();
+        Terms[i].ToTreeAttributes(terms[i]);
+      }
+      tree["terms"] = new TreeArrayAttribute(terms);
+    }
+  }
+
+  public void FromTreeAttributes(ITreeAttribute tree) {
+    ErrorMessage = tree.GetAsString("ErrorMessage");
+    TreeAttribute[] terms = (tree["terms"] as TreeArrayAttribute)?.value;
+    if (terms != null) {
+      Terms = new List<TermInfo>(terms.Length);
+      for (int i = 0; i < terms.Length; ++i) {
+        TermInfo term = new();
+        term.FromTreeAttributes(terms[i]);
+        Terms[i] = term;
+      }
+    }
   }
 }
 
@@ -294,6 +433,52 @@ public class CoqSession : IDisposable {
     }
   }
 
+  public DestructInfo GetDestructInfo(BlockPos pos, string[] imports,
+                                      string term) {
+    string filename = Path.Combine(
+        _config.CoqTmpDir,
+        $"CheckTerm_{pos.X}_{pos.Y}_{pos.Z}_{Environment.CurrentManagedThreadId}.v");
+    try {
+      using FileStream stream = new(filename, FileMode.Create);
+      using StreamWriter writer = new(stream);
+      foreach (string import in imports) {
+        writer.WriteLine($"Require Import {import}.");
+      }
+      writer.Write(TermInfoHeader);
+      writer.WriteLine($"Ltac2 Eval destruct_term (eval hnf in ({term})).");
+      writer.Close();
+
+      using StreamReader reader = new(filename);
+      CoqSanitizer.Sanitize(reader);
+
+      StringBuilder stdoutBuilder = new();
+      StringBuilder stderrBuilder = new();
+
+      using Process coqc = new() {
+        StartInfo = new ProcessStartInfo { FileName = _config.CoqcPath,
+                                           ArgumentList = { filename },
+                                           UseShellExecute = false,
+                                           RedirectStandardOutput = true,
+                                           RedirectStandardError = true,
+                                           CreateNoWindow = true },
+      };
+      coqc.OutputDataReceived += (sender, e) =>
+          stdoutBuilder.AppendLine(e.Data);
+      coqc.ErrorDataReceived += (sender, e) => stderrBuilder.AppendLine(e.Data);
+      coqc.Start();
+      coqc.BeginOutputReadLine();
+      coqc.BeginErrorReadLine();
+      coqc.WaitForExit(600000);
+      DestructInfo result = new();
+      if (coqc.ExitCode != 0) {
+        return DestructInfo.Error(stderrBuilder.ToString(), filename);
+      }
+      return DestructInfo.Success(imports, stdoutBuilder.ToString());
+    } catch (Exception e) {
+      return DestructInfo.Error(e.ToString(), filename);
+    }
+  }
+
   // clang-format off
   private static readonly string TermInfoHeader = """
 From Ltac2 Require Import Ltac2.
@@ -332,6 +517,15 @@ Ltac2 get_reduced (c: constr) :=
 Ltac2 get_info (c: constr) :=
   (get_type c, get_reduced c, get_kind c,
       get_is_function c).
+
+Ltac2 rec destruct_term (c: constr) : (constr * constr * message * bool) list :=
+  match Unsafe.kind c with
+  | Unsafe.Constructor a b =>
+    [ get_info c ]
+  | Unsafe.App a b =>
+    List.append (destruct_term a) (List.map get_info (Array.to_list b))
+  | _ => Control.throw_invalid_argument ("The term does not reduce to a constructed inductive type.")
+  end.
 
 """;
   // clang-format on
