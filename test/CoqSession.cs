@@ -149,10 +149,19 @@ public class CoqSessionTest {
   }
 
   [TestMethod]
-  public void DestructBad() {
+  public void DestructProdHasError() {
     DestructInfo info = _session.GetDestructInfo(
         new BlockPos(0, 0, 0, 0), Array.Empty<string>(), "nat -> nat");
     Assert.AreEqual("The term does not reduce to a constructed inductive type.",
+                    info.ErrorMessage);
+    Assert.AreEqual(null, info.Terms);
+  }
+
+  [TestMethod]
+  public void PartiallyAppliedHasError() {
+    DestructInfo info = _session.GetDestructInfo(
+        new BlockPos(0, 0, 0, 0), Array.Empty<string>(), "S");
+    Assert.AreEqual("The term is not fully applied.",
                     info.ErrorMessage);
     Assert.AreEqual(null, info.Terms);
   }

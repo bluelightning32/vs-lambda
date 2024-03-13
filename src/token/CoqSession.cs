@@ -518,13 +518,19 @@ Ltac2 get_info (c: constr) :=
   (get_type c, get_reduced c, get_kind c,
       get_is_function c).
 
-Ltac2 rec destruct_term (c: constr) : (constr * constr * message * bool) list :=
+Ltac2 rec destruct_term_aux (c: constr) : (constr * constr * message * bool) list :=
   match Unsafe.kind c with
   | Unsafe.Constructor a b =>
     [ get_info c ]
   | Unsafe.App a b =>
-    List.append (destruct_term a) (List.map get_info (Array.to_list b))
+    List.append (destruct_term_aux a) (List.map get_info (Array.to_list b))
   | _ => Control.throw_invalid_argument ("The term does not reduce to a constructed inductive type.")
+  end.
+
+Ltac2 destruct_term (c: constr) : (constr * constr * message * bool) list :=
+  match! type c with
+  | forall a, _ => Control.throw_invalid_argument ("The term is not fully applied.")
+  | _ => destruct_term_aux c
   end.
 
 """;
