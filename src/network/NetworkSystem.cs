@@ -41,17 +41,17 @@ public class NetworkSystem : ModSystem {
       }
     }
     api.RegisterBlockBehaviorClass("AutoConnect",
-                                   typeof(BlockBehavior.AutoConnect));
-    api.RegisterBlockBehaviorClass("Network", typeof(BlockBehavior.Network));
-    api.RegisterBlockBehaviorClass("Port", typeof(BlockBehavior.Port));
+                                   typeof(BlockBehaviors.AutoConnect));
+    api.RegisterBlockBehaviorClass("Network", typeof(BlockBehaviors.Network));
+    api.RegisterBlockBehaviorClass("Port", typeof(BlockBehaviors.Port));
     RegisterNetworkBlockEntityBehavior(
-        api, "TokenEmitter", typeof(BlockEntityBehavior.TokenEmitter));
+        api, "TokenEmitter", typeof(BlockEntityBehaviors.TokenEmitter));
     RegisterNetworkBlockEntityBehavior(api, "AcceptPort",
-                                       typeof(BlockEntityBehavior.AcceptPort));
+                                       typeof(BlockEntityBehaviors.AcceptPort));
     RegisterNetworkBlockEntityBehavior(api, "Wire",
-                                       typeof(BlockEntityBehavior.Wire));
+                                       typeof(BlockEntityBehaviors.Wire));
     TokenEmitterManager =
-        new BlockEntityBehavior.TokenEmitter.Manager(api.World);
+        new BlockEntityBehaviors.TokenEmitter.Manager(api.World);
   }
 
   public static void RegisterNetworkDebugCommands(IChatCommandApi api,

@@ -1,13 +1,11 @@
-using Lambda.BlockEntityBehavior;
+using Lambda.BlockEntityBehaviors;
 
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
-namespace Lambda.BlockBehavior;
-
-using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
+namespace Lambda.BlockBehaviors;
 
 public interface IDropCraftListener {
   // `pos` is the position of the listener. `dropper` is the position of the
@@ -15,7 +13,7 @@ public interface IDropCraftListener {
   void OnDropCraft(IWorldAccessor world, BlockPos pos, BlockPos dropper);
 }
 
-public class DropCraft : VSBlockBehavior, IBlockWatcher {
+public class DropCraft : BlockBehavior, IBlockWatcher {
   ICoreAPI _api;
   int _yieldStrength = 3;
   int _listenerSearchDist = 3;

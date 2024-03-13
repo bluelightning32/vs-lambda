@@ -5,13 +5,11 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace Lambda.BlockBehavior;
-
-using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
+namespace Lambda.BlockBehaviors;
 
 // Rightclicking on the source block with the correct ingredient constructs a
 // new block.
-public class Construct : VSBlockBehavior {
+public class Construct : BlockBehavior {
   // Indexed by face
   private readonly AssetLocation[] _construct = new AssetLocation[6];
   CraftingRecipeIngredient _ingredient = null;

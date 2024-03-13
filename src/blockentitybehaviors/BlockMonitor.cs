@@ -1,22 +1,19 @@
-using Lambda.BlockBehavior;
+using Lambda.BlockBehaviors;
 
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 
-namespace Lambda.BlockEntityBehavior;
-
-using VSBlockEntityBehavior = Vintagestory.API.Common.BlockEntityBehavior;
-using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
+namespace Lambda.BlockEntityBehaviors;
 
 interface IBlockWatcher {
   public void BlockChanged(BlockPos watcher, BlockPos changed);
 }
 
 // Monitors for block replacement.
-public class BlockMonitor : VSBlockEntityBehavior, IBlockEntityForward {
+public class BlockMonitor : BlockEntityBehavior, IBlockEntityForward {
   BlockPos _watcher = new(0);
-  public BlockMonitor(VSBlockEntity blockentity) : base(blockentity) {}
+  public BlockMonitor(BlockEntity blockentity) : base(blockentity) {}
 
   public override void Initialize(ICoreAPI api, JsonObject properties) {
     base.Initialize(api, properties);

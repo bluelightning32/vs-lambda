@@ -3,8 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-using Lambda.BlockBehavior;
-using Lambda.CollectibleBehavior;
+using Lambda.BlockBehaviors;
+using Lambda.CollectibleBehaviors;
 using Lambda.Network;
 using Lambda.Token;
 
@@ -15,7 +15,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
-namespace Lambda.BlockEntity;
+namespace Lambda.BlockEntities;
 
 public class ApplicationJig : BlockEntityDisplay,
                               IBlockEntityForward,
@@ -125,7 +125,7 @@ public class ApplicationJig : BlockEntityDisplay,
       return false;
     }
     if (hotbarSlot.Itemstack.Collectible
-            .GetBehavior<CollectibleBehavior.Term>() == null) {
+            .GetBehavior<CollectibleBehaviors.Term>() == null) {
       (Api as ICoreClientAPI)
           ?.TriggerIngameError(this, "onlyterms", Lang.Get("lambda:onlyterms"));
       handled = EnumHandling.PreventSubsequent;

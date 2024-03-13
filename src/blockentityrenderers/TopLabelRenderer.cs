@@ -8,7 +8,7 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
-namespace Lambda.BlockEntityRenderer;
+namespace Lambda.BlockEntityRenderers;
 
 // Renders text on top of a block.
 public class TopLabelRenderer : BlockEntitySignRenderer {

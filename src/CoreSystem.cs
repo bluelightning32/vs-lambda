@@ -80,33 +80,33 @@ public class CoreSystem : ModSystem {
     LoadConfigFile(api);
 
     api.RegisterCollectibleBehaviorClass(
-        "ForwardToBlock", typeof(CollectibleBehavior.ForwardToBlock));
+        "ForwardToBlock", typeof(CollectibleBehaviors.ForwardToBlock));
     api.RegisterCollectibleBehaviorClass("Term",
-                                         typeof(CollectibleBehavior.Term));
+                                         typeof(CollectibleBehaviors.Term));
     api.RegisterBlockClass("DestructionJig", typeof(Blocks.DestructionJig));
     api.RegisterBlockBehaviorClass("BlockEntityForward",
-                                   typeof(BlockBehavior.BlockEntityForward));
+                                   typeof(BlockBehaviors.BlockEntityForward));
     api.RegisterBlockBehaviorClass("BlockEntityForward",
-                                   typeof(BlockBehavior.BlockEntityForward));
+                                   typeof(BlockBehaviors.BlockEntityForward));
     api.RegisterBlockBehaviorClass("Construct",
-                                   typeof(BlockBehavior.Construct));
+                                   typeof(BlockBehaviors.Construct));
     api.RegisterBlockBehaviorClass("DropCraft",
-                                   typeof(BlockBehavior.DropCraft));
+                                   typeof(BlockBehaviors.DropCraft));
     api.RegisterBlockBehaviorClass("MultiAttached",
-                                   typeof(BlockBehavior.MultiAttached));
-    api.RegisterBlockBehaviorClass("Orient", typeof(BlockBehavior.Orient));
+                                   typeof(BlockBehaviors.MultiAttached));
+    api.RegisterBlockBehaviorClass("Orient", typeof(BlockBehaviors.Orient));
     api.RegisterBlockEntityClass("FunctionContainer",
-                                 typeof(BlockEntity.FunctionContainer));
+                                 typeof(BlockEntities.FunctionContainer));
     api.RegisterBlockEntityClass("ApplicationJig",
-                                 typeof(BlockEntity.ApplicationJig));
+                                 typeof(BlockEntities.ApplicationJig));
     api.RegisterBlockEntityClass("DestructionJig",
-                                 typeof(BlockEntity.DestructionJig));
+                                 typeof(BlockEntities.DestructionJig));
     api.RegisterBlockEntityClass("TermContainer",
-                                 typeof(BlockEntity.TermContainer));
-    api.RegisterBlockEntityBehaviorClass("CacheMesh",
-                                         typeof(BlockEntityBehavior.CacheMesh));
+                                 typeof(BlockEntities.TermContainer));
     api.RegisterBlockEntityBehaviorClass(
-        "BlockMonitor", typeof(BlockEntityBehavior.BlockMonitor));
+        "CacheMesh", typeof(BlockEntityBehaviors.CacheMesh));
+    api.RegisterBlockEntityBehaviorClass(
+        "BlockMonitor", typeof(BlockEntityBehaviors.BlockMonitor));
   }
 
   public override void StartClientSide(ICoreClientAPI api) {}

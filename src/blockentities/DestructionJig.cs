@@ -1,8 +1,8 @@
 using System;
 using System.Text;
 
-using Lambda.BlockBehavior;
-using Lambda.CollectibleBehavior;
+using Lambda.BlockBehaviors;
+using Lambda.CollectibleBehaviors;
 using Lambda.Token;
 
 using Vintagestory.API.Client;
@@ -13,7 +13,7 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
-namespace Lambda.BlockEntity;
+namespace Lambda.BlockEntities;
 
 public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
   // Pass in null for the API and inventory class name for now. The correct
@@ -80,7 +80,6 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
     // GetMeshBounds handles nulls.
     Cuboidf bounds = MeshUtil.GetMeshBounds(mesh);
     Matrixf mat = Matrixf.Create();
-    Api.Logger.Notification("Starty {0}.", startY);
     // 4. Move the mesh up from the bottom of the cube to its appropriate
     //    vertical position. The first inventory item starts half way up the
     //    cube. The next inventory item is 6/16 above it.
@@ -92,7 +91,6 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
     if (bounds.X1 < 3.999f / 16f || bounds.X1 > 12.001f / 16f ||
         bounds.Y1 < -0.001f / 16f || bounds.Y1 > 6.001f / 16f ||
         bounds.Z1 < 3.999f / 16f || bounds.Z1 > 12.001f / 16f) {
-      Api.Logger.Notification("Transform is shrinking mesh.");
       float xzSize = Math.Max(bounds.XSize, bounds.ZSize);
       // 3. Move the mesh to bottom the center of the cube.
       mat.Translate(0.5f, 0, 0.5f);
@@ -122,7 +120,6 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
         return result;
       }
 
-      Api.Logger.Notification("Tessellating destruction jig liquid");
       ICoreClientAPI capi = Api as ICoreClientAPI;
       ITexPositionSource contentSource = BlockBarrel.getContentTexture(
           capi, stack, out float unusedFillHeight);
@@ -158,12 +155,11 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
   }
 
   protected override float[][] genTransformationMatrices() {
-    float[][] matrices = new float[_inventory.Count][];
+    float[][] matrices = new float [_inventory.Count][];
     float fill = 0;
     float capacity = 1;
     ItemSlot liquidSlot = Inventory[0];
     if (!liquidSlot.Empty) {
-      Api.Logger.Notification("Getting liquid transform for destruction jig.");
       WaterTightContainableProps props =
           BlockLiquidContainerBase.GetContainableProps(liquidSlot.Itemstack);
       fill = liquidSlot.StackSize / props.ItemsPerLitre;
@@ -190,7 +186,7 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
       return false;
     }
     if (hotbarSlot.Itemstack.Collectible
-            .GetBehavior<CollectibleBehavior.Term>() == null) {
+            .GetBehavior<CollectibleBehaviors.Term>() == null) {
       (Api as ICoreClientAPI)
           ?.TriggerIngameError(this, "onlyterms", Lang.Get("lambda:onlyterms"));
       handled = EnumHandling.PreventSubsequent;
@@ -282,7 +278,8 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
   }
 
   public static string GetInContainerName(CollectibleObject obj) {
-    return Lang.Get($"{obj.Code.Domain}:incontainer-{obj.ItemClass.Name()}-{obj.Code.Path}");
+    return Lang.Get(
+        $"{obj.Code.Domain}:incontainer-{obj.ItemClass.Name()}-{obj.Code.Path}");
   }
 
   public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc) {
@@ -295,9 +292,11 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
       WaterTightContainableProps props =
           BlockLiquidContainerBase.GetContainableProps(liquidSlot.Itemstack);
       float fill = liquidSlot.StackSize / props.ItemsPerLitre;
-      string incontainerrname = GetInContainerName(liquidSlot.Itemstack.Collectible);
+      string incontainerrname =
+          GetInContainerName(liquidSlot.Itemstack.Collectible);
       dsc.AppendLine(Lang.Get("{0} litres of {1}", fill, incontainerrname));
-      liquidSlot.Itemstack.Collectible.AppendPerishableInfoText(liquidSlot, dsc, Api.World);
+      liquidSlot.Itemstack.Collectible.AppendPerishableInfoText(liquidSlot, dsc,
+                                                                Api.World);
     }
     if (!_inventory[1].Empty) {
       Term t = _inventory[1].Itemstack.Collectible.GetBehavior<Term>();

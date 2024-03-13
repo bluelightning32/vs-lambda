@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
-namespace Lambda.BlockBehavior;
-
-using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
-using VSBlockEntityBehavior = Vintagestory.API.Common.BlockEntityBehavior;
+namespace Lambda.BlockBehaviors;
 
 // The BlockEntity should implement this interface.
 public interface IBlockEntityForward {
@@ -34,7 +31,7 @@ public class BlockEntityForward : StrongBlockBehavior {
   public override void OnNeighbourBlockChange(IWorldAccessor world,
                                               BlockPos pos, BlockPos neibpos,
                                               ref EnumHandling handled) {
-    VSBlockEntity entity = world.BlockAccessor.GetBlockEntity(pos);
+    BlockEntity entity = world.BlockAccessor.GetBlockEntity(pos);
     WalkBlockEntityBehaviors(
         entity,
         (IBlockEntityForward forward, ref EnumHandling handled) =>
@@ -49,7 +46,7 @@ public class BlockEntityForward : StrongBlockBehavior {
   public override ItemStack OnPickBlock(IWorldAccessor world, BlockPos pos,
                                         ref EnumHandling handled) {
     ItemStack result = null;
-    VSBlockEntity entity = world.BlockAccessor.GetBlockEntity(pos);
+    BlockEntity entity = world.BlockAccessor.GetBlockEntity(pos);
     WalkBlockEntityBehaviors(
         entity, (IBlockEntityForward forward, ref EnumHandling handled) => {
           ItemStack localResult = forward.OnPickBlock(ref handled);
@@ -67,7 +64,7 @@ public class BlockEntityForward : StrongBlockBehavior {
                                               BlockPos pos,
                                               ref EnumHandling handled) {
     List<Cuboidf> result = null;
-    VSBlockEntity entity = blockAccessor.GetBlockEntity(pos);
+    BlockEntity entity = blockAccessor.GetBlockEntity(pos);
     WalkBlockEntityBehaviors(
         entity, (IBlockEntityForward forward, ref EnumHandling handled) => {
           Cuboidf[] localResult = forward.GetSelectionBoxes(ref handled);
@@ -88,7 +85,7 @@ public class BlockEntityForward : StrongBlockBehavior {
                                               BlockPos pos,
                                               ref EnumHandling handled) {
     List<Cuboidf> result = null;
-    VSBlockEntity entity = blockAccessor.GetBlockEntity(pos);
+    BlockEntity entity = blockAccessor.GetBlockEntity(pos);
     WalkBlockEntityBehaviors(
         entity, (IBlockEntityForward forward, ref EnumHandling handled) => {
           Cuboidf[] localResult = forward.GetCollisionBoxes(ref handled);
@@ -110,8 +107,7 @@ public class BlockEntityForward : StrongBlockBehavior {
                                             BlockSelection blockSel,
                                             ref EnumHandling handled) {
     bool result = true;
-    VSBlockEntity entity =
-        world.BlockAccessor.GetBlockEntity(blockSel.Position);
+    BlockEntity entity = world.BlockAccessor.GetBlockEntity(blockSel.Position);
     WalkBlockEntityBehaviors(
         entity, (IBlockEntityForward forward, ref EnumHandling handled) => {
           bool localResult =
@@ -126,19 +122,18 @@ public class BlockEntityForward : StrongBlockBehavior {
     return base.OnBlockInteractStart(world, byPlayer, blockSel, ref handled);
   }
 
-  public delegate void
-  BlockEntityBehaviorDelegate(VSBlockEntityBehavior behavior,
-                              ref EnumHandling handled);
-  public delegate void BlockEntityDelegate(VSBlockEntity entity,
+  public delegate void BlockEntityBehaviorDelegate(BlockEntityBehavior behavior,
+                                                   ref EnumHandling handled);
+  public delegate void BlockEntityDelegate(BlockEntity entity,
                                            ref EnumHandling handled);
 
   public static void WalkBlockEntityBehaviors(
-      VSBlockEntity entity, BlockEntityBehaviorDelegate callBehavior,
+      BlockEntity entity, BlockEntityBehaviorDelegate callBehavior,
       BlockEntityDelegate callEntity, ref EnumHandling handled) {
     if (entity == null) {
       return;
     }
-    foreach (VSBlockEntityBehavior behavior in entity.Behaviors) {
+    foreach (BlockEntityBehavior behavior in entity.Behaviors) {
       EnumHandling behaviorHandled = EnumHandling.PassThrough;
       callBehavior(behavior, ref behaviorHandled);
       if (behaviorHandled != EnumHandling.PassThrough) {
@@ -163,17 +158,17 @@ public class BlockEntityForward : StrongBlockBehavior {
                                                     ref EnumHandling handled);
 
   private static void
-  WalkBlockEntityBehaviors(VSBlockEntity entity,
+  WalkBlockEntityBehaviors(BlockEntity entity,
                            IBlockEntityForwardDelegate callForward,
                            ref EnumHandling handled) {
     WalkBlockEntityBehaviors(
         entity,
-        (VSBlockEntityBehavior behavior, ref EnumHandling handled) => {
+        (BlockEntityBehavior behavior, ref EnumHandling handled) => {
           if (behavior is IBlockEntityForward forward) {
             callForward(forward, ref handled);
           }
         },
-        (VSBlockEntity entity, ref EnumHandling handled) => {
+        (BlockEntity entity, ref EnumHandling handled) => {
           if (entity is IBlockEntityForward forward) {
             callForward(forward, ref handled);
           }

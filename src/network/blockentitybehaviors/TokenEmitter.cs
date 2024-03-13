@@ -1,20 +1,17 @@
 using System;
 using System.Text;
 
-using Lambda.BlockEntityBehavior;
-using Lambda.CollectibleBehavior;
+using Lambda.BlockEntityBehaviors;
+using Lambda.CollectibleBehaviors;
 
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 
-namespace Lambda.Network.BlockEntityBehavior;
+namespace Lambda.Network.BlockEntityBehaviors;
 
-using VSBlockEntityBehavior = Vintagestory.API.Common.BlockEntityBehavior;
-using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
-
-public class TokenEmitter : VSBlockEntityBehavior, IMeshGenerator {
+public class TokenEmitter : BlockEntityBehavior, IMeshGenerator {
   protected BlockNodeTemplate _template;
   protected Node[] _nodes;
 
@@ -61,7 +58,7 @@ public class TokenEmitter : VSBlockEntityBehavior, IMeshGenerator {
 
   private void MarkDirty(bool redraw) { Blockentity.MarkDirty(redraw); }
 
-  public TokenEmitter(VSBlockEntity blockentity) : base(blockentity) {}
+  public TokenEmitter(BlockEntity blockentity) : base(blockentity) {}
 
   public override void ToTreeAttributes(ITreeAttribute tree) {
     base.ToTreeAttributes(tree);

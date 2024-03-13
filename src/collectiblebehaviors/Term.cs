@@ -9,12 +9,10 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
 
-namespace Lambda.CollectibleBehavior;
-
-using VSCollectibleBehavior = Vintagestory.API.Common.CollectibleBehavior;
+namespace Lambda.CollectibleBehaviors;
 
 // Identifies the item as a Coq term and provides introspection of the term.
-public class Term : VSCollectibleBehavior {
+public class Term : CollectibleBehavior {
   private string _term;
   private string _type;
   private string _constructs;

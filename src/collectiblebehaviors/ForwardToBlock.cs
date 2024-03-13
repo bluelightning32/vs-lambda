@@ -1,15 +1,10 @@
-using Lambda.BlockBehavior;
+using Lambda.BlockBehaviors;
 
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 
-namespace Lambda.CollectibleBehavior;
-
-using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
-using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
-using VSBlockEntityBehavior = Vintagestory.API.Common.BlockEntityBehavior;
-using VSCollectibleBehavior = Vintagestory.API.Common.CollectibleBehavior;
+namespace Lambda.CollectibleBehaviors;
 
 public interface ICollectibleTarget {
   public void OnHeldAttackStart(ItemSlot slot, EntityAgent byEntity,
@@ -37,7 +32,7 @@ public interface ICollectibleTarget {
 }
 
 // Forwards the attack events to the block that the player is targeting.
-public class ForwardToBlock : VSCollectibleBehavior {
+public class ForwardToBlock : CollectibleBehavior {
   protected ICoreAPI _api;
 
   public ForwardToBlock(CollectibleObject collObj) : base(collObj) {}
@@ -148,7 +143,7 @@ public class ForwardToBlock : VSCollectibleBehavior {
 
   public delegate void BlockDelegate(Block block, ref EnumHandling handled);
 
-  public delegate void BlockBehaviorDelegate(VSBlockBehavior behavior,
+  public delegate void BlockBehaviorDelegate(BlockBehavior behavior,
                                              ref EnumHandling handled);
   public static void
   WalkBlockBehaviors(IBlockAccessor blockAccessor, Block block, BlockPos pos,
@@ -156,7 +151,7 @@ public class ForwardToBlock : VSCollectibleBehavior {
                      BlockDelegate callBlock,
                      BlockEntityForward.BlockEntityDelegate callEntity,
                      ref EnumHandling handled) {
-    foreach (VSBlockBehavior behavior in block.BlockBehaviors) {
+    foreach (BlockBehavior behavior in block.BlockBehaviors) {
       EnumHandling behaviorHandled = EnumHandling.PassThrough;
       callBehavior(behavior, ref behaviorHandled);
       if (behaviorHandled != EnumHandling.PassThrough) {
@@ -179,7 +174,7 @@ public class ForwardToBlock : VSCollectibleBehavior {
     }
 
     {
-      VSBlockEntity entity = blockAccessor.GetBlockEntity(pos);
+      BlockEntity entity = blockAccessor.GetBlockEntity(pos);
       if (entity == null) {
         return;
       }
@@ -199,7 +194,7 @@ public class ForwardToBlock : VSCollectibleBehavior {
       ref EnumHandling handled) {
     WalkBlockBehaviors(
         blockAccessor, block, pos, callBehavior, callBlock,
-        (VSBlockEntity entity, ref EnumHandling handled) =>
+        (BlockEntity entity, ref EnumHandling handled) =>
             BlockEntityForward.WalkBlockEntityBehaviors(
                 entity, callEntityBehavior, callEntity, ref handled),
         ref handled);
@@ -213,7 +208,7 @@ public class ForwardToBlock : VSCollectibleBehavior {
                                          ref EnumHandling handled) {
     WalkBlockBehaviors(
         blockAccessor, block, pos,
-        (VSBlockBehavior behavior, ref EnumHandling handled) => {
+        (BlockBehavior behavior, ref EnumHandling handled) => {
           if (behavior is ICollectibleTarget forward) {
             callForward(forward, ref handled);
           }
@@ -223,12 +218,12 @@ public class ForwardToBlock : VSCollectibleBehavior {
             callForward(forward, ref handled);
           }
         },
-        (VSBlockEntityBehavior behavior, ref EnumHandling handled) => {
+        (BlockEntityBehavior behavior, ref EnumHandling handled) => {
           if (behavior is ICollectibleTarget forward) {
             callForward(forward, ref handled);
           }
         },
-        (VSBlockEntity entity, ref EnumHandling handled) => {
+        (BlockEntity entity, ref EnumHandling handled) => {
           if (entity is ICollectibleTarget forward) {
             callForward(forward, ref handled);
           }

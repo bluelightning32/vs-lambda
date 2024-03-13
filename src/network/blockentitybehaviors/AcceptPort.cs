@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Lambda.BlockEntity;
-using Lambda.BlockEntityBehavior;
-using Lambda.Network.BlockBehavior;
+using Lambda.BlockEntities;
+using Lambda.BlockEntityBehaviors;
+using Lambda.Network.BlockBehaviors;
 
 using Newtonsoft.Json;
 
@@ -14,9 +14,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace Lambda.Network.BlockEntityBehavior;
-
-using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
+namespace Lambda.Network.BlockEntityBehaviors;
 
 [JsonObject(MemberSerialization.OptIn)]
 public class PortConfiguration {
@@ -48,7 +46,7 @@ public class AcceptPort : TokenEmitter, IAcceptPort, IInventoryControl {
   private int _occupiedPorts = 0;
   private PortConfiguration _configuration;
 
-  public AcceptPort(VSBlockEntity blockentity) : base(blockentity) {}
+  public AcceptPort(BlockEntity blockentity) : base(blockentity) {}
 
   private static PortConfiguration ParseConfiguration(ICoreAPI api,
                                                       JsonObject properties) {

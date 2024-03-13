@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Lambda.CollectibleBehavior;
+using Lambda.CollectibleBehaviors;
 using Lambda.Network;
 using Lambda.Token;
 
@@ -12,7 +12,7 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 
-namespace Lambda.BlockEntity;
+namespace Lambda.BlockEntities;
 
 // Creates a container with a single slot. The dialog has an inscribe button and
 // a status bar. Decisions about whether to show the dialog and what kind of
@@ -113,7 +113,7 @@ public class FunctionContainer : TermContainer {
         _finishTime = _currentRecipe.ProcessTime;
         try {
           TokenEmitter emitter =
-              GetBehavior<Network.BlockEntityBehavior.TokenEmitter>().Emit();
+              GetBehavior<Network.BlockEntityBehaviors.TokenEmitter>().Emit();
           _running = true;
           InscriptionRecipe recipe = _currentRecipe;
           TyronThreadPool.QueueLongDurationTask(

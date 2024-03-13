@@ -8,9 +8,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 
-namespace Lambda.BlockBehavior;
-
-using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
+namespace Lambda.BlockBehaviors;
 
 enum OrientationMode { Slab, AllFaces, Horizontals }
 
@@ -18,7 +16,7 @@ enum OrientationMode { Slab, AllFaces, Horizontals }
 // the player selected for the placement and the direction of the player. If
 // `_networks` is non-empty, then the player selected orientation will be
 // overridden to connect the new block to the neighboring blocks.
-public class Orient : VSBlockBehavior {
+public class Orient : BlockBehavior {
   private string _facingCode;
   private OrientationMode _mode;
   private bool _flip;

@@ -1,15 +1,12 @@
 using System.Text;
 
-using Lambda.CollectibleBehavior;
+using Lambda.CollectibleBehaviors;
 
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
 namespace Lambda.Blocks;
-
-using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
-using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
 
 public class DestructionJig : BlockLiquidContainerBase {
   // This is the slot for liquids
@@ -42,7 +39,7 @@ public class DestructionJig : BlockLiquidContainerBase {
     EnumHandling handled = EnumHandling.PassThrough;
     ForwardToBlock.WalkBlockBehaviors(
         world.BlockAccessor, this, pos,
-        (VSBlockBehavior behavior, ref EnumHandling handled) =>
+        (BlockBehavior behavior, ref EnumHandling handled) =>
             behavior.OnBlockBroken(world, pos, player, ref handled),
         (Block block, ref EnumHandling handled) => {
           if (world.Side == EnumAppSide.Server &&
@@ -50,7 +47,7 @@ public class DestructionJig : BlockLiquidContainerBase {
             DropContainerWithoutContents(world, pos, player);
           }
         },
-        (VSBlockEntity entity, ref EnumHandling handled) =>
+        (BlockEntity entity, ref EnumHandling handled) =>
             entity.OnBlockBroken(),
         ref handled);
     if (handled != EnumHandling.PreventDefault &&
@@ -59,9 +56,11 @@ public class DestructionJig : BlockLiquidContainerBase {
     }
   }
 
-  // Override BlockLiquidContainerBase to restore the grand base's behavior of calling the BlockEntity to get the placed info.
-  public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos, IPlayer forPlayer) {
-    VSBlockEntity be = world.BlockAccessor.GetBlockEntity(pos);
+  // Override BlockLiquidContainerBase to restore the grand base's behavior of
+  // calling the BlockEntity to get the placed info.
+  public override string GetPlacedBlockInfo(IWorldAccessor world, BlockPos pos,
+                                            IPlayer forPlayer) {
+    BlockEntity be = world.BlockAccessor.GetBlockEntity(pos);
     StringBuilder sb = new();
     be?.GetBlockInfo(forPlayer, sb);
     return sb.ToString();

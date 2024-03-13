@@ -2,9 +2,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 
-namespace Lambda.Network.BlockBehavior;
-
-using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
+namespace Lambda.Network.BlockBehaviors;
 
 public interface IAcceptPort {
   bool SetPort(Block port, PortDirection direction, BlockFacing face,
@@ -36,7 +34,7 @@ public class Port : Vintagestory.GameContent.BlockBehaviorDecor {
 
     BlockPos pos = blockSel.Position.AddCopy(blockSel.Face.Opposite);
 
-    VSBlockEntity parentBlock = world.BlockAccessor.GetBlockEntity(pos);
+    BlockEntity parentBlock = world.BlockAccessor.GetBlockEntity(pos);
     if (parentBlock == null) {
       failureCode = "doesnotacceptports";
       return false;

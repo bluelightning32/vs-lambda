@@ -4,13 +4,11 @@ using System.Collections.Generic;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 
-namespace Lambda.Network.BlockBehavior;
-
-using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
+namespace Lambda.Network.BlockBehaviors;
 
 // Prevents the block from being placed if it would cause a network conflict by
 // connecting two sources in the same network.
-public class Network : VSBlockBehavior {
+public class Network : BlockBehavior {
   private BlockNodeTemplate _blockTemplate;
 
   public Network(Block block) : base(block) {}

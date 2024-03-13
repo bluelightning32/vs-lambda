@@ -2,9 +2,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 
-namespace Lambda.Network.BlockBehavior;
-
-using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
+namespace Lambda.Network.BlockBehaviors;
 
 public interface IConnectable {
   Manager GetManager(ICoreAPI api);
@@ -20,7 +18,7 @@ public interface IConnectable {
 // This is used by the wire blocks, where they actually add edges when placed.
 // For other blocks, the possible edges are static, and the edges are either
 // paired or unpaired depending on whether the neighboring block reciprocates.
-public class AutoConnect : VSBlockBehavior {
+public class AutoConnect : BlockBehavior {
   private bool _singleConnect = false;
   // Disconnect the edge on this block when a neighbor loses its corresponding
   // edge, even if the neighbor does not have the connect behavior.

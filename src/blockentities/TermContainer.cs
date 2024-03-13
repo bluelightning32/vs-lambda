@@ -2,14 +2,14 @@ using System;
 using System.Drawing;
 using System.Text;
 
-using Lambda.BlockEntityRenderer;
+using Lambda.BlockEntityRenderers;
 
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
-namespace Lambda.BlockEntity;
+namespace Lambda.BlockEntities;
 
 public interface IInventoryControl {
   public string GetTitle();
@@ -65,8 +65,8 @@ public class TermContainer : BlockEntityOpenableContainer {
 
   public virtual string GetInventoryTerm(out string[] imports) {
     ItemStack item = _inventory[0].Itemstack;
-    CollectibleBehavior.Term term =
-        item?.Collectible.GetBehavior<CollectibleBehavior.Term>();
+    CollectibleBehaviors.Term term =
+        item?.Collectible.GetBehavior<CollectibleBehaviors.Term>();
     if (term != null) {
       imports = term.GetImports(item);
       return term.GetTerm(item);
@@ -126,8 +126,8 @@ public class TermContainer : BlockEntityOpenableContainer {
 
   protected virtual void SetLabel() {
     ItemStack item = _inventory[0].Itemstack;
-    CollectibleBehavior.Term term =
-        item?.Collectible.GetBehavior<CollectibleBehavior.Term>();
+    CollectibleBehaviors.Term term =
+        item?.Collectible.GetBehavior<CollectibleBehaviors.Term>();
     SetLabel(term?.GetTerm(item));
   }
 

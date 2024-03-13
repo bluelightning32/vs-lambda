@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 
-using Lambda.BlockBehavior;
-using Lambda.BlockEntityBehavior;
+using Lambda.BlockBehaviors;
+using Lambda.BlockEntityBehaviors;
 using Lambda.Network;
-using Lambda.Network.BlockBehavior;
-using Lambda.Network.BlockEntityBehavior;
+using Lambda.Network.BlockBehaviors;
+using Lambda.Network.BlockEntityBehaviors;
 
 using Newtonsoft.Json;
 
@@ -15,8 +15,7 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace Lambda.Network.BlockEntityBehavior;
-using VSBlockEntity = Vintagestory.API.Common.BlockEntity;
+namespace Lambda.Network.BlockEntityBehaviors;
 
 public class ShapeOverride {
   public HashSet<string> Directions;
@@ -54,7 +53,7 @@ public class Wire : TokenEmitter, IBlockEntityForward, IConnectable {
   private int _directions = 0;
   private Cuboidf[] _selectionBoxes = null;
 
-  public Wire(VSBlockEntity blockentity) : base(blockentity) {}
+  public Wire(BlockEntity blockentity) : base(blockentity) {}
 
   public override void Initialize(ICoreAPI api) {
     base.Initialize(api);

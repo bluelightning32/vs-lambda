@@ -24,8 +24,8 @@ public class InventoryOptions {
   public Dictionary<string, CompositeTexture> EmptyTextures;
 
   public int GetMaxStackForItem(ItemStack item) {
-    CollectibleBehavior.Term term =
-        item.Collectible.GetBehavior<CollectibleBehavior.Term>();
+    CollectibleBehaviors.Term term =
+        item.Collectible.GetBehavior<CollectibleBehaviors.Term>();
     if (RequireTerm) {
       if (term == null) {
         return 0;

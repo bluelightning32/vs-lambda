@@ -3,13 +3,11 @@ using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 
-namespace Lambda.BlockBehavior;
-
-using VSBlockBehavior = Vintagestory.API.Common.BlockBehavior;
+namespace Lambda.BlockBehaviors;
 
 // Rightclicking on the source block with the correct ingredient constructs a
 // new block.
-public class MultiAttached : VSBlockBehavior {
+public class MultiAttached : BlockBehavior {
   // Indexed by face
   private readonly AssetLocation[] _requiredSides = new AssetLocation[6];
 
