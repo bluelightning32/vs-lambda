@@ -139,4 +139,28 @@
       },
     ]
   },
+  {
+    side: "server",
+    file: "game:blocktypes/stone/rock", op: "addeach", path: "/dropsByType/*/-",
+    value: [
+      {
+        type: "item", code: "lambda:term-inltt",
+        quantity: { avg: 0.02, var: 0 }
+      },
+      {
+        type: "item", code: "lambda:term-inrnil",
+        quantity: { avg: 0.02, var: 0 }
+      },
+    ]
+  },
+  {
+    side: "server",
+    file: "game:blocktypes/plant/seaweed", op: "addeach", path: "/drops/-",
+    value: [
+      {
+        type: "item", code: "lambda:term-listinrttinl",
+        quantity: { avg: 0.2, var: 0 }
+      },
+    ]
+  },
 ]

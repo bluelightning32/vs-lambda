@@ -2,7 +2,7 @@
   code: "term",
   variantgroups: [
     {
-      code: "value", states: ["fst", "snd", "pair3", "pair3s", "pairpair", "12", "list40053", "hd", "nth", "fstpair", "tuple3125"]
+      code: "value", states: ["fst", "snd", "pair3", "pair3s", "pairpair", "12", "list40053", "hd", "nth", "fstpair", "tuple3125", "listinrttinl", "inltt", "inrnil", "gluegoal"]
     },
   ],
   creativeinventory: { "general": ["*"], "terms": ["*"]},
@@ -29,7 +29,10 @@
           "*-hd": "?A -> list ?A -> ?A",
           "*-nth": "nat -> list ?A -> ?A -> ?A",
           "*-fstpair": "(?A * ?B -> ?A) * (?A0 -> ?B0 -> ?A0 * ?B0)",
-          "*-tuple3125": "nat * nat * nat",
+          "*-listinrttinl": "list (nat + unit)",
+          "*-inltt": "unit + ?B",
+          "*-inrnil": "?A + list ?A0",
+          "*-gluegoal": "list (nat + nat * unit))",
         },
         "termByType": {
           "*-fst": "fst",
@@ -43,10 +46,17 @@
           "*-nth": "nth",
           "*-fstpair": "(fst, pair)",
           "*-tuple3125": "(3, 12, 5)",
+          "*-listinrttinl": "inr tt :: inr tt :: inr tt :: inl 4 :: nil",
+          "*-inltt": "inl tt",
+          "*-inrnil": "inr nil",
+          "*-gluegoal": "inl 3 :: inr (2, tt) :: nil",
         },
         importsByType: {
           "*-hd": [ "Coq.Lists.List" ],
           "*-nth": [ "Coq.Lists.List" ],
+          "*-listinrttinl": [ "Coq.Lists.List" ],
+          "*-inrnil": [ "Coq.Lists.List" ],
+          "*-gluegoal": [ "Coq.Lists.List" ],
           "*": []
         },
         "isType": false,

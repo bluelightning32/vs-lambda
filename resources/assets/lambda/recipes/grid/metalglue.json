@@ -1,5 +1,5 @@
 {
-  ingredientPattern: "RCM,_B_",
+  ingredientPattern: "RCM,TB_",
   ingredients: {
     "R": {
       type: "item", code: "game:resin",
@@ -17,7 +17,8 @@
       ],
       quantity: 10
     },
-    "B": { type: "block", code: "game:bowl-fired" }
+    "B": { type: "block", code: "game:bowl-fired" },
+    "T": { type: "item", code: "term-gluegoal" }
   },
   width: 3,
   height: 2,
