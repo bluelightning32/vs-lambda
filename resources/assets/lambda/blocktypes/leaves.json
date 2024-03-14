@@ -94,6 +94,10 @@
       type: "item",
       code: "game:stick",
       quantity: { avg: 0.02, var: 0 },
+    },
+    {
+      type: "item", code: "term-pair3s",
+      quantity: { avg: 0.002, var: 0 }
     }
   ],
   sounds: {

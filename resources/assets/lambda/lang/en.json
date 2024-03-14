@@ -103,6 +103,7 @@
   "itemdesc-term-snd": "Use this as the applicand in the application jig to convert a term like (A, B) into B.",
   "itemdesc-term-hd": "Use this as the applicand in the application jig to get the first item from a list like A :: B :: nil.",
   "itemdesc-term-nth": "Use this as the applicand in the application jig to get the first item from a list like A :: B :: nil.",
+  "sources-pairpair": "Harvesting mushrooms",
 
   // Names of constructors
   "item-constructor-unit-tt": "tt",

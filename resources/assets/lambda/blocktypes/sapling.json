@@ -3,7 +3,7 @@
   class: "BlockSapling",
   entityclass: "Sapling",
   attributes: {
-    treeGen: "lambda:tree",
+    treeGen: "lambda:lambda",
     reinforcable: true,
     sproutDays: { avg: 3, var: 1 },
     matureDays: { avg: 14, var: 4 }

@@ -46,20 +46,18 @@
   {
     side: "server",
     file: "game:blocktypes/plant/leaves/normal", op: "addmerge", path: "/drops/-",
-    value:{
+    value: {
       type: "item", code: "lambda:term-pair3s",
       quantity: { avg: 0.002, var: 0 }
     }
   },
   {
     side: "server",
-    file: "game:blocktypes/plant/mushroom", op: "addmerge", path: "/drops",
-    value: [
-      {
-        type: "item", code: "lambda:term-pairpair",
-        quantity: { avg: 0.05, var: 0 }
-      },
-    ]
+    file: "game:blocktypes/plant/mushroom", op: "addmerge", path: "/drops/-",
+    value: {
+      type: "item", code: "lambda:term-pairpair",
+      quantity: { avg: 0.1, var: 0 }
+    },
   },
   {
     side: "server",
