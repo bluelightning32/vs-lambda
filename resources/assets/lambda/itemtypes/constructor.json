@@ -64,7 +64,12 @@
           "*": []
         },
         "isType": false,
-        "isTypeFamily": false
+        "isTypeFamily": false,
+        implicitArgumentsByType: {
+          "*-prod-pair": [ 0, 1 ],
+          "*-sum-*": [0, 1],
+          "*-list-*": [0],
+        },
       }
     }
   ],

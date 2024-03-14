@@ -19,6 +19,7 @@ public class Term : CollectibleBehavior {
   private bool? _isType;
   private bool? _isTypeFamily;
   private string[] _imports;
+  private int[] _implicitArguments;
 
   public Term(CollectibleObject collObj) : base(collObj) {}
 
@@ -36,6 +37,8 @@ public class Term : CollectibleBehavior {
     _isTypeFamily = properties["isTypeFamily"].Exists
                         ? properties["isTypeFamily"].AsBool()
                         : null;
+    _implicitArguments =
+        properties["implicitArguments"].AsArray<int>(Array.Empty<int>());
   }
 
   public override void OnLoaded(ICoreAPI api) {
@@ -49,6 +52,10 @@ public class Term : CollectibleBehavior {
 
   public string GetType(ItemStack stack) {
     return _type ?? stack.Attributes.GetAsString("type");
+  }
+
+  public int[] GetImplicitArguments(ItemStack stack) {
+    return _implicitArguments;
   }
 
   public string GetConstructs(ItemStack stack) {
@@ -128,5 +135,13 @@ public class Term : CollectibleBehavior {
     termInfo.ToTreeAttributes(tree);
     ItemStack stack = new(generic.Id, generic.ItemClass, 1, tree, api.World);
     return stack;
+  }
+
+  public static ItemStack FindStandard(ICoreAPI api, string term) {
+    Dictionary<string, CollectibleObject> termDict = GetTermDict(api);
+    if (termDict.TryGetValue(term, out CollectibleObject termObj)) {
+      return new ItemStack(termObj, 1);
+    }
+    return null;
   }
 }

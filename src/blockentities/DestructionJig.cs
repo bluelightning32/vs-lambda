@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 using Lambda.BlockBehaviors;
@@ -21,7 +22,10 @@ public class DestructionFluidProps {
   public JsonItemStack Output;
 }
 
-public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
+public class DestructionJig : BlockEntityDisplay,
+                              IBlockEntityForward,
+                              IDropCraftListener,
+                              ICollectibleTarget {
   private enum TermState {
     Invalid,
     CompilationWaiting,
@@ -44,6 +48,7 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
   private bool _compilationRunning = false;
   DestructInfo _destructInfo = null;
   bool _dropWaiting = false;
+  int _hammerHits = 0;
   // `_termState` applies to `_lastTerm`. This is used to check whether the term
   // currently in the inventory changed since the last state update.
   string _lastTerm = null;
@@ -74,7 +79,9 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
     // necessary, because the container shouldn't accept blocks (only term
     // items), but this is set anyway for future proofing.
     Block.PlacedPriorityInteract = true;
-    GetOrCreateErrorMesh();
+    if (Api.Side == EnumAppSide.Client) {
+      GetOrCreateErrorMesh();
+    }
   }
 
   public override void ToTreeAttributes(ITreeAttribute tree) {
@@ -84,6 +91,7 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
     if (_termState == TermState.CompilationDone) {
       _destructInfo?.ToTreeAttributes(tree);
     }
+    tree.SetInt("hammerHits", _hammerHits);
   }
 
   public override void FromTreeAttributes(ITreeAttribute tree,
@@ -98,6 +106,7 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
       _destructInfo ??= new();
       _destructInfo.FromTreeAttributes(tree);
     }
+    _hammerHits = tree.GetInt("hammerHits", 0);
 
     SetInventoryBounds(!_inventory[1].Empty);
     RedrawAfterReceivingTreeAttributes(worldForResolving);
@@ -286,6 +295,7 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
       _dropWaiting = false;
       _lastTerm = null;
       _termState = TermState.Invalid;
+      _hammerHits = 0;
       return;
     }
     string[] imports = termBhv?.GetImports(_inventory[1].Itemstack);
@@ -516,5 +526,152 @@ public class DestructionJig : BlockEntityDisplay, IBlockEntityForward {
       result |= Behaviors[i].OnTesselation(mesher, tessThreadTesselator);
     }
     return result;
+  }
+
+  private void DropDestructItems() {
+    if (Api.Side != EnumAppSide.Server) {
+      return;
+    }
+    if (_termState == TermState.Invalid) {
+      return;
+    }
+    if (_termState == TermState.CompilationRunning ||
+        _termState == TermState.CompilationWaiting) {
+      _dropWaiting = true;
+      return;
+    }
+    if (_destructInfo.ErrorMessage != null) {
+      return;
+    }
+    DestructInfo destructInfo = _destructInfo;
+    _termState = TermState.Invalid;
+    _destructInfo = null;
+    // Take out the water as a convenience to the player, and because it
+    // "splashed" when the term was hit.
+    for (int i = 0; i < _inventory.Count; ++i) {
+      _inventory[i].TakeOutWhole();
+    }
+    HashSet<int> skipTerms = new();
+    if (destructInfo.Terms[0].Term[0] == '@') {
+      ItemStack constructor =
+          Term.FindStandard(Api, destructInfo.Terms[0].Term[1..]);
+      if (constructor != null) {
+        Term term = constructor.Collectible.GetBehavior<Term>();
+        skipTerms.Add(0);
+        foreach (int i in term.GetImplicitArguments(constructor)) {
+          skipTerms.Add(i + 1);
+        }
+        Api.World.SpawnItemEntity(constructor, Pos.ToVec3d().Add(0.5, 0.5, 0.5),
+                                  null);
+      }
+    }
+
+    for (int i = 0; i < destructInfo.Terms.Count; ++i) {
+      if (skipTerms.Contains(i)) {
+        continue;
+      }
+      TermInfo termInfo = destructInfo.Terms[i];
+      ItemStack drop = Term.Find(Api, termInfo);
+      Api.World.SpawnItemEntity(drop, Pos.ToVec3d().Add(0.5, 0.5, 0.5), null);
+    }
+    MarkDirty();
+  }
+
+  void IDropCraftListener.OnDropCraft(IWorldAccessor world, BlockPos pos,
+                                      BlockPos dropper) {
+    DropDestructItems();
+  }
+
+  void ICollectibleTarget.OnHeldAttackStart(ItemSlot slot, EntityAgent byEntity,
+                                            BlockSelection blockSel,
+                                            EntitySelection entitySel,
+                                            ref EnumHandHandling handHandling,
+                                            ref EnumHandling handled) {
+    Api.Logger.Notification("Got OnHeldAttackStart");
+
+    handHandling = EnumHandHandling.PreventDefault;
+    handled = EnumHandling.PreventSubsequent;
+
+    if (_termState != TermState.CompilationDone ||
+        _destructInfo.ErrorMessage != null) {
+      // There's no easy way to prevent the attack animation from playing. This
+      // method doesn't start the animation, but it will later get started by
+      // EntityPlayer.HandleHandAnimations.
+      //
+      // Return with handHandling set to `EnumHandHandling.PreventDefault`. This
+      // way the block won't get broken in creative mode. Although, the hammer's
+      // nimationAuthoritative behavior would have set handHandling to that
+      // anyway, if `handled` allowed it to run.
+      return;
+    }
+    MarkToolAsHitting(slot, true);
+    string anim =
+        slot.Itemstack.Collectible.GetHeldTpHitAnimation(slot, byEntity);
+    float framesound =
+        CollectibleBehaviorAnimationAuthoritative.getSoundAtFrame(byEntity,
+                                                                  anim);
+
+    byEntity.AnimManager.RegisterFrameCallback(
+        new AnimFrameCallback() { Animation = anim, Frame = framesound,
+                                  Callback = () => OnHammerStrike(slot) });
+  }
+
+  private void OnHammerStrike(ItemSlot tool) {
+    Api.Logger.Notification("Got hammer strike");
+    if (GetToolIsHitting(tool) == true) {
+      Api.Logger.Notification("Still hitting the jig");
+      if (_termState == TermState.CompilationDone &&
+          _destructInfo.ErrorMessage == null) {
+        ++_hammerHits;
+        int necessaryHits = Block.Attributes["hammerHits"].AsInt(2);
+        if (_hammerHits >= necessaryHits) {
+          DropDestructItems();
+        }
+      }
+    }
+  }
+
+  private void MarkToolAsHitting(ItemSlot tool, bool value) {
+    tool.Itemstack.TempAttributes.SetBool($"hitting-{Block.Code}", value);
+  }
+
+  private bool GetToolIsHitting(ItemSlot tool) {
+    if (tool.Itemstack == null) {
+      return false;
+    }
+    return tool.Itemstack.TempAttributes.GetAsBool($"hitting-{Block.Code}",
+                                                   false);
+  }
+
+  bool ICollectibleTarget.OnHeldAttackStep(BlockPos originalTarget,
+                                           float secondsPassed, ItemSlot slot,
+                                           EntityAgent byEntity,
+                                           BlockSelection blockSelection,
+                                           EntitySelection entitySel,
+                                           ref EnumHandling handled) {
+    handled = EnumHandling.PreventSubsequent;
+
+    MarkToolAsHitting(slot,
+                      blockSelection != null && blockSelection.Position == Pos);
+
+    string animCode =
+        slot.Itemstack.Collectible.GetHeldTpHitAnimation(slot, byEntity);
+    return byEntity.AnimManager.IsAnimationActive(animCode);
+  }
+
+  bool ICollectibleTarget.OnHeldAttackCancel(
+      BlockPos originalTarget, float secondsPassed, ItemSlot slot,
+      EntityAgent byEntity, BlockSelection blockSelection,
+      EntitySelection entitySel, EnumItemUseCancelReason cancelReason,
+      ref EnumHandling handled) {
+    Api.Logger.Debug("Got OnHeldAttackCancel");
+    handled = EnumHandling.PreventSubsequent;
+    if (cancelReason == EnumItemUseCancelReason.Death ||
+        cancelReason == EnumItemUseCancelReason.Destroyed) {
+      MarkToolAsHitting(slot, false);
+      return true;
+    } else {
+      return false;
+    }
   }
 }
