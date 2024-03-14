@@ -392,7 +392,7 @@ abstract public class Jig : BlockEntityDisplay,
     for (int i = 0; i < Inventory.Count; i++) {
       ItemStack stack = Inventory[i].Itemstack;
       if (stack != null) {
-        mesher.AddMeshData(GetMesh(0, stack), tfMatrices[i]);
+        mesher.AddMeshData(GetMesh(i, stack), tfMatrices[i]);
       }
     }
 
