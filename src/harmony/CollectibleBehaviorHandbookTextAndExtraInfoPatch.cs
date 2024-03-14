@@ -40,8 +40,6 @@ class CollectibleBehaviorHandbookTextAndExtraInfoPatch {
       ItemStack stack, List<RichTextComponentBase> components, float marginTop,
       bool haveText) {
     bool addedCreatedBy = components.Count != __state;
-    capi.Logger.Debug("addCreatedByInfoPostfix {0} {1}", __state,
-                      addedCreatedBy);
     haveText = __result;
     List<RichTextComponentBase> inscriptionComponents =
         InscriptionSystem.GetInstance(capi).GetHandbookCreatedByInfo(

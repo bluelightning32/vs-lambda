@@ -1,0 +1,20 @@
+{
+  ingredientPattern: "SPS,SCS,SSS",
+  ingredients: {
+    "P": { type: "block", code: "game:claypot-burned" },
+    "C": { type: "item", code: "game:clay-*" },    
+    "S": {
+      type: "item", code: "game:stone-*", name: "stone",
+      allowedVariants: [
+        "chert",
+        "granite",
+        "andesite",
+        "basalt",
+        "peridotite"
+      ]
+    }
+  },
+  width: 3,
+  height: 3,
+  output: { type: "block", code: "destructionjig-{stone}" }
+}
