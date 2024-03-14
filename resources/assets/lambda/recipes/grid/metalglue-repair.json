@@ -1,0 +1,200 @@
+[
+  {
+    ingredientPattern: "B,P",
+    ingredients: {
+      "P": {
+        type: "item", code: "game:*-copper",
+        name: "tool",
+        allowedVariants: ["pickaxe", "axe-felling", "shovel", "blade-falx", "hoe", "prospectingpick", "knife-generic", "spear-generic" ]
+      },
+      "B": { type: "block", code: "game:bowl-fired" }
+    },
+    attributes: {
+      liquidContainerProps: {
+        requiresContent: { type: "item", code: "lambda:metalglueportion-copper" },
+        requiresLitres: 1
+      }
+    },
+    width: 1,
+    height: 2,
+    averageDurability: false,
+    shapeless: true,
+    output: { type: "item", code: "game:{tool}-copper", quantity: 1  }
+  },
+  {
+    ingredientPattern: "B,P",
+    ingredients: {
+      "P": {
+        type: "item", code: "game:*-tinbronze",
+        name: "tool",
+        allowedVariants: ["pickaxe", "axe-felling", "shovel", "blade-falx", "hoe", "prospectingpick", "knife-generic", "spear-generic" ]
+      },
+      "B": { type: "block", code: "game:bowl-fired" }
+    },
+    attributes: {
+      liquidContainerProps: {
+        requiresContent: { type: "item", code: "lambda:metalglueportion-tinbronze" },
+        requiresLitres: 1
+      }
+    },
+    width: 1,
+    height: 2,
+    averageDurability: false,
+    shapeless: true,
+    output: { type: "item", code: "game:{tool}-tinbronze", quantity: 1  }
+  },
+  {
+    ingredientPattern: "B,P",
+    ingredients: {
+      "P": {
+        type: "item", code: "game:*-bismuthbronze",
+        name: "tool",
+        allowedVariants: ["pickaxe", "axe-felling", "shovel", "blade-falx", "hoe", "prospectingpick", "knife-generic", "spear-generic" ]
+      },
+      "B": { type: "block", code: "game:bowl-fired" }
+    },
+    attributes: {
+      liquidContainerProps: {
+        requiresContent: { type: "item", code: "lambda:metalglueportion-bismuthbronze" },
+        requiresLitres: 1
+      }
+    },
+    width: 1,
+    height: 2,
+    averageDurability: false,
+    shapeless: true,
+    output: { type: "item", code: "game:{tool}-bismuthbronze", quantity: 1  }
+  },
+  {
+    ingredientPattern: "B,P",
+    ingredients: {
+      "P": {
+        type: "item", code: "game:*-blackbronze",
+        name: "tool",
+        allowedVariants: ["pickaxe", "axe-felling", "shovel", "blade-falx", "hoe", "prospectingpick", "knife-generic", "spear-generic" ]
+      },
+      "B": { type: "block", code: "game:bowl-fired" }
+    },
+    attributes: {
+      liquidContainerProps: {
+        requiresContent: { type: "item", code: "lambda:metalglueportion-blackbronze" },
+        requiresLitres: 1
+      }
+    },
+    width: 1,
+    height: 2,
+    averageDurability: false,
+    shapeless: true,
+    output: { type: "item", code: "game:{tool}-blackbronze", quantity: 1  }
+  },
+  {
+    ingredientPattern: "B,P",
+    ingredients: {
+      "P": {
+        type: "item", code: "game:*-gold",
+        name: "tool",
+        allowedVariants: ["pickaxe", "axe-felling", "shovel", "blade-falx", "hoe", "prospectingpick", "knife-generic", "spear-generic" ]
+      },
+      "B": { type: "block", code: "game:bowl-fired" }
+    },
+    attributes: {
+      liquidContainerProps: {
+        requiresContent: { type: "item", code: "lambda:metalglueportion-gold" },
+        requiresLitres: 1
+      }
+    },
+    width: 1,
+    height: 2,
+    averageDurability: false,
+    shapeless: true,
+    output: { type: "item", code: "game:{tool}-gold", quantity: 1  }
+  },
+  {
+    ingredientPattern: "B,P",
+    ingredients: {
+      "P": {
+        type: "item", code: "game:*-silver",
+        name: "tool",
+        allowedVariants: ["pickaxe", "axe-felling", "shovel", "blade-falx", "hoe", "prospectingpick", "knife-generic", "spear-generic" ]
+      },
+      "B": { type: "block", code: "game:bowl-fired" }
+    },
+    attributes: {
+      liquidContainerProps: {
+        requiresContent: { type: "item", code: "lambda:metalglueportion-silver" },
+        requiresLitres: 1
+      }
+    },
+    width: 1,
+    height: 2,
+    averageDurability: false,
+    shapeless: true,
+    output: { type: "item", code: "game:{tool}-silver", quantity: 1  }
+  },
+  {
+    ingredientPattern: "B,P",
+    ingredients: {
+      "P": {
+        type: "item", code: "game:*-iron",
+        name: "tool",
+        allowedVariants: ["pickaxe", "axe-felling", "shovel", "blade-falx", "hoe", "prospectingpick", "knife-generic", "spear-generic" ]
+      },
+      "B": { type: "block", code: "game:bowl-fired" }
+    },
+    attributes: {
+      liquidContainerProps: {
+        requiresContent: { type: "item", code: "lambda:metalglueportion-iron" },
+        requiresLitres: 1
+      }
+    },
+    width: 1,
+    height: 2,
+    averageDurability: false,
+    shapeless: true,
+    output: { type: "item", code: "game:{tool}-iron", quantity: 1  }
+  },
+  {
+    ingredientPattern: "B,P",
+    ingredients: {
+      "P": {
+        type: "item", code: "game:*-meteoriciron",
+        name: "tool",
+        allowedVariants: ["pickaxe", "axe-felling", "shovel", "blade-falx", "hoe", "prospectingpick", "knife-generic", "spear-generic" ]
+      },
+      "B": { type: "block", code: "game:bowl-fired" }
+    },
+    attributes: {
+      liquidContainerProps: {
+        requiresContent: { type: "item", code: "lambda:metalglueportion-meteoriciron" },
+        requiresLitres: 1
+      }
+    },
+    width: 1,
+    height: 2,
+    averageDurability: false,
+    shapeless: true,
+    output: { type: "item", code: "game:{tool}-meteoriciron", quantity: 1  }
+  },
+  {
+    ingredientPattern: "B,P",
+    ingredients: {
+      "P": {
+        type: "item", code: "game:*-steel",
+        name: "tool",
+        allowedVariants: ["pickaxe", "axe-felling", "shovel", "blade-falx", "hoe", "prospectingpick", "knife-generic", "spear-generic" ]
+      },
+      "B": { type: "block", code: "game:bowl-fired" }
+    },
+    attributes: {
+      liquidContainerProps: {
+        requiresContent: { type: "item", code: "lambda:metalglueportion-steel" },
+        requiresLitres: 1
+      }
+    },
+    width: 1,
+    height: 2,
+    averageDurability: false,
+    shapeless: true,
+    output: { type: "item", code: "game:{tool}-steel", quantity: 1  }
+  },
+]

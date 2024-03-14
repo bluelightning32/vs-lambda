@@ -69,13 +69,33 @@
   "block-leavesbranchy-placed-lambda": "Lambda branchy leaves",
   "block-sapling-lambda-free": "Lambda sapling",
 
-  // Items
-  "item-denaturedterm": "Denatured term",
-  "itemdesc-denaturedterm": "This is edible, but barely. It smells like overripe fruit and has a slimy, rubbery texture.",
+  // Liquids
   "item-sapportion-raw": "Lambda sap",
   "incontainer-item-sapportion-raw": "Lambda sap",
   "item-sapportion-destruction": "Term destruction fluid",
   "incontainer-item-sapportion-destruction": "Term destruction fluid",
+  "item-metalglueportion-copper": "Copper metal glue",
+  "incontainer-item-metalglueportion-copper": "Copper metal glue",
+  "item-metalglueportion-tinbronze": "Tin bronze metal glue",
+  "incontainer-item-metalglueportion-tinbronze": "Tin bronze metal glue",
+  "item-metalglueportion-bismuthbronze": "Bismuth bronze metal glue",
+  "incontainer-item-metalglueportion-bismuthbronze": "Bismuth bronze metal glue",
+  "item-metalglueportion-blackbronze": "Black bronze metal glue",
+  "incontainer-item-metalglueportion-blackbronze": "Black bronze metal glue",
+  "item-metalglueportion-gold": "Gold metal glue",
+  "incontainer-item-metalglueportion-gold": "Gold metal glue",
+  "item-metalglueportion-silver": "Silver metal glue",
+  "incontainer-item-metalglueportion-silver": "Silver metal glue",
+  "item-metalglueportion-iron": "Iron metal glue",
+  "incontainer-item-metalglueportion-iron": "Iron metal glue",
+  "item-metalglueportion-meteoriciron": "Meteoric iron metal glue",
+  "incontainer-item-metalglueportion-meteoriciron": "Meteoric iron metal glue",
+  "item-metalglueportion-steel": "Steel metal glue",
+  "incontainer-item-metalglueportion-steel": "Steel metal glue",
+
+  // Items
+  "item-denaturedterm": "Denatured term",
+  "itemdesc-denaturedterm": "This is edible, but barely. It smells like overripe fruit and has a slimy, rubbery texture.",
   "item-treeseed-lambda": "Lambda tree seed",
 
   // Terms that are not constructors or types
