@@ -3,12 +3,24 @@ client side does not need Coq installed. However, if you are running a server,
 or playing in single player mode, Coq must be installed, as explained on the
 [readme page](readme.md).
 
-Currently the only item in the mod not related to building functions is the
-enhanced pan. The enhanced pan has a 50% greater chance of dropping copper
-nuggets (about 22.5% total) and a 50% greater chance of dropping sphalerite
-nuggets (3% total). So the early game goal of the mod is to use function
-application crafting to create the term `(3, 12, 5)`, which is required in the
-crafting grid recipe for the enhanced pan.
+These are the items that are not solely involved with crafting terms:
+* Enhanced pan - has a 50% greater chance of dropping copper nuggets (about
+  22.5% total) and a 50% greater chance of dropping sphalerite nuggets (3%
+  total). Needs `(3, 12, 5)` term to craft.
+* Lambda tree seed - grows into a tree with bluelish colored logs. It can be
+  used for decoration, or its sap can be processed into term destruction fluid,
+  which is necessary to craft some terms. The trees can rarely be found in the
+  world, or the seed can be crafted using a walnut seed and the term `(pair, S)`.
+* Metal glue - can be used to repair tools in the crafting grid. Using metal
+  glue on a tool saves the hassle smithing, and repairing a tool overall costs
+  half the metal. Requires term `inl 3 :: inr (2, tt) :: nil` to craft.
+
+The enhanced pan and lambda tree seeds are early game items, because their
+required terms on the application jig with input terms found in the early game.
+
+The metal glue is a mid game item. Building its term requires both the
+application jig and destruction jig. The destruction jig doesn't work without
+destruction fluid, which requires a barrel and lambda tree sap to craft.
 
 ## Function application crafting
 
@@ -25,12 +37,12 @@ and clay, similar to, but with a slightly different recipe than cobblestone.
 The mod adds terms items (currently all blue colored in the shape of a spinning
 top) which represent functions or arguments to functions. The application jig
 combines two terms together to make a new term. The first term must be a
-function (called the applicand). The player shift right clicks it into place.
+function (called the applicand). The player right clicks it into place.
 The second term (called the argument) must have a type that matches what the
-function accepts. It is also shift right clicked into place. If the argument
+function accepts. It is also right clicked into place. If the argument
 has the correct type, then it will stay poking out the top of the jig. If it
 has the wrong type, then it will quickly fall out of the jig. Both terms can be
-removed with right click.
+removed by right clicking with an empty hand.
 
 Early game, you will find functions like these:
 * `fst` - Takes an argument in the form (A, B) then returns the first element (the A)
@@ -63,15 +75,60 @@ Besides combining terms in the application jig, terms can be gathered in the fol
 * Panning sand/gravel
 * Breaking non-branchy leaves
 * Harvesting mushrooms
-* Breaking boulders (not rocks)
+* Breaking boulders
 * Harvesting wolves
 * Harvesting hares
 * Harvesting hyenas
+* Breaking rocks
+* Breaking seaweed
 
-You will need a variety of terms to craft the `(3, 12, 5)` term in the
-application jig. However, if you end up with too many or the wrong kinds, you
-can cook them into denatured terms in a firepit, then eat them. Although the
-denatured terms only provide a little bit of fruit satiety.
+You will need a variety of terms to process and craft the reward items.
+However, if you end up with too many or the wrong kinds, you can cook them into
+denatured terms in a firepit, then eat them. Although the denatured terms only
+provide a little bit of fruit satiety.
+
+## Lambda tree
+
+The lambda tree can be found in the world near acacia trees. Its distinguishing
+features are its bluelish logs, and its upward curving branches.
+
+![lambda tree](screenshots/lambda-tree.png)
+
+Or instead of exploring to find it, its seed can be crafted from a walnut seed
+plus the term `(pair, S)`.
+
+The lambda tree sap's necessary for making destruction fluid. If the A Culinary
+Artillery mod is installed, then the sap can be obtained by putting a spile on
+the tree and a bucket below the spile. Alternatively, the tree logs can be
+sealed in a barrel with water to make the sap (similar to the tannin recipe).
+To make the destruction fluid, denatured terms need to be sealed in a barrel
+with the tree sap.
+
+## Destruction jig
+
+![Destruction jig](screenshots/destruction-jig.png)
+
+The destruction jig allows one to break apart terms into a constructor and its
+arguments. The input term must be an inductive type. The constructor is a very
+pure form of a term. This is the only way of obtaining some of the constructors.
+
+The destruction jig recipe is easy. It is crafted from stones, clay, and a
+cooking pot. However, the jig cannot be used without destruction fluid, as
+explained above, getting destruction fluid requires access to a lambda tree and
+a barrel.
+
+To use the jig, first right click destruction fluid into the pan on top. It
+takes 5L (half a bucket). Then right click a term into the pan. If the term is
+not an inductive type, then the destruction fluid will turn red but will not be
+consumed. The incorrect term can be right clicked out with an empty hand. If
+the term is an inductive type, then the destruction fluid will turn into water.
+The term can either be destructed using a hammer, or by dropping a cobblestone
+slab on top, like with the application jig.
+
+Here are some examples of what can be destructed:
+* `inl tt` -> `inl` and `tt`
+* `inr nil` -> `inr` and `nil`
+* `inr tt :: inr tt :: inr tt :: inl 4 :: nil` -> `cons`, `inr tt`, and `inr tt :: inr tt :: inl 4 :: nil`
 
 ## Inscription crafting
 
