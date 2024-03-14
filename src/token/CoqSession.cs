@@ -445,7 +445,8 @@ public class CoqSession : IDisposable {
         writer.WriteLine($"Require Import {import}.");
       }
       writer.Write(TermInfoHeader);
-      writer.WriteLine($"Ltac2 Eval destruct_term (eval hnf in ({term})).");
+      writer.WriteLine(
+          $"Ltac2 Eval destruct_term (Std.eval_hnf open_constr:({term})).");
       writer.Close();
 
       using StreamReader reader = new(filename);

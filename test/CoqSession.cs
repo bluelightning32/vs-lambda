@@ -164,4 +164,16 @@ public class CoqSessionTest {
     Assert.AreEqual("The term is not fully applied.", info.ErrorMessage);
     Assert.AreEqual(null, info.Terms);
   }
+
+  [TestMethod]
+  public void DestructOpenTerm() {
+    DestructInfo info = _session.GetDestructInfo(
+        new BlockPos(0, 0, 0, 0), Array.Empty<string>(), "( pair, pair )");
+    Assert.AreEqual(null, info.ErrorMessage);
+    Assert.AreEqual("@pair", info.Terms[0].Term);
+    Assert.IsTrue(info.Terms[1].IsType);
+    Assert.IsTrue(info.Terms[2].IsType);
+    Assert.AreEqual("pair", info.Terms[3].Term);
+    Assert.AreEqual("pair", info.Terms[4].Term);
+  }
 }
