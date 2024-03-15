@@ -6,13 +6,13 @@
       "*coopersreed-*-normal-*": [
         {
           type: "item", code: "lambda:term-fst",
-          quantity: { avg: 0.03, var: 0 }
+          quantity: { avg: 0.01, var: 0 }
         }
       ],
       "*papyrus-*-normal-*":  [
         {
           type: "item", code: "lambda:term-fst",
-          quantity: { avg: 0.03, var: 0 }
+          quantity: { avg: 0.01, var: 0 }
         }
       ]
     }
