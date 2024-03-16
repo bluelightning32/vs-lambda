@@ -68,6 +68,8 @@
   "block-leaves-placed-lambda": "Lambda leaves",
   "block-leavesbranchy-placed-lambda": "Lambda branchy leaves",
   "block-sapling-lambda-free": "Lambda sapling",
+  "block-reed-termstorage-primitive": "Primitive term storage",
+  "termstorage-primitive-contents": "Term storage contents",
 
   // Liquids
   "item-sapportion-raw": "Lambda sap",

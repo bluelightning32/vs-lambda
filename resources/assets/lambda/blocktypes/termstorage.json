@@ -1,0 +1,115 @@
+{
+  code: "termstorage",
+  class: "BlockGenericTypedContainer",
+  entityclass: "TermContainer",
+	variantGroups: [
+    { code: "type", states: ["primitive"] },
+	],
+  attributes: {
+    inventoryClassName: "termstorage",
+    defaultType: "reed",
+    openSound: "game:sounds/block/basketopen",
+    closeSound: "game:sounds/block/basketclose",
+    types: ["reed"],
+    drop: {
+      reed: true,
+    },
+    quantitySlots: {
+      reed: 16,
+    },
+    dialogTitleLangCode: {
+      reed: "lambda:termstorage-primitive-contents",
+    },
+    shape: {
+      reed: "game:block/reed/basket-normal",
+    }
+  },
+  behaviors: [{name: "Lockable" }, {name: "Container"}],
+  entityBehaviors: [{ name: "Animatable" }],
+  creativeinventory: {  },
+  creativeinventoryStacks: [
+    {
+      tabs: [ "general", "decorative" ],
+      stacks: [
+          { type: "block", code: "termstorage-primitive", attributes: { type: "reed" } },
+      ]
+    }
+  ],
+  heldTpIdleAnimation: "holdunderarm",
+  shapeInventory: { base: "game:block/reed/basket-normal", rotateY: 270 },
+  shape: { base: "game:block/reed/basket-normal", rotateY: 270 },
+
+  textures: {
+    // In the shape file the textures do not have the "reed-" prefix. The prefix is added by the block entity.
+		"reed-sidesWE": {
+      base: "game:block/reed/basket/normal-westeast",
+      blendedOverlays: [
+        {
+          base: "lambda:reed/westeast-overlay",
+          blendMode: "overlay"
+        }
+      ]
+    },
+		"reed-sidesSN": {
+      base: "game:block/reed/basket/normal-northsouth",
+      blendedOverlays: [
+        {
+          base: "lambda:reed/westeast-overlay",
+          blendMode: "overlay"
+        }
+      ]
+    },
+		"reed-lid": {
+      base: "game:block/reed/basket/normal-lid",
+      blendedOverlays: [
+        {
+          base: "lambda:reed/westeast-overlay",
+          blendMode: "overlay"
+        }
+      ]
+    },
+  },
+  blockmaterial: "Wood",
+  replaceable: 900,
+  resistance: 2,
+  lightAbsorption: 0,
+  sideAo: { all: false },
+  sidesolid: {
+      all: false
+  },
+  sideopaque: {
+      all: false
+  },
+  collisionbox: {
+      x1: 0.125, y1: 0, z1: 0.125, x2: 0.8125, y2: 0.5, z2: 0.875,
+      rotateYByType: {
+          "*-north": 270,
+          "*-east": 180,
+          "*-south": 90,
+          "*-west": 0
+      }
+  },
+  selectionbox: {
+      x1: 0.125, y1: 0, z1: 0.125, x2: 0.8125, y2: 0.5, z2: 0.875,
+      rotateYByType: {
+          "*-north": 270,
+          "*-east": 180,
+          "*-south": 90,
+          "*-west": 0
+      }
+  },
+  sounds: {
+      "place": "game:block/planks",
+      "walk": "game:walk/wood"
+  },
+  materialDensity: 600,
+  tpHandTransform: {
+      translation: { x: -0.9, y: -0.5, z: -0.3 },
+      rotation: { x: 0, y: 90, z: -102 },
+      scale: 0.56
+  },
+  guiTransform: {
+      origin: { x: 0.5, y: 0.3, z: 0.5 },
+      scale: 1.3
+  }
+}

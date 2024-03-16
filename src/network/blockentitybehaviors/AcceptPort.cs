@@ -169,7 +169,8 @@ public class AcceptPort : TokenEmitter, IAcceptPort, IInventoryControl {
       return false;
     }
     if (GetInventoryPort() == option) {
-      ItemStack item = (Blockentity as SingleTermContainer)?.Inventory[0].Itemstack;
+      ItemStack item =
+          (Blockentity as SingleTermContainer)?.Inventory[0].Itemstack;
       if (item != null &&
           (GetNextInventoryPort()?.Inventory.GetMaxStackForItem(item) ?? 0) <
               item.StackSize) {

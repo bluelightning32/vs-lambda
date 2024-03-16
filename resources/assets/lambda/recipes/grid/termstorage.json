@@ -1,0 +1,25 @@
+[
+  {
+    ingredientPattern: "CTC,TST,CTC",
+    ingredients: {
+      "C": { type: "item", code: "game:cattailtops", quantity: 3 },
+      "T": { type: "item", code: "term-fst", quantity: 1 },
+      "S": { type: "item", code: "game:stone-*", name: "stone" }
+    },
+    width: 3,
+    height: 3,
+    output: { type: "block", code: "termstorage-primitive", attributes: { type: "reed" }  }
+  },
+
+  {
+    ingredientPattern: "CTC,TST,CTC",
+    ingredients: {
+      "C": { type: "item", code: "game:papyrustops", quantity: 3 },
+      "T": { type: "item", code: "term-fst", quantity: 1 },
+      "S": { type: "item", code: "game:stone-*", name: "stone" }
+    },
+    width: 3,
+    height: 3,
+    output: { type: "block", code: "termstorage-primitive", attributes: { type: "reed" }  }
+  }
+]
