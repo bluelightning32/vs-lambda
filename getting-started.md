@@ -4,6 +4,7 @@ or playing in single player mode, Coq must be installed, as explained on the
 [readme page](readme.md).
 
 These are the items that are not solely involved with crafting terms:
+* Primitive term storage - a basket that can be crafted in the stone age and is big as a chest, but only holds terms.
 * Enhanced pan - has a 50% greater chance of dropping copper nuggets (about
   22.5% total) and a 50% greater chance of dropping sphalerite nuggets (3%
   total). Needs `(3, 12, 5)` term to craft.
@@ -15,8 +16,15 @@ These are the items that are not solely involved with crafting terms:
   glue on a tool saves the hassle smithing, and repairing a tool overall costs
   half the metal. Requires term `inl 3 :: inr (2, tt) :: nil` to craft.
 
-The enhanced pan and lambda tree seeds are early game items, because their
+The first time you will want to make is the primitive term storage. After that,
+the enhanced pan and lambda tree seeds are early game items, because their
 required terms on the application jig with input terms found in the early game.
+
+There is also a recipe to duplicate tree seeds, which can be used early game.
+However, the recipe is somewhat involved. So it's only worth copying tree seeds
+that are somewhat rare. Also a tree seed can only be copied once. Seeds
+harvested from a tree can be copied, whether or not the tree was grown from a
+copied seed.
 
 The metal glue is a mid game item. Building its term requires both the
 application jig and destruction jig. The destruction jig doesn't work without
@@ -81,6 +89,7 @@ Besides combining terms in the application jig, terms can be gathered in the fol
 * Harvesting hyenas
 * Breaking rocks
 * Breaking seaweed
+* Breaking clay blocks
 
 You will need a variety of terms to process and craft the reward items.
 However, if you end up with too many or the wrong kinds, you can cook them into
