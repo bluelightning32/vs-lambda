@@ -75,6 +75,7 @@ public class CoreSystem : ModSystem {
                                 coqcVersion.ReplaceLineEndings(" "));
       } catch (Exception e) {
         api.Logger.Fatal(e.ToString());
+        ((ICoreServerAPI)api).Server.ShutDown();
       }
     }
   }
