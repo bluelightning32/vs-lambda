@@ -161,4 +161,14 @@
       },
     ]
   },
+  {
+    side: "server",
+    file: "game:blocktypes/soil/clay", op: "addeach", path: "/drops/-",
+    value: [
+      {
+        type: "item", code: "lambda:term-nateven",
+        quantity: { avg: 0.015, var: 0 }
+      },
+    ]
+  },
 ]

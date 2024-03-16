@@ -5,7 +5,7 @@
       code: "value", states: [
         "fst", "snd", "pair3", "pair3s", "pairpair", "12", "list40053",
         "hd", "nth", "fstpair", "pangoal", "treeseedgoal", "listinrttinl",
-        "inltt", "inrnil", "gluegoal"
+        "inltt", "inrnil", "gluegoal", "nateven"
       ]
     },
   ],
@@ -47,6 +47,7 @@
           "*-inltt": "unit + ?B",
           "*-inrnil": "?A + list ?A0",
           "*-gluegoal": "list (nat + nat * unit)",
+          "*-nateven": "nat -> bool",
         },
         "termByType": {
           "*-fst": "fst",
@@ -65,6 +66,7 @@
           "*-inltt": "inl tt",
           "*-inrnil": "inr nil",
           "*-gluegoal": "inl 3 :: inr (2, tt) :: nil",
+          "*-nateven": "Nat.even",
         },
         importsByType: {
           "*-hd": [ "Coq.Lists.List" ],
