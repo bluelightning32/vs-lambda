@@ -14,7 +14,7 @@ namespace Lambda;
 #pragma warning disable IDE1006
 
 [HarmonyPatch(typeof(CollectibleBehaviorHandbookTextAndExtraInfo))]
-[HarmonyPatchCategory(nameof(InscriptionSystem))]
+// Adds inscription recipe info to the handbook.
 class CollectibleBehaviorHandbookTextAndExtraInfoPatch {
   [HarmonyPrefix]
   [HarmonyPatch("addCreatedByInfo")]

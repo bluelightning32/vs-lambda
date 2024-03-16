@@ -9,7 +9,8 @@ public class TermContainer : BlockEntityGenericTypedContainer {
   protected override void InitInventory(Block block) {
     base.InitInventory(block);
 
-    // Recreate the slots of the inventory so that the new slots only accept terms. When recreating the slots, copy over the existing contents.
+    // Recreate the slots of the inventory so that the new slots only accept
+    // terms. When recreating the slots, copy over the existing contents.
     for (int i = 0; i < Inventory.Count; i++) {
       ItemStack item = Inventory[i].Itemstack;
       Inventory[i] = new SelectiveItemSlot(

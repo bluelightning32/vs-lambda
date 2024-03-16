@@ -1,11 +1,10 @@
 {
-    ingredientPattern: "TS",
-    ingredients: {
-      "S": { type: "item", code: "game:treeseed-walnut" },
-      "T": { type: "item", code: "term-treeseedgoal" },
-    },
-    width: 2,
-    height: 1,
-    output: { type: "item", code: "treeseed-lambda" }
-  }
-  
+  ingredientPattern: "TS",
+  ingredients: {
+    "S": { type: "item", code: "game:treeseed-walnut" },
+    "T": { type: "item", code: "term-treeseedgoal" },
+  },
+  width: 2,
+  height: 1,
+  output: { type: "item", code: "treeseed-lambda" }
+}

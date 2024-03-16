@@ -1,10 +1,16 @@
 {
   code: "treeseed",
   class: "ItemTreeSeed",
+  behaviors: [ {name: "RejectRecipeAttribute"} ],
   maxstacksize: 64,
   attributes: {
     displaycaseable: true,
-    shelvable: true
+    shelvable: true,
+    handbook: {
+      extraSections: [
+        { title: "lambda:handbook-copying", text: "lambda:handbook-copying-desc" }
+      ]
+    }
   },
 	variantgroups: [
 		{ code: "type", states: [ "lambda" ] }
@@ -21,7 +27,22 @@
       ]
     },
   },
-  creativeinventory: { "general": ["*"], "items": ["*"] },
+  creativeinventoryStacks: [
+    {
+      tabs: ["general", "items"],
+      stacks: [
+        {
+          type: "item", code: "treeseed-{type}"
+        },
+        {
+          type: "item", code: "treeseed-{type}",
+          attributes: {
+            copied: true
+          }
+        }
+      ]
+    }
+  ],
   materialDensity: 200,
   combustibleProps: {
     burnTemperature: 600,

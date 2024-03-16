@@ -1,0 +1,52 @@
+[
+  {
+    op: "addmerge",
+    file: "game:itemtypes/resource/treeseed.json",
+    path: "/behaviors",
+    side: "server",
+    value: [ { name: "RejectRecipeAttribute" } ]
+  },
+  {
+    op: "addmerge",
+    file: "game:itemtypes/resource/treeseed.json",
+    path: "/creativeinventoryStacks",
+    side: "server",
+    value: [
+      // Add the item to the creative tab twice, each time with different attributes. This is necessary to get the handbook to work for both versions of the attributes.
+      {
+        tabs: ["general", "items"],
+        stacks: [
+          {
+            type: "item", code: "treeseed-{type}"
+          },
+          {
+            type: "item", code: "treeseed-{type}",
+            attributes: {
+              copied: true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    op: "remove",
+    file: "game:itemtypes/resource/treeseed.json",
+    // When creativeinventoryStacks and creativeinventory are both present, then both attributes contribute to the creative inventory, but only creativeinventoryStacks contributes to the handbook. So remove creativeinventory to prevent a 3rd copy of the seeds from getting added to the creative inventory.
+    path: "/creativeinventory",
+    side: "server"
+  },
+  {
+    op: "addmerge",
+    file: "game:itemtypes/resource/treeseed.json",
+    path: "/attributes",
+    side: "server",
+    value: {
+      handbook: {
+        extraSections: [
+          { title: "lambda:handbook-copying", text: "lambda:handbook-copying-desc" }
+        ]
+      }
+	  }
+  }
+]

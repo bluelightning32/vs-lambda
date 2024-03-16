@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
+using HarmonyLib;
+
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 
@@ -30,6 +33,7 @@ public static class ICoreAPIExtension {
 public class CoreSystem : ModSystem {
   public static string Domain { get; private set; }
   public ServerConfig ServerConfig { get; private set; }
+  private Harmony _harmony;
 
   public static CoreSystem GetInstance(ICoreAPI api) {
     return api.GetCachedModSystem<CoreSystem>();
@@ -79,10 +83,19 @@ public class CoreSystem : ModSystem {
     Domain = Mod.Info.ModID;
     LoadConfigFile(api);
 
+    string patchId = Mod.Info.ModID;
+    if (!Harmony.HasAnyPatches(patchId)) {
+      _harmony = new Harmony(patchId);
+      _harmony.PatchAll();
+    }
+
     api.RegisterCollectibleBehaviorClass(
         "ForwardToBlock", typeof(CollectibleBehaviors.ForwardToBlock));
     api.RegisterCollectibleBehaviorClass("Term",
                                          typeof(CollectibleBehaviors.Term));
+    api.RegisterCollectibleBehaviorClass(
+        "RejectRecipeAttribute",
+        typeof(CollectibleBehaviors.RejectRecipeAttribute));
     api.RegisterBlockClass("DestructionJig", typeof(Blocks.DestructionJig));
     api.RegisterBlockBehaviorClass("BlockEntityForward",
                                    typeof(BlockBehaviors.BlockEntityForward));
@@ -115,5 +128,9 @@ public class CoreSystem : ModSystem {
 
   public override void StartServerSide(ICoreServerAPI api) {}
 
-  public override void Dispose() { base.Dispose(); }
+  public override void Dispose() {
+    base.Dispose();
+
+    _harmony?.UnpatchAll(_harmony.Id);
+  }
 }

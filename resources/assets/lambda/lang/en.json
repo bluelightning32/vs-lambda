@@ -16,6 +16,8 @@
   "required-function-type": "Required function type:",
   "accepts-inscriptions": "Accepts inscriptions",
   "inscribing": "Inscribing",
+  "handbook-copying": "Copying",
+  "handbook-copying-desc": "A tree seed can only be copied once using terms. Seeds harvested from grown trees can be copied, whether or not the tree was grown from a copied seed.",
 
   // Inscribe button label
   "inscribe": "Inscribe",

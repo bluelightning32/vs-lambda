@@ -1,0 +1,44 @@
+[
+  {
+    ingredientPattern: "TS",
+    ingredients: {
+      "S": {
+        type: "item",
+        code: "game:treeseed-*",
+        name: "wood",
+        // This requires the RejectRecipeAttribute behavior to be installed on the tree seed.
+        recipeAttributes: { rejectAttributes: ["copied"] }
+      },
+      "T": { type: "item", code: "term-treeseedduplicategoal" },
+    },
+    width: 2,
+    height: 1,
+    output: {
+      type: "item",
+      code: "game:treeseed-{wood}",
+      quantity: 2,
+      attributes: { "copied": true }
+    }
+  },
+  {
+    ingredientPattern: "TS",
+    ingredients: {
+      "S": {
+        type: "item",
+        code: "treeseed-*",
+        name: "wood",
+        // This requires the RejectRecipeAttribute behavior to be installed on the tree seed.
+        recipeAttributes: { rejectAttributes: ["copied"] }
+      },
+      "T": { type: "item", code: "term-treeseedduplicategoal" },
+    },
+    width: 2,
+    height: 1,
+    output: {
+      type: "item",
+      code: "treeseed-{wood}",
+      quantity: 2,
+      attributes: { "copied": true }
+    }
+  }
+]

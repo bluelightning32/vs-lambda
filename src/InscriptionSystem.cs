@@ -4,8 +4,6 @@ using System.Linq;
 
 using Cairo;
 
-using HarmonyLib;
-
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -18,7 +16,6 @@ namespace Lambda;
 public class InscriptionSystem : ModSystem {
   private RecipeRegistryGeneric<InscriptionRecipe> _inscriptionRegistry;
   private ICoreAPI _api;
-  private Harmony _harmony;
 
   public override double ExecuteOrder() {
     // Use a value bigger than RecipeLoader's 1.0 value so that the RecipeLoader
@@ -31,11 +28,6 @@ public class InscriptionSystem : ModSystem {
   }
 
   public override void Start(ICoreAPI api) {
-    string patchId = $"{Mod.Info.ModID}.{nameof(InscriptionSystem)}";
-    if (!Harmony.HasAnyPatches(patchId)) {
-      _harmony = new Harmony(patchId);
-      _harmony.PatchCategory(nameof(InscriptionSystem));
-    }
     _api = api;
     _inscriptionRegistry =
         api.RegisterRecipeRegistry<RecipeRegistryGeneric<InscriptionRecipe>>(
@@ -245,10 +237,4 @@ public class InscriptionSystem : ModSystem {
   public override void StartClientSide(ICoreClientAPI api) {}
 
   public override void StartServerSide(ICoreServerAPI api) {}
-
-  public override void Dispose() {
-    base.Dispose();
-
-    _harmony?.UnpatchAll(_harmony.Id);
-  }
 }

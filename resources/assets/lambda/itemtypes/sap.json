@@ -51,7 +51,7 @@
           }
         }
       ]
-    } 
+    }
   ],
   maxstacksize: 5000,
   materialDensity: 200,
