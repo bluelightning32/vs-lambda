@@ -22,7 +22,7 @@ public interface IInventoryControl {
 // Creates a container with a single slot. Decisions about format of the dialog
 // and what kind of items to accept are forwarded to the first behavior that
 // implements `IInventoryControl`.
-public class TermContainer : BlockEntityOpenableContainer {
+public class SingleTermContainer : BlockEntityOpenableContainer {
   // Pass in null for the API and inventory class name for now. The correct
   // values will be passed by `BlockEntityOpenableContainer` when it calls
   // LateInitialize from inside of `BlockEntityOpenableContainer.Initialize`.
@@ -34,7 +34,7 @@ public class TermContainer : BlockEntityOpenableContainer {
   public override string InventoryClassName => _inventoryClassName;
   private TopLabelRenderer _labelRenderer = null;
 
-  public TermContainer() { _inventory.SlotModified += OnSlotModified; }
+  public SingleTermContainer() { _inventory.SlotModified += OnSlotModified; }
 
   protected IInventoryControl GetInventoryControl() {
     // Don't use `Block.GetInterface`, because that uses the block accessor to

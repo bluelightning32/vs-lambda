@@ -16,7 +16,7 @@
     { name: "Network" },
     { name: "Container" }
   ],
-  entityClass: "TermContainer",
+  entityClass: "SingleTermContainer",
   attributes: {
     inventoryClassName: "case",
     facingCode: "side",

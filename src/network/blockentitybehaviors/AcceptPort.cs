@@ -143,7 +143,7 @@ public class AcceptPort : TokenEmitter, IAcceptPort, IInventoryControl {
     key |= (ulong)_portedSides << bits;
     bits += 6;
     bool inventoryFull =
-        (Blockentity as TermContainer)?.Inventory[0].Itemstack != null;
+        (Blockentity as SingleTermContainer)?.Inventory[0].Itemstack != null;
     key |= (inventoryFull ? 1ul : 0) << bits;
     ++bits;
     if (bits > 64) {
@@ -169,7 +169,7 @@ public class AcceptPort : TokenEmitter, IAcceptPort, IInventoryControl {
       return false;
     }
     if (GetInventoryPort() == option) {
-      ItemStack item = (Blockentity as TermContainer)?.Inventory[0].Itemstack;
+      ItemStack item = (Blockentity as SingleTermContainer)?.Inventory[0].Itemstack;
       if (item != null &&
           (GetNextInventoryPort()?.Inventory.GetMaxStackForItem(item) ?? 0) <
               item.StackSize) {
@@ -210,7 +210,7 @@ public class AcceptPort : TokenEmitter, IAcceptPort, IInventoryControl {
       _template.OnNodePlaced(Pos, nodeId, ref _nodes[nodeId]);
       Blockentity.GetBehavior<CacheMesh>()?.UpdateMesh();
       if (GetInventoryOptions() != oldInventory) {
-        (Blockentity as TermContainer)?.InventoryChanged();
+        (Blockentity as SingleTermContainer)?.InventoryChanged();
       }
       return true;
     }
@@ -268,7 +268,7 @@ public class AcceptPort : TokenEmitter, IAcceptPort, IInventoryControl {
     if (option != GetInventoryPort()) {
       return false;
     }
-    return (Blockentity as TermContainer)?.Inventory[0].Itemstack != null;
+    return (Blockentity as SingleTermContainer)?.Inventory[0].Itemstack != null;
   }
 
   PortOption GetInventoryPort() {
@@ -323,7 +323,7 @@ public class AcceptPort : TokenEmitter, IAcceptPort, IInventoryControl {
   }
 
   public override string GetInventoryTerm(out string[] imports) {
-    if (Blockentity is TermContainer container) {
+    if (Blockentity is SingleTermContainer container) {
       return container.GetInventoryTerm(out imports);
     } else {
       imports = Array.Empty<string>();

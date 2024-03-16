@@ -101,8 +101,8 @@ public class CoreSystem : ModSystem {
                                  typeof(BlockEntities.ApplicationJig));
     api.RegisterBlockEntityClass("DestructionJig",
                                  typeof(BlockEntities.DestructionJig));
-    api.RegisterBlockEntityClass("TermContainer",
-                                 typeof(BlockEntities.TermContainer));
+    api.RegisterBlockEntityClass("SingleTermContainer",
+                                 typeof(BlockEntities.SingleTermContainer));
     api.RegisterBlockEntityBehaviorClass(
         "CacheMesh", typeof(BlockEntityBehaviors.CacheMesh));
     api.RegisterBlockEntityBehaviorClass(

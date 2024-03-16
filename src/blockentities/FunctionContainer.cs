@@ -18,7 +18,7 @@ namespace Lambda.BlockEntities;
 // a status bar. Decisions about whether to show the dialog and what kind of
 // items to accept are forwarded to the first behavior that implements
 // `IInventoryControl`.
-public class FunctionContainer : TermContainer {
+public class FunctionContainer : SingleTermContainer {
   public enum PacketId {
     Inscribe = 2000,
   }

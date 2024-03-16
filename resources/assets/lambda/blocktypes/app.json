@@ -15,7 +15,7 @@
     { name: "BlockEntityForward" },
     { name: "Container" }
   ],
-  entityClass: "TermContainer",
+  entityClass: "SingleTermContainer",
   attributes: {
     inventoryClassName: "app",
     facingCode: "side",
