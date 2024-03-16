@@ -1,19 +1,40 @@
-{
-  ingredientPattern: "SSS,_C_,SSS",
-  ingredients: {
-    "C": { type: "item", code: "game:clay-*" },
-    "S": {
-      type: "item", code: "game:stone-*", name: "stone",
-      allowedVariants: [
-        "chert",
-        "granite",
-        "andesite",
-        "basalt",
-        "peridotite"
-      ]
-    }
+[
+  {
+    ingredientPattern: "SSS,_C_,SSS",
+    ingredients: {
+      "C": { type: "item", code: "game:clay-*" },
+      "S": {
+        type: "item", code: "game:stone-*", name: "stone",
+        allowedVariants: [
+          "chert",
+          "granite",
+          "andesite",
+          "basalt",
+          "peridotite"
+        ]
+      }
+    },
+    width: 3,
+    height: 3,
+    output: { type: "block", code: "groovedcobblestone-{stone}" }
   },
-  width: 3,
-  height: 3,
-  output: { type: "block", code: "groovedcobblestone-{stone}" }
-}
+  {
+    ingredientPattern: "SSS,_C_,SSS",
+    ingredients: {
+      "C": { type: "item", code: "game:clay-*" },
+      "S": {
+        type: "item", code: "game:flint", name: "stone",
+        allowedVariants: [
+          "chert",
+          "granite",
+          "andesite",
+          "basalt",
+          "peridotite"
+        ]
+      }
+    },
+    width: 3,
+    height: 3,
+    output: { type: "block", code: "groovedcobblestone-granite" }
+  }
+]

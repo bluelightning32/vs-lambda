@@ -36,16 +36,7 @@
     }
   ],
   variantGroups: [
-    {
-      code: "rock",
-      states: [
-        "chert",
-        "granite",
-        "andesite",
-        "basalt",
-        "peridotite"
-      ]
-    },
+    { code: "rock", loadFromProperties: "block/rockwithdeposit" },
     {
       code: "orientation",
       states: [
@@ -54,6 +45,7 @@
       ]
     }
   ],
+  skipVariants: ["*-obsidian-*", "*-halite-*", "*-scoria-*", "*-tuff-*", "*-up-snow"],
   creativeinventory: {
     "construction": [
       "*"

@@ -1,19 +1,33 @@
-{
-  ingredientPattern: "S_S,SCS,SSS",
-  ingredients: {
-    "C": { type: "item", code: "game:clay-*" },
-    "S": {
-      type: "item", code: "game:stone-*", name: "stone",
-      allowedVariants: [
-        "chert",
-        "granite",
-        "andesite",
-        "basalt",
-        "peridotite"
-      ]
-    }
+[
+  {
+    ingredientPattern: "S_S,SCS,SSS",
+    ingredients: {
+      "C": { type: "item", code: "game:clay-*" },
+      "S": {
+        type: "item", code: "game:stone-*", name: "stone",
+        allowedVariants: [
+          "chert",
+          "granite",
+          "andesite",
+          "basalt",
+          "peridotite"
+        ]
+      }
+    },
+    width: 3,
+    height: 3,
+    output: { type: "block", code: "applicationjig-{stone}" }
   },
-  width: 3,
-  height: 3,
-  output: { type: "block", code: "applicationjig-{stone}" }
-}
+  {
+    ingredientPattern: "S_S,SCS,SSS",
+    ingredients: {
+      "C": { type: "item", code: "game:clay-*" },
+      "S": {
+        type: "item", code: "game:flint"
+      }
+    },
+    width: 3,
+    height: 3,
+    output: { type: "block", code: "applicationjig-granite" }
+  }
+]
