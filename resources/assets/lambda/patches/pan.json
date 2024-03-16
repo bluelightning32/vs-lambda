@@ -56,15 +56,15 @@
           // these new entries to the end of the existing array as part of
           // merging the entries. The pan shuffles the list before drawing.
           // The value below combines with the existing 15% to make the
-          // combined chance 50% greater. The combined chance would be 22.5%,
+          // combined chance 100% greater. The combined chance would be 30%,
           // except the chance of panning any of the other blocks lowers the
           // probability (each panning action produces 0 or 1 items).
           {
             type: "item", code: "nugget-nativecopper",
-            chance: { avg: 0.0882, var: 0 }
+            chance: { avg: 0.1765, var: 0 }
           },
-          // The base chance is 0.02. This increases it by about 50%.
-          { type: "item", code: "nugget-sphalerite",  chance: { avg: 0.01, var: 0 }  },
+          // The base chance is 0.02. This increases it by about 200%.
+          { type: "item", code: "nugget-sphalerite",  chance: { avg: 0.04, var: 0 }  },
         ]
       },
       "*": {}

@@ -5,8 +5,8 @@ or playing in single player mode, Coq must be installed, as explained on the
 
 These are the items that are not solely involved with crafting terms:
 * Primitive term storage - a basket that can be crafted in the stone age and is big as a chest, but only holds terms.
-* Enhanced pan - has a 50% greater chance of dropping copper nuggets (about
-  22.5% total) and a 50% greater chance of dropping sphalerite nuggets (3%
+* Enhanced pan - has a 100% greater chance of dropping copper nuggets (about
+  30% total) and a 200% greater chance of dropping sphalerite nuggets (6%
   total). Needs `(3, 12, 5)` term to craft.
 * Lambda tree seed - grows into a tree with bluelish colored logs. It can be
   used for decoration, or its sap can be processed into term destruction fluid,
