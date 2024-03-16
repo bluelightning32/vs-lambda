@@ -132,13 +132,13 @@ public partial class TermInfo {
   }
 
   public void FromTreeAttributes(ITreeAttribute tree) {
-    ErrorMessage = tree.GetAsString("ErrorMessage");
+    ErrorMessage = tree.GetAsString("errorMessage");
     Imports = (tree["imports"] as StringArrayAttribute)?.value;
-    Term = tree.GetAsString("Term");
-    Type = tree.GetAsString("Type");
-    Constructs = tree.GetAsString("Constructs");
-    IsType = tree.GetAsBool("IsType");
-    IsTypeFamily = tree.GetAsBool("IsTypeFamily");
+    Term = tree.GetAsString("term");
+    Type = tree.GetAsString("type");
+    Constructs = tree.GetAsString("constructs");
+    IsType = tree.GetAsBool("isType");
+    IsTypeFamily = tree.GetAsBool("isTypeFamily");
   }
 }
 

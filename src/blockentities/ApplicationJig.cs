@@ -27,18 +27,19 @@ public class ApplicationJig : Jig {
 
   public override void ToTreeAttributes(ITreeAttribute tree) {
     base.ToTreeAttributes(tree);
-    if (_termState == TermState.CompilationDone) {
+    if (_termState == TermState.CompilationDone ||
+        _termInfo?.ErrorMessage != null) {
       _termInfo?.ToTreeAttributes(tree);
     }
   }
 
   protected override void LoadTermInfo(ITreeAttribute tree,
                                        IWorldAccessor worldForResolving) {
-    if (_termState != TermState.CompilationDone) {
+    _termInfo ??= new();
+    _termInfo.FromTreeAttributes(tree);
+    if (_termState != TermState.CompilationDone &&
+        _termInfo?.ErrorMessage == null) {
       _termInfo = null;
-    } else {
-      _termInfo ??= new();
-      _termInfo.FromTreeAttributes(tree);
     }
   }
 
@@ -58,7 +59,10 @@ public class ApplicationJig : Jig {
 
   protected override void ResetTermState() {
     base.ResetTermState();
-    _termInfo = null;
+    // Keep the term info if it has an error and the first term is still there.
+    if (_termInfo?.ErrorMessage == null || _inventory[0].Itemstack == null) {
+      _termInfo = null;
+    }
   }
 
   protected override void Compile(string[][] imports, string[] terms) {
@@ -97,6 +101,15 @@ public class ApplicationJig : Jig {
   }
 
   private void CompilationDone(TermInfo info) {
+    if (info.ErrorMessage != null) {
+      Api.Logger.Notification(
+          "Compilation for application jig {0} completed with an error '{1}'.",
+          Pos, info.ErrorMessage);
+    } else {
+      Api.Logger.Notification(
+          "Compilation for application jig {0} completed successfully.", Pos);
+    }
+
     _compilationRunning = false;
     if (_termState != TermState.CompilationRunning) {
       if (_termState == TermState.CompilationWaiting) {

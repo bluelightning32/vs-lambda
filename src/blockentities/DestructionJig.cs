@@ -160,6 +160,14 @@ public class DestructionJig : Jig {
   }
 
   private void CompilationDone(DestructInfo info) {
+    if (info.ErrorMessage != null) {
+      Api.Logger.Notification(
+          "Compilation for destruction jig {0} completed with an error '{1}'.",
+          Pos, info.ErrorMessage);
+    } else {
+      Api.Logger.Notification(
+          "Compilation for destruction jig {0} completed successfully.", Pos);
+    }
     _compilationRunning = false;
     if (_termState != TermState.CompilationRunning) {
       if (_termState == TermState.CompilationWaiting) {
