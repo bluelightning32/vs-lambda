@@ -2,7 +2,7 @@
 	"type": "code",
 	"name": "Lambda",
 	"modid": "lambda",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	
 	"description" : "Coq logic puzzles",
 	"website": "https://github.com/bluelightning32/vs-lambda",
