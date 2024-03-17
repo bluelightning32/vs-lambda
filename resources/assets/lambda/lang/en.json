@@ -108,6 +108,7 @@
   "itemdesc-term-hd": "Use this as the applicand in the application jig to get the first item from a list like A :: B :: nil.",
   "itemdesc-term-nth": "Give this an index and a list in the application jig, and it will give back that element from the list. Passing 0 gives the 0th (first) item in the list.",
   "sources-pairpair": "Harvesting mushrooms",
+  "sources-pairnil": "Breaking forest floor",
 
   // Names of constructors
   "item-constructor-unit-tt": "tt",

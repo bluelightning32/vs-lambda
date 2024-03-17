@@ -4,16 +4,17 @@
     {
       code: "value", states: [
         "fst", "snd", "pair3", "pair3s", "pairpair", "12", "list40053",
-        "hd", "nth", "fstpair", "pangoal", "treeseedgoal", "listinrttinl",
-        "inltt", "inrnil", "gluegoal", "nateven", "treeseedduplicategoal"
+        "hd", "nth", "fstpair", "pairnil", "pangoal", "treeseedgoal", "listinrttinl",
+        "inltt", "inrnil", "gluegoal", "nateven", "treeseedduplicategoal",
       ]
     },
   ],
   attributes: {
 		handbook: {
 			extraSectionsByType: {
-        // I don't know why the mushroom drops don't automatically show up in the handbook.
+        // I don't know why these terms don't automatically show up in the handbook.
         "*-pairpair": [ { title: "handbook-item-sources", text: "lambda:sources-pairpair" } ],
+        "*-pairnil": [ { title: "handbook-item-sources", text: "lambda:sources-pairnil" } ],
       }
 		}
   },
@@ -41,6 +42,7 @@
           "*-hd": "?A -> list ?A -> ?A",
           "*-nth": "nat -> list ?A -> ?A -> ?A",
           "*-fstpair": "(?A * ?B -> ?A) * (?A0 -> ?B0 -> ?A0 * ?B0)",
+          "*-pairnil": "list (?A -> ?B -> ?A * ?B))",
           "*-pangoal": "nat * nat * nat",
           "*-treeseedgoal": "(?A -> ?B -> ?A * ?B) * (nat -> nat)",
           "*-listinrttinl": "list (nat + unit)",
@@ -61,6 +63,7 @@
           "*-hd": "hd",
           "*-nth": "nth",
           "*-fstpair": "(fst, pair)",
+          "*-pairnil": "pair :: nil",
           "*-pangoal": "(3, 12, 5)",
           "*-treeseedgoal": "(pair, S)",
           "*-listinrttinl": "inr tt :: inr tt :: inr tt :: inl 4 :: nil",
@@ -75,6 +78,7 @@
           "*-nth": [ "Coq.Lists.List" ],
           "*-listinrttinl": [ "Coq.Lists.List" ],
           "*-inrnil": [ "Coq.Lists.List" ],
+          "*-pairnil": [ "Coq.Lists.List" ],
           "*-gluegoal": [ "Coq.Lists.List" ],
           "*": []
         },

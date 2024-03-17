@@ -78,18 +78,19 @@ The first way to trigger the application is only available if you have the metal
 ## Gathering terms
 
 Besides combining terms in the application jig, terms can be gathered in the following ways.
-* Harvesting reeds or papyrus
-* Killing drifters
-* Panning sand/gravel
-* Breaking non-branchy leaves
-* Harvesting mushrooms
-* Breaking boulders
-* Harvesting wolves
-* Harvesting hares
-* Harvesting hyenas
-* Breaking rocks
-* Breaking seaweed
-* Breaking clay blocks
+* Harvesting reeds or papyrus - `fst`
+* Killing drifters - `snd`
+* Panning sand/gravel - `snd`
+* Breaking non-branchy leaves - `(pair 3, S)`
+* Harvesting mushrooms - `(pair, pair)`
+* Breaking boulders - `S` and `12`
+* Harvesting wolves - `4 :: 0 :: 0 :: 5 :: 3 :: nil`
+* Harvesting hares - `hd` and `nth`
+* Harvesting hyenas - `(fst, pair)`
+* Breaking rocks - `inl tt` and `inr nil`
+* Breaking seaweed - `inr tt :: inr tt :: inr tt :: inl 4 :: nil`
+* Breaking clay blocks - `Nat.even`
+* Breaking forest floor - `pair :: nil`
 
 You will need a variety of terms to process and craft the reward items.
 However, if you end up with too many or the wrong kinds, you can cook them into

@@ -171,4 +171,14 @@
       },
     ]
   },
+  {
+    side: "server",
+    file: "game:blocktypes/soil/forestfloor", op: "addeach", path: "/drops/-",
+    value: [
+      {
+        type: "item", code: "lambda:term-pairnil",
+        quantity: { avg: 0.05, var: 0 }
+      },
+    ]
+  }
 ]
