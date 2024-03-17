@@ -176,4 +176,10 @@ public class CoqSessionTest {
     Assert.AreEqual("pair", info.Terms[3].Term);
     Assert.AreEqual("pair", info.Terms[4].Term);
   }
+
+  [TestMethod]
+  public void CheckVersion() {
+    Version v = _session.GetCoqcVersion();
+    Assert.IsTrue(v.Major >= 8);
+  }
 }

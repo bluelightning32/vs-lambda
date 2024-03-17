@@ -5,6 +5,8 @@ using System.IO;
 
 using HarmonyLib;
 
+using Lambda.Token;
+
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -59,20 +61,13 @@ public class CoreSystem : ModSystem {
       }
       try {
         ServerConfig.ResolveCoqcPath();
-        using Process coqc = new() { StartInfo = new ProcessStartInfo {
-          FileName = ServerConfig.CoqcPath, ArgumentList = { "--version" },
-          UseShellExecute = false, RedirectStandardOutput = true,
-          CreateNoWindow = true
-        } };
-        coqc.Start();
-        string coqcVersion = coqc.StandardOutput.ReadToEnd();
-        coqc.WaitForExit();
-        if (coqc.ExitCode != 0) {
-          api.Logger.Fatal("Failed to invoke '{0} --version'.",
-                           ServerConfig.CoqcPath);
+        CoqSession session = new(ServerConfig);
+        Version v = session.GetCoqcVersion();
+        api.Logger.Notification("Coqc version: {0}", v);
+        if (v < new Version(8, 19, 0)) {
+          throw new InvalidOperationException(
+              $"Coq version 8.19.0 or higher is necessary, but version {v} is installed.");
         }
-        api.Logger.Notification("Coqc version: {0}",
-                                coqcVersion.ReplaceLineEndings(" "));
       } catch (Exception e) {
         api.Logger.Fatal(e.ToString());
         ((ICoreServerAPI)api).Server.ShutDown();

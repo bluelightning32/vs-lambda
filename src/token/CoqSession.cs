@@ -341,7 +341,7 @@ public partial class CoqResult {
   private static partial Regex ParseUnresolvedParameterType();
 }
 
-public class CoqSession : IDisposable {
+public partial class CoqSession : IDisposable {
   private readonly ServerConfig _config;
   public CoqSession(ServerConfig config) { _config = config; }
 
@@ -480,6 +480,28 @@ public class CoqSession : IDisposable {
     }
   }
 
+  public Version GetCoqcVersion() {
+    using Process coqc = new() { StartInfo = new ProcessStartInfo {
+      FileName = _config.CoqcPath, ArgumentList = { "--version" },
+      UseShellExecute = false, RedirectStandardOutput = true,
+      CreateNoWindow = true
+    } };
+    coqc.Start();
+    string output = coqc.StandardOutput.ReadToEnd();
+    coqc.WaitForExit();
+    if (coqc.ExitCode != 0) {
+      throw new InvalidOperationException(
+          $"Coqc at path '{_config.CoqcPath}' exited with code {coqc.ExitCode}.");
+    }
+    RegexMatch match = VersionRegex().Match(output);
+    return Version.Parse(match.Groups[1].Value);
+  }
+
+  // Remove the +rc suffix if present. The returned version object does not
+  // support rcs.
+  [GeneratedRegex("version ([0-9.]+)(\\+.*)?\\n", RegexOptions.Multiline)]
+  private static partial Regex VersionRegex();
+
   // clang-format off
   private static readonly string TermInfoHeader = """
 From Ltac2 Require Import Ltac2.
@@ -535,5 +557,6 @@ Ltac2 destruct_term (c: constr) : (constr * constr * message * bool) list :=
   end.
 
 """;
+
   // clang-format on
 }
