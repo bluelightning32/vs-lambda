@@ -93,6 +93,7 @@ public class CoreSystem : ModSystem {
         "RejectRecipeAttribute",
         typeof(CollectibleBehaviors.RejectRecipeAttribute));
     api.RegisterBlockClass("DestructionJig", typeof(Blocks.DestructionJig));
+    api.RegisterBlockClass("SpreadingSoil", typeof(Blocks.SpreadingSoil));
     api.RegisterBlockBehaviorClass("BlockEntityForward",
                                    typeof(BlockBehaviors.BlockEntityForward));
     api.RegisterBlockBehaviorClass("BlockEntityForward",
@@ -118,6 +119,7 @@ public class CoreSystem : ModSystem {
         "CacheMesh", typeof(BlockEntityBehaviors.CacheMesh));
     api.RegisterBlockEntityBehaviorClass(
         "BlockMonitor", typeof(BlockEntityBehaviors.BlockMonitor));
+    api.RegisterItemClass("BlockReplacer", typeof(Items.BlockReplacer));
   }
 
   public override void StartClientSide(ICoreClientAPI api) {}

@@ -1,0 +1,65 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+		"fireclay": "game:block/soil/fireclay",
+		"teleporter": "game:block/teleporter"
+	},
+	"elements": [
+		{
+			"name": "Cube2",
+			"from": [ 4.0, 3.0, 4.0 ],
+			"to": [ 12.0, 11.0, 12.0 ],
+			"rotationOrigin": [ 4.0, 3.0, 4.0 ],
+			"faces": {
+				"north": { "texture": "#fireclay", "uv": [ 0.0, 0.0, 8.0, 8.0 ] },
+				"east": { "texture": "#fireclay", "uv": [ 0.0, 0.0, 8.0, 8.0 ] },
+				"south": { "texture": "#fireclay", "uv": [ 0.0, 0.0, 8.0, 8.0 ] },
+				"west": { "texture": "#fireclay", "uv": [ 0.0, 0.0, 8.0, 8.0 ] },
+				"up": { "texture": "#fireclay", "uv": [ 0.0, 0.0, 8.0, 8.0 ] },
+				"down": { "texture": "#fireclay", "uv": [ 0.0, 0.0, 8.0, 8.0 ] }
+			},
+			"children": [
+				{
+					"name": "Cube3",
+					"from": [ 0.0, 0.0, 0.0 ],
+					"to": [ 8.0, 8.0, 8.0 ],
+					"rotationOrigin": [ 4.0, 4.0, 4.0 ],
+					"rotationX": 45.0,
+					"rotationY": 22.5,
+					"rotationZ": 22.5,
+					"faces": {
+						"north": { "texture": "#fireclay", "uv": [ 0.0, 0.0, 8.0, 8.0 ] },
+						"east": { "texture": "#fireclay", "uv": [ 0.0, 0.0, 8.0, 8.0 ] },
+						"south": { "texture": "#fireclay", "uv": [ 0.0, 0.0, 8.0, 8.0 ] },
+						"west": { "texture": "#fireclay", "uv": [ 0.0, 0.0, 8.0, 8.0 ] },
+						"up": { "texture": "#fireclay", "uv": [ 0.0, 0.0, 8.0, 8.0 ] },
+						"down": { "texture": "#fireclay", "uv": [ 0.0, 0.0, 8.0, 8.0 ] }
+					}
+				},
+				{
+					"name": "Cube4",
+					"from": [ 0.0, 0.0, 0.0 ],
+					"to": [ 8.0, 8.0, 8.0 ],
+					"rotationOrigin": [ 4.0, 4.0, 4.0 ],
+					"rotationX": 90.0,
+					"rotationY": 22.5,
+					"rotationZ": 45.0,
+					"faces": {
+						"north": { "texture": "#teleporter", "uv": [ 4.0, 4.0, 12.0, 12.0 ] },
+						"east": { "texture": "#teleporter", "uv": [ 3.5, 4.0, 11.5, 12.0 ] },
+						"south": { "texture": "#teleporter", "uv": [ 3.5, 4.0, 11.5, 12.0 ] },
+						"west": { "texture": "#teleporter", "uv": [ 4.0, 4.0, 12.0, 12.0 ] },
+						"up": { "texture": "#teleporter", "uv": [ 4.0, 4.0, 12.0, 12.0 ] },
+						"down": { "texture": "#teleporter", "uv": [ 4.0, 4.0, 12.0, 12.0 ] }
+					}
+				}
+			]
+		}
+	]}

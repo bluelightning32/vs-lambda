@@ -1,0 +1,72 @@
+{
+	code: "convertingfireclay",
+	class: "SpreadingSoil",
+	variantgroups: [
+		{ code:"grasscoverage", states: ["none", "verysparse"] },
+	],
+	shape: { base: "block/basic/cube" },
+	drawtype: "TopSoil",
+	renderpass: "TopSoil",
+	blockmaterial: "Soil",
+	attributes: {
+		mapColorCode: "land",
+		ignoreTintInventory: true,
+		growthLightLevel: 7,
+		preventsDecay: true,
+		tallGrassGrowthChance: 0.6,
+		spreadChance: 0.5,
+    afterSpreadBlock: "game:rawclay-fire-{grasscoverage}",
+    spreadDelay: 30,
+    spreadBlocks: {
+      "game:rawclay-blue-none": "convertingfireclay-none",
+      "game:rawclay-blue-verysparse": "convertingfireclay-verysparse"
+    }
+	},
+	creativeinventory: { "terrain": ["*"] },
+	replaceable: 700,
+	resistance: 4,
+	textures: {
+		all: {base: "game:block/soil/blueclay"},
+		snowed: {base: "game:block/plant/grasscoverage/snow/normal"},
+		specialSecondTexture: {base: "game:block/plant/grasscoverage/{grasscoverage}"}
+	},
+	texturesInventory: {
+		down: {base: "game:block/soil/blueclay"},
+		horizontals: {
+			base: "game:block/soil/blueclay",
+			overlays: ["game:block/plant/grasscoverage/inventory/side_{grasscoverage}"]
+		},
+		up: {
+			base: "game:block/soil/blueclay",
+			overlays: ["game:block/plant/grasscoverage/inventory/top_{grasscoverage}"]
+		}
+	},
+	climateColorMapByType: {
+		"*-none": null,
+		"*": "climatePlantTint",
+	},
+	seasonColorMapByType: {
+		"*-none": null,
+		"*": "seasonalGrass",
+	},
+	frostable: true,
+	sounds: {
+		place: "game:block/dirt",
+		break: "game:block/dirt",
+		hit: "game:block/dirt",
+	},
+	fertility: 5,
+	drops: [
+		{ 
+			type: "item", 
+			code: "game:clay-blue",
+			quantity: { avg: 4.5, var: 1 },
+		}
+	],
+	heldTpIdleAnimation: "holdbothhandslarge", heldRightReadyAnimation: "heldblockready", heldTpUseAnimation: "twohandplaceblock",
+	tpHandTransform: {
+		translation: { x: -1.23, y: -0.91, z: -0.8 },
+		rotation: { x: -2, y: 25, z: -78 },
+		scale: 0.4
+	}
+}

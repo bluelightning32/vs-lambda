@@ -12,6 +12,8 @@ These are the items that are not solely involved with crafting terms:
   used for decoration, or its sap can be processed into term destruction fluid,
   which is necessary to craft some terms. The trees can rarely be found in the
   world, or the seed can be crafted using a walnut seed and the term `(pair, S)`.
+* Blue clay transformer - right click this on a blue clay block in the world to
+  slowly convert it and its neighbors into fire clay blocks.
 * Metal glue - can be used to repair tools in the crafting grid. Using metal
   glue on a tool saves the hassle smithing, and repairing a tool overall costs
   half the metal. Requires term `inl 3 :: inr (2, tt) :: nil` to craft.
@@ -26,9 +28,10 @@ that are somewhat rare. Also a tree seed can only be copied once. Seeds
 harvested from a tree can be copied, whether or not the tree was grown from a
 copied seed.
 
-The metal glue is a mid game item. Building its term requires both the
-application jig and destruction jig. The destruction jig doesn't work without
-destruction fluid, which requires a barrel and lambda tree sap to craft.
+The blue clay converter and metal glue are mid game items. Building their terms
+requires both the application jig and destruction jig. The destruction jig
+doesn't work without destruction fluid, which requires a barrel and lambda tree
+sap to craft.
 
 ## Function application crafting
 

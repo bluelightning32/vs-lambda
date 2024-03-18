@@ -1,0 +1,19 @@
+{
+  code: "fireclayconverter",
+  class: "BlockReplacer",
+  attributes: {
+    replacements: {
+      "game:rawclay-blue-none": "convertingfireclay-none",
+      "game:rawclay-blue-verysparse": "convertingfireclay-verysparse"
+    }
+  },
+  creativeinventory: { "general": ["*"]},
+  maxStackSize: 64,
+  shape: { base: "item/fireclayconverter" },
+  guiTransform: {
+		translation: { x: 2, y: 0, z: 0 },
+		rotation: { x: 0, y: -54, z: -30 },
+		origin: { x: 0.5, y: 0.4, z: 0.5 },
+		scale: 1.84
+	}
+}

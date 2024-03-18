@@ -72,6 +72,8 @@
   "block-sapling-lambda-free": "Lambda sapling",
   "block-reed-termstorage-primitive": "Primitive term storage",
   "termstorage-primitive-contents": "Term storage contents",
+  "block-convertingfireclay-none": "Transforming blue clay",
+  "block-convertingfireclay-verysparse": "Transforming blue clay (Sparse grass)",
 
   // Liquids
   "item-sapportion-raw": "Lambda sap",
@@ -101,6 +103,8 @@
   "item-denaturedterm": "Denatured term",
   "itemdesc-denaturedterm": "This is edible, but barely. It smells like overripe fruit and has a slimy, rubbery texture.",
   "item-treeseed-lambda": "Lambda tree seed",
+  "item-fireclayconverter": "Blue clay transformer",
+  "itemdesc-fireclayconverter": "Use this on a blue clay block in the world to slowly transform it and neighboring blocks into fire clay. Half of the blocks will convert quickly, and the half will convert slowly. Feel free to mine the blocks that have finished converting to fire clay, but avoid mining the blocks that are still transforming.",
 
   // Terms that are not constructors or types
   "itemdesc-term-fst": "Use this as the applicand in the application jig to convert a term like (A, B) into A.",
