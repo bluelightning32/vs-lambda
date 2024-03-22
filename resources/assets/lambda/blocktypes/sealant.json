@@ -1,0 +1,36 @@
+{
+  code: "sealant",
+  behaviors: [
+    {
+      name: "Decor",
+      properties: {
+        sides: ["north", "east", "south", "west", "up", "down"],
+        notFullFace: true,
+        thickness: 0.0
+      }
+    }
+  ],
+  attributes: {
+    handbook: {
+      exclude: true
+    }
+  },
+  variantgroups: [
+  ],
+  renderPass: "Transparent",
+  drawtype: "surfacelayer",
+  shapeInventory: {
+    base: "game:block/basic/layers/0voxel", rotateX: 90
+  },
+  sidesolid: { all: false },
+  sideopaque: { all: false },
+  blockmaterial: "Ceramic",
+  creativeinventory: { "clutter": ["*"] },
+  replaceable: 700,
+  resistance: 0,
+  lightAbsorption: 0,
+  textures: { 
+    all: {  base: "sealant/decor" } 
+  },
+  drops: [],
+}

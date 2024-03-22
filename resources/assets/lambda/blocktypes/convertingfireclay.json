@@ -4,7 +4,7 @@
 	variantgroups: [
 		{ code:"grasscoverage", states: ["none", "verysparse"] },
 	],
-	shape: { base: "block/basic/cube" },
+	shape: { base: "game:block/basic/cube" },
 	drawtype: "TopSoil",
 	renderpass: "TopSoil",
 	blockmaterial: "Soil",

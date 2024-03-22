@@ -11,7 +11,7 @@
     waterTightContainerProps: {
       containable: true,
       itemsPerLitre: 100,
-      texture: { base: "sealant" },
+      texture: { base: "sealant/liquid" },
       allowSpill: true,
       whenSpilled: { 
         action: "DropContents",
@@ -21,7 +21,7 @@
   },
   shape: { base: "game:item/liquid" },
   textures: {
-    "all": { base: "sealant" }
+    "all": { base: "sealant/liquid" }
   },
   creativeinventoryStacks: [
     {
