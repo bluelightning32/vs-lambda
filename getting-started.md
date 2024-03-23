@@ -14,6 +14,8 @@ These are the items that are not solely involved with crafting terms:
   world, or the seed can be crafted using a walnut seed and the term `(pair, S)`.
 * Blue clay transformer - right click this on a blue clay block in the world to
   slowly convert it and its neighbors into fire clay blocks.
+* Charcoal pit sealant - paint this on the inside of a charcoal pit to increase
+  the amount of charcoal the pit produces by up to 30%.
 * Metal glue - can be used to repair tools in the crafting grid. Using metal
   glue on a tool saves the hassle smithing, and repairing a tool overall costs
   half the metal. Requires term `inl 3 :: inr (2, tt) :: nil` to craft.
@@ -142,6 +144,30 @@ Here are some examples of what can be destructed:
 * `inl tt` -> `inl` and `tt`
 * `inr nil` -> `inr` and `nil`
 * `inr tt :: inr tt :: inr tt :: inl 4 :: nil` -> `cons`, `inr tt`, and `inr tt :: inr tt :: inl 4 :: nil`
+
+## Charcoal pit sealant
+
+Creating the sealant requires a term of the shape `3 :: nil`. This can only be
+created by obtaining the `nil` and `cons` constructors, which can only be
+obtained by destructing a list in the destruction jig.
+
+Seal the `3 :: nil` term in barrel with 10 liters of lambda tree sap. After 12
+hours it will turn into sealant.
+
+Create a paintbrush with a knife, a log, and some flax. Hold a bucket of
+sealant in your offhand and the paintbrush in your main hand. Hold right click
+to paint a face of the block with the sealant.
+
+Sealing the walls of the charcoal pit chamber increases the amount of charcoal
+the pit produces, by up to 30%. The more walls that are sealed, the more
+effective the charcoal pit is. For example, let's say the charcoal pit is
+2x2x2, with 7 of those blocks full stacks of logs, and 1 of the blocks is the
+firepit that starts the charcoal pit. The chamber would have 24 faces (4 faces
+on each of the 6 sides). It's not possible to seal the last block that closes
+the chamber. So at most 23/24 = 96% of the faces could be sealed in the 2x2x2
+example. The chamber would produce 0.247 pieces of charcoal per input log.
+Without sealing any walls, only 0.188 pieces of charcoal would be produced per
+input log.
 
 ## Inscription crafting
 

@@ -1,7 +1,7 @@
 [
   {
     code: "sealant",
-    sealHours: 24,
+    sealHours: 12,
     ingredients: [
       { type: "item", code: "term-sealantgoal",  quantity: 1 },
       { type: "item", code: "sapportion-raw",  litres: 10 }
