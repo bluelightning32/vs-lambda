@@ -56,7 +56,7 @@
     file: "game:blocktypes/plant/mushroom", op: "addmerge", path: "/drops/-",
     value: {
       type: "item", code: "lambda:term-pairpair",
-      quantity: { avg: 0.1, var: 0 }
+      quantity: { avg: 0.2, var: 0 }
     },
   },
   {
@@ -95,11 +95,11 @@
     value: [
       {
         type: "item", code: "lambda:term-hd",
-        quantity: { avg: 0.05, var: 0 }
+        quantity: { avg: 0.10, var: 0 }
       },
       {
         type: "item", code: "lambda:term-nth",
-        quantity: { avg: 0.05, var: 0 }
+        quantity: { avg: 0.10, var: 0 }
       },
     ]
   },
@@ -109,11 +109,11 @@
     value: [
       {
         type: "item", code: "lambda:term-hd",
-        quantity: { avg: 0.05, var: 0 }
+        quantity: { avg: 0.10, var: 0 }
       },
       {
         type: "item", code: "lambda:term-nth",
-        quantity: { avg: 0.05, var: 0 }
+        quantity: { avg: 0.10, var: 0 }
       },
     ]
   },
