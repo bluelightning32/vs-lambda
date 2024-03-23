@@ -31,6 +31,9 @@
 
   "game:tabname-terms": "Terms",
 
+  // Errors
+  "nopaint": "Requires a bucket of paint in the offhand",
+
   // Names of blocks
   "block-app-north": "Application",
   "block-doublescope-ud": "Double-sided scope",
@@ -74,6 +77,7 @@
   "termstorage-primitive-contents": "Term storage contents",
   "block-convertingfireclay-none": "Transforming blue clay",
   "block-convertingfireclay-verysparse": "Transforming blue clay (Sparse grass)",
+  "block-sealant": "Painted sealant",
 
   // Liquids
   "item-sapportion-raw": "Lambda sap",
@@ -98,6 +102,9 @@
   "incontainer-item-metalglueportion-meteoriciron": "Meteoric iron metal glue",
   "item-metalglueportion-steel": "Steel metal glue",
   "incontainer-item-metalglueportion-steel": "Steel metal glue",
+  "item-sealantportion": "Sealant",
+  "itemdesc-sealantportion": "Hold a bucket of this in your offhand and a paintbrush in your main hand to paint a surface with sealant. A charcoal pit with sealed walls is more efficient for making charcoal.",
+  "incontainer-item-sealantportion": "Sealant",
 
   // Items
   "item-denaturedterm": "Denatured term",
@@ -105,6 +112,8 @@
   "item-treeseed-lambda": "Lambda tree seed",
   "item-fireclayconverter": "Blue clay transformer",
   "itemdesc-fireclayconverter": "Use this on a blue clay block in the world to slowly transform it and neighboring blocks into fire clay. Half of the blocks will convert quickly, and the half will convert slowly. Feel free to mine the blocks that have finished converting to fire clay, but avoid mining the blocks that are still transforming.",
+  "item-paintbrush": "Paintbrush",
+  "itemdesc-paintbrush": "Used to apply paints or sealants to surfaces.",
 
   // Terms that are not constructors or types
   "itemdesc-term-fst": "Use this as the applicand in the application jig to convert a term like (A, B) into A.",

@@ -1,0 +1,8 @@
+[
+  // Let the bucket be held in the offhand
+  {
+    side: "server",
+    file: "game:blocktypes/wood/bucket", op: "add", path: "/storageFlags",
+    value: 257
+  },
+]

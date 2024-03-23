@@ -85,6 +85,8 @@ public class CoreSystem : ModSystem {
       _harmony.PatchAll();
     }
 
+    api.RegisterCollectibleBehaviorClass("Paint",
+                                         typeof(CollectibleBehaviors.Paint));
     api.RegisterCollectibleBehaviorClass(
         "ForwardToBlock", typeof(CollectibleBehaviors.ForwardToBlock));
     api.RegisterCollectibleBehaviorClass("Term",

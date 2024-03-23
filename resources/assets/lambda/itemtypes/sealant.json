@@ -17,6 +17,10 @@
         action: "DropContents",
         stack: { type: "item", code: "sealantportion" } 
       }
+    },
+    paint: {
+      decor: "lambda:sealant",
+      requiresLitres: 1
     }
   },
   shape: { base: "game:item/liquid" },

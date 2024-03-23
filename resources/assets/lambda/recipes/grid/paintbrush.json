@@ -1,0 +1,24 @@
+[
+  {
+    ingredientPattern: "_F,KL",
+    ingredients: {
+      "F": { type: "item", code: "game:flaxfibers", quantity: 2 },
+      "K": { type: "item", code: "game:knife-*", isTool: true },
+      "L": { type: "block", code: "game:log-placed-*" }
+    },
+    width: 2,
+    height: 2,
+    output: { type: "item", code: "paintbrush" }
+  },
+  {
+    ingredientPattern: "_F,KL",
+    ingredients: {
+      "F": { type: "item", code: "game:flaxfibers", quantity: 2 },
+      "K": { type: "item", code: "game:knife-*", isTool: true },
+      "L": { type: "block", code: "game:logsection-placed-*" }
+    },
+    width: 2,
+    height: 2,
+    output: { type: "item", code: "paintbrush" }
+  }
+]

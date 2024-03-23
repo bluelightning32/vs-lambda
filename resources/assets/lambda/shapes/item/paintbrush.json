@@ -1,0 +1,59 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+		"wood-generic": "game:block/wood-generic",
+		"fibers": "game:item/resource/fibers"
+	},
+	"elements": [
+		{
+			"name": "handle",
+			"from": [ 7.0, 0.0, 7.25 ],
+			"to": [ 12.0, 1.5, 8.75 ],
+			"rotationOrigin": [ 7.0, 0.0, 7.0 ],
+			"faces": {
+				"north": { "texture": "#wood-generic", "uv": [ 0.0, 0.0, 5.0, 1.5 ] },
+				"south": { "texture": "#wood-generic", "uv": [ 0.0, 0.0, 5.0, 1.5 ] },
+				"west": { "texture": "#wood-generic", "uv": [ 0.0, 0.0, 1.5, 1.5 ] },
+				"up": { "texture": "#wood-generic", "uv": [ 0.0, 0.0, 5.0, 1.5 ] },
+				"down": { "texture": "#wood-generic", "uv": [ 0.0, 0.0, 5.0, 1.5 ] }
+			},
+			"children": [
+				{
+					"name": "ferrule",
+					"from": [ 5.0, 0.0, -1.75 ],
+					"to": [ 7.0, 1.5, 3.25 ],
+					"rotationOrigin": [ 5.0, 0.0, -1.0 ],
+					"faces": {
+						"north": { "texture": "#wood-generic", "uv": [ 0.0, 0.0, 2.0, 1.5 ] },
+						"east": { "texture": "#wood-generic", "uv": [ 0.0, 0.0, 5.0, 1.5 ] },
+						"south": { "texture": "#wood-generic", "uv": [ 0.0, 0.0, 2.0, 1.5 ] },
+						"west": { "texture": "#wood-generic", "uv": [ 0.0, 0.0, 5.0, 1.5 ] },
+						"up": { "texture": "#wood-generic", "uv": [ 0.0, 0.0, 2.0, 5.0 ] },
+						"down": { "texture": "#wood-generic", "uv": [ 0.0, 0.0, 2.0, 5.0 ] }
+					},
+					"children": [
+						{
+							"name": "bristles",
+							"from": [ 2.0, 0.25, 0.0 ],
+							"to": [ 4.0, 1.25, 5.0 ],
+							"rotationOrigin": [ 2.0, 1.0, 0.0 ],
+							"faces": {
+								"north": { "texture": "#fibers", "uv": [ 0.0, 0.0, 1.0, 2.0 ], "rotation": 90 },
+								"east": { "texture": "#fibers", "uv": [ 4.0, 14.0, 9.0, 15.0 ] },
+								"south": { "texture": "#fibers", "uv": [ 0.0, 0.0, 1.0, 2.0 ], "rotation": 90 },
+								"up": { "texture": "#fibers", "uv": [ 0.0, 0.0, 5.0, 2.0 ], "rotation": 90 },
+								"down": { "texture": "#fibers", "uv": [ 0.0, 0.0, 5.0, 2.0 ], "rotation": 90 }
+							}
+						}
+					]
+				}
+			]
+		}
+	]}
