@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 
 using HarmonyLib;
@@ -9,7 +8,6 @@ using Lambda.Token;
 
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
-using Vintagestory.API.Config;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 
@@ -121,6 +119,8 @@ public class CoreSystem : ModSystem {
         "CacheMesh", typeof(BlockEntityBehaviors.CacheMesh));
     api.RegisterBlockEntityBehaviorClass(
         "BlockMonitor", typeof(BlockEntityBehaviors.BlockMonitor));
+    api.RegisterBlockEntityBehaviorClass(
+        "SealedCharcoalPit", typeof(BlockEntityBehaviors.SealedCharcoalPit));
     api.RegisterItemClass("BlockReplacer", typeof(Items.BlockReplacer));
   }
 

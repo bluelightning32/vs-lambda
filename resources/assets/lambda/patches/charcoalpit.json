@@ -1,0 +1,16 @@
+[
+  {
+    side: "server",
+    file: "game:blocktypes/charcoalpit", op: "addmerge", path: "/entityBehaviors",
+    value: [
+      {
+        name: "SealedCharcoalPit",
+        properties: {
+          sealedDecors: [
+            "lambda:sealant"
+          ]
+        }
+      },
+    ]
+  }
+]
