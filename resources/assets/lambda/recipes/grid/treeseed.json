@@ -1,7 +1,7 @@
 {
   ingredientPattern: "TS",
   ingredients: {
-    "S": { type: "item", code: "game:treeseed-walnut" },
+    "S": { type: "item", code: "game:treeseed-*", allowedVariants: ["walnut", "oak", "maple"] },
     "T": { type: "item", code: "term-treeseedgoal" },
   },
   width: 2,
