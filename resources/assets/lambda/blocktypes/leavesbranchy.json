@@ -89,7 +89,7 @@
     {
       type: "item",
       code: "treeseed",
-      quantity: { avg: 0.05, var: 0 }
+      quantity: { avg: 0.10, var: 0 }
     },
     {
       type: "item",

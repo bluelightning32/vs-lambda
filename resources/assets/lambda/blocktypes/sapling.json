@@ -5,8 +5,8 @@
   attributes: {
     treeGen: "lambda:lambda",
     reinforcable: true,
-    sproutDays: { avg: 3, var: 1 },
-    matureDays: { avg: 14, var: 4 }
+    sproutDays: { avg: 2, var: 1 },
+    matureDays: { avg: 7, var: 2 }
   },
   variantgroups: [
 		{ code: "wood", states: ["lambda"] },
