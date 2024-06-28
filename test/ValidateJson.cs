@@ -25,7 +25,7 @@ public class ValidateJson {
   public void Validate() {
     string resources = ResourcesPath();
     Assert.IsNotNull(resources);
-    TestContext.WriteLine($"Json path: resources");
+    TestContext.WriteLine($"Json path: {resources}");
     int validated = 0;
     foreach (string file in Directory.EnumerateFiles(
                  resources, "*.json", SearchOption.AllDirectories)) {
@@ -33,6 +33,8 @@ public class ValidateJson {
         using StreamReader stream = File.OpenText(file);
         using JsonTextReader reader = new(stream);
         JToken.ReadFrom(reader);
+        string remaining = stream.ReadToEnd();
+        Assert.AreEqual("", remaining, $"Extra text at the end of {file}");
       } catch (JsonException ex) {
         Assert.Fail("Validation failed for JSON file: {0}\n{1}", file, ex);
       }
