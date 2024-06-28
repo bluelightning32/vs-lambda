@@ -8,7 +8,9 @@
     "program": "${env:VINTAGE_STORY}/Vintagestory",
     "args": [
       "--addModPath", "${workspaceFolder}/bin/Debug",
-      "--addOrigin", "${workspaceFolder}/resources/assets"
+      "--addOrigin", "${workspaceFolder}/resources/assets",
+      "--openWorld=test_world",
+      "--playStyle=creativebuilding"
     ],
     "justMyCode": false,
     "sourceFileMap": {
